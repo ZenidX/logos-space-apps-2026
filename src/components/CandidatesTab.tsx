@@ -123,6 +123,7 @@ export default function CandidatesTab() {
   const res = DATA[targetId];
   const [view3d, setView3d] = useState<Candidate | null>(null);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [sortShape, setSortShape] = useState(false);
   const viewerTarget: ViewerTarget = { name: target.name, short: target.short, ...TARGET_TERRAIN[target.id] };
 
   const markers = useMemo(
@@ -233,8 +234,33 @@ export default function CandidatesTab() {
           </section>
 
           <section className="space-y-2">
-            <p className="etq mb-3" data-n="03">Candidate ranking</p>
-            {res.top.map((c, i) => (
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="etq" data-n="03">Candidate ranking</p>
+              {targetId !== "jezero" && (
+                <div className="flex gap-1 font-mono text-[11px] uppercase tracking-[.06em]" role="group" aria-label="Sort candidates">
+                  {([false, true] as const).map((v) => (
+                    <button
+                      key={String(v)}
+                      type="button"
+                      aria-pressed={sortShape === v}
+                      onClick={() => setSortShape(v)}
+                      className={`btn-cut border px-2 py-1 ${sortShape === v ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
+                    >
+                      {v ? "Sort by shape" : "Sort by score"}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {sortShape && targetId !== "jezero" && (
+              <p className="mb-2 text-xs" style={{ color: C.muted }}>
+                Sorted by relief shape over 11 km (percentile against random Earth land). The score and its rank (#) do not change.
+              </p>
+            )}
+            {res.top
+              .map((c, i) => ({ c, i }))
+              .sort((a, b) => (sortShape && targetId !== "jezero" ? (shapePct(b.c, targetId) ?? -1) - (shapePct(a.c, targetId) ?? -1) : a.i - b.i))
+              .map(({ c, i }) => (
               <article key={i} id={`cand-${i}`} className={`rounded-xl border bg-white/[0.03] p-3 ${selectedCard === String(i) ? "border-[var(--acc)]" : "border-white/10"}`}>
                 <header className="mb-2 flex items-start justify-between gap-2">
                   <div>
@@ -291,7 +317,7 @@ export default function CandidatesTab() {
                             <span className={sp >= 95 ? "text-emerald-400" : "text-[var(--mut)]"}>
                               {sp >= 95 ? "▲ Shape match:" : "Shape:"}
                             </span>{" "}
-                            more similar in relief shape than {sp}% of Earth&apos;s land
+                            more similar in relief shape than {sp > 98 ? "over 98" : sp}% of Earth&apos;s land
                             <span style={{ color: C.muted }}> (informative, not scored)</span>
                           </p>
                         );
