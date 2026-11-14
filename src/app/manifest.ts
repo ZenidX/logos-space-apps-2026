@@ -4,8 +4,8 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Terra Analog",
-    short_name: "Terra Analog",
+    name: "TerraVista",
+    short_name: "TerraVista",
     description: "Earth analogs of the Moon and Mars with NASA data",
     start_url: "./",
     display: "standalone",

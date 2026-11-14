@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 7) · El producto pasa a llamarse TerraVista; guion v1 del equipo
+
+- **Nombre:** «Terra Analog» → **TerraVista** en la web (`layout.tsx`, `manifest.ts`), README, banner, `package.json` y documentos. El proyecto de Earth Engine y el asset siguen siendo `terra-analog`, porque no se pueden renombrar. La web pública cambiará con el próximo `npm run deploy`.
+- **Guion** ([docs/guion-video.md](guion-video.md)): versión del equipo con los tiempos reajustados (0:00–0:04 / 0:04–0:09 / 0:09–0:13 / 0:13–0:24 / 0:24–0:27 / 0:27–0:30). Vuelve *"and where they break"*. Llevará ~2 s del audio real de Armstrong de fondo al principio. Las funciones de acogida (Open Spaces) se construirán más adelante y saldrán en el vídeo.
+- **Audio de Armstrong** descargado de la NASA (dominio público) en `video/assets/archive/`; créditos en `video/assets/CREDITS.md`.
+
 ## 2026-11-14 (noche, 6) · Guion del vídeo de 30 s
 
 Valorados los tres guiones del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`) y fundidos en una estructura v0 en [docs/guion-video.md](guion-video.md): contexto de Leo, pregunta de Víctor, producto en una frase y lema de Leo. Propuestas 3 intros y 3 cierres dramáticos, con tres parejas (recomendada: «un pequeño paso» + «el salto empieza aquí»). Quedan para después las cifras del presupuesto (fuente oficial) y el nombre «Open Spaces».

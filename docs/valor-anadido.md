@@ -1,12 +1,12 @@
-# Valor Añadido, Storytelling y Modelo de Impacto · Terra Analog
+# Valor Añadido, Storytelling y Modelo de Impacto · TerraVista
 > **NASA Space Apps Challenge 2026** | Reto: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*  
-> **Equipo:** Logos (Barcelona) | **Proyecto:** Terra Analog
+> **Equipo:** Logos (Barcelona) | **Proyecto:** TerraVista
 
 ---
 
 ## 1. Resumen Ejecutivo (El Gancho en 10 segundos)
 
-> *"No podemos permitirnos gastar miles de millones probando a ciegas en la Luna o Marte cuando el laboratorio más completo del sistema solar está bajo nuestros pies. **Terra Analog** no es solo un mapa de satélites: es un ecosistema que reduce en un 80% el coste de pruebas espaciales, reactiva la economía local de zonas remotas y reconcilia a la ciudadanía con el presupuesto espacial de la NASA acercando el espacio a la Tierra."*
+> *"No podemos permitirnos gastar miles de millones probando a ciegas en la Luna o Marte cuando el laboratorio más completo del sistema solar está bajo nuestros pies. **TerraVista** no es solo un mapa de satélites: es un ecosistema que reduce en un 80% el coste de pruebas espaciales, reactiva la economía local de zonas remotas y reconcilia a la ciudadanía con el presupuesto espacial de la NASA acercando el espacio a la Tierra."*
 
 Los jueces de Space Apps no buscan simplemente código que pinte puntos en un mapa (hay decenas de proyectos haciendo eso). Buscan una **solución integral, viable, inspiradora y sostenible** que responda a una pregunta incómoda: **¿Por qué la sociedad debería financiar esto y cómo genera valor real hoy?**
 
@@ -35,7 +35,7 @@ graph TD
 
 ## 3. La Solución: El Modelo de Doble Motor (Digital + Físico)
 
-Terra Analog no se queda en una pantalla web; plantea un **flywheel (bucle virtuoso)** donde el software financia y potencia el territorio físico, y el territorio físico retroalimenta la ciencia y la cultura.
+TerraVista no se queda en una pantalla web; plantea un **flywheel (bucle virtuoso)** donde el software financia y potencia el territorio físico, y el territorio físico retroalimenta la ciencia y la cultura.
 
 ```mermaid
 flowchart LR
@@ -90,7 +90,7 @@ La resolución de búsqueda satelital arroja celdas de aproximadamente **11 km²
 
 ## 5. Matriz de Valor frente a los 5 Criterios de Evaluación
 
-| Criterio Space Apps | ¿Qué busca el jurado? | ¿Cómo lo vende Terra Analog? |
+| Criterio Space Apps | ¿Qué busca el jurado? | ¿Cómo lo vende TerraVista? |
 |---|---|---|
 | **Impact** | Solución medible a un problema real | **Ahorro masivo de capital (millones de $ por campaña de pruebas)** al evitar fallos de diseño antes del lanzamiento; dinamización económica regional en zonas de análogos; inspiración medible en vocaciones STEM. |
 | **Creativity** | Idea original, fuera de lo común | **El concepto de "Doble Motor":** unir un motor algorítmico satelital con un modelo de uso público circular (Turismo análogo + Festivales científicos en tiempos muertos de pruebas aeroespaciales). |

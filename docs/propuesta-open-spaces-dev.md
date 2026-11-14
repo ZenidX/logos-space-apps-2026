@@ -7,11 +7,11 @@
 ## PARTE 1 · La Venta Estratégica (Defensa sin inventar datos)
 
 ### 1. El Principio del Beneficio Bidireccional (Win-Win)
-El valor añadido de **Terra Analog** no se defiende con porcentajes inventados ni promesas financieras vacías. Se defiende demostrando un **equilibrio de incentivos real** entre la exploración espacial y las comunidades locales terrestres:
+El valor añadido de **TerraVista** no se defiende con porcentajes inventados ni promesas financieras vacías. Se defiende demostrando un **equilibrio de incentivos real** entre la exploración espacial y las comunidades locales terrestres:
 
 ```mermaid
 flowchart LR
-    A["Agencias Espaciales & NewSpace"] <-->|"Pruebas de alta fidelidad previas al vuelo / Reducción de riesgo"| B["Terra Analog Hub"]
+    A["Agencias Espaciales & NewSpace"] <-->|"Pruebas de alta fidelidad previas al vuelo / Reducción de riesgo"| B["TerraVista Hub"]
     B <-->|"Uso en ventanas de descanso / Divulgación y retorno local"| C["Sociedad, Estudiantes y Comunidades"]
 ```
 

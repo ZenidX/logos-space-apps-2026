@@ -1,4 +1,4 @@
-# Terra Analog
+# TerraVista
 
 *How bringing you down to Earth will keep you dreaming.*
 
@@ -35,10 +35,10 @@ The US won the cold war, but once it was all over, keeping such a high investmen
 
 Furthermore, NASA collects terabytes of data, underused data to which we aim to find a purpose.
 
-## Scene 4 - Building Terra Analog (WebApp)
+## Scene 4 - Building TerraVista (WebApp)
 > Various screens showing how the WebApp works.
 
-**Terra Analog** is the WebApp that allows to find *Earth Locations that **Analog** the Permanent Moon Base Locations and Mars*.
+**TerraVista** is the WebApp that allows to find *Earth Locations that **Analog** the Permanent Moon Base Locations and Mars*.
 
 ## Scene 5 - Open Spaces
 > Dramatic scenes of brutal environments in Earth, Mars and the Moon.

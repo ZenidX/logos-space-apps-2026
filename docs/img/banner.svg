@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="Terra Analog: scanning Earth for places that resemble Moon and Mars base sites">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="TerraVista: scanning Earth for places that resemble Moon and Mars base sites">
 <style>
   text { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
   .title { fill: #f0efec; font-size: 46px; font-weight: 700; letter-spacing: .5px; }
@@ -59,7 +59,7 @@
 <text class="chip" x="790" y="122" text-anchor="middle">MOON</text>
 <text class="chip" x="790" y="236" text-anchor="middle">MARS</text>
 
-<text class="title" x="300" y="128">Terra Analog</text>
+<text class="title" x="300" y="128">TerraVista</text>
 <text class="tag" x="302" y="158">Finding the places on Earth that behave most like</text>
 <text class="tag" x="302" y="180">future Moon and Mars base sites, using NASA data</text>
 <text class="chip" x="302" y="82">NASA SPACE APPS 2026 · TEAM LOGOS</text>

@@ -5,7 +5,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 ## Qué es
 - Hackathon **NASA Space Apps Challenge 2026**, evento local de Barcelona, del 14 al 15 de noviembre de 2026. Equipo **Logos**.
 - Reto: **Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars**. (El README original decía «Junior Astronaut Mission Trainer»: era un error, el equipo confirmó el reto de los análogos.)
-- Producto: **Terra Analog**, una web Next.js pensada para móvil que busca en toda la Tierra análogos de bases en la Luna y Marte con datos de NASA (Google Earth Engine) y explica en qué se parece cada lugar, cuánto y dónde se rompe la analogía.
+- Producto: **TerraVista**, una web Next.js pensada para móvil que busca en toda la Tierra análogos de bases en la Luna y Marte con datos de NASA (Google Earth Engine) y explica en qué se parece cada lugar, cuánto y dónde se rompe la analogía.
 - **Entrega:** domingo 15-11-2026 a las 23:59, hora local. Todo en inglés. Demo de 30 s como máximo o de 7 diapositivas como máximo. Pitch local de 3 minutos. Ver `docs/normas.md`.
 
 ## Cómo trabajar aquí
@@ -29,7 +29,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - Método: posición relativa dentro del rango terrestre p1–p99. «Fuera de rango» se marca contra el mín./máx. real. Ver `docs/metodo.md`.
 
 ## Google Earth Engine
-- Proyecto de Cloud **`terra-analog`**, registrado como no comercial (plan Comunidad). Se usa desde el Code Editor: https://code.earthengine.google.com/?project=terra-analog
+- Proyecto de Cloud **`terra-analog`** (se queda con ese id aunque el producto ahora se llame TerraVista: no se puede renombrar), registrado como no comercial (plan Comunidad). Se usa desde el Code Editor: https://code.earthengine.google.com/?project=terra-analog
 - **Copia de todo lo de Earth Engine en el repo:** `data/ee/` (9 capas del asset + 12 mapas de puntuación en GeoTIFF, ver `data/ee/README.md`).
 - **Asset de lectura pública** (desde el 14-11) y script 06 público: https://code.earthengine.google.com/f08f00b996446e8bc90653d3bec72b83
 - Asset con las variables globales: `projects/terra-analog/assets/terra_features_01deg`. Rejilla de 0,1°, de 85°N a 85°S. Bandas: lst_day, lst_night, lst_max, lst_min, precip, ndvi (×1e-4, ver abajo), albedo, slope, elev.
