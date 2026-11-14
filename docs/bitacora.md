@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche)
+
+### Copia de Earth Engine en el repo y acceso público
+- `data/ee/terra_features_01deg/`: las 9 bandas del asset como GeoTIFF (0,1°, de 85°N a 85°S, Float32).
+- `data/ee/scores/`: mapas de similitud total y por dimensión para Shackleton, Jezero y Arcadia (12 GeoTIFF). Se generaron con la fórmula de `06_puntuar_asset.js`.
+- El asset `projects/terra-analog/assets/terra_features_01deg` ahora es de **lectura pública** (`all_users_can_read`).
+- Copia pública del script de puntuación en el Code Editor: https://code.earthengine.google.com/f08f00b996446e8bc90653d3bec72b83
+- Formato, unidades, el aviso del NDVI (×10⁻⁴) y un ejemplo en Python en [data/ee/README.md](../data/ee/README.md).
+
 ## 2026-11-14 (noche, 4) · Visor 3D: el relieve ya no espera a la foto (Jefe)
 
 En la web publicada el relieve de la Tierra se quedaba en «Loading elevation…»: el cargador esperaba a la foto Sentinel-2, que a 81°N son ~64 teselas de EOX. Ahora la foto se descarga solo al pulsar «Earth satellite photo» (≈20 m/px, menos teselas) y el relieve sale solo (22 s en la prueba, con Chromium sin GPU). Si no hay foto, lo dice («no photo here»).

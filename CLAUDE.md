@@ -30,6 +30,8 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 
 ## Google Earth Engine
 - Proyecto de Cloud **`terra-analog`**, registrado como no comercial (plan Comunidad). Se usa desde el Code Editor: https://code.earthengine.google.com/?project=terra-analog
+- **Copia de todo lo de Earth Engine en el repo:** `data/ee/` (9 capas del asset + 12 mapas de puntuación en GeoTIFF, ver `data/ee/README.md`).
+- **Asset de lectura pública** (desde el 14-11) y script 06 público: https://code.earthengine.google.com/f08f00b996446e8bc90653d3bec72b83
 - Asset con las variables globales: `projects/terra-analog/assets/terra_features_01deg`. Rejilla de 0,1°, de 85°N a 85°S. Bandas: lst_day, lst_night, lst_max, lst_min, precip, ndvi (×1e-4, ver abajo), albedo, slope, elev.
 - Flujo: `05_export_features.js` (exportación batch, ~6 min) → `06_puntuar_asset.js` (puntuación, ~1 min) → resultados a `src/data/ee-global.json`.
 - **Cómo sacar resultados grandes del Code Editor:** la herramienta de navegador corta la salida a ~1 KB, y Chrome bloquea que una página https llame a `localhost`. Lo que funciona: en la consola de la página, `ee.FeatureCollection([ee.Feature(null,{data: JSON})]).getDownloadURL('geojson', ['data'], 'x', cb)` y luego `curl` de esa URL desde la terminal (no pide autenticación).
