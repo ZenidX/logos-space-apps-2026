@@ -136,7 +136,7 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
         for (let i = 0; i < n * n; i++) geo.userData.base[i] = (heights[i] - d.minH) * s;
         for (let i = 0; i < n * n; i++) pos.setY(i, geo.userData.base[i] * exRef.current);
         geo.computeVertexNormals();
-        const canvas = lookRef.current === "imagery" && d.imagery ? d.imagery : d.texture;
+        const canvas = d.texture; // la foto, si se pide, la pone el efecto de «look»
         const tex = new THREE.CanvasTexture(canvas);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 8;
@@ -184,20 +184,46 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
     sun.position.set(Math.cos(el) * Math.sin(az) * 5, Math.sin(el) * 5, Math.cos(el) * Math.cos(az) * 5);
   }, [sunElevationDeg, state]);
 
-  // Cambiar entre relieve neutro y foto de satélite sin recargar
+  // Cambiar entre relieve neutro y foto de satélite sin recargar el relieve.
+  // La foto se descarga la primera vez que se pide y se guarda.
+  const imageryRef = useRef<HTMLCanvasElement | null | undefined>(undefined);
+  const [photoState, setPhotoState] = useState<"" | "cargando" | "sin foto">("");
   useEffect(() => {
-    const mesh = meshRef.current;
+    let cancel = false;
+    const apply = (canvas: HTMLCanvasElement) => {
+      const mesh = meshRef.current;
+      if (!mesh) return;
+      const mat = mesh.material as THREE.MeshStandardMaterial;
+      if (mat.map?.image === canvas) return;
+      mat.map?.dispose();
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 8;
+      mat.map = tex;
+      mat.needsUpdate = true;
+    };
     const d = dataRef.current;
-    if (!mesh || !d) return;
-    const mat = mesh.material as THREE.MeshStandardMaterial;
-    const canvas = look === "imagery" && d.imagery ? d.imagery : d.texture;
-    if (mat.map?.image === canvas) return;
-    mat.map?.dispose();
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
-    mat.map = tex;
-    mat.needsUpdate = true;
+    if (!d || state !== "ok") return;
+    if (look !== "imagery" || !d.loadImagery) {
+      apply(d.texture);
+      setPhotoState("");
+      return;
+    }
+    if (imageryRef.current !== undefined) {
+      if (imageryRef.current) apply(imageryRef.current);
+      setPhotoState(imageryRef.current ? "" : "sin foto");
+      return;
+    }
+    setPhotoState("cargando");
+    d.loadImagery().then((c) => {
+      imageryRef.current = c;
+      if (cancel) return;
+      if (c) apply(c);
+      setPhotoState(c ? "" : "sin foto");
+    });
+    return () => {
+      cancel = true;
+    };
   }, [look, state]);
 
   // Exageración vertical sin recargar
@@ -241,7 +267,11 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
           ) : state === "error" ? (
             <span style={{ color: "var(--warn)" }}>Error: {err}</span>
           ) : (
-            <span className="k">Mesh ≈ {res ? Math.round(res) : "?"} m/px · ×{exaggeration} vertical</span>
+            <span className="k">
+              Mesh ≈ {res ? Math.round(res) : "?"} m/px · ×{exaggeration} vertical
+              {photoState === "cargando" && " · loading photo…"}
+              {photoState === "sin foto" && " · no photo here"}
+            </span>
           )
         }
       >

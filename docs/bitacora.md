@@ -2,6 +2,11 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 4) · Visor 3D: el relieve ya no espera a la foto (Jefe)
+
+En la web publicada el relieve de la Tierra se quedaba en «Loading elevation…»: el cargador esperaba a la foto Sentinel-2, que a 81°N son ~64 teselas de EOX. Ahora la foto se descarga solo al pulsar «Earth satellite photo» (≈20 m/px, menos teselas) y el relieve sale solo (22 s en la prueba, con Chromium sin GPU). Si no hay foto, lo dice («no photo here»).
+Hallazgo para el método: el candidato de 81,25°N 78,15°W es mitad mar (la parte plana a 0 m es agua del fiordo). Conviene excluir celdas con mucha agua.
+
 ## 2026-11-14 (noche, 3) · Visor 3D: escalones falsos en el terreno de la Tierra (Jefe)
 
 zexu vio en su navegador líneas negras con escalones en Nunavut (81,25°N 78,15°W): pendiente máxima 74° con media de 6°. Causa: las teselas terrarium guardan la altura repartida en R, G y B; al encogerlas con `drawImage`, su navegador mezclaba píxeles vecinos (depende de la GPU; Chromium sin GPU no lo reproducía) y salían saltos de 256 m justo en las curvas de nivel de 256, 512 y 768 m. Las teselas descargadas no tienen ningún salto (comprobado).

@@ -7,7 +7,8 @@ export interface TerrainData {
   widthM: number; // extensión este-oeste en metros
   heightM: number; // extensión norte-sur en metros
   texture: HTMLCanvasElement; // relieve neutro: misma apariencia en Tierra, Luna y Marte
-  imagery?: HTMLCanvasElement | null; // solo Tierra: foto de satélite (opcional)
+  // Solo Tierra: foto de satélite, que se descarga únicamente si el usuario la pide (no retrasa el relieve).
+  loadImagery?: () => Promise<HTMLCanvasElement | null>;
   minH: number;
   maxH: number;
   source: string; // atribución
@@ -153,15 +154,19 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     if (heights[i] < minH) minH = heights[i];
     if (heights[i] > maxH) maxH = heights[i];
   }
-  // Foto Sentinel-2 opcional (≈11 m/px, unas 25 teselas como máximo). Si falla, el relieve se ve igual.
-  let imagery: HTMLCanvasElement | null = null;
-  let imgNote = "Satellite photo: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)";
-  try {
-    const tz = zoomFor(lat, sizeM / 1024, 6, 14);
-    imagery = await mercatorMosaic("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", bbox, tz, 1024);
-  } catch {
-    imgNote = "No Sentinel-2 photo available here";
-  }
+  // Foto Sentinel-2 bajo demanda (≈20 m/px, unas 16–36 teselas). Si falla, se queda el relieve.
+  const loadImagery = async () => {
+    try {
+      return await mercatorMosaic(
+        "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg",
+        bbox,
+        zoomFor(lat, sizeM / 512, 6, 14),
+        1024,
+      );
+    } catch {
+      return null;
+    }
+  };
   const latR = (lat * Math.PI) / 180;
   return {
     heights,
@@ -169,11 +174,11 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     widthM: sizeM,
     heightM: sizeM,
     texture: reliefTexture(heights, n, minH, maxH),
-    imagery,
+    loadImagery,
     minH,
     maxH,
     resolutionM: Math.max(sizeM / n, (40075016 * Math.cos(latR)) / 2 ** z / 256),
-    source: `Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · ${imgNote}`,
+    source: "Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · Satellite photo on request: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)",
   };
 }
 
