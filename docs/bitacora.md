@@ -2,6 +2,11 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 3) · Visor 3D: escalones falsos en el terreno de la Tierra (Jefe)
+
+zexu vio en su navegador líneas negras con escalones en Nunavut (81,25°N 78,15°W): pendiente máxima 74° con media de 6°. Causa: las teselas terrarium guardan la altura repartida en R, G y B; al encogerlas con `drawImage`, su navegador mezclaba píxeles vecinos (depende de la GPU; Chromium sin GPU no lo reproducía) y salían saltos de 256 m justo en las curvas de nivel de 256, 512 y 768 m. Las teselas descargadas no tienen ningún salto (comprobado).
+Arreglo: `terrariumHeights` pinta las teselas a tamaño real, las pasa a metros y remuestrea con bilineal sobre las alturas, nunca sobre los colores. Mismo punto: relieve 787 m, pendiente media 3,8°, máxima 34°.
+
 ## 2026-11-14 (noche, 2) · Visor 3D comparable (Jefe, rama `fix/visor-3d-comparable`)
 
 zexu: «los modelos 3D de la Tierra no se parecen a los de la Luna o Marte». Causa: tres fallos de pintado, no del método.

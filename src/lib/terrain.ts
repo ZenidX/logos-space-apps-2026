@@ -88,6 +88,56 @@ async function mercatorMosaic(template: string, bbox: BBox, z: number, size: num
   return canvas;
 }
 
+// Alturas terrarium SIN que el navegador escale la imagen: cada píxel guarda la altura repartida en
+// R, G y B, así que si el canvas mezcla píxeles vecinos al encoger (pasaba al reducir teselas) aparecen
+// saltos falsos de 256 m justo en las curvas de nivel de 256, 512, 768 m… Aquí las teselas se pintan a
+// tamaño real, se decodifican a metros y solo después se remuestrea (bilineal) sobre las alturas.
+async function terrariumHeights(bbox: BBox, z: number, n: number) {
+  const x0 = lon2x(bbox.west, z);
+  const x1 = lon2x(bbox.east, z);
+  const y0 = lat2y(bbox.north, z);
+  const y1 = lat2y(bbox.south, z);
+  const tx0 = Math.floor(x0);
+  const ty0 = Math.floor(y0);
+  const ntx = Math.floor(x1) - tx0 + 1;
+  const nty = Math.floor(y1) - ty0 + 1;
+  const W = ntx * 256;
+  const H = nty * 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+  const jobs: Promise<void>[] = [];
+  for (let i = 0; i < ntx; i++)
+    for (let j = 0; j < nty; j++)
+      jobs.push(
+        loadImage(`https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${tx0 + i}/${ty0 + j}.png`).then((img) =>
+          ctx.drawImage(img, i * 256, j * 256),
+        ),
+      );
+  await Promise.all(jobs);
+  const px = ctx.getImageData(0, 0, W, H).data;
+  const full = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) full[i] = px[i * 4] * 256 + px[i * 4 + 1] + px[i * 4 + 2] / 256 - 32768;
+  const out = new Float32Array(n * n);
+  for (let r = 0; r < n; r++) {
+    const fy = Math.min(H - 1.001, Math.max(0, (y0 + ((y1 - y0) * r) / (n - 1) - ty0) * 256 - 0.5));
+    const iy = Math.floor(fy);
+    const ay = fy - iy;
+    for (let c = 0; c < n; c++) {
+      const fx = Math.min(W - 1.001, Math.max(0, (x0 + ((x1 - x0) * c) / (n - 1) - tx0) * 256 - 0.5));
+      const ix = Math.floor(fx);
+      const ax = fx - ix;
+      const a = full[iy * W + ix];
+      const b = full[iy * W + ix + 1];
+      const d = full[(iy + 1) * W + ix];
+      const e = full[(iy + 1) * W + ix + 1];
+      out[r * n + c] = (a * (1 - ax) + b * ax) * (1 - ay) + (d * (1 - ax) + e * ax) * ay;
+    }
+  }
+  return out;
+}
+
 // Elevación: AWS Terrain Tiles (formato terrarium), con SRTM/NASADEM en tierra firme.
 // height = (R·256 + G + B/256) − 32768
 // Cuadrado de sizeM × sizeM metros (no 0,1° × 0,1°: cerca de los polos un grado de longitud se encoge).
@@ -96,21 +146,12 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
   const dLon = sizeM / (111320 * Math.cos((lat * Math.PI) / 180));
   const bbox: BBox = { west: lon - dLon / 2, east: lon + dLon / 2, south: lat - dLat / 2, north: lat + dLat / 2 };
   const z = zoomFor(lat, sizeM / n, 6, 14); // teselas con la resolución de la malla, no más
-  const demCanvas = await mercatorMosaic(
-    "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
-    bbox,
-    z,
-    n,
-  );
-  const px = demCanvas.getContext("2d")!.getImageData(0, 0, n, n).data;
-  const heights = new Float32Array(n * n);
+  const heights = await terrariumHeights(bbox, z, n);
   let minH = Infinity;
   let maxH = -Infinity;
   for (let i = 0; i < n * n; i++) {
-    const h = px[i * 4] * 256 + px[i * 4 + 1] + px[i * 4 + 2] / 256 - 32768;
-    heights[i] = h;
-    if (h < minH) minH = h;
-    if (h > maxH) maxH = h;
+    if (heights[i] < minH) minH = heights[i];
+    if (heights[i] > maxH) maxH = heights[i];
   }
   // Foto Sentinel-2 opcional (≈11 m/px, unas 25 teselas como máximo). Si falla, el relieve se ve igual.
   let imagery: HTMLCanvasElement | null = null;
