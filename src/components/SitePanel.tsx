@@ -113,7 +113,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         </div>
         <header className="mt-1 grid items-end gap-x-3 gap-y-1 sm:grid-cols-[1fr_auto]">
           <div className="min-w-0">
-            <h3 className="place text-[clamp(24px,3.4vh,38px)] leading-[1.02]">{site.name}</h3>
+            <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
             <p className="truncate text-[13px] text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "region to investigate, not a surveyed site" : "0.1° cell around the site"}</span></p>
           </div>
           <div className="flex items-baseline gap-3 sm:block sm:text-right">
@@ -169,7 +169,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             {mission.notScored.map((n) => <li key={n} className="flex gap-2 px-2 text-[12.5px] text-[var(--dim)]"><span aria-hidden>◌</span>Not scored: {n}</li>)}
           </ul>
         </>}
-          {tab === "shape" && <><p className="mb-2 text-[13px] text-[var(--mut)]">Numbers behind the 3D view above: the ground here next to <i className="place text-[15px]">{targetShort}</i>: 11 × 11 km each, same horizontal and vertical scale.</p><TerrainStats siteId={site.id} targetId={`target-${mission.id}`} /></>}
+          {tab === "shape" && <><p className="mb-2 text-[13px] text-[var(--mut)]">Numbers behind the 3D view above: the ground here next to <span className="place">{targetShort}</span>: 11 × 11 km each, same horizontal and vertical scale.</p><TerrainStats siteId={site.id} targetId={`target-${mission.id}`} /></>}
           {tab === "when" && <>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Noon Sun height through the year, computed from latitude only (terrain ignored).</p>
           <SunChart lat={site.lat} targetMax={t.body === "moon" ? tSun : null} targetName={targetShort} />

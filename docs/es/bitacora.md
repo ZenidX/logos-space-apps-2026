@@ -2,6 +2,11 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 23:26 · Tipografía con más carácter, portada sin scroll y criterio documentado
+- Tipografía v3 de Diseño: Bricolage Grotesque (titulares y texto, peso 700 en titulares) y Martian Mono (datos). Sin cursivas.
+- Portada: título, frase y las 3 misiones caben sin scroll a 1366×768 y a 390×844; «How it works» queda debajo.
+- `docs/design-rationale.md`: 14 principios con fuente (NN/g, Laws of UX, WCAG 2.2, Material 3, Apple HIG; recopilados por Consulta) y el cambio aplicado por cada uno. Curva de animación = Material 3 emphasized-decelerate.
+
 ## 2026-11-14 · 23:23 · 2.ª ronda de zexu: «vistazo primero», arcos, cristal y logo
 - Sitio de un vistazo (cabe en una pantalla a 1366×768): nombre, índice, los dos terrenos, 4 cifras (condiciones en rango, relieve, pendiente, acceso) y la frase de dónde se rompe; el detalle (Why, Shape, When, How, Limits & sources) se abre por pestañas. Principio: progressive disclosure (NN/g).
 - Arcos rehechos: una curva por sitio, un color por misión con degradado sutil, se dibujan una vez y quedan quietos, ocultos tras el planeta; el marcador hace un pulso cuando llega su arco. Sin puntos ni tramos.

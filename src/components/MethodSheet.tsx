@@ -7,7 +7,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="dialog" aria-modal="true" aria-label="Method and sources" onClick={onClose}>
       <div className="glass fade-in h-full w-full max-w-[600px] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between"><h2 className="display text-[34px]">Method & sources</h2><button onClick={onClose} className="chip" autoFocus>Close ✕</button></div>
+        <div className="flex items-center justify-between"><h2 className="display text-[30px]">Method & sources</h2><button onClick={onClose} className="chip" autoFocus>Close ✕</button></div>
 
         <h3 className="label mt-6">1 · Start from real missions</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">We did not ask “which place looks like the Moon?”. We listed real analog field campaigns run by NASA, ESA and the Mars Society, read which task each one rehearsed, and turned each task into a few surface conditions that open global data can measure.</p>
@@ -57,7 +57,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>
           <li>• Moon: LROC WAC mosaic, CGI Moon Kit, NASA&apos;s Scientific Visualization Studio (NASA/GSFC/Arizona State University).</li>
           <li>• Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.</li>
-          <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Instrument Serif © 2022 The Instrument Serif Project Authors; Instrument Sans © 2022 The Instrument Sans Project Authors; Geist Mono © 2024 The Geist Project Authors.</li>
+          <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Bricolage Grotesque and Martian Mono.</li>
         </ul>
         <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>
         <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and the problem framing are our team&apos;s own. AI assistants (Claude) were used as tools, under the team&apos;s direction, for code, data search, drafting the scoring method, design proposals and texts; outputs are reviewed by the team before submission. No AI-generated images or video.</p>

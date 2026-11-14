@@ -69,7 +69,7 @@ export default function Home() {
     <li>
       <button onClick={() => { setSel(s.id); setHover(null); }} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
         <span className="mono text-[12px]" style={{ color: BODY_COLOR[t.body] }}>{String(n).padStart(2, "0")}</span>
-        <span className="min-w-0"><span className="place block truncate text-[18px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
+        <span className="min-w-0"><span className="place block truncate text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
         <span className="flex flex-col items-end gap-1"><span className="mono text-[13px]"><Count value={s.match} /></span><AccessBars site={s} /></span>
       </button>
     </li>
@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : "h-[46dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(600px,46vw)]" : "md:left-0 md:right-[270px]") : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(600px,46vw)]" : "md:left-0 md:right-[270px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
@@ -107,26 +107,25 @@ export default function Home() {
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
       <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? "md:absolute md:left-0 md:top-0 md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
         {!missionId && (
-          <div className="fade-in pt-4 md:pt-0">
+          <div className="fade-in pt-1 md:pt-0">
             <p className="label">NASA Space Apps Challenge 2026</p>
-            <h1 className="display mt-3 text-[length:var(--t-hero)] leading-[.95]">Rehearse the Moon and Mars on Earth.</h1>
-            <p className="mt-4 max-w-[460px] text-[16px] text-[var(--mut)]">Pick a mission. We show regions on Earth worth investigating to rehearse it, how they compare with the target, where the comparison breaks — and how complex it is to get there.</p>
-            <p className="mt-3 max-w-[460px] text-[13.5px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
+            <h1 className="display mt-3 text-[length:var(--t-hero)] leading-[.92] tracking-[-.045em]">Rehearse the Moon and Mars on Earth.</h1>
+            <p className="mt-3 max-w-[440px] text-[15.5px] leading-snug text-[var(--mut)]">Pick a mission to see where on Earth it could be rehearsed, how each region compares with the target, and where the comparison breaks.</p>
           </div>
         )}
-        <div className={missionId ? "flex flex-wrap gap-2" : "stagger mt-6 grid gap-2"} role="group" aria-label="Choose a mission">
+        <div className={missionId ? "flex flex-wrap gap-2" : "stagger mt-4 grid gap-2"} role="group" aria-label="Choose a mission">
           {MISSIONS.map((m) => {
             const active = m.id === missionId || (!missionId && m.id === shown.id);
             const c = BODY_COLOR[m.target.body];
             return missionId ? (
               <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={active ? { borderColor: c, color: c } : undefined}>{m.short}</button>
             ) : (
-              <button key={m.id} onClick={() => pick(m.id)} className="card glass rounded-xl p-3 text-left hover:border-[var(--ink)]" style={{ ...(active ? { borderColor: c } : {}), ["--glow" as string]: c }}>
+              <button key={m.id} onClick={() => pick(m.id)} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ...(active ? { borderColor: c } : {}), ["--glow" as string]: c }}>
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <b className="display text-[24px] leading-tight">{m.short}</b>
-                  <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <i className="place text-[17px]">{m.target.name.split(" (")[0]}</i></span>
+                  <b className="display text-[19px] leading-tight">{m.short}</b>
+                  <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
                 </span>
-                <small className="mt-0.5 block text-[13px] text-[var(--mut)] md:[@media(max-height:840px)]:hidden">{m.blurb}</small>
+                <small className="mt-0.5 hidden text-[13px] text-[var(--mut)] md:block md:[@media(max-height:900px)]:hidden">{m.blurb}</small>
               </button>
             );
           })}
@@ -143,8 +142,8 @@ export default function Home() {
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (
             <div className="fade-in" key={shown.id}>
-              <p className="text-[14px]" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body === "moon" ? "Moon" : "Mars"} · <i className="place text-[18px]">{t.name}</i></p>
-              <h2 className="display mt-1 text-[34px] leading-[1.02]">{shown.short}</h2>
+              <p className="text-[14px]" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body === "moon" ? "Moon" : "Mars"} · <span className="place">{t.name}</span></p>
+              <h2 className="display mt-1 text-[30px] leading-[1]">{shown.short}</h2>
               <p className="mt-1 text-[13.5px] text-[var(--mut)]">{shown.blurb}</p>
               <dl className="mt-3 grid gap-2 text-[13px]">
                 <div><dt className="label">What is rehearsed</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.rehearse}</dd></div>
@@ -174,12 +173,13 @@ export default function Home() {
 
       {!missionId && (
         <section className="relative z-10 px-4 pb-10 md:w-[36%] md:max-w-[560px] md:px-8" aria-labelledby="how">
-          <h2 id="how" className="display text-[32px]">How it works</h2>
+          <h2 id="how" className="display text-[28px]">How it works</h2>
           <ol className="stagger mt-4 grid gap-4">
             <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">1</span><div><b className="title-sm text-[15px]">Start from a real mission</b><p className="text-[13.5px] text-[var(--mut)]">We read what NASA, ESA and Mars Society field campaigns actually rehearsed, and turned each task into a few surface conditions that open data can measure.</p></div></li>
             <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">2</span><div><b className="title-sm text-[15px]">Score all land on Earth</b><p className="text-[13.5px] text-[var(--mut)]">NASA MODIS and GPM grids, soil and rock maps: every 0.1° cell gets an analog index per mission. Known analog sites are used to check that the index finds them.</p></div></li>
             <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">3</span><div><b className="title-sm text-[15px]">Show new regions — and their limits</b><p className="text-[13.5px] text-[var(--mut)]">Each mission gets new regions to investigate, compared with its target condition by condition, with where the analogy breaks and how complex access is.</p></div></li>
           </ol>
+          <p className="mt-4 text-[13px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
           <button className="chip mt-5 hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
         </section>
       )}

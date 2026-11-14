@@ -48,7 +48,7 @@ AI-assisted outputs are reviewed by the team before submission. AI-assisted code
 - Terrain (11 × 11 km heightmaps in `public/heightmaps/`, each folder with its own NOTICE/LICENSE): Earth — Copernicus DEM GLO-30 (produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved); Moon — NASA LRO LOLA 30 m south-pole DEM v04; Mars — HRSC and MOLA Blended DEM 200 m v2 (USGS; MOLA NASA/GSFC CC0, HRSC ESA/DLR/FU Berlin CC BY-SA 3.0 IGO).
 - Monthly temperature: NASA POWER Climatology API v2.10.1 (retrieved 2026-11-14). The data was obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science Division. Airports: OurAirports (public domain).
 - Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
-- Front-end design proposal «Orbit» drafted with AI assistance; fonts Instrument Serif, Instrument Sans, Geist Mono (SIL OFL 1.1).
+- Front-end design proposal «Orbit» drafted with AI assistance; fonts Bricolage Grotesque, Martian Mono (SIL OFL 1.1).
 
 ## Licence
 Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences (see `docs/sources.md`).
