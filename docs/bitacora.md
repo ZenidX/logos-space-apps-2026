@@ -2,7 +2,31 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (tarde, 2)
+
+### Web publicada, estilo «Consola» y visor 3D
+- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ (GitHub Pages, rama `gh-pages`). Para publicar: `npm run deploy`. El script construye en un *git worktree* aparte, así que publica **lo commiteado** y no rompe `npm run dev`. Antes, el `next build` pisaba la carpeta `.next` del servidor de desarrollo y daba un error 500.
+- La descripción y el enlace web del repo en GitHub ya apuntan al reto de los análogos y a la web publicada.
+- **Rediseño** con la propuesta «Consola» de animaciones.zenidx.com, elegida como la más «control de misión NASA»:
+  - Paleta azul noche y cian; tipografías Space Grotesk, IBM Plex Sans y JetBrains Mono.
+  - Esquinas cortadas, rótulos `[01] ———` y visor con escuadras, retícula, viñeta y textos HUD.
+  - Glitch al cambiar de objetivo, raíl numerado de pestañas y reloj UTC.
+  - Componente `src/components/Visor.tsx`. La paleta de Tailwind se remapea en `globals.css`.
+- **Visor 3D** (botón «Ver en 3D» en cada candidato): compara 11 × 11 km del candidato con 11 × 11 km del objetivo, a la misma escala.
+  - Tierra: AWS Terrain Tiles (SRTM, NASADEM, ArcticDEM) con imagen Sentinel-2 cloudless de EOX. Si no hay imagen (por encima de ~80°N a zoom 14), prueba zoom 11 y, si tampoco, usa sombreado del relieve.
+  - Luna: LOLA polo sur 5 m (Moon Trek ImageServer, `exportImage` en Float32). Las teselas WMTS de Trek son imágenes de 8 bits y **no** sirven como alturas.
+  - Marte: Jezero con CTX DTM de 20 m de USGS, leyendo solo las filas necesarias con Range; Arcadia con la mezcla HRSC+MOLA (~200 m).
+  - Controles de altura del Sol (preajuste del polo sur lunar a 1,5°) y de exageración vertical. Muestra desnivel, pendiente media y pendiente máxima.
+  - Primeras cifras (11 × 11 km): Ellesmere #1 tiene 1.268 m de desnivel y 15,9° de pendiente media; Karakórum #2, 2.263 m y 30,8°; Shackleton, 3.014 m y 22,4°.
+  - Archivos: `src/lib/terrain.ts`, `src/lib/targetTerrain.ts`, `src/components/Terrain3D.tsx` y `Viewer3D.tsx`.
+
 ## 2026-11-14 (tarde)
+
+### README con animaciones y gráficos
+- Banner animado en `docs/img/banner.svg`: la Tierra con un haz que la escanea y trayectorias hacia la Luna y Marte. Es SVG con CSS, así que GitHub lo anima. Respeta `prefers-reduced-motion`.
+- Gráfico de validación en `docs/img/validation.svg`: los 25 análogos conocidos frente a la mediana y el top 10 % de la Tierra en cada objetivo, junto al mejor candidato nuevo. Se adapta al modo claro y al oscuro y cada punto muestra su nombre al pasar el ratón.
+- El gráfico se genera desde `src/data/ee-global.json` con `node scripts/readme/make-charts.mjs`. **Hay que volver a lanzarlo cada vez que cambie la puntuación.**
+- Diagrama Mermaid del flujo de datos y nuevas secciones «How it works» y «Results» en el README.
 
 ### Explicación por candidato y pitch
 - Cada candidato muestra las 3 variables en las que más se parece al objetivo, las 2 en las que más se aleja y las que **ninguna parte de la Tierra** puede igualar. Estas últimas se calculan contra los extremos reales de la Tierra: así una lluvia de 0 o la pendiente a 5 km ya no salen como inalcanzables por error. También lleva un enlace a NASA Worldview.
