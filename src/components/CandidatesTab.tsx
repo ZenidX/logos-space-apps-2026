@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { TARGETS } from "@/data/targets";
 import Visor from "@/components/Visor";
+import Viewer3D, { type ViewerTarget } from "@/components/Viewer3D";
+import { TARGET_TERRAIN } from "@/lib/targetTerrain";
 import eeGlobal from "@/data/ee-global.json";
 import eeSamples from "@/data/ee-samples.json";
 
@@ -102,6 +104,8 @@ export default function CandidatesTab() {
   const [targetId, setTargetId] = useState(available[0]?.id ?? TARGETS[0].id);
   const target = TARGETS.find((t) => t.id === targetId)!;
   const res = DATA[targetId];
+  const [view3d, setView3d] = useState<Candidate | null>(null);
+  const viewerTarget: ViewerTarget = { name: target.name, short: target.short, ...TARGET_TERRAIN[target.id] };
 
   const markers = useMemo(
     () =>
@@ -265,7 +269,13 @@ export default function CandidatesTab() {
                         className="inline-block pt-1 text-sky-300 underline"
                       >
                         Ver en NASA Worldview ↗
-                      </a>
+                      </a>{" "}
+                      <button
+                        onClick={() => setView3d(c)}
+                        className="btn-cut ml-2 border border-[var(--acc)] px-2 py-1 font-mono text-[10px] uppercase tracking-[.08em] text-[var(--acc)] hover:bg-[var(--acc)] hover:text-[var(--bg)]"
+                      >
+                        Ver en 3D ▸
+                      </button>
                     </div>
                   );
                 })()}
@@ -273,6 +283,13 @@ export default function CandidatesTab() {
             ))}
           </section>
         </>
+      )}
+      {view3d && (
+        <Viewer3D
+          site={{ lat: view3d.c[1], lon: view3d.c[0], name: view3d.place ?? coord(view3d.c) }}
+          target={viewerTarget}
+          onClose={() => setView3d(null)}
+        />
       )}
     </div>
   );
