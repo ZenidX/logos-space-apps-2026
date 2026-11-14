@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Rediseño con globos 3D (rama `feature/redesign-globes`, sin push)
+
+- Propuesta de Diseño «Consola v2 + globos 3D», aprobada por zexu. Montada: globo de la Tierra con los 20 candidatos v2 (toque 1 = ficha, toque 2 = visor 11×11 km), globos de Luna y Marte con el objetivo marcado, reserva al mapa 2D sin WebGL, reduced-motion, tokens de contraste AA.
+- Texturas en `public/tex/` (NASA GIBS Blue Marble, LROC WAC/SVS, Viking MDIM 2.1); créditos en el HUD, README y `docs/licencias-texturas.md`.
+- Visor de terreno 11×11 km: aviso visible si no hay WebGL (antes, cuadro negro).
+- Comprobado: tsc, eslint, next build, test de `globe-math` (6/6); globos de Tierra y Luna dibujados en local. Sin probar: Marte, móvil real, capturas a 390/1280 px. Puerta de integración: dom 16:00.
+- Shape (Datos, prototipo): el máximo sobre desplazamientos y giros tiene un suelo alto (NCC de superficies al azar 0,47–0,67); solo 1 acierto limpio entre análogos conocidos. Recomendación: no meterlo en la nota ni en el pitch; como mucho, columna informativa si supera el nulo.
+
 ## 2026-11-14 (noche, 3)
 
 ### «Why this target?» en la web
