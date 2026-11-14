@@ -1,0 +1,2429 @@
+{
+ "generatedWith": "AI-assisted (Claude), reviewed by team Logos",
+ "generatedAt": "2026-11-14T23:10:00+01:00",
+ "version": "v3",
+ "method": "see method.md (section v3) in the same folder",
+ "missions": [
+  {
+   "id": "m1-eva-basalt",
+   "title": "Suited EVA traverse and field geology on basaltic terrain",
+   "campaigns": [
+    {
+     "name": "NASA JETT3 (2022)",
+     "url": "https://www.nasa.gov/humans-in-space/nasa-to-practice-artemis-moonwalking-roving-operations-in-arizona-desert"
+    },
+    {
+     "name": "NASA JETT5 (2024)",
+     "url": "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field"
+    },
+    {
+     "name": "NASA Desert RATS (2022, with JAXA)",
+     "url": "https://www.nasa.gov/humans-in-space/nasa-practices-rover-operations-in-simulated-lunar-environment/"
+    },
+    {
+     "name": "NASA BASALT (2016-2017)",
+     "url": "https://www.nasa.gov/general/basalt-research-program-hawaii-2017-field-deployment/"
+    },
+    {
+     "name": "ESA PANGAEA",
+     "url": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/CAVES_and_PANGAEA/What_is_PANGAEA"
+    }
+   ],
+   "target": {
+    "body": "moon",
+    "name": "Mons Mouton (lunar south pole)",
+    "lat": -84.6,
+    "lon": 31.0,
+    "coordSource": "USGS Gazetteer Feature 16070, https://planetarynames.wr.usgs.gov/Feature/16070",
+    "values": {
+     "ndvi": {
+      "value": 0,
+      "unit": "index",
+      "source": "no vegetation (by definition)",
+      "url": null
+     },
+     "albedo": {
+      "value": 0.15,
+      "unit": "0-1",
+      "source": "approximate literature value (LROC WAC), team targets.ts; not extracted from PDS",
+      "url": null
+     },
+     "precip": {
+      "value": 0,
+      "unit": "mm/yr",
+      "source": "airless body",
+      "url": null
+     },
+     "sun_max_deg": {
+      "value": 6.9,
+      "unit": "deg",
+      "source": "computed: 90 - (84.6 - 1.54); lunar obliquity 1.54 deg; summit relief ignored",
+      "url": null
+     },
+     "sun_winter_solstice_deg": {
+      "value": 3.9,
+      "unit": "deg",
+      "source": "computed: 90 - 84.6 - 1.54",
+      "url": null
+     },
+     "volcanic": {
+      "value": null,
+      "unit": "0/1",
+      "source": "not applicable: the rule describes the Earth campaign terrain, not the target (see breaks)",
+      "url": null
+     }
+    }
+   },
+   "variables": [
+    {
+     "id": "ndvi",
+     "label": "Vegetation (NDVI)",
+     "unit": "index",
+     "why": "EVA analogs need bare rock; target has none",
+     "inMatch": true,
+     "ideal": "<= 0.05",
+     "tolerance": 0.1,
+     "weight": 1.0
+    },
+    {
+     "id": "albedo",
+     "label": "Surface albedo",
+     "unit": "0-1",
+     "why": "dark basaltic ground like lunar regolith (~0.15)",
+     "inMatch": true,
+     "ideal": "0.07-0.20",
+     "tolerance": 0.06,
+     "weight": 1.0
+    },
+    {
+     "id": "precip",
+     "label": "Precipitation",
+     "unit": "mm/yr",
+     "why": "arid ground stays bare and unweathered",
+     "inMatch": true,
+     "ideal": "<= 250",
+     "tolerance": 300,
+     "weight": 0.5
+    },
+    {
+     "id": "volcanic",
+     "label": "Basic volcanic rock nearby (GLiM)",
+     "unit": "0/1",
+     "why": "the EVA campaigns ran on basalt lava fields",
+     "inMatch": true,
+     "ideal": "1",
+     "tolerance": 0.5,
+     "weight": 1.0
+    },
+    {
+     "id": "sun_max_deg",
+     "label": "Highest noon Sun elevation in the year",
+     "unit": "deg",
+     "why": "south-pole EVAs work under a Sun always near the horizon (JETT3/5 used a 'sun cart')",
+     "inMatch": false,
+     "ideal": "~6.9",
+     "tolerance": 15,
+     "weight": 0
+    },
+    {
+     "id": "sun_winter_solstice_deg",
+     "label": "Noon Sun elevation at winter solstice",
+     "unit": "deg",
+     "why": "<= 0 means polar night",
+     "inMatch": false,
+     "weight": 0
+    },
+    {
+     "id": "slope",
+     "label": "Slope",
+     "unit": "deg",
+     "why": "walkable terrain; needs Copernicus DEM 30 m (not available tonight)",
+     "inMatch": false,
+     "value": null
+    }
+   ],
+   "breaks": [
+    {
+     "text": "Gravity: 1.62 m/s2 on the Moon vs 9.80 on Earth (0.165 g); suits, walking and sampling loads differ.",
+     "source": "NASA NSSDC Moon fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+    },
+    {
+     "text": "Vacuum: lunar surface pressure ~3e-15 bar (night) vs 1014 mb on Earth; no air for cooling or to slow dust.",
+     "source": "NASA NSSDC Moon and Earth fact sheets",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+    },
+    {
+     "text": "Lighting: at Mons Mouton the Sun stays below ~7 deg (computed from latitude 84.6 S and 1.54 deg obliquity); low-latitude Earth sites see it near overhead.",
+     "source": "computed",
+     "url": null
+    },
+    {
+     "text": "Rock: south-pole highland crust is feldspathic, not basalt; basalt sites train EVA operations, not target composition.",
+     "source": "general lunar geology; not sourced tonight",
+     "url": null
+    }
+   ],
+   "sites": [
+    {
+     "id": "sp_crater_az",
+     "name": "SP Crater, San Francisco Volcanic Field, Arizona",
+     "country": "United States of America",
+     "lat": 35.5823524,
+     "lon": -111.63186,
+     "kind": "known",
+     "match": 0.969,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.062,
+     "matchPercentile": 99.9,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.165,
+       "percentile": 26.7,
+       "similarity": 0.514,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.179,
+       "percentile": 33.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 283.24,
+       "percentile": 44.4,
+       "similarity": 0.994,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 77.9,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 31.0,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "campaign": "JETT3/JETT5",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.159,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "craters_of_the_moon_id",
+     "name": "Craters of the Moon, Idaho",
+     "country": "United States of America",
+     "lat": 43.4050421,
+     "lon": -113.5060838,
+     "kind": "known",
+     "match": 0.824,
+     "ruleFraction": 0.75,
+     "percentileDistance": 0.102,
+     "matchPercentile": 98.6,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.161,
+       "percentile": 26.1,
+       "similarity": 0.538,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.285,
+       "percentile": 53.7,
+       "similarity": 0.371,
+       "meetsRule": false,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 342.37,
+       "percentile": 49.0,
+       "similarity": 0.954,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 70.0,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 23.2,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "campaign": "BASALT",
+     "breaks": [
+      "Surface albedo 0.285 0-1 outside the mission range (<= 0.5)",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.159,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "timanfaya_lanzarote",
+     "name": "Timanfaya, Lanzarote",
+     "country": "Spain",
+     "lat": 29.0216435,
+     "lon": -13.7812357,
+     "kind": "known",
+     "match": 0.939,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.121,
+     "matchPercentile": 99.6,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.079,
+       "percentile": 11.0,
+       "similarity": 0.958,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.058,
+       "percentile": 0.3,
+       "similarity": 0.98,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 451.14,
+       "percentile": 57.0,
+       "similarity": 0.799,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": null,
+      "sun_max_deg": {
+       "value": 84.4,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 37.5,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "campaign": "PANGAEA",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.167,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.313; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-07-31); UK: no travel alert; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "kilauea_iki_hi",
+     "name": "Kilauea Iki, Hawai'i",
+     "country": "United States of America",
+     "lat": 19.4148967,
+     "lon": -155.25574,
+     "kind": "known",
+     "match": 0.607,
+     "ruleFraction": 0.5,
+     "percentileDistance": 0.286,
+     "matchPercentile": 86.4,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.7,
+       "percentile": 89.5,
+       "similarity": 0.0,
+       "meetsRule": false,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.104,
+       "percentile": 1.1,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 1273.12,
+       "percentile": 88.3,
+       "similarity": 0.003,
+       "meetsRule": false,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 90,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 47.1,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "campaign": "BASALT",
+     "breaks": [
+      "Vegetation (NDVI) 0.7 index outside the mission range (<= 0.10)",
+      "Precipitation 1273.12 mm/yr outside the mission range (<= 250)",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.159,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new1",
+     "name": "Tihāmah · Abha · 'Asir Province",
+     "country": "Saudi Arabia",
+     "lat": 18.265,
+     "lon": 41.75,
+     "kind": "new",
+     "match": 0.998,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.004,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.162,
+       "percentile": 26.1,
+       "similarity": 0.536,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.146,
+       "percentile": 17.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 383.98,
+       "percentile": 52.2,
+       "similarity": 0.905,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 90,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 48.3,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 49,
+      "areaKm2": 6072,
+      "bbox": [
+       41.25,
+       17.52,
+       42.45,
+       18.9
+      ],
+      "meanSimilarity": 0.964
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "score": 0.619,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.619 (0-1, relative); Governance perception (WGI, perceptions-based) 0.341; nearby organised-violence events 0.963; travel advice 0.583; US level 3 of 4 (2026-10-22); UK advice mentions specific regions; see source; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new2",
+     "name": "Patagonia · Deseado · Santa Cruz",
+     "country": "Argentina",
+     "lat": -48.335,
+     "lon": -69.15,
+     "kind": "new",
+     "match": 0.997,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.005,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.163,
+       "percentile": 26.4,
+       "similarity": 0.527,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.145,
+       "percentile": 17.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 367.92,
+       "percentile": 51.0,
+       "similarity": 0.926,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 65.1,
+       "similarity": 0.001,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 18.2,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 1701,
+      "areaKm2": 155337,
+      "bbox": [
+       -72.75,
+       -50.35,
+       -66.55,
+       -40.08
+      ],
+      "meanSimilarity": 0.966
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.126,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new3",
+     "name": "Chalbi Desert · North Horr · Marsabit County",
+     "country": "Kenya",
+     "lat": 3.441,
+     "lon": 36.75,
+     "kind": "new",
+     "match": 0.996,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.008,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.155,
+       "percentile": 25.2,
+       "similarity": 0.575,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.148,
+       "percentile": 18.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 400.04,
+       "percentile": 53.3,
+       "similarity": 0.882,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 90,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 63.1,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 115,
+      "areaKm2": 14981,
+      "bbox": [
+       35.45,
+       2.49,
+       37.45,
+       3.76
+      ],
+      "meanSimilarity": 0.957
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "score": 0.518,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.518 (0-1, relative); Governance perception (WGI, perceptions-based) 0.54; nearby organised-violence events 0.447; travel advice 0.583; US level 3 of 4 (2026-10-18); UK advice mentions specific regions; see source",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new4",
+     "name": "Western Plateau · Western Australia",
+     "country": "Australia",
+     "lat": -23.029,
+     "lon": 117.35,
+     "kind": "new",
+     "match": 0.995,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.009,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.158,
+       "percentile": 25.6,
+       "similarity": 0.557,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.141,
+       "percentile": 14.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 389.09,
+       "percentile": 52.5,
+       "similarity": 0.898,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 90,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 43.5,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 146,
+      "areaKm2": 17588,
+      "bbox": [
+       115.55,
+       -23.45,
+       117.45,
+       -21.02
+      ],
+      "meanSimilarity": 0.977
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.083,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.083 (0-1, relative); Governance perception (WGI, perceptions-based) 0.207; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-08-17); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new5",
+     "name": "Patagonia · Departamento Valcheta · Río Negro",
+     "country": "Argentina",
+     "lat": -41.453,
+     "lon": -65.75,
+     "kind": "new",
+     "match": 0.995,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.01,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.163,
+       "percentile": 26.3,
+       "similarity": 0.529,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.145,
+       "percentile": 17.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 345.29,
+       "percentile": 49.2,
+       "similarity": 0.951,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 72.0,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 25.1,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 37,
+      "areaKm2": 3619,
+      "bbox": [
+       -66.45,
+       -41.77,
+       -65.65,
+       -40.92
+      ],
+      "meanSimilarity": 0.985
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.126,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m1-eva-basalt-new6",
+     "name": "Patagonia · Departamento San Carlos · Mendoza",
+     "country": "Argentina",
+     "lat": -34.359,
+     "lon": -69.45,
+     "kind": "new",
+     "match": 0.993,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.013,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "ndvi": {
+       "value": 0.161,
+       "percentile": 26.0,
+       "similarity": 0.541,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.142,
+       "percentile": 15.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 348.94,
+       "percentile": 49.5,
+       "similarity": 0.947,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "volcanic": {
+       "value": 1.0,
+       "percentile": null,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
+      },
+      "sun_max_deg": {
+       "value": 79.1,
+       "similarity": 0.0,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      },
+      "sun_winter_solstice_deg": {
+       "value": 32.2,
+       "similarity": null,
+       "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
+       "inMatch": false
+      }
+     },
+     "region": {
+      "cells": 157,
+      "areaKm2": 17150,
+      "bbox": [
+       -70.75,
+       -34.46,
+       -69.35,
+       -31.39
+      ],
+      "meanSimilarity": 0.941
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Basalt from a 0.5 deg geological map: outcrop not confirmed",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.126,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    }
+   ],
+   "validation": {
+    "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "result": "3 of 4 known analogs in the top 2 % of land cells (SP Crater 99.9, Craters of the Moon 98.6, Timanfaya 99.6); Kilauea Iki 86.4 (11 km cell mostly rainforest). Amazonia control: 31.2th percentile.",
+    "landCells": 1854290,
+    "knownMedianPercentiles": {
+     "ndvi": 26.4,
+     "albedo": 17.3,
+     "precip": 53.0,
+     "volcanic": 1.0
+    },
+    "candidateRegionsFound": 131,
+    "control": {
+     "match": 0.362,
+     "matchPercentile": 31.2
+    }
+   }
+  },
+  {
+   "id": "m2-rover-sand",
+   "title": "Rover mobility on loose sand and slopes",
+   "campaigns": [
+    {
+     "name": "JPL Scarecrow at Dumont Dunes (2012)",
+     "url": "https://www.jpl.nasa.gov/news/mojave-desert-tests-prepare-for-nasa-mars-roving/"
+    },
+    {
+     "name": "ESA SAFER, Atacama (2013)",
+     "url": "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/ESA_rover_completes_exploring_Mars-like_desert"
+    },
+    {
+     "name": "NASA ARADS, Atacama (2015-2019)",
+     "url": "https://www.nasa.gov/image-article/astrobiology-technology-atacama-rover-astrobiology-drilling-studies/"
+    },
+    {
+     "name": "Mars Society MDRS, Utah",
+     "url": "https://mdrs.marssociety.org/"
+    }
+   ],
+   "target": {
+    "body": "mars",
+    "name": "Jezero crater",
+    "lat": 18.4,
+    "lon": 77.7,
+    "coordSource": "The Planetary Society, https://www.planetary.org/articles/jezero-landing-site-mars-2020-rover (gazetteer crater entry not found)",
+    "values": {
+     "sand": {
+      "value": null,
+      "unit": "%",
+      "source": "no comparable measurement found; scored against mission need (loose sand), not a Mars value",
+      "url": null
+     },
+     "ndvi": {
+      "value": 0,
+      "unit": "index",
+      "source": "no vegetation",
+      "url": null
+     },
+     "precip": {
+      "value": 0,
+      "unit": "mm/yr",
+      "source": "no liquid precipitation",
+      "url": null
+     },
+     "albedo": {
+      "value": 0.2,
+      "unit": "0-1",
+      "source": "approximate literature value (MGS TES), team targets.ts; not extracted from PDS",
+      "url": null
+     }
+    }
+   },
+   "variables": [
+    {
+     "id": "sand",
+     "label": "Sand fraction (topsoil)",
+     "unit": "%",
+     "why": "loose sand is where rovers sink and slip (Spirit was lost in soft soil)",
+     "inMatch": true,
+     "ideal": ">= 50",
+     "tolerance": 12,
+     "weight": 1.0
+    },
+    {
+     "id": "ndvi",
+     "label": "Vegetation (NDVI)",
+     "unit": "index",
+     "why": "plants bind sand; Mars has none",
+     "inMatch": true,
+     "ideal": "<= 0.05",
+     "tolerance": 0.1,
+     "weight": 1.0
+    },
+    {
+     "id": "precip",
+     "label": "Precipitation",
+     "unit": "mm/yr",
+     "why": "dry, uncemented sand",
+     "inMatch": true,
+     "ideal": "<= 150",
+     "tolerance": 250,
+     "weight": 0.5
+    },
+    {
+     "id": "albedo",
+     "label": "Surface albedo",
+     "unit": "0-1",
+     "why": "Mars-like brightness (~0.2)",
+     "inMatch": true,
+     "ideal": "0.12-0.28",
+     "tolerance": 0.08,
+     "weight": 0.5
+    },
+    {
+     "id": "slope",
+     "label": "Slope",
+     "unit": "deg",
+     "why": "dune slopes; needs Copernicus DEM 30 m (not available tonight)",
+     "inMatch": false,
+     "value": null
+    }
+   ],
+   "breaks": [
+    {
+     "text": "Gravity: 3.73 m/s2 on Mars (0.38 g); a rover weighs ~2.6x more on Earth, so sinkage differs unless mass is reduced (JPL's Scarecrow).",
+     "source": "NASA NSSDC Mars fact sheet; JPL 2012",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+    },
+    {
+     "text": "Atmosphere: 6.36 mb mean surface pressure on Mars vs 1014 mb on Earth; wind moves sand differently.",
+     "source": "NASA NSSDC Mars fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+    },
+    {
+     "text": "Temperature: Mars average ~-59 C (Viking 1 site range -89 to -31 C); Earth sand deserts are far warmer.",
+     "source": "NASA NSSDC Mars fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+    }
+   ],
+   "sites": [
+    {
+     "id": "dumont_dunes_ca",
+     "name": "Dumont Dunes, California",
+     "country": "United States of America",
+     "lat": 35.6810623,
+     "lon": -116.2247997,
+     "kind": "known",
+     "match": 0.995,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.009,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.446,
+       "percentile": 78.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.085,
+       "percentile": 11.9,
+       "similarity": 0.942,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 161.33,
+       "percentile": 36.6,
+       "similarity": 0.999,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.262,
+       "percentile": 50.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "campaign": "Scarecrow",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.159,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "yungay_atacama",
+     "name": "Yungay, Atacama Desert",
+     "country": "Chile",
+     "lat": -24.08,
+     "lon": -69.93,
+     "kind": "known",
+     "match": 0.96,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.08,
+     "matchPercentile": 97.9,
+     "perVariable": {
+      "sand": {
+       "value": 62.643,
+       "percentile": 90.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.106,
+       "percentile": 17.3,
+       "similarity": 0.854,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 38.69,
+       "percentile": 21.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.243,
+       "percentile": 47.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "campaign": "ARADS / SAFER",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.167,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.314; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-08-18); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "mdrs_hanksville_ut",
+     "name": "Mars Desert Research Station, Utah",
+     "country": "United States of America",
+     "lat": 38.4053762,
+     "lon": -110.7898833,
+     "kind": "known",
+     "match": 0.993,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.014,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.517,
+       "percentile": 78.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.099,
+       "percentile": 15.4,
+       "similarity": 0.887,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 204.4,
+       "percentile": 39.1,
+       "similarity": 0.977,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.283,
+       "percentile": 53.5,
+       "similarity": 0.999,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "campaign": "MDRS",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.159,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new1",
+     "name": "Asia · Torbat-e-jam County · Razavi Khorasan",
+     "country": "Iran",
+     "lat": 35.1,
+     "lon": 60.55,
+     "kind": "new",
+     "match": 0.997,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.006,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.422,
+       "percentile": 78.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.103,
+       "percentile": 16.4,
+       "similarity": 0.87,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 154.76,
+       "percentile": 36.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.256,
+       "percentile": 49.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 12520,
+      "areaKm2": 1398129,
+      "bbox": [
+       50.15,
+       25.04,
+       69.95,
+       37.75
+      ],
+      "meanSimilarity": 0.949
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "score": 0.856,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.856 (0-1, relative); Governance perception (WGI, perceptions-based) 0.64; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new2",
+     "name": "Arabian Peninsula · Al Jawf Governorate",
+     "country": "Yemen",
+     "lat": 16.465,
+     "lon": 44.95,
+     "kind": "new",
+     "match": 0.996,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.007,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.075,
+       "percentile": 77.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.097,
+       "percentile": 14.9,
+       "similarity": 0.896,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 174.47,
+       "percentile": 37.4,
+       "similarity": 0.995,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.265,
+       "percentile": 50.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 8811,
+      "areaKm2": 1062758,
+      "bbox": [
+       35.35,
+       12.65,
+       51.65,
+       30.65
+      ],
+      "meanSimilarity": 0.942
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "score": 0.913,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.783; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new3",
+     "name": "Arabian Peninsula · Ad Dhahirah Governorate",
+     "country": "Oman",
+     "lat": 22.606,
+     "lon": 56.75,
+     "kind": "new",
+     "match": 0.996,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.008,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.442,
+       "percentile": 78.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.091,
+       "percentile": 13.4,
+       "similarity": 0.918,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 167.9,
+       "percentile": 37.0,
+       "similarity": 0.997,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.257,
+       "percentile": 49.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 1784,
+      "areaKm2": 215135,
+      "bbox": [
+       53.55,
+       18.26,
+       59.75,
+       26.31
+      ],
+      "meanSimilarity": 0.955
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.179,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.179 (0-1, relative); Governance perception (WGI, perceptions-based) 0.24; nearby organised-violence events 0.0; travel advice 0.333; US level 3 of 4 (2026-10-22); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new4",
+     "name": "Sahel · Bourem Cercle · Gao",
+     "country": "Mali",
+     "lat": 17.841,
+     "lon": 0.05,
+     "kind": "new",
+     "match": 0.994,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.011,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.014,
+       "percentile": 77.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.105,
+       "percentile": 16.9,
+       "similarity": 0.862,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 173.74,
+       "percentile": 37.3,
+       "similarity": 0.996,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.269,
+       "percentile": 51.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 14341,
+      "areaKm2": 1711659,
+      "bbox": [
+       -2.15,
+       15.62,
+       20.65,
+       30.86
+      ],
+      "meanSimilarity": 0.948
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "score": 0.913,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.782; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-06-07); UK advice covers whole country; see source",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new5",
+     "name": "Tibetan Plateau · Ngari Prefecture · Xizang",
+     "country": "China",
+     "lat": 30.653,
+     "lon": 82.95,
+     "kind": "new",
+     "match": 0.994,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.013,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 54.033,
+       "percentile": 77.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.085,
+       "percentile": 11.8,
+       "similarity": 0.942,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 170.09,
+       "percentile": 37.1,
+       "similarity": 0.997,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.262,
+       "percentile": 50.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 27954,
+      "areaKm2": 2769633,
+      "bbox": [
+       71.65,
+       29.06,
+       115.15,
+       50.77
+      ],
+      "meanSimilarity": 0.932
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.178,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.178 (0-1, relative); Governance perception (WGI, perceptions-based) 0.34; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-10-18); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m2-rover-sand-new6",
+     "name": "Andes · Angaco · San Juan",
+     "country": "Argentina",
+     "lat": -31.288,
+     "lon": -68.25,
+     "kind": "new",
+     "match": 0.994,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.013,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "sand": {
+       "value": 53.913,
+       "percentile": 77.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
+      },
+      "ndvi": {
+       "value": 0.096,
+       "percentile": 14.6,
+       "similarity": 0.9,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 147.46,
+       "percentile": 35.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.277,
+       "percentile": 52.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 4228,
+      "areaKm2": 502221,
+      "bbox": [
+       -78.65,
+       -37.22,
+       -65.65,
+       -8.42
+      ],
+      "meanSimilarity": 0.944
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Sand fraction is a 5 km model value: dunes not confirmed on imagery",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.126,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    }
+   ],
+   "validation": {
+    "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "result": "3 of 3 known analogs in the top 2.1 % (Dumont Dunes 100.0, Yungay 97.9, MDRS 100.0). Amazonia control: 1.5th percentile.",
+    "landCells": 1452035,
+    "knownMedianPercentiles": {
+     "sand": 78.5,
+     "ndvi": 15.4,
+     "precip": 36.6,
+     "albedo": 50.4
+    },
+    "candidateRegionsFound": 741,
+    "control": {
+     "match": 0.315,
+     "matchPercentile": 1.5
+    }
+   }
+  },
+  {
+   "id": "m3-ground-ice",
+   "title": "Shallow ground ice for ISRU and drilling",
+   "campaigns": [
+    {
+     "name": "NASA TRIDENT drill at Haughton (2024)",
+     "url": "https://ntrs.nasa.gov/api/citations/20250004164/downloads/LSIC25-Glass_abst2.docx"
+    },
+    {
+     "name": "IceBite, Antarctic Dry Valleys (planned ~2010)",
+     "url": "https://astrobiology.nasa.gov/news/drilling-into-arctic-ice/"
+    },
+    {
+     "name": "NASA/CSA RESOLVE at Mauna Kea (2010)",
+     "url": "https://ntrs.nasa.gov/citations/20100033667"
+    }
+   ],
+   "target": {
+    "body": "mars",
+    "name": "Arcadia Planitia",
+    "lat": 46.66,
+    "lon": 192.0,
+    "coordSource": "USGS Gazetteer Feature 348 (planetocentric, +East 0-360), https://planetarynames.wr.usgs.gov/Feature/348",
+    "values": {
+     "lst_mean": {
+      "value": -80,
+      "unit": "degC",
+      "source": "mean of approximate day/night values (-60/-100) from team targets.ts (MGS TES / Mars Climate Database); not extracted from PDS",
+      "url": null
+     },
+     "precip": {
+      "value": 0,
+      "unit": "mm/yr",
+      "source": "no liquid precipitation",
+      "url": null
+     },
+     "albedo": {
+      "value": 0.2,
+      "unit": "0-1",
+      "source": "approximate literature value, team targets.ts",
+      "url": null
+     },
+     "ndvi": {
+      "value": 0,
+      "unit": "index",
+      "source": "no vegetation",
+      "url": null
+     },
+     "ice": {
+      "value": null,
+      "unit": "",
+      "source": "SWIM ice-consistency map exists (1/20 deg GeoTIFF) but server was down on 2026-11-14",
+      "url": "https://swim.psi.edu/"
+     }
+    }
+   },
+   "variables": [
+    {
+     "id": "lst_mean",
+     "label": "Mean surface temperature",
+     "unit": "degC",
+     "why": "ground ice persists where the mean is below freezing (permafrost proxy)",
+     "inMatch": true,
+     "ideal": "<= -5",
+     "tolerance": 6,
+     "weight": 1.0
+    },
+    {
+     "id": "precip",
+     "label": "Precipitation",
+     "unit": "mm/yr",
+     "why": "polar desert: ice in the ground, not snow on top",
+     "inMatch": true,
+     "ideal": "<= 250",
+     "tolerance": 250,
+     "weight": 1.0
+    },
+    {
+     "id": "albedo",
+     "label": "Surface albedo",
+     "unit": "0-1",
+     "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (~0.2) over ice",
+     "inMatch": true,
+     "ideal": "<= 0.5",
+     "tolerance": 0.12,
+     "weight": 1.0
+    },
+    {
+     "id": "ndvi",
+     "label": "Vegetation (NDVI)",
+     "unit": "index",
+     "why": "bare ground",
+     "inMatch": true,
+     "ideal": "<= 0.10",
+     "tolerance": 0.1,
+     "weight": 0.5
+    }
+   ],
+   "breaks": [
+    {
+     "text": "Low pressure (6.36 mb): on Mars drilled ice sublimes instead of melting and refreezing on the bit, unlike Earth permafrost.",
+     "source": "NASA NSSDC Mars fact sheet; Honeybee chamber tests (phys.org 2010)",
+     "url": "https://phys.org/news/2010-06-drilling-mars.html"
+    },
+    {
+     "text": "Temperature: Mars average ~-59 C; Earth candidates have mean surface temperatures of about -5 to -30 C and a summer thaw layer.",
+     "source": "NASA NSSDC Mars fact sheet; MODIS 2024 (this dataset)",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+    },
+    {
+     "text": "Gravity 0.38 g and no liquid precipitation on Mars; Earth polar deserts still get snow.",
+     "source": "NASA NSSDC Mars fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+    }
+   ],
+   "sites": [
+    {
+     "id": "haughton_crater",
+     "name": "Haughton impact crater, Devon Island",
+     "country": "Canada",
+     "lat": 75.3771298,
+     "lon": -89.6804276,
+     "kind": "known",
+     "match": 0.98,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.04,
+     "matchPercentile": 99.6,
+     "perVariable": {
+      "lst_mean": {
+       "value": -18.182,
+       "percentile": 24.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 168.63,
+       "percentile": 37.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.436,
+       "percentile": 70.1,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.019,
+       "percentile": 6.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "campaign": "TRIDENT / HMP",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.081,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "mcmurdo_dry_valleys",
+     "name": "McMurdo Dry Valleys",
+     "country": "Antarctica",
+     "lat": -77.5145082,
+     "lon": 161.9469821,
+     "kind": "known",
+     "match": 0.974,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.053,
+     "matchPercentile": 99.2,
+     "perVariable": {
+      "lst_mean": {
+       "value": -29.139,
+       "percentile": 20.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 0.0,
+       "percentile": 13.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.394,
+       "percentile": 65.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": null
+     },
+     "campaign": "IceBite",
+     "breaks": [
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": null,
+      "score": null,
+      "insideProtectedArea": null,
+      "permitFlag": "ANTARCTIC_TREATY_AREA",
+      "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new1",
+     "name": "Ellesmere Island · Qikiqtaaluk Region · Nunavut",
+     "country": "Canada",
+     "lat": 81.476,
+     "lon": -70.85,
+     "kind": "new",
+     "match": 0.997,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.006,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "lst_mean": {
+       "value": -19.85,
+       "percentile": 24.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 103.66,
+       "percentile": 25.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.418,
+       "percentile": 68.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.015,
+       "percentile": 6.1,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 3476,
+      "areaKm2": 65003,
+      "bbox": [
+       -86.85,
+       79.25,
+       -61.15,
+       83.06
+      ],
+      "meanSimilarity": 0.978
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.081,
+      "insideProtectedArea": true,
+      "permitFlag": "PROTECTED_AREA",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert; inside a protected area: check national permits",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new2",
+     "name": "Banks Island · Inuvik Region · Northwest Territories",
+     "country": "Canada",
+     "lat": 74.276,
+     "lon": -121.95,
+     "kind": "new",
+     "match": 0.994,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.012,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "lst_mean": {
+       "value": -14.613,
+       "percentile": 26.1,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 116.07,
+       "percentile": 25.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.422,
+       "percentile": 68.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.009,
+       "percentile": 5.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 1832,
+      "areaKm2": 69702,
+      "bbox": [
+       -125.65,
+       71.1,
+       -115.35,
+       74.49
+      ],
+      "meanSimilarity": 0.971
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.081,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new3",
+     "name": "Asia · Allaikhovsky Ulus · Sakha Republic",
+     "country": "Russia",
+     "lat": 72.159,
+     "lon": 149.15,
+     "kind": "new",
+     "match": 0.994,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.013,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "lst_mean": {
+       "value": -15.283,
+       "percentile": 25.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 108.04,
+       "percentile": 25.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.425,
+       "percentile": 69.1,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.033,
+       "percentile": 6.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 40494,
+      "areaKm2": 1904651,
+      "bbox": [
+       87.45,
+       59.45,
+       179.95,
+       77.66
+      ],
+      "meanSimilarity": 0.933
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "medium",
+      "score": 0.454,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.454 (0-1, relative); Governance perception (WGI, perceptions-based) 0.51; nearby organised-violence events 0.0; travel advice 1.0; US level 4 of 4 (2025-12-28); UK advice covers whole country; see source",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new4",
+     "name": "Karakoram · disputed area (no administrative names used)",
+     "country": "China (de facto; disputed area)",
+     "lat": 34.994,
+     "lon": 78.35,
+     "kind": "new",
+     "match": 0.993,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.015,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "lst_mean": {
+       "value": -13.725,
+       "percentile": 26.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 111.69,
+       "percentile": 25.5,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.405,
+       "percentile": 67.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.032,
+       "percentile": 6.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 9476,
+      "areaKm2": 998071,
+      "bbox": [
+       69.05,
+       31.61,
+       99.55,
+       43.15
+      ],
+      "meanSimilarity": 0.925
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": null,
+      "score": null,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity None (0-1, relative); Governance perception (WGI, perceptions-based) None; nearby organised-violence events 0.0; travel advice None",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new5",
+     "name": "Unnamed region",
+     "country": "Antarctica",
+     "lat": -76.182,
+     "lon": -27.15,
+     "kind": "new",
+     "match": 0.988,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.023,
+     "matchPercentile": 99.9,
+     "perVariable": {
+      "lst_mean": {
+       "value": -20.36,
+       "percentile": 23.8,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 45.99,
+       "percentile": 22.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.437,
+       "percentile": 70.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": null
+     },
+     "region": {
+      "cells": 4,
+      "areaKm2": 125,
+      "bbox": [
+       -27.35,
+       -76.18,
+       -27.05,
+       -76.18
+      ],
+      "meanSimilarity": 0.983
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": null,
+      "score": null,
+      "insideProtectedArea": null,
+      "permitFlag": "ANTARCTIC_TREATY_AREA",
+      "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m3-ground-ice-new6",
+     "name": "Canadian Arctic Archipelago · Qikiqtaaluk Region · Nunavut",
+     "country": "Canada",
+     "lat": 71.735,
+     "lon": -73.65,
+     "kind": "new",
+     "match": 0.988,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.023,
+     "matchPercentile": 99.9,
+     "perVariable": {
+      "lst_mean": {
+       "value": -13.33,
+       "percentile": 27.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 125.56,
+       "percentile": 26.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.434,
+       "percentile": 69.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": -0.033,
+       "percentile": 4.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 10157,
+      "areaKm2": 482722,
+      "bbox": [
+       -90.05,
+       62.1,
+       -61.55,
+       73.75
+      ],
+      "meanSimilarity": 0.959
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.081,
+      "insideProtectedArea": false,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "Travel advice from two governments (US, UK); other governments may assess differently. U.S. Department of State, travel.state.gov (retrieved 2026-11-14); contains public sector information licensed under the Open Government Licence v3.0",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "UNEP-WCMC and IUCN (2026), Protected Planet: WDPCA [On-line], [October 2026], www.protectedplanet.net (flag only)",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    }
+   ],
+   "validation": {
+    "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "result": "2 of 2 known analogs in the top 1 % (Haughton 99.6, McMurdo Dry Valleys 99.2). Amazonia control: 2.8th percentile. Only 2 verified known sites: weak test.",
+    "landCells": 1854344,
+    "knownMedianPercentiles": {
+     "lst_mean": 22.5,
+     "precip": 25.4,
+     "albedo": 68.0,
+     "ndvi": 6.2
+    },
+    "candidateRegionsFound": 754,
+    "control": {
+     "match": 0.28,
+     "matchPercentile": 2.8
+    }
+   }
+  }
+ ]
+}

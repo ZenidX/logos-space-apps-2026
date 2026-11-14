@@ -13,7 +13,7 @@ The idea is our team's own. See [Use of AI](#use-of-ai).
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm test        # globe math tests
+npm test        # globe, scene and arc tests
 npm run build   # static export to out/
 ```
 
@@ -33,6 +33,8 @@ The team reviewed, tested and approved every AI-assisted output. AI-assisted cod
 - Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.
 - Software: three.js (MIT), Next.js (MIT, © Vercel, Inc.), React (MIT, © Meta Platforms, Inc.), Tailwind CSS (MIT).
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
-- Mission and dataset sources: to be added.
+- Missions: real analog field campaigns by NASA and ESA (links in the app and in `docs/misiones.md`).
+- Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth, WDPCA (flag only). Full list and licences in the app («Method & sources») and `docs/method.md`, `docs/licencias-geopolitica.md`.
+- Front design proposal «Orbit» by the team's design agent; fonts Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).
 
 This project is not endorsed by NASA.

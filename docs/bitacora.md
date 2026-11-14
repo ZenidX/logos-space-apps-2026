@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:05 · Front «Orbit» con datos v3
+- Escena única con la Tierra, la Luna y Marte (Orrery de Diseño) y arcos del objetivo a cada lugar. Tramos del arco: «no puntuado» junto al objetivo, luego las 3 condiciones principales (la más importante llega al lugar); ámbar = la analogía se rompe.
+- 3 misiones con datos v3 de Logos Datos: 6 regiones nuevas por misión + análogos conocidos para validar; ficha por lugar (nota, condición por condición frente al objetivo, ángulo del Sol en la misión lunar, dónde se rompe con fuentes NSSDC, «access complexity» neutral). Hoja «Method & sources».
+- `?capture=1` conserva el búfer de WebGL para capturas y grabación (la herramienta de capturas del agente no ve el canvas sin eso).
+- Comprobado: tsc, lint, 20 pruebas, build; en local, escena, misión, ficha y hoja de método.
+
 ## 2026-11-14 · 21:50 · Datos de sitios y propuesta de diseño
 - Logos Datos: `sites.json` (9 análogos conocidos + control Amazonia, 4 objetivos), `validacion.md` (reglas simples por misión: T1 3/4, T2 3/3, T3 2/2; el control falla las 3) y `suelo-espectral.md` (solo «next step» esta noche). Limitaciones: la pendiente GMTED no sirve (54 % de celdas a 0°); valores de la Luna/Marte aproximados; T1 no es específica sin capa de roca.
 - Falta: análogos NUEVOS (búsqueda global por misión) → pedido a Logos Datos.
