@@ -1,7 +1,0 @@
-# Créditos del material del vídeo
-
-| Archivo | Qué es | Fuente | Licencia |
-|---|---|---|---|
-| `archive/apollo11_one-small-step_nasa.mp3` | Audio de Neil Armstrong, Apolo 11 (20-07-1969): *"That's one small step for (a) man…"* (~13 s, 128 kbps) | NASA, «Blast Through the Past» (historical sounds): https://www.nasa.gov/historical-sounds/ · archivo directo: https://www.nasa.gov/wp-content/uploads/2015/01/590331main_ringtone_smallStep.mp3 | Dominio público (material de la NASA). Citar en «Space Agency Partner Data and Other References». Sin logos de la NASA en el vídeo. |
-| `archive/apollo11_first-step_135-170s_nasa.mp4` | Imagen de TV restaurada del primer paseo lunar del Apolo 11 (segundos 135–170 del original, 1280×720). El audio de `apollo11_one-small-step_nasa.mp3` empieza en el s 150,2 del original (localizado por correlación cruzada) | NASA Image and Video Library, «Apollo 11 Restored Moonwalk», id `KSC-20090716-MH-NAS01-0001-Apollo_11_Restored_Moonwalk-HM_795`: https://images.nasa.gov/details/KSC-20090716-MH-NAS01-0001-Apollo_11_Restored_Moonwalk-HM_795 | Dominio público (NASA). La carátula del principio del original lleva logos de la NASA: **no se usa**. |
-| `../data/nasa_budget_share.csv` | % del gasto federal de EE. UU. que fue a la NASA, años fiscales 1959–2026 (máximo: 4,41 % en 1966; 2026: 0,33 %) | Wikipedia, «Budget of NASA» (consultada el 14-11-2026), que compila el conjunto de datos histórico de The Planetary Society (peticiones de presupuesto de la NASA + Historical Tables de la OMB) | Datos factuales; citar Planetary Society / OMB |

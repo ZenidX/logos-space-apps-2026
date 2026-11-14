@@ -57,4 +57,4 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
   - Recuperar el NDVI real de los candidatos (necesita la cuenta de Google dueña del proyecto EE `terra-analog`).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
-  - Pitch: borrador en `docs/pitch.md` (guion 3 min, vídeo 30 s, campos de la página). Falta ensayar, grabar el vídeo y rellenar la página del proyecto.
+  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). El vídeo de 30 s se rehace desde cero con requisitos nuevos. Falta ensayar, grabar el vídeo y rellenar la página del proyecto.

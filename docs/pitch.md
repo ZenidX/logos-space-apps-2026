@@ -38,21 +38,7 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 
 ---
 
-## 2. Vídeo de demo (30 s como máximo, inglés o subtítulos en inglés)
-
-| Tiempo | Imagen | Voz / texto |
-|---|---|---|
-| 0:00–0:03 | Logo del equipo | "We're team Logos, from Barcelona." |
-| 0:03–0:08 | Foto de la Luna → mapa de la Tierra | "Where on Earth can we rehearse for the Moon and Mars?" |
-| 0:08–0:12 | Título | "TerraVista — finding the Moon and Mars on Earth." |
-| 0:12–0:22 | Grabación de pantalla: mapa → validación → candidato #1 | "We scored all land on Earth with NASA MODIS and GPM data against real Moon and Mars sites, validated with known analogs, and found new ones in the Canadian Arctic and the Karakoram." |
-| 0:22–0:30 | Tarjeta «where the analogy breaks» | "And we show where each analog stops working — so missions test in the right place." |
-
-**El límite de 30 s es estricto:** si se pasa, el proyecto queda fuera de la fase global.
-
----
-
-## 3. Campos de la página del proyecto (inglés)
+## 2. Campos de la página del proyecto (inglés)
 
 **Project name:** TerraVista
 
@@ -67,7 +53,7 @@ TerraVista systematically searches all land between 85°N and 85°S for new terr
 
 ---
 
-## 4. Riesgos a decir en voz alta si preguntan
+## 3. Riesgos a decir en voz alta si preguntan
 - Los valores de la Luna y Marte de los objetivos son **aproximados** (de la literatura); todavía no salen de los productos PDS. Como casi todas las temperaturas de la Luna y Marte quedan por debajo del mínimo terrestre, en la práctica la puntuación de clima premia «lo más frío de la Tierra».
 - La pendiente global se mide a 5 km: a esa escala casi toda montaña queda «en el techo» y saca Relieve 100. La web lo marca como «Tie at Earth's limit».
 - Death Valley y Mauna Kea entran en el top 10 % de Shackleton: con solo clima, superficie y pendiente, cualquier sitio seco, sin plantas y empinado parece lunar.

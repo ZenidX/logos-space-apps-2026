@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 9) · Vídeo de 30 s: borrón y cuenta nueva
+
+El guion tiene que cumplir unos requisitos nuevos y se empieza de cero. Borrado (recuperable desde el commit `ea2ce49` con `git checkout ea2ce49 -- <ruta>`):
+- `docs/guion-video.md` (guion v1 Apolo/Armstrong y alternativas) y la sección «Vídeo de demo» de `docs/pitch.md`.
+- `video/assets/` entera: el clip del primer paso del Apolo 11, el audio de Armstrong y `CREDITS.md`.
+- Fuera de git: `video/build/` (cinta del Apolo, miniaturas, recortes) y los temporales del reconocedor de voz.
+
+Se quedan los guiones originales del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`), los datos del presupuesto (`video/data/nasa_budget_share.csv`) y las herramientas (`video/tools/`). Los enlaces a esos archivos en entradas anteriores de esta bitácora ya no funcionan.
+
 ## 2026-11-14 (noche, 8) · Vídeo, fase 0 y primer material
 
 - Herramientas en `video/tools/` (no se suben a git): ffmpeg 7.0.2 y ffprobe estáticos, y Playwright (`playwright-core`, con el Chrome del sistema).
