@@ -25,8 +25,8 @@
   --color-slate-950: #04080f;
   --color-slate-900: #08111c;
   --color-slate-800: #0c1828;
-  --color-slate-500: #4f6378;
-  --color-slate-400: #8197ad;
+  --color-slate-500: #7289a0;
+  --color-slate-400: #93a8bd;
   --color-slate-300: #b4c6d8;
   --color-slate-100: #dbe8f4;
   --color-orange-300: #9af0ff;
@@ -248,3 +248,47 @@ h1, h2, h3 {
 .leaflet-control-attribution a { color: var(--acc) !important; }
 .leaflet-bar a { background: var(--bg2) !important; color: var(--acc) !important; border-color: var(--line2) !important; }
 .leaflet-tooltip { background: var(--bg2); color: var(--ink); border: 1px solid var(--line2); font: 11px var(--font-jetbrains), monospace; border-radius: 0; }
+/* ===== Terra Analog · «Consola v2» — AÑADIR/CAMBIAR en src/app/globals.css (ver PROPUESTA.md) ===== */
+
+/* 1) :root → sustituir --mut y --dim, añadir el resto (el resto de tokens no cambia) */
+:root {
+  --mut: #93a8bd;   /* antes #8197ad · 6,7:1 → 8,2:1 sobre --bg */
+  --dim: #7289a0;   /* antes #4f6378 · 3,2:1 (suspendía AA) → 5,5:1 */
+  --acc2-t: #7fb0ff; /* azul para TEXTO/enlaces (9,1:1); --acc2 #3d7dff queda para rellenos */
+  --danger: #ff8a8a;
+  --focus: #ffffff;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  --t-xs: 11px; --t-sm: 13px; --t-md: 15px; --t-lg: 18px; --t-xl: 24px; /* mínimo 11 px (antes 10 px) */
+  --tap: 44px;
+  --ease: cubic-bezier(.2, .7, .2, 1); --d1: 120ms; --d2: 240ms; --d3: 500ms;
+}
+
+/* 2) Foco visible global (hoy no hay) */
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* 3) Marcadores del globo (botones de 44 px; los coloca Globe.tsx con transform inline) */
+.mk { position: absolute; width: var(--tap); height: var(--tap); background: none; border: 0; padding: 0; cursor: pointer; z-index: 4; }
+.mk i { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px #fff; transition: transform var(--d2) var(--ease); }
+.mk.sel i { transform: scale(1.35); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #fff, 0 0 16px 7px rgba(94, 230, 255, .45); }
+.mk.known i { border-radius: 0; background: transparent; border: 2px solid var(--warn); transform: rotate(45deg); width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 3px #fff; }
+.mk.target i { width: 20px; height: 20px; margin: -10px 0 0 -10px; background: transparent; border: 2px solid var(--acc); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px #fff; }
+.mk.target i::before { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; background: var(--acc); border-radius: 50%; }
+.mk.target i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1px solid var(--acc); animation: pulso 2s var(--ease) infinite; }
+@keyframes pulso { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
+.mk-l { position: absolute; left: 50%; top: 50%; margin-left: 15px; transform: translateY(-50%); white-space: nowrap; padding: 5px 7px; font: 500 var(--t-xs)/1 var(--font-jetbrains), monospace; letter-spacing: .04em; color: var(--ink); background: rgba(4, 8, 15, .84); border: 1px solid var(--line2); }
+.mk.flip .mk-l { left: auto; right: 50%; margin-left: 0; margin-right: 15px; }
+
+/* 4) Esqueleto de carga del globo */
+.skel { border: 1px solid var(--line2); background: radial-gradient(circle at 35% 30%, #12304a, #08111c 70%); overflow: hidden; }
+.skel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(94, 230, 255, .14) 50%, transparent 70%); transform: translateX(-100%); animation: brillo 1.6s linear infinite; }
+@keyframes brillo { to { transform: translateX(100%); } }
+
+/* 5) Visor del globo sin líneas de barrido (restan nitidez a la textura); la viñeta se queda suave */
+.visor.globo > .vineta { background: radial-gradient(ellipse at center, transparent 62%, rgba(4, 8, 15, .45) 100%); }
+
+/* 6) Movimiento reducido (añadir a la regla que ya existe en globals.css) */
+@media (prefers-reduced-motion: reduce) {
+  .mk.target i::after { animation: none; transform: scale(1.1); opacity: .5; }
+  .skel::after { animation: none; display: none; }
+  .mk i { transition: none; }
+}

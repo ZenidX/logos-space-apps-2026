@@ -1,15 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import DataTab from "@/components/DataTab";
 import AnalysisTab from "@/components/AnalysisTab";
 import CandidatesTab from "@/components/CandidatesTab";
-import Visor from "@/components/Visor";
+import GlobeView from "@/components/GlobeView";
 import { SITES } from "@/data/catalog";
 import type { Body } from "@/components/TileMap";
 
-const TileMap = dynamic(() => import("@/components/TileMap"), { ssr: false });
 
 const TARGET_MARKERS: Record<Body, { lat: number; lon: number; label: string; highlight?: boolean }[]> = {
   earth: SITES.map((s) => ({ lat: s.lat, lon: s.lon, label: s.name, highlight: s.known })),
@@ -21,7 +19,6 @@ const TARGET_MARKERS: Record<Body, { lat: number; lon: number; label: string; hi
 };
 
 const BODY_LABEL: Record<Body, string> = { earth: "Earth", moon: "Moon", mars: "Mars" };
-const BODY_SRC: Record<Body, string> = { earth: "NASA GIBS · BLUE MARBLE", moon: "MOON TREK · LRO WAC", mars: "MARS TREK · MGS MOLA" };
 
 const TABS = [
   ["candidatos", "Candidates"],
@@ -94,10 +91,11 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <Visor
+            <GlobeView
+              body={body}
               className="flex-1"
-              glitchKey={body}
-              reticle={false}
+              markers={TARGET_MARKERS[body].map((m, i) => ({ id: `t${i}`, lat: m.lat, lon: m.lon, label: m.label, kind: "target" as const }))}
+              tileMarkers={TARGET_MARKERS[body]}
               tl={
                 <>
                   <span className="k">Body</span>
@@ -105,10 +103,7 @@ export default function Home() {
                   {BODY_LABEL[body]}
                 </>
               }
-              br={<span className="k">{BODY_SRC[body]}</span>}
-            >
-              <TileMap key={body} body={body} markers={TARGET_MARKERS[body]} />
-            </Visor>
+            />
           </div>
         )}
       </main>

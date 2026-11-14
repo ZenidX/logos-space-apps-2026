@@ -1,16 +1,15 @@
 "use client";
 
 import TargetWhy from "@/components/TargetWhy";
-import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
+import GlobeView from "@/components/GlobeView";
+import type { GlobeMarker } from "@/components/Globe";
 import { TARGETS } from "@/data/targets";
-import Visor from "@/components/Visor";
 import Viewer3D, { type ViewerTarget } from "@/components/Viewer3D";
 import { TARGET_TERRAIN } from "@/lib/targetTerrain";
 import eeGlobal from "@/data/ee-global.json";
 import eeSamples from "@/data/ee-samples.json";
 
-const TileMap = dynamic(() => import("@/components/TileMap"), { ssr: false });
 
 interface Candidate {
   c: [number, number]; // [lon, lat]
@@ -115,6 +114,7 @@ export default function CandidatesTab() {
   const target = TARGETS.find((t) => t.id === targetId)!;
   const res = DATA[targetId];
   const [view3d, setView3d] = useState<Candidate | null>(null);
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const viewerTarget: ViewerTarget = { name: target.name, short: target.short, ...TARGET_TERRAIN[target.id] };
 
   const markers = useMemo(
@@ -127,6 +127,15 @@ export default function CandidatesTab() {
       })),
     [res],
   );
+
+  const globeMarkers: GlobeMarker[] = (res?.top ?? []).map((c, i) => ({
+    id: String(i),
+    lat: c.c[1],
+    lon: c.c[0],
+    label: `#${i + 1} · ${c.place ?? coord(c.c)}`,
+    kind: "candidate",
+    rank: i + 1,
+  }));
 
   if (!available.length) {
     return <p className="text-sm text-slate-400">Running the global search in Earth Engine…</p>;
@@ -170,17 +179,19 @@ export default function CandidatesTab() {
             </p>
           </section>
 
-          <Visor
-            className="h-80"
-            glitchKey={targetId}
-            reticle={false}
+          <GlobeView
+            body="earth"
+            markers={globeMarkers}
+            tileMarkers={markers}
+            selectedId={selectedCard}
+            onSelect={(id) => {
+              setSelectedCard(id);
+              document.getElementById(`cand-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
             tl={<><span className="k">Target</span><br />{target.short}</>}
             tr={<><span className="k">Cells</span><br />0.1° · 85N–85S</>}
-            bl={<span className="k">Top {res.top.length} · ≥ 300 km apart</span>}
-            br={<span className="k">NASA MODIS · Oxford MAP access</span>}
-          >
-            <TileMap body="earth" markers={markers} />
-          </Visor>
+            bl={<span className="k">Top {res.top.length} · ≥ 300 km apart · tap a point</span>}
+          />
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
             <p className="etq mb-3" data-n="02">Validation</p>
@@ -212,7 +223,7 @@ export default function CandidatesTab() {
           <section className="space-y-2">
             <p className="etq mb-3" data-n="03">Candidate ranking</p>
             {res.top.map((c, i) => (
-              <article key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <article key={i} id={`cand-${i}`} className={`rounded-xl border bg-white/[0.03] p-3 ${selectedCard === String(i) ? "border-[var(--acc)]" : "border-white/10"}`}>
                 <header className="mb-2 flex items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-semibold">
