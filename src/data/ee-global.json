@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-14T09:59:55.022Z",
- "source": "Google Earth Engine · projects/terra-analog/assets/terra_features_01deg (0.1°) · scripts/ee/06_puntuar_asset.js",
+ "generatedAt": "2026-11-14T14:08:39.995Z",
+ "source": "Google Earth Engine · terra_features_01deg (0.1°) + Oxford/MAP/accessibility_to_cities_2015_v1_0 + MODIS MCD12Q1 urban mask · scripts/ee/06_puntuar_asset.js (v2)",
  "ranges": {
   "albedo_p1": 0.049,
   "albedo_p99": 0.842,
@@ -21,1518 +21,1613 @@
   "slope_p1": 0.05,
   "slope_p99": 4.437
  },
+ "notes": "v2 (2026-11-14 night): climate no longer scored. Total = mean of Surface (NDVI, albedo), Relief (slope) and Accessibility (travel time to nearest city ≥50k, Weiss et al. 2018; score = 1 − ln(1+h)/ln(73), 0 h = 1, ≥72 h = 0). Cells with albedo < 0.08 (coastal cells dominated by water) and cells with >5 % urban land (MODIS MCD12Q1 2023) excluded, plus 300 km around 25 catalogued analogs. NDVI shown corrected (x10000). Place names: OpenStreetMap Nominatim.",
  "shackleton": {
   "dist": {
-   "total_p50": 0.432,
-   "total_p90": 0.553,
-   "total_p99": 0.709
+   "total_p50": 0.404,
+   "total_p90": 0.568,
+   "total_p99": 0.74
   },
   "known": [
    {
     "name": "Atacama",
-    "total": 0.45
+    "total": 0.553,
+    "access_h": 4.92
    },
    {
     "name": "Haughton / Devon",
-    "total": 0.518
+    "total": 0.306,
+    "access_h": 133.91
    },
    {
     "name": "Death Valley / Mojave",
-    "total": 0.636
+    "total": 0.773,
+    "access_h": 3.16
    },
    {
     "name": "McMurdo Dry Valleys",
-    "total": 0.678
+    "total": 0.605,
+    "access_h": null
    },
    {
     "name": "Iceland",
-    "total": 0.537
+    "total": 0.522,
+    "access_h": 9.27
    },
    {
     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
-    "total": 0.6
+    "total": 0.646,
+    "access_h": 12.16
    },
    {
     "name": "MDRS Utah",
-    "total": 0.461
+    "total": 0.572,
+    "access_h": 3.28
    },
    {
     "name": "Rio Tinto",
-    "total": 0.365
+    "total": 0.557,
+    "access_h": 0.82
    },
    {
     "name": "Lanzarote",
-    "total": 0.431
+    "total": 0.656,
+    "access_h": 0.29
    },
    {
     "name": "Svalbard (AMASE)",
-    "total": 0.705
+    "total": 0.52,
+    "access_h": 78.06
    },
    {
     "name": "Pilbara",
-    "total": 0.386
+    "total": 0.41,
+    "access_h": 20
    },
    {
     "name": "Meteor / SP Crater",
-    "total": 0.462
+    "total": 0.589,
+    "access_h": 2.96
    },
    {
     "name": "Axel Heiberg",
-    "total": 0.69
+    "total": 0.48,
+    "access_h": 126.39
    },
    {
     "name": "Qaidam",
-    "total": 0.445
+    "total": 0.506,
+    "access_h": 4.86
    },
    {
     "name": "Danakil / Dallol",
-    "total": 0.405
+    "total": 0.556,
+    "access_h": 3.89
    },
    {
     "name": "Namib",
-    "total": 0.4
+    "total": 0.423,
+    "access_h": 17.15
    },
    {
     "name": "Ries",
-    "total": 0.357
+    "total": 0.523,
+    "access_h": 0.88
    },
    {
     "name": "Arkaroola",
-    "total": 0.472
+    "total": 0.539,
+    "access_h": 7.84
    },
    {
     "name": "Sudbury",
-    "total": 0.395
+    "total": 0.474,
+    "access_h": 3.46
    },
    {
     "name": "Concordia (Dome C)",
-    "total": 0.568
+    "total": 0.15,
+    "access_h": null
    },
    {
     "name": "Lonar",
-    "total": 0.313
+    "total": 0.544,
+    "access_h": 0.65
    },
    {
     "name": "Kamchatka",
-    "total": 0.494
+    "total": 0.434,
+    "access_h": 20.27
    },
    {
     "name": "Bunge Land",
-    "total": 0.462
+    "total": 0.263,
+    "access_h": 103.64
    },
    {
     "name": "Mojave Bristol",
-    "total": 0.458
+    "total": 0.615,
+    "access_h": 2.3
    },
    {
     "name": "Wadi Rum",
-    "total": 0.453
+    "total": 0.612,
+    "access_h": 1.91
    }
   ],
   "top": [
    {
     "c": [
-     -68.549,
-     82.55
+     51.351,
+     33.95
     ],
-    "total": 0.86,
-    "clima": 0.64,
-    "superficie": 0.95,
+    "total": 0.942,
+    "superficie": 0.906,
     "relieve": 1,
-    "lst_day": -17.83,
-    "lst_night": -19.9,
-    "lst_max": 13.57,
-    "lst_min": -39.63,
-    "precip": 147.46,
-    "ndvi": null,
-    "albedo": 0.22,
-    "slope": 12.34,
-    "elev": 123,
-    "place": "Nunavut, Canada"
+    "accesibilidad": 0.919,
+    "access_h": 0.41,
+    "urban_frac": 0.003,
+    "lst_day": 28.83,
+    "lst_min": -1.23,
+    "precip": 203.67,
+    "ndvi": 0.108,
+    "albedo": 0.203,
+    "slope": 5.88,
+    "elev": 1023,
+    "place": "Isfahan Province, Iran"
    },
    {
     "c": [
-     76.951,
-     36.15
+     69.251,
+     35.15
     ],
-    "total": 0.85,
-    "clima": 0.58,
-    "superficie": 0.96,
+    "total": 0.942,
+    "superficie": 0.865,
     "relieve": 1,
-    "lst_day": -0.68,
-    "lst_night": -15.75,
-    "lst_max": 16.31,
-    "lst_min": -33.55,
-    "precip": 75.92,
-    "ndvi": null,
-    "albedo": 0.2,
-    "slope": 5.21,
-    "elev": 5320,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     75.251,
-     38.65
-    ],
-    "total": 0.84,
-    "clima": 0.61,
-    "superficie": 0.92,
-    "relieve": 1,
-    "lst_day": -8.53,
-    "lst_night": -17.36,
-    "lst_max": 6.83,
-    "lst_min": -34.27,
-    "precip": 267.91,
-    "ndvi": null,
-    "albedo": 0.22,
-    "slope": 6.07,
-    "elev": 5018,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     80.351,
-     42.25
-    ],
-    "total": 0.84,
-    "clima": 0.63,
-    "superficie": 0.88,
-    "relieve": 1,
-    "lst_day": -11.31,
-    "lst_night": -19.11,
-    "lst_max": 2.87,
-    "lst_min": -37.71,
-    "precip": 312.44,
-    "ndvi": null,
-    "albedo": 0.31,
-    "slope": 5.27,
-    "elev": 5273,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     -73.35,
-     79.75
-    ],
-    "total": 0.83,
-    "clima": 0.68,
-    "superficie": 0.82,
-    "relieve": 1,
-    "lst_day": -20.04,
-    "lst_night": -21.5,
-    "lst_max": 3.27,
-    "lst_min": -44.67,
-    "precip": 121.18,
-    "ndvi": null,
-    "albedo": 0.44,
-    "slope": 6.23,
-    "elev": 38,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     -78.55,
-     72.35
-    ],
-    "total": 0.83,
-    "clima": 0.61,
-    "superficie": 0.88,
-    "relieve": 1,
-    "lst_day": -13.83,
-    "lst_night": -16.04,
-    "lst_max": 13.83,
-    "lst_min": -39.99,
-    "precip": 289.81,
-    "ndvi": null,
-    "albedo": 0.34,
-    "slope": 5.76,
-    "elev": 265,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     85.351,
-     43.65
-    ],
-    "total": 0.83,
-    "clima": 0.55,
-    "superficie": 0.94,
-    "relieve": 1,
-    "lst_day": -3.34,
-    "lst_night": -12.66,
-    "lst_max": 15.71,
-    "lst_min": -26.21,
-    "precip": 244.55,
-    "ndvi": null,
-    "albedo": 0.21,
+    "accesibilidad": 0.96,
+    "access_h": 0.18,
+    "urban_frac": 0,
+    "lst_day": 21.83,
+    "lst_min": -8.33,
+    "precip": 345.29,
+    "ndvi": 0.221,
+    "albedo": 0.169,
     "slope": 5.03,
-    "elev": 3957,
-    "place": "Xinjiang, China"
+    "elev": 2048,
+    "place": "Parwan Province, Afghanistan"
    },
    {
     "c": [
-     84.651,
-     36.85
+     -70.049,
+     -17.85
     ],
-    "total": 0.83,
-    "clima": 0.58,
-    "superficie": 0.91,
+    "total": 0.936,
+    "superficie": 0.931,
     "relieve": 1,
-    "lst_day": -2.99,
-    "lst_night": -14.22,
-    "lst_max": 15.81,
-    "lst_min": -38.87,
-    "precip": 173.01,
-    "ndvi": null,
-    "albedo": 0.26,
-    "slope": 6.36,
-    "elev": 5071,
-    "place": "Xinjiang, China"
+    "accesibilidad": 0.878,
+    "access_h": 0.69,
+    "urban_frac": 0,
+    "lst_day": 34.01,
+    "lst_min": 8.71,
+    "precip": 175.2,
+    "ndvi": 0.09,
+    "albedo": 0.179,
+    "slope": 5.66,
+    "elev": 2318,
+    "place": "Tacna, Peru"
    },
    {
     "c": [
-     -71.25,
-     70.35
+     -16.549,
+     28.25
     ],
-    "total": 0.83,
-    "clima": 0.62,
-    "superficie": 0.86,
+    "total": 0.932,
+    "superficie": 0.863,
     "relieve": 1,
-    "lst_day": -13.72,
-    "lst_night": -16.89,
-    "lst_max": 6.21,
-    "lst_min": -39.23,
-    "precip": 339.45,
-    "ndvi": null,
-    "albedo": 0.36,
-    "slope": 6.01,
-    "elev": 8,
-    "place": "Nunavut, Canada"
+    "accesibilidad": 0.935,
+    "access_h": 0.32,
+    "urban_frac": 0,
+    "lst_day": 29.4,
+    "lst_min": 2.97,
+    "precip": 154.76,
+    "ndvi": 0.205,
+    "albedo": 0.113,
+    "slope": 6.54,
+    "elev": 2027,
+    "place": "Canary Islands, Spain"
    },
    {
     "c": [
-     -69.549,
-     -33.151
+     57.551,
+     23.05
     ],
-    "total": 0.83,
-    "clima": 0.5,
-    "superficie": 0.99,
+    "total": 0.928,
+    "superficie": 0.922,
     "relieve": 1,
-    "lst_day": 4.54,
-    "lst_night": -8.68,
-    "lst_max": 21.75,
-    "lst_min": -23.37,
-    "precip": 332.88,
-    "ndvi": null,
-    "albedo": 0.17,
-    "slope": 5.51,
-    "elev": 4443,
-    "place": "Mendoza, Argentina"
+    "accesibilidad": 0.86,
+    "access_h": 0.82,
+    "urban_frac": 0,
+    "lst_day": 32.12,
+    "lst_min": 12.49,
+    "precip": 237.98,
+    "ndvi": 0.135,
+    "albedo": 0.154,
+    "slope": 4.69,
+    "elev": 1275,
+    "place": "Ad Dakhiliyah Governorate, Oman"
    },
    {
     "c": [
-     96.751,
-     39.45
+     -68.149,
+     -31.351
     ],
-    "total": 0.83,
-    "clima": 0.52,
-    "superficie": 0.96,
+    "total": 0.926,
+    "superficie": 0.944,
     "relieve": 1,
-    "lst_day": 4.27,
-    "lst_night": -10.91,
-    "lst_max": 21.41,
-    "lst_min": -25.07,
-    "precip": 146.73,
-    "ndvi": null,
-    "albedo": 0.18,
-    "slope": 7.2,
-    "elev": 4467,
-    "place": "Gansu, China"
+    "accesibilidad": 0.835,
+    "access_h": 1.03,
+    "urban_frac": 0,
+    "lst_day": 29.5,
+    "lst_min": 0.07,
+    "precip": 170.09,
+    "ndvi": 0.088,
+    "albedo": 0.139,
+    "slope": 5.32,
+    "elev": 808,
+    "place": "San Juan, Argentina"
    },
    {
     "c": [
-     -68.749,
-     -28.051
+     34.051,
+     38.15
     ],
-    "total": 0.83,
-    "clima": 0.51,
-    "superficie": 0.96,
+    "total": 0.925,
+    "superficie": 0.844,
     "relieve": 1,
-    "lst_day": 6.11,
-    "lst_night": -13.72,
-    "lst_max": 26.27,
-    "lst_min": -23.61,
-    "precip": 81.76,
-    "ndvi": null,
-    "albedo": 0.13,
-    "slope": 5.22,
-    "elev": 5876,
-    "place": "La Rioja, Argentina"
+    "accesibilidad": 0.931,
+    "access_h": 0.34,
+    "urban_frac": 0,
+    "lst_day": 24.21,
+    "lst_min": -9.55,
+    "precip": 387.63,
+    "ndvi": 0.21,
+    "albedo": 0.212,
+    "slope": 5.23,
+    "elev": 1091,
+    "place": "Central Anatolia Region, Turkey"
    },
    {
     "c": [
-     -142.85,
-     61.95
+     50.151,
+     36.55
     ],
-    "total": 0.83,
-    "clima": 0.6,
-    "superficie": 0.89,
-    "relieve": 0.99,
-    "lst_day": -10.16,
-    "lst_night": -15.05,
-    "lst_max": 7.75,
-    "lst_min": -35.33,
-    "precip": 413.18,
-    "ndvi": null,
-    "albedo": 0.32,
-    "slope": 4.38,
-    "elev": 1589,
-    "place": "Alaska, USA"
-   },
-   {
-    "c": [
-     -72.35,
-     -47.651
-    ],
-    "total": 0.82,
-    "clima": 0.52,
-    "superficie": 0.95,
+    "total": 0.923,
+    "superficie": 0.874,
     "relieve": 1,
-    "lst_day": -1.05,
-    "lst_night": -9.44,
-    "lst_max": 12.37,
-    "lst_min": -21.25,
-    "precip": 427.78,
-    "ndvi": null,
-    "albedo": 0.23,
-    "slope": 4.72,
-    "elev": 2239,
-    "place": "Santa Cruz, Argentina"
+    "accesibilidad": 0.897,
+    "access_h": 0.56,
+    "urban_frac": 0,
+    "lst_day": 24.52,
+    "lst_min": -5.15,
+    "precip": 686.93,
+    "ndvi": 0.222,
+    "albedo": 0.146,
+    "slope": 4.87,
+    "elev": 1058,
+    "place": "Qazvin Province, Iran"
    },
    {
     "c": [
-     -80.85,
-     77.25
+     36.151,
+     33.95
     ],
-    "total": 0.82,
-    "clima": 0.63,
-    "superficie": 0.84,
+    "total": 0.923,
+    "superficie": 0.825,
     "relieve": 1,
-    "lst_day": -16.55,
-    "lst_night": -17.84,
-    "lst_max": 9.61,
-    "lst_min": -39.15,
-    "precip": 245.28,
-    "ndvi": null,
-    "albedo": 0.39,
-    "slope": 4.94,
-    "elev": 165,
-    "place": "Nunavut, Canada"
+    "accesibilidad": 0.945,
+    "access_h": 0.27,
+    "urban_frac": 0.015,
+    "lst_day": 27.87,
+    "lst_min": -0.01,
+    "precip": 437.27,
+    "ndvi": 0.246,
+    "albedo": 0.211,
+    "slope": 4.76,
+    "elev": 1162,
+    "place": "Baalbek-Hermel Governorate, Lebanon"
    },
    {
     "c": [
-     78.751,
-     33.85
+     54.151,
+     31.65
     ],
-    "total": 0.82,
-    "clima": 0.51,
-    "superficie": 0.95,
+    "total": 0.922,
+    "superficie": 0.901,
     "relieve": 1,
-    "lst_day": 6.47,
-    "lst_night": -11.49,
-    "lst_max": 27.77,
-    "lst_min": -30.13,
-    "precip": 161.33,
-    "ndvi": null,
-    "albedo": 0.19,
+    "accesibilidad": 0.866,
+    "access_h": 0.78,
+    "urban_frac": 0,
+    "lst_day": 21.84,
+    "lst_min": -8.39,
+    "precip": 174.47,
+    "ndvi": 0.135,
+    "albedo": 0.187,
+    "slope": 5.5,
+    "elev": 2332,
+    "place": "Yazd Province, Iran"
+   },
+   {
+    "c": [
+     57.251,
+     30.25
+    ],
+    "total": 0.921,
+    "superficie": 0.904,
+    "relieve": 1,
+    "accesibilidad": 0.857,
+    "access_h": 0.85,
+    "urban_frac": 0,
+    "lst_day": 35.7,
+    "lst_min": -1.19,
+    "precip": 121.91,
+    "ndvi": 0.109,
+    "albedo": 0.206,
     "slope": 4.82,
-    "elev": 5597,
-    "place": "Ladakh, India"
+    "elev": 1890,
+    "place": "Kerman Province, Iran"
    },
    {
     "c": [
-     90.951,
-     48.65
+     51.251,
+     29.35
     ],
-    "total": 0.82,
-    "clima": 0.59,
-    "superficie": 0.87,
-    "relieve": 1,
-    "lst_day": -7.85,
-    "lst_night": -13.44,
-    "lst_max": 10.83,
-    "lst_min": -33.67,
-    "precip": 177.39,
-    "ndvi": null,
-    "albedo": 0.31,
-    "slope": 4.88,
-    "elev": 3488,
-    "place": "Bayan-Ölgiy, Mongolia"
+    "total": 0.918,
+    "superficie": 0.849,
+    "relieve": 0.955,
+    "accesibilidad": 0.951,
+    "access_h": 0.23,
+    "urban_frac": 0,
+    "lst_day": 34.55,
+    "lst_min": 9.83,
+    "precip": 326.31,
+    "ndvi": 0.143,
+    "albedo": 0.264,
+    "slope": 4.24,
+    "elev": 68,
+    "place": "Bushehr Province, Iran"
    },
    {
     "c": [
-     90.251,
-     28.95
+     -65.649,
+     -23.75
     ],
-    "total": 0.82,
-    "clima": 0.51,
-    "superficie": 0.95,
+    "total": 0.914,
+    "superficie": 0.916,
     "relieve": 1,
-    "lst_day": 4.38,
-    "lst_night": -10.74,
-    "lst_max": 17.35,
-    "lst_min": -24.21,
-    "precip": 465.01,
-    "ndvi": null,
-    "albedo": 0.21,
-    "slope": 5.16,
-    "elev": 5646,
-    "place": "Tibet (Xizang), China"
+    "accesibilidad": 0.827,
+    "access_h": 1.11,
+    "urban_frac": 0,
+    "lst_day": 21.22,
+    "lst_min": -5.95,
+    "precip": 624.15,
+    "ndvi": 0.144,
+    "albedo": 0.143,
+    "slope": 4.95,
+    "elev": 4047,
+    "place": "Jujuy, Argentina"
    },
    {
     "c": [
-     81.351,
-     36.05
+     -75.95,
+     -13.25
     ],
-    "total": 0.82,
-    "clima": 0.53,
-    "superficie": 0.93,
+    "total": 0.914,
+    "superficie": 0.918,
     "relieve": 1,
-    "lst_day": 1.16,
-    "lst_night": -8.91,
-    "lst_max": 14.37,
-    "lst_min": -24.87,
-    "precip": 357.7,
-    "ndvi": null,
-    "albedo": 0.19,
-    "slope": 7.38,
-    "elev": 4793,
-    "place": "Xinjiang, China"
+    "accesibilidad": 0.824,
+    "access_h": 1.12,
+    "urban_frac": 0,
+    "lst_day": 33.13,
+    "lst_min": -18.05,
+    "precip": 157.68,
+    "ndvi": 0.137,
+    "albedo": 0.14,
+    "slope": 4.8,
+    "elev": 1529,
+    "place": "Ica, Peru"
+   },
+   {
+    "c": [
+     -149.65,
+     61.25
+    ],
+    "total": 0.913,
+    "superficie": 0.788,
+    "relieve": 1,
+    "accesibilidad": 0.95,
+    "access_h": 0.24,
+    "urban_frac": 0.03,
+    "lst_day": 1.12,
+    "lst_min": -25.99,
+    "precip": 830.74,
+    "ndvi": 0.337,
+    "albedo": 0.189,
+    "slope": 4.47,
+    "elev": 269,
+    "place": "Alaska, United States"
+   },
+   {
+    "c": [
+     -78.95,
+     -7.75
+    ],
+    "total": 0.912,
+    "superficie": 0.896,
+    "relieve": 1,
+    "accesibilidad": 0.841,
+    "access_h": 0.98,
+    "urban_frac": 0,
+    "lst_day": 33.03,
+    "lst_min": 13.71,
+    "precip": 194.18,
+    "ndvi": 0.14,
+    "albedo": 0.109,
+    "slope": 4.78,
+    "elev": 593,
+    "place": "La Libertad, Peru"
+   },
+   {
+    "c": [
+     41.951,
+     19.55
+    ],
+    "total": 0.912,
+    "superficie": 0.857,
+    "relieve": 0.996,
+    "accesibilidad": 0.881,
+    "access_h": 0.66,
+    "urban_frac": 0.041,
+    "lst_day": 27.23,
+    "lst_min": 6.29,
+    "precip": 337.99,
+    "ndvi": 0.216,
+    "albedo": 0.186,
+    "slope": 4.42,
+    "elev": 2031,
+    "place": "'Asir Province, Saudi Arabia"
+   },
+   {
+    "c": [
+     45.151,
+     36.65
+    ],
+    "total": 0.91,
+    "superficie": 0.783,
+    "relieve": 1,
+    "accesibilidad": 0.946,
+    "access_h": 0.26,
+    "urban_frac": 0.05,
+    "lst_day": 19.57,
+    "lst_min": -6.35,
+    "precip": 686.2,
+    "ndvi": 0.353,
+    "albedo": 0.183,
+    "slope": 5.33,
+    "elev": 1440,
+    "place": "West Azerbaijan Province, Iran"
+   },
+   {
+    "c": [
+     105.751,
+     38.85
+    ],
+    "total": 0.91,
+    "superficie": 0.864,
+    "relieve": 0.928,
+    "accesibilidad": 0.937,
+    "access_h": 0.31,
+    "urban_frac": 0.046,
+    "lst_day": 19.7,
+    "lst_min": -16.97,
+    "precip": 383.25,
+    "ndvi": 0.153,
+    "albedo": 0.231,
+    "slope": 4.12,
+    "elev": 1796,
+    "place": "Inner Mongolia, China"
+   },
+   {
+    "c": [
+     72.251,
+     41.35
+    ],
+    "total": 0.909,
+    "superficie": 0.878,
+    "relieve": 1,
+    "accesibilidad": 0.85,
+    "access_h": 0.9,
+    "urban_frac": 0.034,
+    "lst_day": 19.61,
+    "lst_min": -15.49,
+    "precip": 563.56,
+    "ndvi": 0.205,
+    "albedo": 0.163,
+    "slope": 5.11,
+    "elev": 760,
+    "place": "Jalal-Abad Region, Kyrgyzstan"
    }
   ]
  },
  "jezero": {
   "dist": {
-   "total_p50": 0.545,
-   "total_p90": 0.654,
-   "total_p99": 0.787
+   "total_p50": 0.514,
+   "total_p90": 0.67,
+   "total_p99": 0.795
   },
   "known": [
    {
     "name": "Atacama",
-    "total": 0.614
+    "total": 0.673,
+    "access_h": 4.92
    },
    {
     "name": "Haughton / Devon",
-    "total": 0.681
+    "total": 0.424,
+    "access_h": 133.91
    },
    {
     "name": "Death Valley / Mojave",
-    "total": 0.677
+    "total": 0.769,
+    "access_h": 3.16
    },
    {
     "name": "McMurdo Dry Valleys",
-    "total": 0.735
+    "total": 0.669,
+    "access_h": null
    },
    {
     "name": "Iceland",
-    "total": 0.689
+    "total": 0.633,
+    "access_h": 9.27
    },
    {
     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
-    "total": 0.664
+    "total": 0.666,
+    "access_h": 12.16
    },
    {
     "name": "MDRS Utah",
-    "total": 0.619
+    "total": 0.685,
+    "access_h": 3.28
    },
    {
     "name": "Rio Tinto",
-    "total": 0.509
+    "total": 0.656,
+    "access_h": 0.82
    },
    {
     "name": "Lanzarote",
-    "total": 0.575
+    "total": 0.756,
+    "access_h": 0.29
    },
    {
     "name": "Svalbard (AMASE)",
-    "total": 0.752
+    "total": 0.529,
+    "access_h": 78.06
    },
    {
     "name": "Pilbara",
-    "total": 0.535
+    "total": 0.514,
+    "access_h": 20
    },
    {
     "name": "Meteor / SP Crater",
-    "total": 0.609
+    "total": 0.69,
+    "access_h": 2.96
    },
    {
     "name": "Axel Heiberg",
-    "total": 0.761
+    "total": 0.51,
+    "access_h": 126.39
    },
    {
     "name": "Qaidam",
-    "total": 0.609
+    "total": 0.625,
+    "access_h": 4.86
    },
    {
     "name": "Danakil / Dallol",
-    "total": 0.563
+    "total": 0.669,
+    "access_h": 3.89
    },
    {
     "name": "Namib",
-    "total": 0.565
+    "total": 0.543,
+    "access_h": 17.15
    },
    {
     "name": "Ries",
-    "total": 0.505
+    "total": 0.626,
+    "access_h": 0.88
    },
    {
     "name": "Arkaroola",
-    "total": 0.616
+    "total": 0.638,
+    "access_h": 7.84
    },
    {
     "name": "Sudbury",
-    "total": 0.547
+    "total": 0.581,
+    "access_h": 3.46
    },
    {
     "name": "Concordia (Dome C)",
-    "total": 0.542
+    "total": 0.213,
+    "access_h": null
    },
    {
     "name": "Lonar",
-    "total": 0.456
+    "total": 0.642,
+    "access_h": 0.65
    },
    {
     "name": "Kamchatka",
-    "total": 0.656
+    "total": 0.551,
+    "access_h": 20.27
    },
    {
     "name": "Bunge Land",
-    "total": 0.628
+    "total": 0.388,
+    "access_h": 103.64
    },
    {
     "name": "Mojave Bristol",
-    "total": 0.622
+    "total": 0.735,
+    "access_h": 2.3
    },
    {
     "name": "Wadi Rum",
-    "total": 0.617
+    "total": 0.732,
+    "access_h": 1.91
    }
   ],
   "top": [
    {
     "c": [
-     -78.15,
-     81.25
+     51.751,
+     35.55
     ],
-    "total": 0.89,
-    "clima": 0.77,
-    "superficie": 0.92,
-    "relieve": 0.99,
-    "lst_day": -18.5,
-    "lst_night": -19.19,
-    "lst_max": 11.77,
-    "lst_min": -38.35,
-    "precip": 114.61,
-    "ndvi": null,
-    "albedo": 0.32,
-    "slope": 2.95,
-    "elev": 0,
-    "place": "Nunavut, Canada"
+    "total": 0.953,
+    "superficie": 0.943,
+    "relieve": 0.942,
+    "accesibilidad": 0.973,
+    "access_h": 0.12,
+    "urban_frac": 0.041,
+    "lst_day": 28.25,
+    "lst_min": -3.27,
+    "precip": 364.27,
+    "ndvi": 0.101,
+    "albedo": 0.199,
+    "slope": 2.75,
+    "elev": 1297,
+    "place": "Tehran Province, Iran"
    },
    {
     "c": [
-     85.851,
-     37.25
+     48.451,
+     36.75
     ],
-    "total": 0.88,
-    "clima": 0.71,
-    "superficie": 0.96,
-    "relieve": 0.98,
-    "lst_day": -3.95,
-    "lst_night": -14.97,
-    "lst_max": 13.17,
-    "lst_min": -28.29,
-    "precip": 139.43,
-    "ndvi": null,
-    "albedo": 0.24,
-    "slope": 2.92,
-    "elev": 5440,
-    "place": "Xinjiang, China"
+    "total": 0.948,
+    "superficie": 0.901,
+    "relieve": 0.969,
+    "accesibilidad": 0.973,
+    "access_h": 0.12,
+    "urban_frac": 0.018,
+    "lst_day": 22.35,
+    "lst_min": -7.69,
+    "precip": 453.33,
+    "ndvi": 0.167,
+    "albedo": 0.191,
+    "slope": 3.14,
+    "elev": 1750,
+    "place": "Zanjan Province, Iran"
    },
    {
     "c": [
-     79.251,
-     35.85
+     69.351,
+     36.45
     ],
-    "total": 0.88,
-    "clima": 0.68,
-    "superficie": 0.97,
-    "relieve": 1,
-    "lst_day": 2.05,
-    "lst_night": -12.89,
-    "lst_max": 19.19,
-    "lst_min": -27.21,
-    "precip": 86.87,
-    "ndvi": null,
-    "albedo": 0.2,
-    "slope": 3.02,
-    "elev": 5593,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     55.751,
-     74.45
-    ],
-    "total": 0.88,
-    "clima": 0.66,
-    "superficie": 0.99,
-    "relieve": 0.99,
-    "lst_day": -7.22,
-    "lst_night": -8.22,
-    "lst_max": 16.99,
-    "lst_min": -22.83,
-    "precip": 489.1,
-    "ndvi": null,
-    "albedo": 0.19,
-    "slope": 3.06,
-    "elev": 109,
-    "place": "Arkhangelsk Oblast, Russia"
-   },
-   {
-    "c": [
-     80.951,
-     42.15
-    ],
-    "total": 0.88,
-    "clima": 0.7,
-    "superficie": 0.94,
-    "relieve": 0.99,
-    "lst_day": -4.75,
-    "lst_night": -12.79,
-    "lst_max": 13.53,
-    "lst_min": -32.71,
-    "precip": 277.4,
-    "ndvi": null,
-    "albedo": 0.28,
-    "slope": 2.95,
-    "elev": 4353,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     94.451,
-     43.05
-    ],
-    "total": 0.88,
-    "clima": 0.69,
-    "superficie": 0.95,
-    "relieve": 0.99,
-    "lst_day": -2.43,
-    "lst_night": -11.76,
-    "lst_max": 16.69,
-    "lst_min": -30.33,
-    "precip": 261.34,
-    "ndvi": null,
-    "albedo": 0.25,
-    "slope": 2.94,
-    "elev": 4015,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     75.151,
-     36.95
-    ],
-    "total": 0.88,
-    "clima": 0.71,
-    "superficie": 0.92,
-    "relieve": 1,
-    "lst_day": -3.44,
-    "lst_night": -14.34,
-    "lst_max": 16.35,
-    "lst_min": -33.93,
-    "precip": 81.03,
-    "ndvi": null,
-    "albedo": 0.32,
+    "total": 0.942,
+    "superficie": 0.878,
+    "relieve": 0.994,
+    "accesibilidad": 0.954,
+    "access_h": 0.22,
+    "urban_frac": 0,
+    "lst_day": 24.29,
+    "lst_min": -6.33,
+    "precip": 454.06,
+    "ndvi": 0.185,
+    "albedo": 0.229,
     "slope": 2.98,
-    "elev": 4976,
-    "place": "Gilgit-Baltistan, Pakistan"
+    "elev": 1139,
+    "place": "Takhar Province, Afghanistan"
    },
    {
     "c": [
-     93.651,
-     46.65
+     67.151,
+     30.25
     ],
-    "total": 0.88,
-    "clima": 0.67,
-    "superficie": 0.96,
-    "relieve": 1,
-    "lst_day": 0.39,
-    "lst_night": -11.56,
-    "lst_max": 20.93,
-    "lst_min": -30.03,
-    "precip": 203.67,
-    "ndvi": null,
-    "albedo": 0.21,
-    "slope": 2.98,
-    "elev": 3424,
-    "place": "Hovd, Mongolia"
-   },
-   {
-    "c": [
-     76.051,
-     34.05
-    ],
-    "total": 0.87,
-    "clima": 0.71,
-    "superficie": 0.93,
-    "relieve": 0.99,
-    "lst_day": -7.63,
-    "lst_night": -13.72,
-    "lst_max": 8.99,
-    "lst_min": -33.33,
-    "precip": 384.71,
-    "ndvi": null,
-    "albedo": 0.31,
-    "slope": 3.06,
-    "elev": 5324,
-    "place": "Ladakh, India"
-   },
-   {
-    "c": [
-     81.051,
-     32.85
-    ],
-    "total": 0.87,
-    "clima": 0.71,
-    "superficie": 0.92,
-    "relieve": 1,
-    "lst_day": -2.41,
-    "lst_night": -14.2,
-    "lst_max": 13.39,
-    "lst_min": -29.41,
-    "precip": 129.94,
-    "ndvi": null,
-    "albedo": 0.27,
-    "slope": 2.98,
-    "elev": 6033,
-    "place": "Tibet (Xizang), China"
-   },
-   {
-    "c": [
-     -70.649,
-     70.45
-    ],
-    "total": 0.87,
-    "clima": 0.74,
-    "superficie": 0.89,
-    "relieve": 1,
-    "lst_day": -11.99,
-    "lst_night": -14.86,
-    "lst_max": 9.45,
-    "lst_min": -38.61,
-    "precip": 307.33,
-    "ndvi": null,
-    "albedo": 0.37,
-    "slope": 2.98,
-    "elev": 755,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     88.351,
-     43.75
-    ],
-    "total": 0.87,
-    "clima": 0.68,
-    "superficie": 0.96,
-    "relieve": 0.98,
-    "lst_day": -4.24,
-    "lst_night": -12.31,
-    "lst_max": 13.23,
-    "lst_min": -27.25,
-    "precip": 497.13,
-    "ndvi": null,
-    "albedo": 0.23,
-    "slope": 3.08,
-    "elev": 4011,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     138.951,
-     67.55
-    ],
-    "total": 0.87,
-    "clima": 0.71,
-    "superficie": 0.91,
-    "relieve": 1,
-    "lst_day": -11.39,
-    "lst_night": -16.07,
-    "lst_max": 22.97,
-    "lst_min": -37.75,
-    "precip": 292,
-    "ndvi": null,
-    "albedo": 0.34,
-    "slope": 2.98,
-    "elev": 1573,
-    "place": "Sakha Republic, Russia"
-   },
-   {
-    "c": [
-     89.351,
-     38.25
-    ],
-    "total": 0.87,
-    "clima": 0.66,
-    "superficie": 0.95,
-    "relieve": 0.99,
-    "lst_day": 2.36,
-    "lst_night": -11.53,
-    "lst_max": 20.65,
-    "lst_min": -25.37,
-    "precip": 124.1,
-    "ndvi": null,
-    "albedo": 0.22,
+    "total": 0.94,
+    "superficie": 0.905,
+    "relieve": 0.991,
+    "accesibilidad": 0.923,
+    "access_h": 0.39,
+    "urban_frac": 0,
+    "lst_day": 23.48,
+    "lst_min": -3.95,
+    "precip": 470.85,
+    "ndvi": 0.153,
+    "albedo": 0.216,
     "slope": 3.04,
-    "elev": 4640,
-    "place": "Xinjiang, China"
+    "elev": 2092,
+    "place": "Balochistan, Pakistan"
    },
    {
     "c": [
-     -68.949,
-     -28.051
+     36.351,
+     33.65
     ],
-    "total": 0.87,
-    "clima": 0.64,
-    "superficie": 0.97,
-    "relieve": 1,
-    "lst_day": 7.24,
-    "lst_night": -12.57,
-    "lst_max": 26.55,
-    "lst_min": -21.93,
-    "precip": 77.38,
-    "ndvi": null,
-    "albedo": 0.22,
-    "slope": 2.98,
-    "elev": 5306,
-    "place": "La Rioja, Argentina"
-   },
-   {
-    "c": [
-     -80.55,
-     72.05
-    ],
-    "total": 0.87,
-    "clima": 0.74,
-    "superficie": 0.88,
-    "relieve": 0.98,
-    "lst_day": -13.37,
-    "lst_night": -15.75,
-    "lst_max": 13.31,
-    "lst_min": -39.77,
-    "precip": 294.19,
-    "ndvi": null,
-    "albedo": 0.36,
-    "slope": 2.93,
-    "elev": 1,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     98.551,
-     39.25
-    ],
-    "total": 0.87,
-    "clima": 0.65,
-    "superficie": 0.96,
-    "relieve": 0.99,
-    "lst_day": 1.06,
-    "lst_night": -10.92,
-    "lst_max": 19.69,
-    "lst_min": -25.25,
-    "precip": 340.18,
-    "ndvi": null,
-    "albedo": 0.23,
+    "total": 0.937,
+    "superficie": 0.858,
+    "relieve": 0.986,
+    "accesibilidad": 0.968,
+    "access_h": 0.15,
+    "urban_frac": 0.046,
+    "lst_day": 28.34,
+    "lst_min": 0.71,
+    "precip": 240.9,
+    "ndvi": 0.181,
+    "albedo": 0.266,
     "slope": 2.94,
-    "elev": 4774,
-    "place": "Gansu, China"
+    "elev": 1147,
+    "place": "Rif Dimashq Governorate, Syria"
    },
    {
     "c": [
-     -81.15,
-     77.25
+     57.051,
+     30.05
     ],
-    "total": 0.87,
-    "clima": 0.76,
-    "superficie": 0.84,
-    "relieve": 0.99,
-    "lst_day": -16.42,
-    "lst_night": -18.39,
-    "lst_max": 13.25,
-    "lst_min": -42.19,
-    "precip": 246.74,
-    "ndvi": null,
-    "albedo": 0.44,
-    "slope": 3.03,
-    "elev": 373,
-    "place": "Nunavut, Canada"
+    "total": 0.937,
+    "superficie": 0.939,
+    "relieve": 0.995,
+    "accesibilidad": 0.877,
+    "access_h": 0.7,
+    "urban_frac": 0,
+    "lst_day": 36.89,
+    "lst_min": -1.23,
+    "precip": 125.56,
+    "ndvi": 0.095,
+    "albedo": 0.213,
+    "slope": 2.98,
+    "elev": 1909,
+    "place": "Kerman Province, Iran"
    },
    {
     "c": [
-     -111.05,
-     72.45
+     -76.75,
+     -12.15
     ],
-    "total": 0.87,
-    "clima": 0.72,
-    "superficie": 0.88,
-    "relieve": 1,
-    "lst_day": -12.74,
-    "lst_night": -14.88,
-    "lst_max": 17.35,
-    "lst_min": -35.91,
-    "precip": 313.9,
-    "ndvi": null,
-    "albedo": 0.37,
+    "total": 0.936,
+    "superficie": 0.905,
+    "relieve": 0.991,
+    "accesibilidad": 0.912,
+    "access_h": 0.46,
+    "urban_frac": 0.004,
+    "lst_day": 33.4,
+    "lst_min": 14.71,
+    "precip": 127.02,
+    "ndvi": 0.103,
+    "albedo": 0.14,
+    "slope": 3.04,
+    "elev": 750,
+    "place": "Lima, Peru"
+   },
+   {
+    "c": [
+     -119.65,
+     39.65
+    ],
+    "total": 0.933,
+    "superficie": 0.866,
+    "relieve": 0.999,
+    "accesibilidad": 0.934,
+    "access_h": 0.33,
+    "urban_frac": 0.042,
+    "lst_day": 23.51,
+    "lst_min": -7.79,
+    "precip": 280.32,
+    "ndvi": 0.203,
+    "albedo": 0.166,
+    "slope": 2.99,
+    "elev": 1633,
+    "place": "Nevada, United States"
+   },
+   {
+    "c": [
+     70.551,
+     40.05
+    ],
+    "total": 0.932,
+    "superficie": 0.926,
+    "relieve": 0.984,
+    "accesibilidad": 0.886,
+    "access_h": 0.63,
+    "urban_frac": 0.021,
+    "lst_day": 22.96,
+    "lst_min": -14.13,
+    "precip": 427.05,
+    "ndvi": 0.113,
+    "albedo": 0.182,
+    "slope": 3.07,
+    "elev": 1189,
+    "place": "Sughd Region, Tajikistan"
+   },
+   {
+    "c": [
+     58.151,
+     37.95
+    ],
+    "total": 0.932,
+    "superficie": 0.879,
+    "relieve": 0.973,
+    "accesibilidad": 0.943,
+    "access_h": 0.28,
+    "urban_frac": 0,
+    "lst_day": 27,
+    "lst_min": -2.31,
+    "precip": 294.19,
+    "ndvi": 0.208,
+    "albedo": 0.191,
+    "slope": 3.12,
+    "elev": 507,
+    "place": "Ashgabat, Turkmenistan"
+   },
+   {
+    "c": [
+     -106.65,
+     32.35
+    ],
+    "total": 0.932,
+    "superficie": 0.905,
+    "relieve": 0.955,
+    "accesibilidad": 0.935,
+    "access_h": 0.32,
+    "urban_frac": 0.006,
+    "lst_day": 31.42,
+    "lst_min": -1.63,
+    "precip": 209.51,
+    "ndvi": 0.152,
+    "albedo": 0.183,
+    "slope": 2.8,
+    "elev": 1471,
+    "place": "New Mexico, United States"
+   },
+   {
+    "c": [
+     -1.549,
+     34.85
+    ],
+    "total": 0.931,
+    "superficie": 0.872,
+    "relieve": 0.984,
+    "accesibilidad": 0.939,
+    "access_h": 0.3,
+    "urban_frac": 0.036,
+    "lst_day": 29.66,
+    "lst_min": 2.41,
+    "precip": 183.96,
+    "ndvi": 0.183,
+    "albedo": 0.242,
+    "slope": 3.07,
+    "elev": 517,
+    "place": "Tlemcen, Algeria"
+   },
+   {
+    "c": [
+     -9.449,
+     29.55
+    ],
+    "total": 0.931,
+    "superficie": 0.937,
+    "relieve": 0.964,
+    "accesibilidad": 0.893,
+    "access_h": 0.58,
+    "urban_frac": 0,
+    "lst_day": 32.14,
+    "lst_min": 9.27,
+    "precip": 50.37,
+    "ndvi": 0.093,
+    "albedo": 0.182,
+    "slope": 2.84,
+    "elev": 513,
+    "place": "Souss-Massa, Morocco"
+   },
+   {
+    "c": [
+     -0.549,
+     38.45
+    ],
+    "total": 0.929,
+    "superficie": 0.863,
+    "relieve": 0.946,
+    "accesibilidad": 0.977,
+    "access_h": 0.1,
+    "urban_frac": 0.011,
+    "lst_day": 27.18,
+    "lst_min": 4.35,
+    "precip": 297.84,
+    "ndvi": 0.241,
+    "albedo": 0.195,
+    "slope": 2.76,
+    "elev": 243,
+    "place": "Valencian Community, Spain"
+   },
+   {
+    "c": [
+     58.651,
+     23.35
+    ],
+    "total": 0.928,
+    "superficie": 0.94,
+    "relieve": 0.985,
+    "accesibilidad": 0.859,
+    "access_h": 0.83,
+    "urban_frac": 0,
+    "lst_day": 39.85,
+    "lst_min": 17.67,
+    "precip": 237.98,
+    "ndvi": 0.09,
+    "albedo": 0.216,
+    "slope": 3.07,
+    "elev": 329,
+    "place": "Muscat Governorate, Oman"
+   },
+   {
+    "c": [
+     89.251,
+     29.35
+    ],
+    "total": 0.928,
+    "superficie": 0.925,
+    "relieve": 0.999,
+    "accesibilidad": 0.859,
+    "access_h": 0.83,
+    "urban_frac": 0.023,
+    "lst_day": 22.41,
+    "lst_min": -12.55,
+    "precip": 346.75,
+    "ndvi": 0.12,
+    "albedo": 0.188,
+    "slope": 3.01,
+    "elev": 3817,
+    "place": "Xizang, China"
+   },
+   {
+    "c": [
+     45.751,
+     38.55
+    ],
+    "total": 0.926,
+    "superficie": 0.887,
+    "relieve": 0.967,
+    "accesibilidad": 0.923,
+    "access_h": 0.39,
+    "urban_frac": 0,
+    "lst_day": 23.97,
+    "lst_min": -10.67,
+    "precip": 365.73,
+    "ndvi": 0.192,
+    "albedo": 0.209,
+    "slope": 3.14,
+    "elev": 1463,
+    "place": "East Azerbaijan Province, Iran"
+   },
+   {
+    "c": [
+     -71.75,
+     -16.45
+    ],
+    "total": 0.926,
+    "superficie": 0.958,
+    "relieve": 0.924,
+    "accesibilidad": 0.895,
+    "access_h": 0.57,
+    "urban_frac": 0.001,
+    "lst_day": 36.61,
+    "lst_min": 11.47,
+    "precip": 97.82,
+    "ndvi": 0.059,
+    "albedo": 0.186,
+    "slope": 2.67,
+    "elev": 1867,
+    "place": "Arequipa, Peru"
+   },
+   {
+    "c": [
+     69.151,
+     33.45
+    ],
+    "total": 0.926,
+    "superficie": 0.914,
+    "relieve": 0.999,
+    "accesibilidad": 0.864,
+    "access_h": 0.79,
+    "urban_frac": 0,
+    "lst_day": 25.96,
+    "lst_min": -7.47,
+    "precip": 255.5,
+    "ndvi": 0.146,
+    "albedo": 0.208,
     "slope": 3,
-    "elev": 55,
-    "place": "Northwest Territories, Canada"
+    "elev": 2348,
+    "place": "Paktia Province, Afghanistan"
    },
    {
     "c": [
-     -139.75,
-     61.25
+     -149.75,
+     61.15
     ],
-    "total": 0.87,
-    "clima": 0.68,
-    "superficie": 0.97,
-    "relieve": 0.95,
-    "lst_day": -5.53,
-    "lst_night": -11.94,
-    "lst_max": 19.07,
-    "lst_min": -33.53,
-    "precip": 397.12,
-    "ndvi": null,
-    "albedo": 0.24,
-    "slope": 3.24,
-    "elev": 1914,
-    "place": "Yukon, Canada"
+    "total": 0.925,
+    "superficie": 0.799,
+    "relieve": 0.989,
+    "accesibilidad": 0.988,
+    "access_h": 0.05,
+    "urban_frac": 0.009,
+    "lst_day": 1.13,
+    "lst_min": -22.69,
+    "precip": 930.02,
+    "ndvi": 0.348,
+    "albedo": 0.188,
+    "slope": 3.05,
+    "elev": 95,
+    "place": "Alaska, United States"
    }
   ]
  },
  "arcadia": {
   "dist": {
-   "total_p50": 0.639,
-   "total_p90": 0.748,
-   "total_p99": 0.799
+   "total_p50": 0.643,
+   "total_p90": 0.803,
+   "total_p99": 0.869
   },
   "known": [
    {
     "name": "Atacama",
-    "total": 0.725
+    "total": 0.812,
+    "access_h": 4.92
    },
    {
     "name": "Haughton / Devon",
-    "total": 0.792
+    "total": 0.562,
+    "access_h": 133.91
    },
    {
     "name": "Death Valley / Mojave",
-    "total": 0.568
+    "total": 0.687,
+    "access_h": 3.16
    },
    {
     "name": "McMurdo Dry Valleys",
-    "total": 0.735
+    "total": 0.669,
+    "access_h": null
    },
    {
     "name": "Iceland",
-    "total": 0.714
+    "total": 0.681,
+    "access_h": 9.27
    },
    {
     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
-    "total": 0.526
+    "total": 0.555,
+    "access_h": 12.16
    },
    {
     "name": "MDRS Utah",
-    "total": 0.72
+    "total": 0.814,
+    "access_h": 3.28
    },
    {
     "name": "Rio Tinto",
-    "total": 0.631
+    "total": 0.806,
+    "access_h": 0.82
    },
    {
     "name": "Lanzarote",
-    "total": 0.699
+    "total": 0.906,
+    "access_h": 0.29
    },
    {
     "name": "Svalbard (AMASE)",
-    "total": 0.656
+    "total": 0.457,
+    "access_h": 78.06
    },
    {
     "name": "Pilbara",
-    "total": 0.659
+    "total": 0.666,
+    "access_h": 20
    },
    {
     "name": "Meteor / SP Crater",
-    "total": 0.721
+    "total": 0.83,
+    "access_h": 2.96
    },
    {
     "name": "Axel Heiberg",
-    "total": 0.664
+    "total": 0.437,
+    "access_h": 126.39
    },
    {
     "name": "Qaidam",
-    "total": 0.733
+    "total": 0.777,
+    "access_h": 4.86
    },
    {
     "name": "Danakil / Dallol",
-    "total": 0.665
+    "total": 0.798,
+    "access_h": 3.89
    },
    {
     "name": "Namib",
-    "total": 0.689
+    "total": 0.695,
+    "access_h": 17.15
    },
    {
     "name": "Ries",
-    "total": 0.629
+    "total": 0.778,
+    "access_h": 0.88
    },
    {
     "name": "Arkaroola",
-    "total": 0.704
+    "total": 0.754,
+    "access_h": 7.84
    },
    {
     "name": "Sudbury",
-    "total": 0.672
+    "total": 0.733,
+    "access_h": 3.46
    },
    {
     "name": "Concordia (Dome C)",
-    "total": 0.581
+    "total": 0.213,
+    "access_h": null
    },
    {
     "name": "Lonar",
-    "total": 0.581
+    "total": 0.794,
+    "access_h": 0.65
    },
    {
     "name": "Kamchatka",
-    "total": 0.708
+    "total": 0.63,
+    "access_h": 20.27
    },
    {
     "name": "Bunge Land",
-    "total": 0.753
+    "total": 0.543,
+    "access_h": 103.64
    },
    {
     "name": "Mojave Bristol",
-    "total": 0.696
+    "total": 0.837,
+    "access_h": 2.3
    },
    {
     "name": "Wadi Rum",
-    "total": 0.717
+    "total": 0.859,
+    "access_h": 1.91
    }
   ],
   "top": [
    {
     "c": [
-     -70.75,
-     81.75
+     51.751,
+     35.45
     ],
-    "total": 0.87,
-    "clima": 0.73,
-    "superficie": 0.89,
-    "relieve": 0.98,
-    "lst_day": -19.47,
-    "lst_night": -20.9,
-    "lst_max": 5.67,
-    "lst_min": -46.75,
-    "precip": 72.27,
-    "ndvi": null,
-    "albedo": 0.36,
-    "slope": 0.93,
-    "elev": 246,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     78.651,
-     35.25
-    ],
-    "total": 0.86,
-    "clima": 0.62,
-    "superficie": 0.97,
-    "relieve": 0.99,
-    "lst_day": 2.81,
-    "lst_night": -18.05,
-    "lst_max": 20.93,
-    "lst_min": -36.07,
-    "precip": 86.87,
-    "ndvi": null,
-    "albedo": 0.23,
-    "slope": 0.95,
-    "elev": 5815,
-    "place": "Xinjiang, China"
-   },
-   {
-    "c": [
-     89.351,
-     36.35
-    ],
-    "total": 0.86,
-    "clima": 0.59,
-    "superficie": 0.99,
-    "relieve": 1,
-    "lst_day": -0.79,
-    "lst_night": -6.05,
-    "lst_max": 12.05,
-    "lst_min": -24.13,
-    "precip": 154.76,
-    "ndvi": null,
-    "albedo": 0.22,
+    "total": 0.962,
+    "superficie": 0.919,
+    "relieve": 0.996,
+    "accesibilidad": 0.97,
+    "access_h": 0.14,
+    "urban_frac": 0.002,
+    "lst_day": 28.18,
+    "lst_min": -1.41,
+    "precip": 334.34,
+    "ndvi": 0.12,
+    "albedo": 0.222,
     "slope": 1.02,
-    "elev": 4713,
-    "place": "Xinjiang, China"
+    "elev": 1061,
+    "place": "Tehran Province, Iran"
    },
    {
     "c": [
-     -74.55,
-     78.65
+     69.351,
+     34.55
     ],
-    "total": 0.86,
-    "clima": 0.7,
-    "superficie": 0.87,
-    "relieve": 0.99,
-    "lst_day": -16.8,
-    "lst_night": -18.33,
-    "lst_max": 2.03,
-    "lst_min": -37.33,
-    "precip": 209.51,
-    "ndvi": null,
-    "albedo": 0.4,
-    "slope": 1.04,
-    "elev": 0,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     -64.649,
-     61.45
-    ],
-    "total": 0.85,
-    "clima": 0.59,
-    "superficie": 0.98,
-    "relieve": 0.99,
-    "lst_day": -5.17,
-    "lst_night": -8.94,
-    "lst_max": 11.71,
-    "lst_min": -31.33,
-    "precip": 598.6,
-    "ndvi": null,
-    "albedo": 0.23,
-    "slope": 0.94,
-    "elev": 0,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     -78.85,
-     75.85
-    ],
-    "total": 0.85,
-    "clima": 0.66,
-    "superficie": 0.95,
-    "relieve": 0.94,
-    "lst_day": -11.3,
-    "lst_night": -12.94,
-    "lst_max": 6.89,
-    "lst_min": -37.17,
-    "precip": 210.97,
-    "ndvi": null,
-    "albedo": 0.24,
-    "slope": 1.24,
-    "elev": 0,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     -65.349,
-     64.75
-    ],
-    "total": 0.85,
-    "clima": 0.63,
-    "superficie": 0.94,
-    "relieve": 0.98,
-    "lst_day": -8.69,
-    "lst_night": -11.64,
-    "lst_max": 11.57,
-    "lst_min": -31.81,
-    "precip": 278.13,
-    "ndvi": null,
-    "albedo": 0.29,
-    "slope": 0.92,
-    "elev": 8,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     -80.75,
-     72.25
-    ],
-    "total": 0.85,
-    "clima": 0.65,
-    "superficie": 0.9,
-    "relieve": 0.99,
-    "lst_day": -13.07,
-    "lst_night": -15.81,
-    "lst_max": 14.57,
-    "lst_min": -39.19,
-    "precip": 340.18,
-    "ndvi": null,
-    "albedo": 0.34,
-    "slope": 1.03,
-    "elev": 0,
-    "place": "Nunavut, Canada"
-   },
-   {
-    "c": [
-     82.451,
-     35.25
-    ],
-    "total": 0.85,
-    "clima": 0.62,
-    "superficie": 0.94,
-    "relieve": 0.98,
-    "lst_day": -0.03,
-    "lst_night": -16.09,
-    "lst_max": 16.81,
-    "lst_min": -32.57,
-    "precip": 117.53,
-    "ndvi": null,
-    "albedo": 0.23,
-    "slope": 0.93,
-    "elev": 5484,
-    "place": "Tibet (Xizang), China"
-   },
-   {
-    "c": [
-     148.652,
-     76.65
-    ],
-    "total": 0.85,
-    "clima": 0.68,
-    "superficie": 0.88,
-    "relieve": 1,
-    "lst_day": -14.35,
-    "lst_night": -15.59,
-    "lst_max": 5.95,
-    "lst_min": -32.51,
-    "precip": 118.26,
-    "ndvi": null,
-    "albedo": 0.36,
-    "slope": 0.98,
-    "elev": 87,
-    "place": "Sakha Republic, Russia"
-   },
-   {
-    "c": [
-     55.851,
-     74.45
-    ],
-    "total": 0.85,
-    "clima": 0.57,
-    "superficie": 0.98,
-    "relieve": 1,
-    "lst_day": -7.22,
-    "lst_night": -8.22,
-    "lst_max": 16.99,
-    "lst_min": -22.83,
-    "precip": 495.67,
-    "ndvi": null,
+    "total": 0.959,
+    "superficie": 0.92,
+    "relieve": 0.982,
+    "accesibilidad": 0.974,
+    "access_h": 0.12,
+    "urban_frac": 0,
+    "lst_day": 24.96,
+    "lst_min": -5.51,
+    "precip": 290.54,
+    "ndvi": 0.132,
     "albedo": 0.21,
-    "slope": 1.01,
-    "elev": 202,
-    "place": "Arkhangelsk Oblast, Russia"
+    "slope": 1.08,
+    "elev": 1814,
+    "place": "Kabul Province, Afghanistan"
    },
    {
     "c": [
-     85.851,
-     37.15
+     51.351,
+     32.55
     ],
-    "total": 0.85,
-    "clima": 0.59,
-    "superficie": 0.96,
-    "relieve": 0.99,
-    "lst_day": 2.86,
-    "lst_night": -14.15,
-    "lst_max": 23.87,
-    "lst_min": -29.39,
-    "precip": 70.08,
-    "ndvi": null,
-    "albedo": 0.24,
-    "slope": 1.03,
-    "elev": 5049,
-    "place": "Xinjiang, China"
+    "total": 0.952,
+    "superficie": 0.933,
+    "relieve": 0.955,
+    "accesibilidad": 0.97,
+    "access_h": 0.14,
+    "urban_frac": 0.016,
+    "lst_day": 28.08,
+    "lst_min": -1.17,
+    "precip": 235.06,
+    "ndvi": 0.12,
+    "albedo": 0.2,
+    "slope": 1.2,
+    "elev": 1647,
+    "place": "Isfahan Province, Iran"
    },
    {
     "c": [
      57.951,
-     81.25
+     23.55
     ],
-    "total": 0.85,
-    "clima": 0.67,
-    "superficie": 0.94,
-    "relieve": 0.93,
-    "lst_day": -13.45,
-    "lst_night": -14.31,
-    "lst_max": 1.39,
-    "lst_min": -35.07,
-    "precip": 345.29,
-    "ndvi": null,
-    "albedo": 0.24,
-    "slope": 0.68,
-    "elev": 12,
-    "place": "Arkhangelsk Oblast, Russia"
+    "total": 0.952,
+    "superficie": 0.954,
+    "relieve": 0.975,
+    "accesibilidad": 0.927,
+    "access_h": 0.37,
+    "urban_frac": 0,
+    "lst_day": 41.71,
+    "lst_min": 17.63,
+    "precip": 219,
+    "ndvi": 0.076,
+    "albedo": 0.195,
+    "slope": 1.11,
+    "elev": 98,
+    "place": "Al Batinah South Governorate, Oman"
    },
    {
     "c": [
-     90.551,
-     81.25
+     39.251,
+     21.75
     ],
-    "total": 0.85,
-    "clima": 0.65,
-    "superficie": 0.93,
-    "relieve": 0.96,
-    "lst_day": -12.8,
-    "lst_night": -14.2,
-    "lst_max": 4.65,
-    "lst_min": -30.73,
-    "precip": 389.09,
-    "ndvi": null,
-    "albedo": 0.25,
-    "slope": 0.8,
-    "elev": 14,
-    "place": "Krasnoyarsk Krai, Russia"
+    "total": 0.952,
+    "superficie": 0.945,
+    "relieve": 0.953,
+    "accesibilidad": 0.956,
+    "access_h": 0.21,
+    "urban_frac": 0,
+    "lst_day": 42.93,
+    "lst_min": 19.51,
+    "precip": 97.09,
+    "ndvi": 0.096,
+    "albedo": 0.202,
+    "slope": 0.79,
+    "elev": 54,
+    "place": "Makkah Region, Saudi Arabia"
    },
    {
     "c": [
-     -97.15,
-     73.05
+     55.751,
+     29.55
     ],
-    "total": 0.85,
-    "clima": 0.66,
-    "superficie": 0.88,
-    "relieve": 0.99,
-    "lst_day": -14.02,
-    "lst_night": -16.57,
-    "lst_max": 12.35,
-    "lst_min": -38.07,
-    "precip": 303.68,
-    "ndvi": null,
-    "albedo": 0.36,
-    "slope": 1.02,
-    "elev": 0,
-    "place": "Nunavut, Canada"
+    "total": 0.949,
+    "superficie": 0.954,
+    "relieve": 0.963,
+    "accesibilidad": 0.93,
+    "access_h": 0.35,
+    "urban_frac": 0,
+    "lst_day": 38.99,
+    "lst_min": -1.77,
+    "precip": 139.43,
+    "ndvi": 0.073,
+    "albedo": 0.191,
+    "slope": 0.84,
+    "elev": 1866,
+    "place": "Kerman Province, Iran"
    },
    {
     "c": [
-     -123.15,
-     74.45
+     -71.65,
+     -16.35
     ],
-    "total": 0.85,
-    "clima": 0.65,
-    "superficie": 0.91,
-    "relieve": 0.98,
-    "lst_day": -13.05,
-    "lst_night": -15.42,
-    "lst_max": 16.23,
-    "lst_min": -35.57,
-    "precip": 156.22,
-    "ndvi": null,
-    "albedo": 0.29,
-    "slope": 0.91,
-    "elev": 35,
-    "place": "Northwest Territories, Canada"
-   },
-   {
-    "c": [
-     75.451,
-     38.65
-    ],
-    "total": 0.85,
-    "clima": 0.62,
-    "superficie": 0.95,
-    "relieve": 0.97,
-    "lst_day": -4.72,
-    "lst_night": -14.55,
-    "lst_max": 13.19,
-    "lst_min": -29.09,
-    "precip": 202.94,
-    "ndvi": null,
-    "albedo": 0.26,
+    "total": 0.949,
+    "superficie": 0.918,
+    "relieve": 0.969,
+    "accesibilidad": 0.959,
+    "access_h": 0.19,
+    "urban_frac": 0.039,
+    "lst_day": 39.05,
+    "lst_min": 5.01,
+    "precip": 205.13,
+    "ndvi": 0.105,
+    "albedo": 0.237,
     "slope": 1.13,
-    "elev": 4497,
+    "elev": 2319,
+    "place": "Arequipa, Peru"
+   },
+   {
+    "c": [
+     87.451,
+     43.75
+    ],
+    "total": 0.949,
+    "superficie": 0.903,
+    "relieve": 0.983,
+    "accesibilidad": 0.961,
+    "access_h": 0.18,
+    "urban_frac": 0.003,
+    "lst_day": 16.08,
+    "lst_min": -22.89,
+    "precip": 280.32,
+    "ndvi": 0.121,
+    "albedo": 0.248,
+    "slope": 1.08,
+    "elev": 1054,
     "place": "Xinjiang, China"
    },
    {
     "c": [
-     83.451,
+     56.051,
+     25.85
+    ],
+    "total": 0.948,
+    "superficie": 0.924,
+    "relieve": 0.993,
+    "accesibilidad": 0.927,
+    "access_h": 0.37,
+    "urban_frac": 0,
+    "lst_day": 35.63,
+    "lst_min": 16.61,
+    "precip": 208.05,
+    "ndvi": 0.126,
+    "albedo": 0.19,
+    "slope": 1.03,
+    "elev": 94,
+    "place": "Ras al-Khaimah Emirate, United Arab Emirates"
+   },
+   {
+    "c": [
+     -70.85,
+     -27.151
+    ],
+    "total": 0.947,
+    "superficie": 0.958,
+    "relieve": 0.987,
+    "accesibilidad": 0.897,
+    "access_h": 0.56,
+    "urban_frac": 0,
+    "lst_day": 28.51,
+    "lst_min": 1.83,
+    "precip": 33.58,
+    "ndvi": 0.074,
+    "albedo": 0.202,
+    "slope": 1.06,
+    "elev": 111,
+    "place": "Atacama Region, Chile"
+   },
+   {
+    "c": [
+     -3.049,
+     35.15
+    ],
+    "total": 0.947,
+    "superficie": 0.898,
+    "relieve": 0.969,
+    "accesibilidad": 0.974,
+    "access_h": 0.12,
+    "urban_frac": 0.039,
+    "lst_day": 29.11,
+    "lst_min": 6.97,
+    "precip": 178.12,
+    "ndvi": 0.174,
+    "albedo": 0.191,
+    "slope": 0.87,
+    "elev": 249,
+    "place": "Oriental, Morocco"
+   },
+   {
+    "c": [
+     65.751,
+     31.65
+    ],
+    "total": 0.946,
+    "superficie": 0.922,
+    "relieve": 0.953,
+    "accesibilidad": 0.964,
+    "access_h": 0.17,
+    "urban_frac": 0.034,
+    "lst_day": 30.41,
+    "lst_min": 1.81,
+    "precip": 383.25,
+    "ndvi": 0.108,
+    "albedo": 0.228,
+    "slope": 0.79,
+    "elev": 1032,
+    "place": "Kandahar Province, Afghanistan"
+   },
+   {
+    "c": [
+     57.551,
+     36.25
+    ],
+    "total": 0.946,
+    "superficie": 0.941,
+    "relieve": 0.988,
+    "accesibilidad": 0.91,
+    "access_h": 0.47,
+    "urban_frac": 0.011,
+    "lst_day": 29.21,
+    "lst_min": -3.95,
+    "precip": 157.68,
+    "ndvi": 0.104,
+    "albedo": 0.198,
+    "slope": 1.05,
+    "elev": 1018,
+    "place": "Razavi Khorasan, Iran"
+   },
+   {
+    "c": [
+     41.651,
+     27.65
+    ],
+    "total": 0.946,
+    "superficie": 0.929,
+    "relieve": 0.987,
+    "accesibilidad": 0.921,
+    "access_h": 0.4,
+    "urban_frac": 0,
+    "lst_day": 36.22,
+    "lst_min": 8.79,
+    "precip": 153.3,
+    "ndvi": 0.111,
+    "albedo": 0.214,
+    "slope": 0.94,
+    "elev": 1045,
+    "place": "Ḥa'il Province, Saudi Arabia"
+   },
+   {
+    "c": [
+     -0.649,
+     38.35
+    ],
+    "total": 0.945,
+    "superficie": 0.865,
+    "relieve": 0.988,
+    "accesibilidad": 0.982,
+    "access_h": 0.08,
+    "urban_frac": 0.013,
+    "lst_day": 27.15,
+    "lst_min": 4.53,
+    "precip": 294.92,
+    "ndvi": 0.223,
+    "albedo": 0.217,
+    "slope": 1.05,
+    "elev": 223,
+    "place": "Valencian Community, Spain"
+   },
+   {
+    "c": [
+     93.551,
+     42.95
+    ],
+    "total": 0.945,
+    "superficie": 0.962,
+    "relieve": 0.976,
+    "accesibilidad": 0.897,
+    "access_h": 0.56,
+    "urban_frac": 0,
+    "lst_day": 26.03,
+    "lst_min": -16.53,
+    "precip": 92.71,
+    "ndvi": 0.044,
+    "albedo": 0.221,
+    "slope": 0.89,
+    "elev": 922,
+    "place": "Xinjiang, China"
+   },
+   {
+    "c": [
+     -7.049,
      30.95
     ],
-    "total": 0.85,
-    "clima": 0.6,
-    "superficie": 0.94,
-    "relieve": 1,
-    "lst_day": 1.9,
-    "lst_night": -12.77,
-    "lst_max": 15.45,
-    "lst_min": -27.73,
-    "precip": 156.95,
-    "ndvi": null,
-    "albedo": 0.27,
+    "total": 0.944,
+    "superficie": 0.933,
+    "relieve": 0.966,
+    "accesibilidad": 0.934,
+    "access_h": 0.33,
+    "urban_frac": 0,
+    "lst_day": 33.94,
+    "lst_min": 5.25,
+    "precip": 188.34,
+    "ndvi": 0.113,
+    "albedo": 0.193,
+    "slope": 0.85,
+    "elev": 1206,
+    "place": "Drâa-Tafilalet, Morocco"
+   },
+   {
+    "c": [
+     63.051,
+     34.95
+    ],
+    "total": 0.944,
+    "superficie": 0.886,
+    "relieve": 0.996,
+    "accesibilidad": 0.95,
+    "access_h": 0.24,
+    "urban_frac": 0,
+    "lst_day": 26.69,
+    "lst_min": -1.85,
+    "precip": 292,
+    "ndvi": 0.163,
+    "albedo": 0.237,
     "slope": 1.02,
-    "elev": 5780,
-    "place": "Tibet (Xizang), China"
+    "elev": 928,
+    "place": "Badghis Province, Afghanistan"
    },
    {
     "c": [
-     -116.95,
-     70.15
+     2.851,
+     35.95
     ],
-    "total": 0.85,
-    "clima": 0.62,
-    "superficie": 0.92,
-    "relieve": 0.99,
-    "lst_day": -10.45,
-    "lst_night": -12.25,
-    "lst_max": 13.07,
-    "lst_min": -31.31,
-    "precip": 402.23,
-    "ndvi": null,
-    "albedo": 0.31,
-    "slope": 0.98,
-    "elev": 0,
-    "place": "Northwest Territories, Canada"
+    "total": 0.944,
+    "superficie": 0.89,
+    "relieve": 1,
+    "accesibilidad": 0.942,
+    "access_h": 0.28,
+    "urban_frac": 0,
+    "lst_day": 28.24,
+    "lst_min": 2.07,
+    "precip": 335.8,
+    "ndvi": 0.196,
+    "albedo": 0.198,
+    "slope": 1,
+    "elev": 704,
+    "place": "Médéa, Algeria"
    },
    {
     "c": [
-     -84.55,
-     65.75
+     -77.55,
+     -11.25
     ],
-    "total": 0.84,
-    "clima": 0.61,
-    "superficie": 0.94,
-    "relieve": 0.98,
-    "lst_day": -7.67,
-    "lst_night": -11.47,
-    "lst_max": 18.23,
-    "lst_min": -33.11,
-    "precip": 393.47,
-    "ndvi": null,
-    "albedo": 0.16,
-    "slope": 0.93,
-    "elev": 0,
-    "place": "Nunavut, Canada"
+    "total": 0.944,
+    "superficie": 0.943,
+    "relieve": 0.992,
+    "accesibilidad": 0.897,
+    "access_h": 0.56,
+    "urban_frac": 0.002,
+    "lst_day": 36.34,
+    "lst_min": -14.75,
+    "precip": 56.94,
+    "ndvi": 0.072,
+    "albedo": 0.172,
+    "slope": 0.97,
+    "elev": 39,
+    "place": "Lima, Peru"
    }
   ]
- },
- "notes": "ndvi of candidates set to null on 2026-11-14: the asset stored MOD13C1 NDVI scaled twice (x1e-4) and rounding to 3 decimals erased it. Scores are unaffected (relative positions). Re-run scripts/ee/07_ndvi_candidatos.js and node scripts/ee/merge-ndvi.mjs to restore real values. Place names translated to English."
+ }
 }

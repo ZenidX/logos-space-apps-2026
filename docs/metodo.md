@@ -1,5 +1,20 @@
 # Método de análisis
 
+> **v2 (14-11-2026, noche): cambio de criterio del equipo.**
+> - **El clima ya no puntúa.** Las temperaturas y la lluvia se muestran como contexto, pero no entran en la nota.
+> - **Nueva dimensión: Accesibilidad.** Mide si es factible llevar personas y materiales al sitio. Se calcula con el tiempo de viaje a la ciudad más cercana de ≥50 000 habitantes (Oxford Malaria Atlas Project, *accessibility_to_cities_2015*, Weiss et al. 2018, *Nature*), como media en la celda de 0,1°.
+>   - Nota = 1 − ln(1 + horas) / ln(1 + 72), recortada a [0, 1]. Equivale a 0 h → 1; 1 h → 0,84; 6 h → 0,55; 24 h → 0,24; ≥72 h → 0.
+> - **Total** = media con el mismo peso de **Superficie** (NDVI, albedo), **Relieve** (pendiente) y **Accesibilidad**.
+> - **Exclusiones nuevas en la búsqueda global:**
+>   - celdas con más de un 5 % de suelo urbano (MODIS MCD12Q1 2023);
+>   - celdas con albedo < 0,08, que son costa dominada por el agua.
+>
+>   Sin ellas, ganaban Lima o el golfo de Patras.
+> - **Consecuencia:** los candidatos pasan de los desiertos fríos inaccesibles (Nunavut, a 6 días de una ciudad) a terrenos áridos y desnudos a menos de 1 h de una ciudad (Irán, Afganistán, sur de Perú, Omán, Canarias).
+> - Scripts: `06_puntuar_asset.js` (v2) y `08_export_access.js`.
+>
+> Lo que sigue describe la v1 (con clima). La fórmula de similitud por variable no cambia.
+
 ## Idea
 La Luna y Marte son más extremos que cualquier lugar de la Tierra (−230 °C en los cráteres lunares en sombra). Por eso **no comparamos valores absolutos sino posiciones relativas** dentro del rango que cubre la Tierra.
 

@@ -14,12 +14,13 @@ const TileMap = dynamic(() => import("@/components/TileMap"), { ssr: false });
 interface Candidate {
   c: [number, number]; // [lon, lat]
   total: number;
-  clima: number | null;
   superficie: number | null;
   relieve: number | null;
-  lst_day: number | null;
-  lst_night: number | null;
-  lst_max: number | null;
+  accesibilidad: number | null; // 0–1, from travel time to the nearest city
+  access_h: number | null; // travel time to the nearest city (h), Oxford MAP 2015
+  urban_frac?: number | null;
+  elev?: number | null;
+  lst_day: number | null; // climate: shown for context, NOT scored (v2)
   lst_min: number | null;
   precip: number | null;
   ndvi: number | null;
@@ -41,12 +42,8 @@ const EXTREMES: Record<string, [number, number]> = Object.fromEntries(
 );
 const RANGES = (eeGlobal as unknown as { ranges?: Record<string, number> }).ranges ?? {};
 
+// v2: climate is no longer scored; only these analog variables enter the explanation.
 const VAR_LABEL: Record<string, string> = {
-  lst_day: "Day temp.",
-  lst_night: "Night temp.",
-  lst_max: "Max temp.",
-  lst_min: "Min temp.",
-  precip: "Rainfall",
   ndvi: "Vegetation",
   albedo: "Albedo",
   slope: "Slope",
@@ -84,6 +81,8 @@ const worldview = ([lon, lat]: [number, number]) =>
 const C = { site: "#3d7dff", target: "#ffb547", muted: "#8197ad", track: "#12233a" };
 const pct = (v: number | null | undefined) => (v == null ? "—" : `${Math.round(v * 100)}`);
 const num = (v: number | null | undefined, d = 1) => (v == null ? "—" : v.toFixed(d));
+const fmtHours = (h: number | null | undefined) =>
+  h == null ? "—" : h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : `${Math.round(h / 24)} days`;
 const coord = ([lon, lat]: [number, number]) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
 
@@ -161,8 +160,11 @@ export default function CandidatesTab() {
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
             <h2 className="text-lg font-bold">New analogs of {target.short}</h2>
             <p className="text-xs text-slate-300">
-              All land between 85°N and 85°S in 0.1° cells (~11 km), scored with NASA data in Earth Engine. The 25
-              already-catalogued analogs are excluded (300 km radius). Candidates are at least 300 km apart.
+              All land between 85°N and 85°S in 0.1° cells (~11 km), scored in Earth Engine on three equal-weight
+              dimensions: Surface and Relief (analogy with the target, NASA MODIS data) and Access (how easy it is to
+              bring people and materials: travel time to the nearest city). Climate is not scored. Urban and
+              water-dominated cells and the 25 already-catalogued analogs (300 km radius) are excluded; candidates are
+              at least 300 km apart.
             </p>
           </section>
 
@@ -173,7 +175,7 @@ export default function CandidatesTab() {
             tl={<><span className="k">Target</span><br />{target.short}</>}
             tr={<><span className="k">Cells</span><br />0.1° · 85N–85S</>}
             bl={<span className="k">Top {res.top.length} · ≥ 300 km apart</span>}
-            br={<span className="k">NASA GIBS · MODIS · GPM</span>}
+            br={<span className="k">NASA MODIS · Oxford MAP access</span>}
           >
             <TileMap body="earth" markers={markers} />
           </Visor>
@@ -220,26 +222,24 @@ export default function CandidatesTab() {
                   <span className="btn-cut bg-[var(--acc)] px-2 py-0.5 font-mono text-sm font-medium text-[var(--bg)]">{pct(c.total)}</span>
                 </header>
                 <div className="space-y-1">
-                  <DimBar label="Climate" v={c.clima} />
                   <DimBar label="Surface" v={c.superficie} />
                   <DimBar label="Relief" v={c.relieve} />
+                  <DimBar label="Access" v={c.accesibilidad} />
                 </div>
                 <dl className="mt-2 grid grid-cols-3 gap-1 text-[11px]">
                   <div>
-                    <dt style={{ color: C.muted }}>Day / night</dt>
-                    <dd className="font-mono">
-                      {num(c.lst_day, 0)} / {num(c.lst_night, 0)} °C
-                    </dd>
+                    <dt style={{ color: C.muted }}>To nearest city</dt>
+                    <dd className="font-mono">{fmtHours(c.access_h)}</dd>
                   </div>
                   <div>
-                    <dt style={{ color: C.muted }}>Min / max</dt>
-                    <dd className="font-mono">
-                      {num(c.lst_min, 0)} / {num(c.lst_max, 0)} °C
-                    </dd>
+                    <dt style={{ color: C.muted }}>Elevation</dt>
+                    <dd className="font-mono">{c.elev == null ? "—" : `${c.elev} m`}</dd>
                   </div>
                   <div>
-                    <dt style={{ color: C.muted }}>Rainfall</dt>
-                    <dd className="font-mono">{num(c.precip, 0)} mm/yr</dd>
+                    <dt style={{ color: C.muted }}>Climate (not scored)</dt>
+                    <dd className="font-mono">
+                      {num(c.lst_day, 0)} °C · {num(c.precip, 0)} mm/yr
+                    </dd>
                   </div>
                   <div>
                     <dt style={{ color: C.muted }}>NDVI</dt>

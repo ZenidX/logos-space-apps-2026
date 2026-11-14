@@ -11,7 +11,7 @@ Project of team **Logos** for the NASA Space Apps Challenge 2026 (Barcelona loca
 A mobile-first web app that searches all land between 85°N and 85°S for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
 
 - **Candidates**: global search over all land (excluding ~25 already-catalogued analog sites), validated against known analogs.
-- **Analysis**: per-dimension similarity (Climate, Surface, Relief) for 5 reference sites against a selected target (Shackleton rim, Jezero crater, Arcadia Planitia), and where each Earth variable falls versus the target. Geology (thermal-infrared emissivity) and Ice are shown for Earth but have no Moon/Mars value yet, so they are not scored.
+- **Analysis**: per-dimension similarity (Surface, Relief) for 5 reference sites against a selected target (Shackleton rim, Jezero crater, Arcadia Planitia), and where each Earth variable falls versus the target. Geology (thermal-infrared emissivity) and Ice are shown for Earth but have no Moon/Mars value yet, so they are not scored.
 - **Data**: every layer with its raw type, resolution, temporal coverage, global range and Moon/Mars counterpart.
 - **Maps**: NASA GIBS (Earth), Moon Trek (LRO WAC) and Mars Trek (MGS MOLA) basemaps.
 
@@ -22,7 +22,7 @@ flowchart LR
     A["NASA layers<br/>MODIS · GPM IMERG · ASTER<br/>NASADEM · GMTED2010"] --> B["Google Earth Engine<br/>0.1° global grid, 85°N to 85°S"]
     T["Moon / Mars targets<br/>Diviner · LOLA · TES · MOLA"] --> C
     B --> C["Relative position<br/>inside Earth's p1 to p99 range"]
-    C --> D["Similarity per dimension<br/>Climate · Surface · Relief"]
+    C --> D["Score per dimension<br/>Surface · Relief · Access"]
     D --> E["Validate against<br/>25 known analog sites"]
     D --> F["Rank new candidates<br/>known sites excluded"]
     E --> G(["Terra Analog web app"])
@@ -37,9 +37,9 @@ The Moon and Mars are more extreme than anywhere on Earth, so we don't compare r
 
 **Validation.** Most known analog sites (Atacama, McMurdo Dry Valleys, Devon Island, Svalbard…) score above the Earth-wide median for every target, so the scoring points the right way. Few of them reach the top 10 %, which tells us that well-known analogs were chosen for reasons our current layers don't capture yet (geology, ice, logistics).
 
-**Discovery.** The best *uncatalogued* candidates cluster in the **Canadian High Arctic (Nunavut)** and **High Asia (Xinjiang, Karakoram, Pamir)**, scoring 0.84 to 0.89.
+**Discovery (v2, feasibility-aware).** Climate is no longer scored. The total is the mean of **Surface** and **Relief** (analogy with the target) and **Access**: travel time to the nearest city (Oxford MAP, Weiss et al. 2018), because a field site is only useful if people and materials can get there. Urban and water-dominated cells are excluded. The best *uncatalogued* candidates are bare, arid terrains less than about 1 h from a city: the Iranian plateau and Alborz foothills (Isfahan, Tehran, Qazvin), the Kabul–Parwan basin in Afghanistan, southern Peru (Tacna, Arequipa), the Hajar mountains in Oman, San Juan in Argentina and Tenerife (Canary Islands), which is already used as a Mars analog but was not in our exclusion list.
 
-**Known limitations.** Moon/Mars target values are approximate literature figures, not computed from PDS products. Most Moon/Mars temperatures are below Earth's minimum, so the climate score rewards the coldest places on Earth. Slope is measured at 5 km scale, where almost every mountain range is above Earth's 99th percentile; the app flags this as a tie at Earth's limit instead of a match. For Shackleton, Death Valley and Mauna Kea also reach the top 10 %: with only climate, surface and slope, any dry, bare and steep place looks lunar.
+**Known limitations.** Moon/Mars target values are approximate literature figures, not computed from PDS products. Climate is shown for context but not scored, so the ranking favours accessible bare, arid terrain rather than the coldest places on Earth; the Moon's temperatures remain the clearest point where any Earth analogy breaks. Slope is measured at 5 km scale, where almost every mountain range is above Earth's 99th percentile; the app flags this as a tie at Earth's limit instead of a match. With only surface, slope and access, any bare, steep and reachable place scores well; geology (thermal-infrared emissivity) and ice are the next dimensions to add.
 
 <sub>Chart generated from `src/data/ee-global.json` with `node scripts/readme/make-charts.mjs`.</sub>
 

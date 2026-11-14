@@ -3,6 +3,10 @@
 // Rangos p1–p99 calculados aquí sobre el mismo asset. Exclusión de análogos conocidos con paint (barato).
 // Asset: terra_features_01deg (versión del 14-11-2026; el NDVI se guardó 10 000 veces pequeño).
 // Corrección automática por magnitud: si el p99 del NDVI del asset es < 0,01 se aplica ×10000; si no, ×1.
+// v2 (14-11 noche): el CLIMA ya no puntúa (decisión del equipo). Nueva dimensión ACCESIBILIDAD:
+// tiempo de viaje a la ciudad más cercana (Oxford MAP, Weiss et al. 2018, 1 km), media en la celda de 0,1°.
+// nota = 1 − ln(1 + horas) / ln(1 + 72), recortada a [0, 1]  → 0 h = 1 · 6 h ≈ 0,55 · 24 h ≈ 0,24 · ≥72 h = 0.
+// Total = media de Superficie, Relieve y Accesibilidad (mismo peso).
 var A0 = ee.Image('projects/terra-analog/assets/terra_features_01deg');
 var world = ee.Geometry.Rectangle([-180, -90, 180, 90], null, false);
 var ndviP99 = ee.Number(A0.select('ndvi').reduceRegion({reducer: ee.Reducer.percentile([99]), geometry: world, scale: 11132, bestEffort: true, maxPixels: 1e10}).values().get(0));
@@ -15,7 +19,12 @@ var stats = A.updateMask(land).reduceRegion({reducer: ee.Reducer.percentile([1, 
 function lo(k) { return ee.Number(stats.get(k + '_p1')); }
 function hi(k) { return ee.Number(stats.get(k + '_p99')); }
 
-var DIMS = {clima: ['lst_day', 'lst_night', 'lst_max', 'lst_min', 'precip'], superficie: ['ndvi', 'albedo'], relieve: ['slope']};
+var DIMS = {superficie: ['ndvi', 'albedo'], relieve: ['slope']};
+var ACC_MAX_H = 72;
+var accessH = ee.Image('Oxford/MAP/accessibility_to_cities_2015_v1_0').divide(60)
+  .reduceResolution({reducer: ee.Reducer.mean(), maxPixels: 256})
+  .reproject(A.projection()).rename('access_h');
+var accessScore = ee.Image(1).subtract(accessH.add(1).log().divide(Math.log(1 + ACC_MAX_H))).clamp(0, 1).rename('accesibilidad');
 var T = {
   shackleton: {lst_day: -100, lst_night: -180, lst_max: -50, lst_min: -230, precip: 0, ndvi: 0, albedo: 0.15, slope: 8},
   jezero: {lst_day: -40, lst_night: -80, lst_max: 10, lst_min: -90, precip: 0, ndvi: 0, albedo: 0.2, slope: 3},
@@ -53,6 +62,9 @@ function scoreImage(t) {
     tSum = tSum.add(dimImg.unmask(0));
     tCnt = tCnt.add(cnt.gt(0));
   });
+  bands.push(accessScore);
+  tSum = tSum.add(accessScore.unmask(0));
+  tCnt = tCnt.add(accessScore.mask().gt(0));
   var total = tSum.divide(tCnt.max(1)).updateMask(tCnt.gt(0)).rename('total');
   return ee.Image.cat([total].concat(bands)).updateMask(land);
 }
@@ -68,7 +80,7 @@ function hav(a, b) {
   if (tid === 'shackleton') Map.addLayer(s.select('total'), {min: 0.3, max: 0.9, palette: ['0d366b', '2a78d6', '86b6ef', 'ffffff']}, 'Similitud ' + tid);
   var dist = s.select('total').reduceRegion({reducer: ee.Reducer.percentile([50, 90, 99]), geometry: world, scale: SCALE, bestEffort: true, maxPixels: 1e10});
   var thr = ee.Number(dist.get('total_p99'));
-  var cands = s.addBands(A).updateMask(excluded.not()).updateMask(s.select('total').gte(thr))
+  var cands = s.addBands(A).addBands(accessH).updateMask(excluded.not()).updateMask(s.select('total').gte(thr))
     .sample({region: world, scale: SCALE, geometries: true, tileScale: 4})
     .sort('total', false).limit(500);
   var known = s.select('total').reduceRegions({collection: knownFC, reducer: ee.Reducer.mean(), scale: SCALE});

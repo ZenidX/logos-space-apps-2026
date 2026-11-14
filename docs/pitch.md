@@ -1,5 +1,7 @@
 # Pitch y entrega
 
+⚠ **Cifras del pitch desactualizadas desde la v2 (14-11 noche)**: el clima ya no puntúa y entra la accesibilidad. Los candidatos ahora son terrenos áridos accesibles (Irán, Afganistán, sur de Perú, Omán, Canarias), no Ellesmere ni el Karakórum. Hay que revisar los párrafos marcados con ⚠ antes de ensayar.
+
 Borrador basado en los resultados reales de `src/data/ee-global.json` (14-11-2026). Revisado por Jefe el 14-11: el ensayo de Arizona fue JETT5, en mayo de 2024 ([NASA](https://www.nasa.gov/image-article/a-moonlit-moonwalk/)), no en 2022; se quita «nobody has searched…» porque no se puede demostrar, y se dice abiertamente que Death Valley y Mauna Kea también entran en el top 10 % de Shackleton. Si se vuelve a ejecutar la búsqueda, hay que revisar las cifras marcadas con ⚠.
 
 La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse en el idioma que acepte el evento de Barcelona: hay que confirmarlo con la organización local.

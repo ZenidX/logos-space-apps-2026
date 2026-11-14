@@ -78,6 +78,8 @@ export function analyzeVariables(target: Target): VariableAnalysis[] {
 }
 
 export const DIMENSIONS = ["Climate", "Surface", "Relief", "Geology", "Ice & water"] as const;
+// v2 (14-11): climate is shown for context but no longer scored (team decision).
+export const SCORED_DIMENSIONS = DIMENSIONS.filter((d) => d !== "Climate");
 
 export interface SiteDimensionScore {
   siteId: string;
@@ -89,7 +91,7 @@ export interface SiteDimensionScore {
 export function scoreSites(vars: VariableAnalysis[]): SiteDimensionScore[] {
   return SITES.map((site, i) => {
     const dims: SiteDimensionScore["dims"] = {};
-    for (const d of DIMENSIONS) {
+    for (const d of SCORED_DIMENSIONS) {
       const scores = vars
         .filter((v) => v.layer.dimension === d && v.range && v.targetPos != null && v.samples[i] != null)
         .map((v) => 1 - Math.abs(position(v.range!, v.samples[i]!) - v.targetPos!));

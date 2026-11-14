@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { SITES } from "@/data/catalog";
 import { TARGETS } from "@/data/targets";
-import { analyzeVariables, DIMENSIONS, position, scoreSites, type VariableAnalysis } from "@/lib/analysis";
+import { analyzeVariables, DIMENSIONS, SCORED_DIMENSIONS, position, scoreSites, type VariableAnalysis } from "@/lib/analysis";
 
 // Paleta (referencia dataviz, modo oscuro): serie 1 azul = sitios terrestres, serie 2 naranja = objetivo.
 const C = {
@@ -173,7 +173,7 @@ export default function AnalysisTab() {
                 <th className="text-left font-normal" style={{ color: C.muted }}>
                   Site
                 </th>
-                {DIMENSIONS.map((d) => (
+                {SCORED_DIMENSIONS.map((d) => (
                   <th key={d} className="px-1 font-normal" style={{ color: C.muted }}>
                     {d}
                   </th>
@@ -197,7 +197,7 @@ export default function AnalysisTab() {
                       </span>
                       <span className={site.known ? "" : "text-slate-500"}>{site.name}</span>
                     </td>
-                    {DIMENSIONS.map((d) => {
+                    {SCORED_DIMENSIONS.map((d) => {
                       const c = row.dims[d];
                       return c.score == null ? (
                         <td key={d} className="rounded text-center" style={{ color: C.muted, background: "#08111c" }} title="No comparable data for the target or the site">
