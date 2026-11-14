@@ -5,6 +5,7 @@ import DataTab from "@/components/DataTab";
 import AnalysisTab from "@/components/AnalysisTab";
 import CandidatesTab from "@/components/CandidatesTab";
 import GlobeView from "@/components/GlobeView";
+import Story from "@/components/Story";
 import { SITES } from "@/data/catalog";
 import type { Body } from "@/components/TileMap";
 
@@ -39,10 +40,45 @@ function Clock() {
   return <span>{t}</span>;
 }
 
+function Brand() {
+  return (
+    <div className="flex items-center gap-2.5">
+      <i className="relative inline-block h-4 w-4 rotate-45 border border-[var(--acc)]">
+        <span className="absolute inset-[3px] bg-[var(--acc)]" />
+      </i>
+      <span className="font-[family-name:var(--font-grotesk)] text-xl font-semibold leading-none">
+        Terra <span className="text-[var(--acc)]">Analog</span>
+      </span>
+    </div>
+  );
+}
+
 export default function Home() {
+  const [mode, setMode] = useState<"story" | "explore">("story");
   const [tab, setTab] = useState<Tab>("candidatos");
   const [body, setBody] = useState<Body>("earth");
   const idx = TABS.findIndex(([id]) => id === tab);
+  const go = (m: "story" | "explore") => {
+    setMode(m);
+    window.scrollTo({ top: 0 });
+  };
+
+  if (mode === "story") {
+    return (
+      <div className="relative z-[1]">
+        <header className="fixed inset-x-0 top-0 z-[1000] flex items-center justify-between px-5 py-4 backdrop-blur-[2px]">
+          <Brand />
+          <button
+            onClick={() => go("explore")}
+            className="btn-cut border border-[var(--line2)] bg-[rgba(4,8,15,.6)] px-3 py-2 font-mono text-[11px] uppercase tracking-[.08em] hover:text-[var(--acc)]"
+          >
+            Explore the data
+          </button>
+        </header>
+        <Story onExplore={() => go("explore")} />
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-[1] mx-auto flex min-h-dvh max-w-3xl flex-col">
@@ -57,6 +93,7 @@ export default function Home() {
             </h1>
           </div>
           <div className="text-right font-mono text-[10px] uppercase leading-tight tracking-[.08em] text-[var(--mut)]">
+            <button onClick={() => go("story")} className="mb-1 block w-full text-right text-[var(--acc)] underline">◂ Story</button>
             <span className="vivo text-[var(--ok)]">EE · ONLINE</span>
             <br />
             <Clock />

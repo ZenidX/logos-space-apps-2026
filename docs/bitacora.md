@@ -2,6 +2,21 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 4)
+
+### Portada «historia» al estilo Apple
+- Pedido del equipo: una web muy visual, animada e interactiva para vender el proyecto en el pitch, con poco texto técnico.
+- Inspiración en GitHub: **Nutlope/hallmark** y **heydamir/unslop** (skills de diseño «anti-AI-slop»: nada de degradados morados, brillos ni emojis, enseñar el producto y una sola idea fuerte) y **garyhtou/vanta** (rover planetario contado con scroll en 3D, donde el usuario «toma el mando»).
+- Nueva portada `src/components/Story.tsx` (React + framer-motion), página por defecto. Las pestañas de datos siguen detrás de «Explore the data»:
+  1. **Portada:** «Where on Earth is the Moon?», entrada palabra a palabra, parallax y el globo 3D con los candidatos.
+  2. **Escena fija de 320vh** (estilo Apple, ligada al scroll): la Luna gigante (−230 °C) se encoge, entra la Tierra (−81 °C) y termina en «Same extreme, not same number».
+  3. Texto que **se ilumina palabra a palabra** con el scroll y contadores animados.
+  4. **Elige destino:** orbes giratorios de la Luna y Marte. El globo y el top 3 cambian con animación.
+  5. **Ciencia o logística:** un deslizador re-pondera en directo (1−w)·analogía + w·accesibilidad y la lista se reordena con animación. w = 1/3 es la nota oficial.
+  6. **Entra en 3D:** dos orbes enfrentados; el bloque se expande al hacer scroll y abre el visor de 11 × 11 km.
+  7. **Validación** con puntos animados frente a la mediana y el top 10 % de la Tierra, y **dónde se rompe la analogía** (1/6 g, vacío, −230 °C, radiación).
+- Respeta `prefers-reduced-motion`: sin escena fija ni giros. Estilos `.orb` y `.slider` en `globals.css`.
+
 ## 2026-11-14 (noche) · Segunda tanda tras Crítico (sin publicar)
 
 Veredicto de Crítico sobre el rediseño publicado: «sí con cambios». Aplicado:
