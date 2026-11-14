@@ -55,7 +55,8 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
     // Async start so the effect can be cancelled cleanly (a timer-based staged start measured worse on desktop).
     let cancelled = false;
     let cleanup = () => {};
-    const tick = () => Promise.resolve();
+    const small = window.innerWidth < 700; // on phones a timer-staged start measured better; on desktop it measured worse
+    const tick = () => (small ? new Promise<void>((r) => setTimeout(r, 0)) : Promise.resolve());
     void (async () => {
     await tick();
     if (cancelled) return;
