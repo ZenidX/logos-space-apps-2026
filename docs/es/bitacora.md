@@ -2,6 +2,11 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:32 · Datos v6: regiones cribadas, sustitutas y comprobación independiente
+- Logos Datos cribó el suelo de las 18 regiones (ventana de 11 km): 12 se quedan y 6 se retiran (3 por pendiente, 3 por agua o hielo). Sustitutas verificadas: Gran Karoo (Sudáfrica), Shuanghu (meseta tibetana, ~5 000 m), islas de Nueva Siberia y el interior de Baffin. Queda fuera la de los montes Qilian por ser la más débil. Total: 6 + 6 + 4 regiones nuevas. El cribado es un paso del pipeline (`02b_screen.py`) y está en `docs/region-screening.md`.
+- Comprobación independiente (`docs/independent-check.md`): ninguna fuente cita estos puntos como análogo establecido. Respaldo cercano de la propiedad en 3 (Harrat al Birk, Ellesmere, Banks); parcial en 5; nada en 3; 5 sin comprobar. Cada región lo dice en su pestaña How, con enlace a la fuente y, en 3 casos, a una imagen con licencia libre.
+- Arena ~54 %: es por construcción (el índice acerca las regiones a la mediana de los análogos conocidos), no un artefacto; se explica junto a la condición.
+
 ## 2026-11-15 · 00:28 · «Órbita compartida» (decisión de zexu) y cribado del suelo
 - Sustituye a los arcos: la Tierra en el centro girando despacio; la Luna y Marte recorren dos órbitas dibujadas (línea discontinua, inclinadas, distinto radio y velocidad) y pasan por delante y por detrás de la Tierra con oclusión por profundidad. Un sitio se une a su objetivo con una línea recta de luz del color de ese mundo, solo cuando el objetivo pasa por su lado y cerca; se desvanece con la distancia y nunca cruza un globo.
 - Al elegir misión se atenúa el otro mundo; al abrir un sitio, el objetivo viaja por su órbita hasta aparcar delante, la Tierra gira para poner el sitio de frente, la línea se fija y el otro mundo se aparta al lado contrario. «Pause motion» y «reduced motion» detienen las órbitas (la selección es directa). Órbitas más cerradas en pantallas estrechas.

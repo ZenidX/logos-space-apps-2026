@@ -198,22 +198,22 @@
    "minM": 262.3,
    "maxM": 371.3
   },
-  "m1-eva-basalt-new6": {
-   "name": "Patagonia · Departamento San Carlos · Mendoza",
+  "m1-eva-basalt-new7": {
+   "name": "Great Karoo · Cape Winelands District Municipality · Western Cape",
    "body": "earth",
-   "lat": -34.359,
-   "lon": -69.45,
-   "file": "/heightmaps/earth/m1-eva-basalt-new6.bin",
+   "lat": -32.665,
+   "lon": 19.75,
+   "file": "/heightmaps/earth/m1-eva-basalt-new7.bin",
    "stats": {
-    "slopeMeanDeg": 15.34,
-    "slopeP90Deg": 26.94,
-    "roughnessStdM": 143.5,
-    "reliefM": 1974.0,
+    "slopeMeanDeg": 0.68,
+    "slopeP90Deg": 1.01,
+    "roughnessStdM": 10.1,
+    "reliefM": 77.0,
     "nodataFraction": 0.0
    },
    "source": "earth",
-   "minM": 2208.5,
-   "maxM": 4182.6
+   "minM": 404.2,
+   "maxM": 481.2
   },
   "target-m2-rover-sand": {
    "name": "Jezero crater",
@@ -351,22 +351,22 @@
    "minM": 303.9,
    "maxM": 374.6
   },
-  "m2-rover-sand-new5": {
-   "name": "Tibetan Plateau · Ngari Prefecture · Xizang",
+  "m2-rover-sand-new7": {
+   "name": "Tibetan Plateau · Shuanghu County · Xizang",
    "body": "earth",
-   "lat": 30.653,
-   "lon": 82.95,
-   "file": "/heightmaps/earth/m2-rover-sand-new5.bin",
+   "lat": 33.194,
+   "lon": 87.65,
+   "file": "/heightmaps/earth/m2-rover-sand-new7.bin",
    "stats": {
-    "slopeMeanDeg": 16.39,
-    "slopeP90Deg": 29.16,
-    "roughnessStdM": 237.5,
-    "reliefM": 1006.9,
+    "slopeMeanDeg": 3.04,
+    "slopeP90Deg": 7.44,
+    "roughnessStdM": 39.3,
+    "reliefM": 324.0,
     "nodataFraction": 0.0
    },
    "source": "earth",
-   "minM": 5233.9,
-   "maxM": 6240.8
+   "minM": 4846.5,
+   "maxM": 5170.5
   },
   "m2-rover-sand-new6": {
    "name": "Andes · Angaco · San Juan",
@@ -470,74 +470,57 @@
    "minM": 103.8,
    "maxM": 296.5
   },
-  "m3-ground-ice-new3": {
-   "name": "Asia · Allaikhovsky Ulus · Sakha Republic",
+  "m3-ground-ice-new7": {
+   "name": "New Siberian Islands · Bulunsky Ulus · Sakha Republic",
    "body": "earth",
-   "lat": 72.159,
-   "lon": 149.15,
-   "file": "/heightmaps/earth/m3-ground-ice-new3.bin",
+   "lat": 75.335,
+   "lon": 140.45,
+   "file": "/heightmaps/earth/m3-ground-ice-new7.bin",
    "stats": {
-    "slopeMeanDeg": 0.09,
-    "slopeP90Deg": 0.16,
-    "roughnessStdM": 1.1,
-    "reliefM": 16.8,
+    "slopeMeanDeg": 0.16,
+    "slopeP90Deg": 0.35,
+    "roughnessStdM": 2.7,
+    "reliefM": 17.2,
     "nodataFraction": 0.0
    },
    "source": "earth",
-   "minM": -0.7,
-   "maxM": 16.2
+   "minM": 4.5,
+   "maxM": 21.7
   },
-  "m3-ground-ice-new4": {
-   "name": "Karakoram · disputed area (no administrative names used)",
-   "body": "earth",
-   "lat": 34.994,
-   "lon": 78.35,
-   "file": "/heightmaps/earth/m3-ground-ice-new4.bin",
-   "stats": {
-    "slopeMeanDeg": 17.89,
-    "slopeP90Deg": 33.62,
-    "roughnessStdM": 190.8,
-    "reliefM": 1355.3,
-    "nodataFraction": 0.0
-   },
-   "source": "earth",
-   "minM": 4932.2,
-   "maxM": 6287.5
-  },
-  "m3-ground-ice-new5": {
-   "name": "Unnamed region",
-   "body": "earth",
-   "lat": -76.182,
-   "lon": -27.15,
-   "file": "/heightmaps/earth/m3-ground-ice-new5.bin",
-   "stats": {
-    "slopeMeanDeg": 2.34,
-    "slopeP90Deg": 5.26,
-    "roughnessStdM": 38.2,
-    "reliefM": 438.2,
-    "nodataFraction": 0.0
-   },
-   "source": "earth",
-   "minM": 0.0,
-   "maxM": 438.2
-  },
-  "m3-ground-ice-new6": {
+  "m3-ground-ice-new8": {
    "name": "Canadian Arctic Archipelago · Qikiqtaaluk Region · Nunavut",
    "body": "earth",
-   "lat": 71.735,
-   "lon": -73.65,
-   "file": "/heightmaps/earth/m3-ground-ice-new6.bin",
+   "lat": 67.924,
+   "lon": -69.95,
+   "file": "/heightmaps/earth/m3-ground-ice-new8.bin",
    "stats": {
-    "slopeMeanDeg": 8.09,
-    "slopeP90Deg": 27.37,
-    "roughnessStdM": 164.7,
-    "reliefM": 775.6,
+    "slopeMeanDeg": 5.61,
+    "slopeP90Deg": 11.21,
+    "roughnessStdM": 58.3,
+    "reliefM": 270.5,
     "nodataFraction": 0.0
    },
    "source": "earth",
-   "minM": 0.0,
-   "maxM": 775.6
+   "minM": 195.6,
+   "maxM": 466.1
+  },
+  "m3-ground-ice-new9": {
+   "name": "Qilian Mountains · Subeigiin Mongolian Autonomous County · Gansu",
+   "body": "earth",
+   "lat": 39.335,
+   "lon": 96.55,
+   "file": "/heightmaps/earth/m3-ground-ice-new9.bin",
+   "stats": {
+    "slopeMeanDeg": 8.68,
+    "slopeP90Deg": 18.98,
+    "roughnessStdM": 110.8,
+    "reliefM": 1323.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 3937.9,
+   "maxM": 5261.6
   }
  },
- "generatedWith": "AI-assisted (Claude), reviewed by team Logos"
+ "generatedWith": "AI-assisted (Claude), to be reviewed by team Logos"
 }

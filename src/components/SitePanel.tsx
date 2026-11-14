@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
-import { TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
+import { INDEPENDENT, TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import LocatorMap from "@/components/LocatorMap";
 import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
@@ -170,6 +170,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
                     <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no data") : `here ${fmt(v.value, v.unit)}`}</div>
                   )}
                   {def?.why && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">{def.why}</div>}
+                  {v.id === "sand" && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">Soil-model estimate (SoilGrids, 0.1° cell mean) with a wide uncertainty. New regions cluster near 54 % because the index favours places like the known analogs, whose median is 54 %.</div>}
                 </li>
               );
             })}
@@ -201,6 +202,14 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               </ul>
             </>
           )}
+          {site.kind === "new" && (() => { const ic = INDEPENDENT[site.id] ?? { verdict: "Not checked" as const, text: "No independent check was done for this region." }; return (
+            <div className="mt-3 border-l-2 pl-3 text-[13px]" style={{ borderColor: ic.verdict === "Supported nearby" ? "var(--earth)" : "var(--line2)" }}>
+              <p><span className="label mr-2">Independent check</span><b>{ic.verdict}</b></p>
+              <p className="mt-1 text-[var(--mut)]">{ic.text} {ic.url && <a className="underline" href={ic.url} target="_blank" rel="noopener noreferrer">Source</a>}</p>
+              {ic.image && <p className="mt-1 text-[12.5px]"><a className="underline" href={ic.image.url} target="_blank" rel="noopener noreferrer">{ic.image.label}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></p>}
+              <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Full notes: docs/independent-check.md.</p>
+            </div>
+          ); })()}
           {how && (
             <dl className="mono mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[12.5px]">
               {how.nearestCity50k && <><dt className="text-[var(--dim)]">Nearest city</dt><dd>{how.nearestCity50k.name}, {how.nearestCity50k.country} · {Math.round(how.nearestCity50k.straightLineKm).toLocaleString("en")} km</dd></>}

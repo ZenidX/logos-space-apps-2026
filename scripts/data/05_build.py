@@ -74,7 +74,7 @@ for mid, spec in MISSIONS.items():
         n, camp = KN[k["id"]]
         sites.append(mk(mid, k, "known", k["id"], n, acc[k["id"]], {"campaign": camp}))
     for i, k in enumerate(r["new"]):
-        sid = f"{mid}-new{i+1}"; nm = nm3.get(sid, {})
+        sid = k.get("id") or f"{mid}-new{i+1}"; nm = nm3.get(sid, {})
         parts = [x for x in [k.get("naturalEarthRegion"), nm.get("place"), nm.get("state")] if x]
         if acc3[sid].get("disputed_area"): parts = [k.get("naturalEarthRegion") or "Unnamed region", "disputed area (no administrative names used)"]
         name = " · ".join(dict.fromkeys(parts)) or "Unnamed region"

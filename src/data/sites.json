@@ -1,6 +1,6 @@
 {
  "generatedWith": "AI-assisted (Claude), reviewed by team Logos",
- "generatedAt": "2026-11-14T22:37:23+01:00",
+ "generatedAt": "2026-11-15T00:27:43+01:00",
  "version": "v4",
  "method": "see method.md (section v3) in the same folder",
  "missions": [
@@ -891,35 +891,35 @@
      }
     },
     {
-     "id": "m1-eva-basalt-new6",
-     "name": "Patagonia · Departamento San Carlos · Mendoza",
-     "country": "Argentina",
-     "lat": -34.359,
-     "lon": -69.45,
+     "id": "m1-eva-basalt-new7",
+     "name": "Great Karoo · Cape Winelands District Municipality · Western Cape",
+     "country": "South Africa",
+     "lat": -32.665,
+     "lon": 19.75,
      "kind": "new",
      "match": 0.993,
      "ruleFraction": 1.0,
-     "percentileDistance": 0.013,
+     "percentileDistance": 0.014,
      "matchPercentile": 100.0,
      "perVariable": {
       "ndvi": {
-       "value": 0.161,
-       "percentile": 26.0,
-       "similarity": 0.541,
+       "value": 0.15,
+       "percentile": 24.5,
+       "similarity": 0.608,
        "meetsRule": true,
        "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
       },
       "albedo": {
        "value": 0.142,
-       "percentile": 15.7,
+       "percentile": 15.5,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
       },
       "precip": {
-       "value": 348.94,
-       "percentile": 49.5,
-       "similarity": 0.947,
+       "value": 366.46,
+       "percentile": 50.9,
+       "similarity": 0.927,
        "meetsRule": true,
        "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
       },
@@ -931,28 +931,28 @@
        "source": "GLiM (Hartmann & Moosdorf 2012), 0.5 deg gridded v1.0, class 'vb' (basic volcanic) in the 3x3 0.5 deg window; CC BY 3.0; doi:10.1594/PANGAEA.788537"
       },
       "sun_max_deg": {
-       "value": 79.1,
+       "value": 80.8,
        "similarity": 0.0,
        "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
        "inMatch": false
       },
       "sun_winter_solstice_deg": {
-       "value": 32.2,
+       "value": 33.9,
        "similarity": null,
        "source": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
        "inMatch": false
       }
      },
      "region": {
-      "cells": 157,
-      "areaKm2": 17150,
+      "cells": 33,
+      "areaKm2": 3636,
       "bbox": [
-       -70.75,
-       -34.46,
-       -69.35,
-       -31.39
+       19.55,
+       -32.66,
+       20.05,
+       -32.03
       ],
-      "meanSimilarity": 0.941
+      "meanSimilarity": 0.972
      },
      "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
      "breaks": [
@@ -960,10 +960,10 @@
       "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
      ],
      "accessRisk": {
-      "level": "low",
-      "score": 0.126,
+      "level": "medium",
+      "score": 0.42,
       "permitFlag": "NONE",
-      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "basis": "Access complexity 0.42 (0-1, relative); Governance perception (WGI, perceptions-based) 0.411; nearby organised-violence events 0.612; travel advice 0.167; US level 2 of 4 (2025-05-26); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
@@ -986,7 +986,7 @@
      "precip": 53.0,
      "volcanic": 1.0
     },
-    "candidateRegionsFound": 131,
+    "candidateRegionsFound": 128,
     "control": {
      "match": 0.362,
      "matchPercentile": 31.2
@@ -1591,56 +1591,56 @@
      }
     },
     {
-     "id": "m2-rover-sand-new5",
-     "name": "Tibetan Plateau · Ngari Prefecture · Xizang",
+     "id": "m2-rover-sand-new7",
+     "name": "Tibetan Plateau · Shuanghu County · Xizang",
      "country": "China",
-     "lat": 30.653,
-     "lon": 82.95,
+     "lat": 33.194,
+     "lon": 87.65,
      "kind": "new",
-     "match": 0.994,
+     "match": 0.992,
      "ruleFraction": 1.0,
-     "percentileDistance": 0.013,
+     "percentileDistance": 0.016,
      "matchPercentile": 100.0,
      "perVariable": {
       "sand": {
-       "value": 54.033,
-       "percentile": 77.5,
+       "value": 54.28,
+       "percentile": 78.0,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction"
       },
       "ndvi": {
-       "value": 0.085,
-       "percentile": 11.8,
-       "similarity": 0.942,
+       "value": 0.114,
+       "percentile": 18.8,
+       "similarity": 0.816,
        "meetsRule": true,
        "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
       },
       "precip": {
-       "value": 170.09,
-       "percentile": 37.1,
-       "similarity": 0.997,
+       "value": 188.34,
+       "percentile": 38.2,
+       "similarity": 0.988,
        "meetsRule": true,
        "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
       },
       "albedo": {
-       "value": 0.262,
-       "percentile": 50.4,
+       "value": 0.255,
+       "percentile": 49.3,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
       }
      },
      "region": {
-      "cells": 27954,
-      "areaKm2": 2769633,
+      "cells": 5275,
+      "areaKm2": 578964,
       "bbox": [
-       71.65,
+       75.25,
        29.06,
-       115.15,
-       50.77
+       93.75,
+       36.05
       ],
-      "meanSimilarity": 0.932
+      "meanSimilarity": 0.946
      },
      "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
      "breaks": [
@@ -1747,7 +1747,7 @@
      "precip": 36.6,
      "albedo": 50.4
     },
-    "candidateRegionsFound": 741,
+    "candidateRegionsFound": 742,
     "control": {
      "match": 0.315,
      "matchPercentile": 1.5
@@ -2133,56 +2133,56 @@
      }
     },
     {
-     "id": "m3-ground-ice-new3",
-     "name": "Asia · Allaikhovsky Ulus · Sakha Republic",
+     "id": "m3-ground-ice-new7",
+     "name": "New Siberian Islands · Bulunsky Ulus · Sakha Republic",
      "country": "Russia",
-     "lat": 72.159,
-     "lon": 149.15,
+     "lat": 75.335,
+     "lon": 140.45,
      "kind": "new",
-     "match": 0.994,
+     "match": 0.982,
      "ruleFraction": 1.0,
-     "percentileDistance": 0.013,
-     "matchPercentile": 100.0,
+     "percentileDistance": 0.036,
+     "matchPercentile": 99.6,
      "perVariable": {
       "lst_mean": {
-       "value": -15.283,
-       "percentile": 25.8,
+       "value": -17.191,
+       "percentile": 25.0,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
       },
       "precip": {
-       "value": 108.04,
-       "percentile": 25.2,
+       "value": 164.98,
+       "percentile": 36.8,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
       },
       "albedo": {
-       "value": 0.425,
-       "percentile": 69.1,
+       "value": 0.414,
+       "percentile": 67.9,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
       },
       "ndvi": {
-       "value": 0.033,
-       "percentile": 6.8,
+       "value": 0.007,
+       "percentile": 5.8,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
       }
      },
      "region": {
-      "cells": 40494,
-      "areaKm2": 1904651,
+      "cells": 711,
+      "areaKm2": 23342,
       "bbox": [
-       87.45,
-       59.45,
-       179.95,
-       77.66
+       136.95,
+       74.7,
+       145.35,
+       76.18
       ],
-      "meanSimilarity": 0.933
+      "meanSimilarity": 0.962
      },
      "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
      "breaks": [
@@ -2206,181 +2206,41 @@
      }
     },
     {
-     "id": "m3-ground-ice-new4",
-     "name": "Karakoram · disputed area (no administrative names used)",
-     "country": "Disputed area (boundaries de facto; no position on sovereignty)",
-     "lat": 34.994,
-     "lon": 78.35,
-     "kind": "new",
-     "match": 0.993,
-     "ruleFraction": 1.0,
-     "percentileDistance": 0.015,
-     "matchPercentile": 100.0,
-     "perVariable": {
-      "lst_mean": {
-       "value": -13.725,
-       "percentile": 26.9,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
-      },
-      "precip": {
-       "value": 111.69,
-       "percentile": 25.5,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
-      },
-      "albedo": {
-       "value": 0.405,
-       "percentile": 67.0,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
-      },
-      "ndvi": {
-       "value": 0.032,
-       "percentile": 6.7,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
-      }
-     },
-     "region": {
-      "cells": 9476,
-      "areaKm2": 998071,
-      "bbox": [
-       69.05,
-       31.61,
-       99.55,
-       43.15
-      ],
-      "meanSimilarity": 0.925
-     },
-     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
-     "breaks": [
-      "Ground ice inferred from temperature only: no ice or permafrost map used",
-      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
-     ],
-     "accessRisk": {
-      "level": null,
-      "score": null,
-      "permitFlag": "NONE",
-      "basis": "Not computed: disputed area (boundaries de facto, no country attributed). Only nearby organised-violence events are shown: 0.0 (0-1, UCDP).",
-      "note": "Check national park and research permits before fieldwork.",
-      "sources": [
-       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
-       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
-       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
-       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
-       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
-     }
-    },
-    {
-     "id": "m3-ground-ice-new5",
-     "name": "Unnamed region",
-     "country": "Antarctica",
-     "lat": -76.182,
-     "lon": -27.15,
-     "kind": "new",
-     "match": 0.988,
-     "ruleFraction": 1.0,
-     "percentileDistance": 0.023,
-     "matchPercentile": 99.9,
-     "perVariable": {
-      "lst_mean": {
-       "value": -20.36,
-       "percentile": 23.8,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
-      },
-      "precip": {
-       "value": 45.99,
-       "percentile": 22.0,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
-      },
-      "albedo": {
-       "value": 0.437,
-       "percentile": 70.2,
-       "similarity": 1.0,
-       "meetsRule": true,
-       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
-      },
-      "ndvi": null
-     },
-     "region": {
-      "cells": 4,
-      "areaKm2": 125,
-      "bbox": [
-       -27.35,
-       -76.18,
-       -27.05,
-       -76.18
-      ],
-      "meanSimilarity": 0.983
-     },
-     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
-     "breaks": [
-      "Ground ice inferred from temperature only: no ice or permafrost map used",
-      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
-     ],
-     "accessRisk": {
-      "level": null,
-      "score": null,
-      "permitFlag": "ANTARCTIC_TREATY_AREA",
-      "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
-      "note": "Check national park and research permits before fieldwork.",
-      "sources": [
-       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
-       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
-       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
-       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
-       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
-     }
-    },
-    {
-     "id": "m3-ground-ice-new6",
+     "id": "m3-ground-ice-new8",
      "name": "Canadian Arctic Archipelago · Qikiqtaaluk Region · Nunavut",
      "country": "Canada",
-     "lat": 71.735,
-     "lon": -73.65,
+     "lat": 67.924,
+     "lon": -69.95,
      "kind": "new",
-     "match": 0.988,
+     "match": 0.987,
      "ruleFraction": 1.0,
-     "percentileDistance": 0.023,
-     "matchPercentile": 99.9,
+     "percentileDistance": 0.025,
+     "matchPercentile": 99.8,
      "perVariable": {
       "lst_mean": {
-       "value": -13.33,
-       "percentile": 27.4,
+       "value": -12.028,
+       "percentile": 29.5,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
       },
       "precip": {
-       "value": 125.56,
-       "percentile": 26.2,
+       "value": 116.07,
+       "percentile": 25.7,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
       },
       "albedo": {
-       "value": 0.434,
-       "percentile": 69.9,
+       "value": 0.441,
+       "percentile": 70.6,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
       },
       "ndvi": {
-       "value": -0.033,
-       "percentile": 4.6,
+       "value": 0.014,
+       "percentile": 6.1,
        "similarity": 1.0,
        "meetsRule": true,
        "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
@@ -2417,6 +2277,79 @@
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
+    },
+    {
+     "id": "m3-ground-ice-new9",
+     "name": "Qilian Mountains · Subeigiin Mongolian Autonomous County · Gansu",
+     "country": "China",
+     "lat": 39.335,
+     "lon": 96.55,
+     "kind": "new",
+     "match": 0.96,
+     "ruleFraction": 1.0,
+     "percentileDistance": 0.079,
+     "matchPercentile": 97.9,
+     "perVariable": {
+      "lst_mean": {
+       "value": -3.272,
+       "percentile": 41.1,
+       "similarity": 0.959,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)"
+      },
+      "precip": {
+       "value": 137.97,
+       "percentile": 27.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.318,
+       "percentile": 57.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      },
+      "ndvi": {
+       "value": 0.049,
+       "percentile": 7.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 532,
+      "areaKm2": 54362,
+      "bbox": [
+       95.75,
+       37.01,
+       99.85,
+       39.65
+      ],
+      "meanSimilarity": 0.915
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Ground ice inferred from temperature only: no ice or permafrost map used",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "score": 0.178,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.178 (0-1, relative); Governance perception (WGI, perceptions-based) 0.34; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-10-18); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
     }
    ],
    "validation": {
@@ -2429,7 +2362,7 @@
      "albedo": 68.0,
      "ndvi": 6.2
     },
-    "candidateRegionsFound": 754,
+    "candidateRegionsFound": 752,
     "control": {
      "match": 0.28,
      "matchPercentile": 2.8

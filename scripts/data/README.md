@@ -23,6 +23,7 @@ python -m venv .venv && .venv/bin/pip install numpy rasterio scipy shapely pyshp
 | `ged261-csv.zip` | UCDP GED 26.1 | https://ucdp.uu.se/downloads/ged/ged261-csv.zip | CC BY 4.0 | 8c941d84954e555e |
 | `GEDEvent_v26_0_9.csv` | UCDP Candidate Events v26.0.9 | https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_9.csv | CC BY 4.0 | 20256b0d674f4c58 |
 | `us_travel_advisories.json` | US State Dept advisories (snapshot 2026-11-14) | https://cadataapi.state.gov/api/TravelAdvisories | US public domain | 8eda2365936bfd32 |
+| `ne_10m_glaciated_areas.zip`, `ne_10m_antarctic_ice_shelves_polys.zip` | Natural Earth physical layers (screen south of 60° S) | https://naciscdn.org/naturalearth/10m/physical/ | public domain | — |
 | `access_hours.tif` | Oxford MAP 2015 travel time, team 0.1° export (`projects/terra-analog/assets/terra_access_01deg`) | CC BY 4.0 | — |
 | `ne_10m_populated_places.zip` | Natural Earth populated places | https://naciscdn.org/naturalearth/10m/cultural/ne_10m_populated_places.zip | public domain | — |
 | `ourairports_airports.csv` | OurAirports airports | https://davidmegginson.github.io/ourairports-data/airports.csv | public domain | — |
@@ -35,6 +36,7 @@ No protected-area dataset is used; every site carries `accessRisk.note` "Check n
 export LOGOS_IN=/path/to/inputs LOGOS_WORK=work
 python -I 01_regrid_sand.py                                   # -> work/sand_pct_01deg.tif
 python -I 02_missions.py work/missions.json                   # index, validation, candidate regions (~10 s)
+python -I 02b_screen.py                                       # ground screen: slope, snow/ice, water, spacing (live: AWS Copernicus DEM, ESA WorldCover; ~5–8 min); keeps ids via site_ids.json
 python -I 03_names.py                                         # -> work/names.json, work/sites_list.json (~25 s)
 python -I 04_access.py work/sites_list.json "$LOGOS_IN" > work/access.json
 python -I 05_build.py work/sites.json                         # final file

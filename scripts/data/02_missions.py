@@ -63,10 +63,10 @@ KNOWN = {
     "m3-ground-ice": [("haughton_crater", 75.3771298, -89.6804276), ("mcmurdo_dry_valleys", -77.5145082, 161.9469821)],
 }
 # every analog site named in misiones.md with a usable location (excluded from 'new'); Black Point is ~40 km from SP Crater
-OTHER = [(36.46, -116.87), (19.82, -155.47), (35.58, -111.63), (37.75, 14.99), (17.0, 54.0), (30.6, 34.8), (40.0, 44.6), (28.97, -13.6), (79.5, -91.0), (79.45, 13.3)]
-# + Axel Heiberg Is. (NASA analog), Svalbard Bockfjorden (AMASE). Death Valley; Mauna Kea (PISCES); Black Point ~SP; Etna (ARCHES); Dhofar (AMADEE-18); Negev (AMADEE-20); Ararat prov. (AMADEE-24); Lanzarote
+OTHER = [(36.46, -116.87), (19.82, -155.47), (35.58, -111.63), (37.75, 14.99), (17.0, 54.0), (30.6, 34.8), (40.0, 44.6), (28.97, -13.6), (79.5, -91.0), (79.45, 13.3), (38.0, 92.5), (14.24, 40.3)]
+# + Axel Heiberg Is. (NASA analog), Svalbard Bockfjorden (AMASE), Qaidam Basin (Mars analog in the literature), Dallol/Danakil (astrobiology analog). Death Valley; Mauna Kea (PISCES); Black Point ~SP; Etna (ARCHES); Dhofar (AMADEE-18); Negev (AMADEE-20); Ararat prov. (AMADEE-24); Lanzarote
 # OTHER coordinates are approximate region centres (team estimates), used only for exclusion.
-EXCL_KM, MIN_CELLS, NREG, SEP_KM = 300, 4, 6, 800
+EXCL_KM, MIN_CELLS, NREG, SEP_KM, NCAND = 300, 4, 6, 800, 150
 
 # land percentile per continuous variable
 def pct_grid(a):
@@ -159,6 +159,18 @@ for mid, spec in M.items():
         c = cell(i, j); pt = Point(c["lon"], c["lat"])
         reg = next((a.get("NAME_EN") or a.get("NAME") for gg, a in regions_ne if gg.contains(pt)), None)
         res["new"].append({**c, "region": info, "naturalEarthRegion": reg})
+    res["candidates"] = []  # ranked regions (no spacing applied) for 02b_screen.py
+    for s, cells, i, j, info in regs[:NCAND]:
+        c = cell(i, j); pt = Point(c["lon"], c["lat"])
+        reg = next((a.get("NAME_EN") or a.get("NAME") for gg, a in regions_ne if gg.contains(pt)), None)
+        # alternates: next-best cells of the same region, >= 50 km apart, tried by 02b_screen.py if the best cell fails
+        sl = ndimage.find_objects((lab == lab[i, j]).astype(int))[0]; sub = lab[sl] == lab[i, j]
+        ii, jj = np.nonzero(sub); order = np.argsort(-S[sl][sub]); alts = [(i, j)]
+        for q in order[:4000]:
+            a, b = sl[0].start + ii[q], sl[1].start + jj[q]
+            if all(hav(lats[a], lons[b], lats[x], lons[y]) >= 50 for x, y in alts): alts.append((a, b))
+            if len(alts) == 7: break
+        res["candidates"].append({**c, "region": info, "naturalEarthRegion": reg, "alternates": [cell(a, b) for a, b in alts[1:]]})
     res["nRegionsFound"] = len(regs)
     out[mid] = res
 json.dump(out, open(sys.argv[1], "w"), indent=1)

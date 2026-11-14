@@ -48,11 +48,16 @@ Sun elevation is shown for M1 as an attribute and does **not** enter the index. 
 F says **whether** a place meets the task's conditions. D says **how close** it sits, within Earth's own range of values, to where the task was actually rehearsed. A cell needs data for ≥ 66 % of the variable weight. Reference implementation: `scripts/data/index.py`; hand-computed cases: `scripts/data/test_index.py`.
 
 ## 4. New candidate regions
-1. Candidate cells have all available rules met (minimum 66% of weight coverage), i.e. F = 1 over the variables with data. Example: one Antarctic candidate has no NDVI value and is scored on the other three variables.
-2. Excluded: cells within 300 km of any known analog site (the 9 sites in `sites.json`, plus Death Valley, Mauna Kea, Etna, Dhofar, the Negev, Ararat province, Lanzarote, Axel Heiberg Island and Svalbard, using approximate centres).
-3. Neighbouring candidate cells (8-connected) form a region; regions with fewer than 4 cells are dropped.
-4. Each region is represented by its best cell. Regions are ranked by that cell's index and picked with at least 800 km between them, 6 per mission.
+1. Candidate cells have all available rules met (minimum 66% of weight coverage), i.e. F = 1 over the variables with data.
+2. Excluded: cells within 300 km of any known analog site (the 9 sites in `sites.json`, plus Death Valley, Mauna Kea, Etna, Dhofar, the Negev, Ararat province, Lanzarote, Axel Heiberg Island, Svalbard, the Qaidam Basin and Dallol/Danakil, using approximate centres).
+3. Neighbouring candidate cells (8-connected) form a region; regions with fewer than 4 cells are dropped. Regions are ranked by the index of their best cell.
+4. **Ground screen** (`scripts/data/02b_screen.py`), on the 11 × 11 km window around the cell, in rank order:
+   - mean slope ≤ 10° (Copernicus DEM GLO-30 on the 114.6 m grid);
+   - snow/ice ≤ 10 % and water ≤ 20 % of the window (ESA WorldCover 2021 v200, 10 m; ocean counts as water). South of 60° S, where WorldCover has no data, the point must lie outside Natural Earth glaciated areas and ice shelves, and sea (0 m in the DEM) must be ≤ 20 %;
+   - at least 800 km from every region already picked (decided on the region's best cell).
+   If a region's best cell fails the slope or land-cover test, up to 6 more cells of the same region are tried (next best, ≥ 50 km apart). Up to 6 regions per mission; fewer if the candidates run out (ground ice: see `docs/sources.md`).
 5. Names come from Natural Earth geography regions and an OpenStreetMap reverse geocode. In disputed areas only the Natural Earth region name is used.
+6. **Order and meaning of the index among new regions.** New regions are by construction taken from the very top of the ranking (index ≥ 0.96 for all of them, ≥ 0.98 for all but one), so the index does not separate them: differences in the third decimal are below what the data can support. They are listed in rank order only as a convention; the useful comparison between them is the site view (terrain, Sun, access), not the index.
 
 ## 5. Validation
 We compare each known analog's index with all land cells, and use central Amazonia (−3.4°, −60.0°) as a negative control.
@@ -79,7 +84,8 @@ Levels: low < 0.25 ≤ medium < 0.5 ≤ high. Weights, radii and levels are team
 - Moon and Mars comparison values: Jezero and Arcadia albedo from the MGS TES albedo map (Lambert albedo, not white-sky); Arcadia mean temperature from the Mars Climate Database (a model); Mons Mouton albedo 0.15 is an estimate converted from LOLA 1064 nm normal albedo. See `docs/sources.md`.
 - M1 rock type comes from a 0.5° geological map: "basalt within about 80 km", not "on basalt". There is no data for small islands such as Lanzarote.
 - Slope is not used in the index. The site view shows 11 × 11 km terrain (Copernicus DEM GLO-30, LOLA 30 m, MOLA–HRSC 200 m, resampled to 114.6 m) for comparison only; see `scripts/data/README-v5.md`. Mars terrain comes from a 200 m model, so it looks smoother; sea and lake cells read 0 m.
-- M3 infers ground ice from temperature only; no permafrost or ice map is used.
+- M3 infers ground ice from temperature only; no permafrost or ice map is used. The land-cover screen removes glaciers, ice sheets and lake-covered tundra, but cannot confirm ice in the ground.
+- M2 sand fraction: all M2 sites sit near 54 % because new regions are picked closest to the known analogs' median (the 78th percentile of land, 54.4 %), not because of a fill value. SoilGrids is a model: at the sites its 90 % interval spans roughly 5–95 % sand, and the 250 m point values differ from the 0.1° cell means (Dumont Dunes 61.5 vs 54.4; MDRS 47.5 vs 54.5).
 - One year (2024) of MODIS and GPM data; 0.1° cells (~11 km) describe the cell, not a specific outcrop.
 - The index favours places that resemble the known analogs; it cannot measure absolute closeness to the Moon or Mars.
 - Ranges, tolerances, weights and the 50/50 mix are team choices.

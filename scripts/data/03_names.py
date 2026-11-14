@@ -8,7 +8,7 @@ for mid, r in m.items():
     for k in r["known"]:
         if k["id"] not in [s["id"] for s in sites]: sites.append({"id": k["id"], "lat": k["lat"], "lon": k["lon"]})
     for i, n in enumerate(r["new"]):
-        sid = f"{mid}-new{i+1}"; sites.append({"id": sid, "lat": n["lat"], "lon": n["lon"]})
+        sid = n.get("id") or f"{mid}-new{i+1}"; sites.append({"id": sid, "lat": n["lat"], "lon": n["lon"]})
         u = f"https://nominatim.openstreetmap.org/reverse?format=json&zoom=8&accept-language=en&lat={n['lat']}&lon={n['lon']}"
         a = json.load(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=30)).get("address", {})
         names[sid] = {"place": a.get("county") or a.get("state_district") or a.get("municipality") or a.get("region"),

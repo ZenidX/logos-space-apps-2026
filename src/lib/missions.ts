@@ -48,7 +48,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     blurb: "Loose, sandy, bare ground where rovers can get stuck — and learn not to.",
     rehearse: "Driving a rover over loose sand and dune slopes, as JPL did with its Scarecrow test rover at Dumont Dunes (2012).",
     matters: "Soft sand can stop a rover. Mobility tests on Earth help set driving limits before landing.",
-    keyLimit: "Sand fraction is a soil-model value; dunes are not confirmed on imagery.",
+    keyLimit: "Sand fraction is a soil-model estimate with a wide uncertainty; it indicates sandy soil, not dunes.",
     notScored: ["Dune slopes — needs a 30 m elevation model", "Jezero sand fraction — no comparable value yet"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },
@@ -76,6 +76,7 @@ export const REMOVED: Record<string, { name: string; reason: string }> = {
   "m3-ground-ice-new3": { name: "Allaikhovsky Ulus, Sakha (Russia)", reason: "54 % of the 11 km window is water (lake-covered tundra; ESA WorldCover 2021)" },
   "m3-ground-ice-new5": { name: "Coats Land coast (Antarctica)", reason: "inside the ice sheet (Natural Earth glaciated areas) and 31 % sea" },
   "m3-ground-ice-new6": { name: "Baffin coast, Nunavut (Canada)", reason: "18 % glacier and 56 % water in the window (ESA WorldCover 2021)" },
+  "m3-ground-ice-new9": { name: "Qilian Mountains, Gansu (China)", reason: "passes the screen but relief is 1,324 m over 11 km and it ranks 102nd: left out as the weakest" },
 };
 
 const LEVEL: Record<string, Access["level"]> = { low: "Low", medium: "Medium", high: "High" };
@@ -102,7 +103,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
     of: null,
     id: s.id,
     areaKm2: s.region?.areaKm2 ?? null,
-    name: ((parts) => (parts.length > 2 ? parts.slice(-2) : parts).join(" · "))(s.name.replace(/^Candidate cell near /, "").split(" · ")), // administrative names (the last two parts) are more precise than the broad geographic region
+    name: ((parts) => (parts.length > 2 && /^(Asia|Africa|Europe|North America|South America|Oceania)$/.test(parts[0]) ? parts.slice(1) : parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts).join(" · "))(s.name.replace(/^Candidate cell near /, "").split(" · ")), // geographic region + province (or district + province when the first part is only a continent)
     country: s.country,
     lat: s.lat,
     lon: lon180(s.lon),
@@ -136,8 +137,31 @@ export const DATA_DATE = data.generatedAt.slice(0, 10);
 export const missionById = (id: MissionId) => MISSIONS.find((m) => m.id === id)!;
 
 /** The index is shown to three decimals so that the top regions can be told apart; it never rounds to a perfect 1.000 in this data. */
+/**
+ * Independent check of each new region against literature and agency sources (docs/independent-check.md, 2026-11-15).
+ * No source names any of these points as an established planetary analog; this says what could be confirmed nearby.
+ */
+export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly" | "None found" | "Not checked"; text: string; url?: string; image?: { label: string; url: string } }> = {
+  "m1-eva-basalt-new1": { verdict: "Supported nearby", text: "The Harrat al Birk volcanic field (about 200 scoria cones over 1,800 km², Smithsonian Global Volcanism Program) lies about 17 km away. It is an old, weathered lava field; no analog study was found.", url: "https://volcano.si.edu/volcano.cfm?vn=231072", image: { label: "Landsat image of Harrat al Birk (USGS, public domain; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Harrat_Al_Birk,_Saudi_Arabia.jpg" } },
+  "m1-eva-basalt-new2": { verdict: "None found", text: "No source found for basaltic lava fields at this point in Santa Cruz. NASA Earth Observatory shows bare lava plateaus elsewhere in Patagonia, which does not confirm this region." },
+  "m1-eva-basalt-new3": { verdict: "Partly", text: "The Marsabit shield volcano, with unvegetated young lava flows (Smithsonian Global Volcanism Program), is about 185 km to the south-east. Nothing was found for the point itself.", url: "https://volcano.si.edu/volcano.cfm?vn=222021" },
+  "m1-eva-basalt-new4": { verdict: "Partly", text: "The Pilbara is a known analog for the search for ancient life (NASA JPL, 2019), not for suited traverses on lava fields.", url: "https://www.jpl.nasa.gov/news/mars-scientists-investigate-ancient-life-in-australia/" },
+  "m1-eva-basalt-new5": { verdict: "Not checked", text: "No independent check was done for this region." },
+  "m1-eva-basalt-new7": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done." },
+  "m2-rover-sand-new1": { verdict: "Partly", text: "Only weak, indirect support was found for sandy ground in this region." },
+  "m2-rover-sand-new2": { verdict: "None found", text: "No verifiable source found for this region." },
+  "m2-rover-sand-new3": { verdict: "Partly", text: "Oman hosted a full Mars analog mission (AMADEE-18), but in Dhofar, about 500 km to the south; nothing describes sand at this point." },
+  "m2-rover-sand-new4": { verdict: "None found", text: "No source found for this region." },
+  "m2-rover-sand-new6": { verdict: "Partly", text: "The Médanos Grandes dune field is nearby, but it is described as largely inactive, which weakens it as a test of loose, moving sand.", image: { label: "Satellite image of Médanos Grandes (CC BY-SA 2.0; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:M%C3%A9danos_Grandes,_Argentina.jpg" } },
+  "m2-rover-sand-new7": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done. It sits at about 5,000 m altitude." },
+  "m3-ground-ice-new1": { verdict: "Supported nearby", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature; the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
+  "m3-ground-ice-new2": { verdict: "Supported nearby", text: "Banks Island has ice-rich continuous permafrost (Lewkowicz & Way 2019, Nature Communications). No analog study was found." },
+  "m3-ground-ice-new7": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done." },
+  "m3-ground-ice-new8": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done." },
+};
+
 export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(3));
-export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";
+export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other, less than the uncertainty of the data: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";
 
 export const fmt = (x: number | null, unit = "") => {
   if (x === null || Number.isNaN(x)) return "–";
