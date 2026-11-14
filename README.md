@@ -76,3 +76,7 @@ npm run dev   # http://localhost:3000
 - **ESA**: Copernicus DEM GLO-30.
 - **USGS**: GMTED2010 (global slope).
 - Earth layers accessed through Google Earth Engine (non-commercial project `terra-analog`).
+
+## Use of AI
+
+The idea and the approach (scoring all land against real Moon and Mars sites and showing where each analogy breaks) are the team's. We used an AI assistant, Claude Code (Anthropic), as a tool: it wrote and debugged code (web app, Earth Engine scripts), helped process and score the data, and drafted the documentation. The team reviewed the results. Generated images or video carry a visible watermark.
