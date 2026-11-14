@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Georreferencia de las GeoTIFF y nueva búsqueda (Space Apps)
+
+- `data/ee/README.md` daba una transformación equivocada (`[0.1,0,-180,0,-0.1,85]`). La cabecera de las TIFF (etiqueta 34264) dice origen 90°N y píxel de 0,10588° en latitud. Lo detectó Space Apps Datos con puntos conocidos (Mar Muerto, Qattara) y lo comprobé en `elev.tif`, `access_hours.tif` y `shackleton_total.tif`. README corregido. La web no lee estas TIFF (usa `ee-global.json`).
+- zexu redefine «Access»: viabilidad de llegar por tierra y montar cosas en el terreno, no cercanía a una ciudad. Además, los candidatos tienen que parecerse en forma. Datos busca sitios nuevos: prefiltro desde las TIFF → forma v3 contra el nulo de tierra → % de terreno con pendiente <10° y llegada por tierra → nota = Forma + Superficie + Viabilidad.
+- Rama `feature/shape` (local): línea de forma en la ficha y botón «Sort by shape». A zexu no le convence: la v2 no se parece en forma.
+
 ## 2026-11-14 (noche) · Segunda tanda tras Crítico (sin publicar)
 
 Veredicto de Crítico sobre el rediseño publicado: «sí con cambios». Aplicado:

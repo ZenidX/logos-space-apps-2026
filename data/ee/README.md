@@ -8,7 +8,7 @@ Copia completa (14-11-2026) de lo que hay en el proyecto de Earth Engine **`terr
 - Los demás scripts están en [`scripts/ee/`](../../scripts/ee/). Para usarlos, se copian en el [Code Editor](https://code.earthengine.google.com/) con un proyecto de Cloud propio registrado en Earth Engine.
 
 ## Formato común de todos los GeoTIFF
-- Rejilla de **0,1° (≈11 km)**, de **85°N a 85°S**, 3600 × 1700 píxeles, `EPSG:4326`, transformación `[0.1, 0, -180, 0, -0.1, 85]`.
+- 3600 × 1700 píxeles, `EPSG:4326`. **Usar la georreferencia de la cabecera de cada TIFF**: transformación `[0.1, 0, -180, 0, -0.10588235, 90]` (píxel de 0,1° en longitud y 180/1700 ≈ 0,10588° en latitud, origen 90°N). La rejilla de cálculo era de 0,1° entre 85°N y 85°S, pero la exportación quedó estirada a ±90°. Con la transformación antigua `[0.1, 0, -180, 0, -0.1, 85]` los datos salen hasta ~5° fuera de su sitio. Comprobado con puntos conocidos: el Mar Muerto da −242 m con la cabecera y +419 m con la transformación antigua.
 - Float32, una banda por archivo. Mar y sin dato = nodata (máscara).
 
 ## `terra_features_01deg/`: variables de la Tierra (= las bandas del asset)
