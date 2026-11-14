@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /** Number that counts up to its value when it appears (instant with reduced motion). */
-export default function Count({ value, decimals = 2, ms = 700 }: { value: number | null; decimals?: number; ms?: number }) {
+export default function Count({ value, decimals = 2, ms = 700, cap }: { value: number | null; decimals?: number; ms?: number; cap?: number }) {
   const [shown, setShown] = useState<number | null>(value);
   const raf = useRef(0);
   useEffect(() => {
@@ -18,5 +18,6 @@ export default function Count({ value, decimals = 2, ms = 700 }: { value: number
     raf.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf.current);
   }, [value, ms]);
-  return <span className="tabular-nums">{shown === null ? "–" : shown.toFixed(decimals)}</span>;
+  if (cap !== undefined && shown !== null && value !== null && value >= cap && shown >= cap - 1e-9) return <span className="tabular-nums">≥ {cap.toFixed(decimals)}</span>;
+  return <span className="tabular-nums">{shown === null ? "–" : Math.min(shown, cap ?? Infinity).toFixed(decimals)}</span>;
 }

@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GLOBE_TEX, type GlobeBody } from "@/lib/globe-tex";
 
-const W = 168, H = 96;
+const W = 132, H = 74;
 
 /** Source window (degrees) centred on the point; wider near the poles, clamped to the map's latitude range. */
 export function windowFor(lat: number, lon: number) {

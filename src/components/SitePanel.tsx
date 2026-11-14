@@ -3,8 +3,9 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
-import { fmt, idx, type Mission, type Site } from "@/lib/missions";
+import { TOP, TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
+import LocatorMap from "@/components/LocatorMap";
 import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
 import detailsRaw from "@/data/site-details.json";
 
@@ -118,18 +119,20 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           </div>
           <div className="flex items-baseline gap-3 sm:block sm:text-right">
             <p className="label">Analog index</p>
-            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} /></p>
-            <p className="text-[11px] text-[var(--dim)]">0–1 ranking index,<br className="sm:hidden" /> not a probability</p>
+            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} cap={TOP} /></p>
+            <p className="text-[11px] text-[var(--dim)]" title={TOP_NOTE}>0–1 ranking index,<br className="sm:hidden" /> not suitability</p>
           </div>
         </header>
 
         <div className="mt-2"><TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact /></div>
 
-        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))_auto]">
+          {ts && <div className="hidden lg:block"><LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} /></div>}
           <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {scored.length}</span></>} sub="in the range the mission needs" color={met === scored.length ? "var(--earth)" : "var(--amber)"} />
           <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
           <Fig k="Mean slope" v={ts ? <>{ts.stats.slopeMeanDeg.toFixed(1)}°</> : "–"} sub={tt ? <>target {tt.stats.slopeMeanDeg.toFixed(1)}°</> : undefined} />
           <Fig k="Access" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={site.access.score !== null ? <>complexity {site.access.score.toFixed(2)} of 1</> : site.access.permit ?? "not scored"} color="var(--sand)" />
+          {tt && <div className="hidden lg:block"><LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} /></div>}
         </div>
 
         <p className="mt-2 flex gap-2 rounded-xl border px-3 py-2 text-[12.5px] leading-snug" style={{ borderColor: "color-mix(in srgb, var(--amber) 60%, transparent)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
@@ -145,6 +148,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
       {tab && (
         <section id="site-detail" role="tabpanel" className="fade-in mt-4 border-t border-[var(--line)] pt-4" key={tab}>
           {tab === "why" && <>
+          <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? TOP_NOTE : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
           <ul className="grid gap-1.5">
             {matchVars.map((v) => {

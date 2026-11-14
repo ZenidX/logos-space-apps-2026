@@ -2,6 +2,10 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 23:48 · Índice sin «1.00» perfecto y mini-mapas separados (aviso de Jefe)
+- Las regiones nuevas valen 0,988–0,998 y se veían como «1.00», por encima de análogos reales (SP Crater 0,97). No es un tope de la fórmula: son las celdas elegidas por estar arriba del índice. Ahora todo valor ≥ 0,99 se muestra «≥ 0.99», con una línea que explica por qué una región nueva puede puntuar más que un análogo conocido (el índice compara condiciones de superficie, no idoneidad). También en «Method & sources».
+- Los mapas de situación salen de la caja de los terrenos y pasan a la fila de cifras (uno a cada lado).
+
 ## 2026-11-14 · 23:45 · 3.ª ronda de zexu: arcos por fuera del globo y «dónde» en el mapa
 - Fallo: al girar los planetas los arcos atravesaban el globo. Arreglo de raíz: el arco se calcula con las esferas actuales (centro y radio) y cada punto que caería dentro se empuja hacia fuera (holgura del 3,5 % del radio, que baja a 0 solo en los dos extremos); si el sitio queda en la cara oculta, el arco rodea el planeta. Se recalcula cuando gira un planeta o cambia la cámara y se oculta por profundidad tras las esferas. Prueba nueva: 432 arcos (cara visible, borde y cara oculta, las dos disposiciones), ningún punto dentro de ningún globo.
 - «Dónde»: al abrir un sitio la Tierra gira hasta él con su marcador y nombre; en el panel, dos mapas de situación (sitio y objetivo) recortados del mismo mosaico de NASA que usan los globos (sin datos ni licencias nuevos). A esa escala el recuadro de 11×11 km es menor que un píxel: se marca con un punto y se dice el alto del mapa en km.

@@ -123,7 +123,10 @@ export function arcDims(m: Mission, s: Site): [number | null, number | null, num
 }
 
 /** Analog index (0–1): a ranking index built from team choices and Earth percentiles, not a probability. */
-export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(2));
+/** The index is shown to two decimals and never as a perfect 1.00: values of 0.99 and above read "≥ 0.99". */
+export const TOP = 0.99;
+export const idx = (x: number | null) => (x === null ? "–" : x >= TOP ? "≥ 0.99" : x.toFixed(2));
+export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they can score above a known analog. The index compares surface conditions; it is not a measure of suitability.";
 
 export const fmt = (x: number | null, unit = "") => {
   if (x === null || Number.isNaN(x)) return "–";
