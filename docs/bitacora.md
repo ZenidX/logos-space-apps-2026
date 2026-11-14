@@ -2,6 +2,18 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (tarde-noche, 7)
+
+### Análisis v3 en tres fases, en producción
+- Atmósfera de **NASA MERRA-2** (media de 2024): asset público `terra_atmo_01deg` y GeoTIFF en `data/ee/atmo/` (presión, viento a 10 m, humedad y polvo). Control: Tíbet 556 hPa; Sáhara con polvo 0,21; Amazonía con humedad 18,5 g/kg; Atacama con polvo 0,009.
+- `src/data/ee-global.json` v3 generado con `10_tres_fases.js` y `merge-tres-fases.mjs`:
+  - Shackleton: 89.321 → 8.933 → 20 celdas.
+  - Jezero: 88.993 → 8.900 → 20.
+  - Arcadia: 94.446 → 9.445 → 20.
+- Ganadores: mesetas altas, secas y de aire tenue de Asia central (Tíbet, Qinghai, Sinkiang, Kirguistán, Afganistán), y Colorado para la Luna. Para Marte aparecen Qinghai y el borde del Taklamakán junto a **Qaidam**, un análogo conocido que habíamos excluido.
+- ⚠ **La validación empeora:** pasan la fase 1 entre 4 y 7 de 25 análogos conocidos, y la fase 2 uno o ninguno. El doble filtro deja el ~0,5 % de la Tierra, y muchos análogos clásicos fallan en atmósfera (Atacama tiene aire muy limpio y Marte es polvoriento). Hay que decirlo en el pitch.
+- Arreglado `10_tres_fases.js`: `mean()` necesita el mismo nombre de banda en todas las imágenes.
+
 ## 2026-11-14 (noche, 10) · Visor 3D accesible (C_1)
 
 - **Diálogo:** tiene nombre («{candidato} compared with {objetivo}») y una descripción para lector de pantalla. Al abrirse, el foco va a «Close»; Tab y Mayús+Tab no salen del diálogo, y al cerrar (botón o Esc) el foco vuelve al botón que lo abrió.

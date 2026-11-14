@@ -1,6 +1,6 @@
 # HANDOFF · sesión C_0 (datos y puntuación) · Terra Analog
 
-Traspaso para continuar desde otro dispositivo. Estado a **14-11-2026, ~17:30 (hora de Barcelona)**. Complementa a `CLAUDE.md` (contexto general y normas del repo) y a `docs/bitacora.md` (historial detallado).
+Traspaso para continuar desde otro dispositivo. Estado a **14-11-2026, ~18:15 (hora de Barcelona)**. Complementa a `CLAUDE.md` (contexto general y normas del repo) y a `docs/bitacora.md` (historial detallado).
 
 ## Objetivo
 NASA Space Apps Challenge 2026, equipo Logos (Barcelona), reto **«Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars»**. Producto: **Terra Analog**, una web Next.js que busca en toda la Tierra análogos de 3 objetivos (Shackleton en la Luna; Jezero y Arcadia Planitia en Marte) con datos de NASA procesados en Google Earth Engine, y explica en qué se parecen, cuánto y dónde se rompe la analogía.
@@ -25,16 +25,12 @@ NASA Space Apps Challenge 2026, equipo Logos (Barcelona), reto **«Identify Eart
 - **`data/ee/`:** copia de las capas en GeoTIFF, corregida el 14-11 a la rejilla real de 0,1° entre 85°N y 85°S, con sin dato = −9999. Ver `data/ee/README.md`.
 
 ## En curso / pendiente (por orden)
-1. **Exportación de atmósfera MERRA-2** → asset `projects/terra-analog/assets/terra_atmo_01deg` (bandas `ps_hpa`, `wind_ms`, `qv_gkg`, `dust_aod`; media de 2024). Lanzada desde el Code Editor; estado **RUNNING** desde ~16:50 (hora de Barcelona). Ver el estado en https://code.earthengine.google.com/tasks o en la pestaña *Tasks* del editor.
-2. Cuando termine:
-   - a. hacer público el asset nuevo (ver «Comandos»);
-   - b. publicarlo como GeoTIFF en `data/ee/atmo/{ps_hpa,wind_ms,qv_gkg,dust_aod}.tif`, con la misma rejilla que el resto, y avisar a C_2 para que vuelva a ejecutar `node scripts/ops/score-ops.mjs`;
-   - c. ejecutar las 3 fases: `10_tres_fases.js` para cada objetivo. Descargar `shortlist_{t}.geojson` y `known_{t}.geojson` y montar un `meta.json` con los percentiles de forma (`forma_p50/p90/p95/p99`) y los rangos (`ranges`) por objetivo;
-   - d. `node scripts/ee/merge-tres-fases.mjs <carpeta> <meta.json>` → regenera `src/data/ee-global.json` (v3);
-   - e. revisar los candidatos (que no sean ciudades ni agua) y regenerar el gráfico del README con `node scripts/readme/make-charts.mjs`;
-   - f. avisar a **C_1** para ajustar `HowItWorks.tsx` («01 Measure» con presión, viento y polvo; «03 Rank» con los tres filtros) y a **C_2** para volver a ejecutar su matriz con el v3;
-   - g. actualizar `README.md`, `docs/metodo.md` (ya tiene la v3), `docs/bitacora.md` y `docs/pitch.md` (las cifras están desactualizadas desde la v2);
-   - h. publicar: `npm run deploy`.
+1. ✅ Atmósfera MERRA-2 exportada y pública (`terra_atmo_01deg`, `data/ee/atmo/`).
+2. ✅ v3 en producción: `src/data/ee-global.json` (3 fases).
+   - Pendiente: C_1 ajusta `HowItWorks.tsx` y C_2 vuelve a ejecutar `node scripts/ops/score-ops.mjs` (ya avisados).
+   - Pendiente: reescribir las cifras de `docs/pitch.md` con la v3.
+   - La validación con análogos conocidos es débil en v3 (0–1 de 25 pasan las dos fases): hay que contarlo con honestidad o relajar los umbrales (p95/p90) si el equipo lo decide.
+   - Para repetirlo: los pasos están en `docs/metodo.md` (v3), con los scripts `09`, `10` y `merge-tres-fases.mjs`.
 3. **Decisiones pendientes del usuario:**
    - el hilo conductor propuesto, «no hay una segunda Luna en la Tierra, pero sí un sitio para ensayar cada paso de la misión»;
    - crear la página `/missions/` con el componente de C_2.

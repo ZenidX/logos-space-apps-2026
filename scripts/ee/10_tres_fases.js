@@ -29,7 +29,8 @@ function sim(k, tv) {
   var tp = ee.Number(tv).subtract(lo).divide(span).max(0).min(1);
   return ee.Image(1).subtract(p.subtract(tp).abs());
 }
-function mean(imgs) { return ee.ImageCollection(imgs).mean(); }
+// Todas las imágenes deben llamarse igual para promediarlas (si no: «Expected a homogeneous image collection»).
+function mean(imgs) { return ee.ImageCollection(imgs.map(function (i) { return ee.Image(i).rename('v'); })).mean(); }
 var t = T[TID];
 var superficie = mean([sim('ndvi', t.ndvi), sim('albedo', t.albedo)]).rename('superficie');
 var relieve = sim('slope', t.slope).rename('relieve');
