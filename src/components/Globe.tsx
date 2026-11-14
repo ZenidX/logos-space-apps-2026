@@ -101,14 +101,16 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
     let dirty = true;
     load(def.lo)
       .then((t) => {
-        if (disposed) { t.dispose(); return null; }
+        if (disposed) { t.dispose(); return; }
         material.map = t; material.needsUpdate = true; dirty = true; setLoading(false);
-        return saveData ? null : load(def.hi);
-      })
-      .then((t2) => {
-        if (!t2) return;
-        if (disposed) { t2.dispose(); return; }
-        material.map?.dispose(); material.map = t2; material.needsUpdate = true; dirty = true;
+        if (saveData) return;
+        // Si falla la textura grande, se queda la pequeña: el globo sigue funcionando.
+        load(def.hi)
+          .then((t2) => {
+            if (disposed) { t2.dispose(); return; }
+            material.map?.dispose(); material.map = t2; material.needsUpdate = true; dirty = true;
+          })
+          .catch((e) => console.warn("Globe: high-res texture failed, keeping low-res", e));
       })
       .catch((e) => { if (!disposed) onErrorRef.current?.(e); });
 
@@ -121,6 +123,8 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
     controls.addEventListener("start", () => { controls.autoRotate = false; window.clearTimeout(idle); });
     controls.addEventListener("end", () => { if (!reduce.matches) idle = window.setTimeout(() => (controls.autoRotate = true), 6000); });
     controls.addEventListener("change", () => (dirty = true));
+    const onReduce = () => { controls.autoRotate = !reduce.matches; window.clearTimeout(idle); };
+    reduce.addEventListener("change", onReduce);
 
     // Vuelo a un punto (900 ms, o salto directo con movimiento reducido)
     let fly: { t0: number; from: THREE.Vector3; to: THREE.Vector3 } | null = null;
@@ -184,6 +188,7 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
       cancelAnimationFrame(raf); window.clearTimeout(idle); ro.disconnect(); io.disconnect(); controls.dispose();
       material.map?.dispose(); material.dispose(); geometry.dispose();
       if (atmo) { atmo.geometry.dispose(); (atmo.material as THREE.Material).dispose(); }
+      reduce.removeEventListener("change", onReduce);
       renderer.dispose(); renderer.forceContextLoss();
       renderer.domElement.remove();
       api.current = null;
@@ -202,7 +207,7 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
       className={`relative h-full w-full overflow-hidden ${className}`}
       role="group"
       aria-roledescription="3D globe"
-      aria-label={`${body} globe. Drag to rotate, pinch to zoom. The list below has the same places as text.`}
+      aria-label={`${body} globe. Drag to rotate, pinch to zoom.${markers.some((m) => m.kind === "candidate") ? " The list below has the same places as text." : ""}`}
     >
       {loading && <div role="status" aria-label="Loading globe" className="skel absolute inset-[7%] rounded-full" />}
       <div className="pointer-events-none absolute inset-0">

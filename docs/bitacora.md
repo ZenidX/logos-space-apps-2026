@@ -2,6 +2,16 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Segunda tanda tras Crítico (sin publicar)
+
+Veredicto de Crítico sobre el rediseño publicado: «sí con cambios». Aplicado:
+1. Si falla la textura grande del globo, se queda la pequeña (antes caía al mapa 2D aunque el globo funcionaba).
+2. Los marcadores de objetivo en Maps ya hacen algo: al pulsarlos, se seleccionan y el globo gira hasta ellos.
+3. `prefers-reduced-motion` se respeta también si cambia con la página abierta.
+4. La etiqueta ARIA solo promete «la lista de abajo» cuando hay candidatos.
+Comprobado: tsc, eslint, next build; en local, globo de la Tierra (20 marcadores) y clic en Shackleton en la Luna (seleccionado, sin caer al 2D).
+Pendiente: confirmar la política de uso de las capas de Moon/Mars Trek y si el reto pide algo más de atribución (lo deja abierto `docs/licencias-texturas.md`).
+
 ## 2026-11-14 (noche) · Rediseño con globos 3D publicado (Space Apps)
 
 - Con el OK de zexu: `main` en `fd60435` (8 commits a nombre de zexu, sin firma de IA), push y deploy (gh-pages `8c9cf57`). Sin conflictos: `origin/main` no se había movido.

@@ -33,6 +33,9 @@ interface Props {
 export default function GlobeView({ body, markers, tileMarkers, selectedId, onSelect, className = "h-[22rem]", tl, tr, bl }: Props) {
   const [failed, setFailed] = useState(false);
   const [flat, setFlat] = useState(false);
+  const [ownSel, setOwnSel] = useState<string | null>(null);
+  const sel = onSelect ? selectedId : ownSel;
+  const select = onSelect ?? setOwnSel;
   const show2d = failed || flat;
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
@@ -48,7 +51,7 @@ export default function GlobeView({ body, markers, tileMarkers, selectedId, onSe
         {show2d ? (
           <TileMap key={body} body={body} markers={tileMarkers} />
         ) : (
-          <Globe key={body} body={body} markers={markers} selectedId={selectedId} onSelect={onSelect} onError={() => setFailed(true)} />
+          <Globe key={body} body={body} markers={markers} selectedId={sel} onSelect={select} onError={() => setFailed(true)} />
         )}
       </Visor>
       {!failed && (
