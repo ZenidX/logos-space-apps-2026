@@ -242,6 +242,8 @@ async function trekExport(base: string, bbox: string, n: number, extra = "") {
 }
 
 const MOON_SP = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_SPole875_5mp_v04/ImageServer";
+// LOLA 30 m/px desde 75°S: para objetivos fuera del DEM de 5 m (que solo cubre desde 87,5°S), como Mons Mouton.
+const MOON_SP30 = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_SPole75_30mp_v04/ImageServer";
 const MARS_BLEND = "https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_MOLA_blend200ppx_HRSC_DEM_clon0dd_200mpp_lzw/ImageServer";
 // Imágenes reales: misma proyección que los DEM de cada cuerpo (comprobado en el ?f=json de cada servicio).
 const MOON_WAC_SP = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_WAC_Mosaic_SPole60_100m_v02/ImageServer";
@@ -286,6 +288,20 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
   const box = `${x - hs},${y - hs},${x + hs},${y + hs}`;
   return {
     ...finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px · Imagery: LRO WAC south pole mosaic 100 m/px (Moon Trek)"),
+    loadImagery: () => trekImage(MOON_WAC_SP, box, 512),
+  };
+}
+
+// Polo sur lunar a 30 m/px (LOLA, desde 75°S), misma proyección estereográfica polar que el DEM de 5 m.
+export async function loadMoonSouthPole30(lat: number, lon: number, sizeM = 11000, n = 192): Promise<TerrainData> {
+  const rho = 2 * MOON_R * Math.tan(((90 + lat) * Math.PI) / 360);
+  const x = rho * Math.sin((lon * Math.PI) / 180);
+  const y = rho * Math.cos((lon * Math.PI) / 180);
+  const hs = sizeM / 2;
+  const box = `${x - hs},${y - hs},${x + hs},${y + hs}`;
+  const h = await trekExport(MOON_SP30, box, n);
+  return {
+    ...finish(h, n, sizeM, sizeM, 30, "Elevation: NASA LRO LOLA south pole DEM 30 m/px · Imagery: LRO WAC south pole mosaic 100 m/px (Moon Trek)"),
     loadImagery: () => trekImage(MOON_WAC_SP, box, 512),
   };
 }

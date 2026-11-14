@@ -125,7 +125,7 @@ function shapePct(c: { c: number[]; forma?: number | null }, targetId: string): 
 }
 
 export default function CandidatesTab() {
-  const available = TARGETS.filter((t) => DATA[t.id]);
+  const available = TARGETS.filter((t) => DATA[t.id] || DATA3[t.id]);
   const [targetId, setTargetId] = useState(available[0]?.id ?? TARGETS[0].id);
   const target = TARGETS.find((t) => t.id === targetId)!;
   const [scoring, setScoring] = useState<"v3" | "v2">("v3");
@@ -175,7 +175,7 @@ export default function CandidatesTab() {
           {TARGETS.map((t) => (
             <button
               key={t.id}
-              disabled={!DATA[t.id]}
+              disabled={!DATA[t.id] && !DATA3[t.id]}
               onClick={() => setTargetId(t.id)}
               className={`btn-cut border px-2 py-2 font-mono text-[11px] uppercase tracking-[.06em] transition-colors disabled:opacity-40 ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
             >

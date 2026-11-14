@@ -51,6 +51,35 @@ export const TARGETS: Target[] = [
     ],
   },
   {
+    id: "mouton",
+    name: "Mons Mouton plateau · lunar south pole",
+    short: "Mons Mouton",
+    body: "moon",
+    description: "Flat-topped massif near the lunar south pole, one of NASA's nine Artemis III candidate regions (2024).",
+    // Mismas huellas aproximadas que Shackleton (polo sur lunar); la pendiente se toma de la cima llana.
+    values: {
+      lst_day: -100,
+      lst_night: -180,
+      lst_max: -50,
+      lst_min: null,
+      precip: 0,
+      ndvi: 0,
+      albedo: 0.15,
+      snow: null,
+      emis: null,
+      slope: null,
+      elev: null,
+      cop_dem: null,
+    },
+    sources: "Surface values: same approximate south-pole literature values as Shackleton (LRO Diviner, LROC WAC). Relief: NASA LRO LOLA south pole DEM 30 m/px (Moon Trek). Patch centre: the flattest high 11 km window on the summit, chosen by us from LOLA; Mons Mouton itself is USGS Gazetteer feature 16070. Not an official NASA landing coordinate.",
+    whyChosen:
+      "Mons Mouton is one of the nine Artemis III candidate regions NASA kept in its October 2024 update. Unlike a crater rim, its broad flat summit is the kind of ground a crew could land on and build on, and flat-topped mountains and plateaus do exist on Earth, so it is a fairer target for finding look-alike analogs. We keep Shackleton as an exception: no place on Earth reproduces the wall of a 21 km polar crater.",
+    refs: [
+      { label: "NASA (2024): update to 9 regions", url: "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/" },
+      { label: "USGS Gazetteer: Mons Mouton", url: "https://planetarynames.wr.usgs.gov/Feature/16070" },
+    ],
+  },
+  {
     id: "jezero",
     name: "Jezero crater · Mars",
     short: "Jezero",

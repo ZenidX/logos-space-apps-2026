@@ -11,7 +11,10 @@ import type { Body } from "@/components/TileMap";
 
 const TARGET_MARKERS: Record<Body, { lat: number; lon: number; label: string; highlight?: boolean }[]> = {
   earth: SITES.map((s) => ({ lat: s.lat, lon: s.lon, label: s.name, highlight: s.known })),
-  moon: [{ lat: -89.5, lon: 0, label: "Shackleton rim (south pole)", highlight: true }],
+  moon: [
+    { lat: -89.5, lon: 0, label: "Shackleton rim (south pole)", highlight: true },
+    { lat: -84.987, lon: 36.7, label: "Mons Mouton plateau", highlight: true },
+  ],
   mars: [
     { lat: 18.4, lon: 77.5, label: "Jezero crater", highlight: true },
     { lat: 40, lon: -160, label: "Arcadia Planitia (ice)", highlight: true },
