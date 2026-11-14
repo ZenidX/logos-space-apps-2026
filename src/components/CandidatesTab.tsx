@@ -75,7 +75,7 @@ function explain(c: Candidate, targetValues: Record<string, number | null>) {
     rows.push({ k, sim: 1 - Math.abs(pos(v) - pos(t)), beyond: EXTREMES[k] != null && (t < EXTREMES[k][0] || t > EXTREMES[k][1]) });
   }
   rows.sort((a, b) => b.sim - a.sim);
-  return { strong: rows.slice(0, 3), weak: rows.slice(-2).reverse(), beyond: rows.filter((r) => r.beyond), saturated };
+  return { strong: rows.slice(0, 3), weak: rows.slice(-2).filter((r) => r.sim < 0.7).reverse(), beyond: rows.filter((r) => r.beyond), saturated };
 }
 
 const worldview = ([lon, lat]: [number, number]) =>
@@ -262,10 +262,12 @@ export default function CandidatesTab() {
                         <span className="text-emerald-400">✔ Similar in:</span>{" "}
                         {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
                       </p>
-                      <p>
-                        <span className="text-orange-400">✘ Differs in:</span>{" "}
-                        {e.weak.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
-                      </p>
+                      {e.weak.length > 0 && (
+                        <p>
+                          <span className="text-orange-400">✘ Differs in:</span>{" "}
+                          {e.weak.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
+                        </p>
+                      )}
                       {e.saturated.length > 0 && (
                         <p style={{ color: C.muted }}>
                           Tie at Earth&apos;s limit (not a real match):{" "}

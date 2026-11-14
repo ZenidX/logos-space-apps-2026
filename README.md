@@ -8,7 +8,7 @@ Project of team **Logos** for the NASA Space Apps Challenge 2026 (Barcelona loca
 
 ## Terra Analog
 
-A mobile-first web app that searches the whole Earth for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
+A mobile-first web app that searches all land between 85°N and 85°S for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
 
 - **Candidates**: global search over all land (excluding ~25 already-catalogued analog sites), validated against known analogs.
 - **Analysis**: per-dimension similarity (Climate, Surface, Relief) for 5 reference sites against a selected target (Shackleton rim, Jezero crater, Arcadia Planitia), and where each Earth variable falls versus the target. Geology (thermal-infrared emissivity) and Ice are shown for Earth but have no Moon/Mars value yet, so they are not scored.

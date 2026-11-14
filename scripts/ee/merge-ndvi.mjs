@@ -13,6 +13,7 @@ const path = new URL("../../src/data/ee-global.json", import.meta.url);
 const data = JSON.parse(readFileSync(path, "utf8"));
 let n = 0;
 for (const [t, i, v] of rows) {
+  if (v != null && !(v >= -0.2 && v <= 1)) throw new Error(`NDVI fuera de [-0,2, 1] en ${t} #${i}: ${v}. ¿Factor de escala mal aplicado? No se ha escrito nada.`);
   const c = data[t]?.top?.[i];
   if (!c) throw new Error(`Candidato ${t} #${i} no existe: ¿ha cambiado ee-global.json desde el 14-11?`);
   c.ndvi = v;

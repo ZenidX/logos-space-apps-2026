@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Cambios de la revisión de Crítico (Space Apps, rama `fix/auditoria-jefe`, sin push)
+
+1. «Differs in» solo muestra variables con similitud < 70 %; si no hay ninguna, no sale la línea.
+2. `06` y `07`: el factor del NDVI se decide por magnitud (p99 < 0,01 → ×10000, si no ×1) y se imprime; `merge-ndvi.mjs` rechaza NDVI fuera de [−0,2, 1] antes de escribir.
+3. Pitch y README: «all land between 85°N and 85°S» en vez de «whole Earth»; «We built an open tool…» en vez de «There is no open tool…»; «a first plausibility check» en vez de «we checked it works».
+Pendiente: ejecutar `07` + merge (falta iniciar sesión con la cuenta dueña de `terra-analog`; zexu inicia sesión).
+
 ## 2026-11-14 (tarde, 3) · Auditoría y arreglos (Jefe, rama `fix/auditoria-jefe`, sin push)
 
 Revisión completa del repo comprobada en la web (página oficial del reto, web publicada, catálogo de Earth Engine, nasa.gov). Fallos encontrados y qué se ha hecho:

@@ -12,14 +12,14 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 > In May 2024, to rehearse moonwalks for the lunar south pole, NASA took astronauts to a volcanic field in Arizona — and ran the test at night, with artificial lights, because daylight there is nothing like the low Sun at the Moon's pole. Choosing where on Earth to practise for the Moon and Mars still depends a lot on experience.
 
 **[0:20–0:50] Problem**
-> Today's analog sites — Atacama, Iceland, Antarctica — were chosen one by one, by experience. There is no open tool that scores the *whole* planet against a real Moon or Mars site and tells you *where* each analog stops being useful. The challenge asks exactly that: find new analogs, and explain what is similar, how similar, and where the analogy breaks.
+> Today's analog sites — Atacama, Iceland, Antarctica — were chosen one by one, by experience. We built an open tool that scores all land between 85°N and 85°S against a real Moon or Mars site and tells you *where* each analog stops being useful. The challenge asks exactly that: find new analogs, and explain what is similar, how similar, and where the analogy breaks.
 
 **[0:50–1:50] Solution + demo** *(live demo of the app on a phone)*
 > This is **Terra Analog**. We took NASA Earth observation data — MODIS land temperature, vegetation and albedo, GPM rainfall, and terrain — and scored every 11-kilometre cell of land on Earth against three real targets: the Shackleton crater rim at the lunar south pole, Jezero crater on Mars, and Arcadia Planitia, a candidate Mars landing site with buried ice.
 >
 > The Moon reaches −230 °C — no place on Earth does. So instead of comparing raw numbers, we ask: *where does the target sit within Earth's range?* and find the places that sit at the same extreme.
 >
-> First, we checked it works: for Shackleton, the polar analog sites — Svalbard, the McMurdo Dry Valleys, Axel Heiberg, Concordia — land in the top 10 % of the planet, while Atacama, a Mars analog, does not. It is not perfect: Death Valley and Mauna Kea also reach that top 10 %, because with only climate, surface and slope, any dry, bare and steep place looks lunar. That is exactly why we show, for every site, *which* variables match and which don't.
+> First, a first plausibility check: for Shackleton, the polar analog sites — Svalbard, the McMurdo Dry Valleys, Axel Heiberg, Concordia — land in the top 10 % of the planet, while Atacama, a Mars analog, does not. It is not perfect: Death Valley and Mauna Kea also reach that top 10 %, because with only climate, surface and slope, any dry, bare and steep place looks lunar. That is exactly why we show, for every site, *which* variables match and which don't.
 >
 > Then we removed the 25 analogs that are already catalogued and asked what is left. Our top new candidates: **northern Ellesmere Island in the Canadian high Arctic**, and the **high cold deserts of the Karakoram–Kunlun plateau** in western China. ⚠
 >
@@ -57,7 +57,7 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 **Project name:** Terra Analog
 
 **High-level summary (borrador):**
-Terra Analog systematically searches the whole Earth for new terrestrial analogs of future Moon and Mars base sites. Using NASA MODIS, GPM IMERG and terrain data in Google Earth Engine, it scores every ~11 km land cell against three real targets (Shackleton rim, Jezero crater, Arcadia Planitia) by comparing *relative positions within Earth's range*, since the Moon and Mars are more extreme than anywhere on Earth. It validates the method against 25 known analogs, excludes them, and ranks new candidates, explaining for each one what is analogous, how much, and where the analogy breaks.
+Terra Analog systematically searches all land between 85°N and 85°S for new terrestrial analogs of future Moon and Mars base sites. Using NASA MODIS, GPM IMERG and terrain data in Google Earth Engine, it scores every ~11 km land cell in that band against three real targets (Shackleton rim, Jezero crater, Arcadia Planitia) by comparing *relative positions within Earth's range*, since the Moon and Mars are more extreme than anywhere on Earth. It validates the method against 25 known analogs, excludes them, and ranks new candidates, explaining for each one what is analogous, how much, and where the analogy breaks.
 
 **NASA Data:** *Global search:* MODIS MOD11A2 (land surface temperature), MOD13C1 (NDVI), MCD43C3 (albedo) and GPM IMERG monthly V07 (precipitation), accessed via Google Earth Engine. *Reference-site analysis:* MOD13A2, MCD43A3, MOD10A1 (snow), ASTER GED (emissivity), NASADEM (elevation). *Maps and 3D:* NASA GIBS / Worldview, Moon Trek (LRO WAC, LOLA south-pole DEM) and Mars Trek (MGS MOLA, HRSC+MOLA blend), USGS/NASA Mars 2020 CTX DTM of Jezero. *Moon/Mars target values* are approximate figures from the literature on LRO Diviner and LOLA, MGS TES and MOLA and Perseverance MEDA; they were not computed from PDS products.
 

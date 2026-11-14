@@ -1,12 +1,14 @@
 // terra-analog · Google Earth Engine Code Editor (proyecto terra-analog)
 // Puntúa la Tierra contra los objetivos usando el asset precalculado de 05_export_features.js (0,1°).
 // Rangos p1–p99 calculados aquí sobre el mismo asset. Exclusión de análogos conocidos con paint (barato).
-// NDVI_FIX: el asset del 14-11 guardó el NDVI 10 000 veces pequeño (escala aplicada dos veces).
-// Con este asset, NDVI_FIX = 10000. Si se reexporta con 05 ya corregido, poner NDVI_FIX = 1.
-var NDVI_FIX = 10000;
+// Asset: terra_features_01deg (versión del 14-11-2026; el NDVI se guardó 10 000 veces pequeño).
+// Corrección automática por magnitud: si el p99 del NDVI del asset es < 0,01 se aplica ×10000; si no, ×1.
 var A0 = ee.Image('projects/terra-analog/assets/terra_features_01deg');
-var A = A0.addBands(A0.select('ndvi').multiply(NDVI_FIX), null, true);
 var world = ee.Geometry.Rectangle([-180, -90, 180, 90], null, false);
+var ndviP99 = ee.Number(A0.select('ndvi').reduceRegion({reducer: ee.Reducer.percentile([99]), geometry: world, scale: 11132, bestEffort: true, maxPixels: 1e10}).values().get(0));
+var NDVI_FIX = ee.Number(ee.Algorithms.If(ndviP99.lt(0.01), 10000, 1));
+print('NDVI p99 del asset / factor aplicado', ndviP99, NDVI_FIX);
+var A = A0.addBands(A0.select('ndvi').multiply(NDVI_FIX), null, true);
 var SCALE = 11132;
 var land = A.select('lst_day').mask().gt(0);
 var stats = A.updateMask(land).reduceRegion({reducer: ee.Reducer.percentile([1, 99]), geometry: world, scale: SCALE, bestEffort: true, maxPixels: 1e10});
