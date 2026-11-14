@@ -10,6 +10,7 @@ import { TARGET_TERRAIN } from "@/lib/targetTerrain";
 import eeGlobal from "@/data/ee-global.json";
 import eeSamples from "@/data/ee-samples.json";
 import shapeData from "@/data/shape.json";
+import eeSites from "@/data/ee-sites.json";
 
 
 interface Candidate {
@@ -28,6 +29,10 @@ interface Candidate {
   albedo: number | null;
   slope: number | null;
   place?: string;
+  // Nota nueva (v3): forma + superficie + viabilidad para construir
+  forma?: number | null; // 0–1: percentil de forma frente a tierra al azar / 100
+  viabilidad?: number | null; // 0–1
+  flat_pct?: number | null; // % del parche de 11 km con pendiente < 10°
 }
 interface TargetResult {
   top: Candidate[];
@@ -35,6 +40,8 @@ interface TargetResult {
   known: { name: string; total: number | null }[];
 }
 const DATA = eeGlobal as unknown as Record<string, TargetResult | undefined>;
+// v3 (Space Apps Datos): búsqueda nueva por forma y viabilidad. Vacío hasta que llegue el resultado.
+const DATA3 = eeSites as unknown as Record<string, TargetResult | undefined>;
 // Extremos reales de la Tierra (mín./máx. global de 01_inventario_capas.js) para decidir "fuera de la Tierra".
 const EXTREMES: Record<string, [number, number]> = Object.fromEntries(
   (eeSamples as unknown as { layers: { id: string; stats?: Record<string, number | null> | null }[] }).layers
@@ -112,7 +119,8 @@ function DimBar({ label, v }: { label: string; v: number | null }) {
 
 // «Parecido de forma» (informativo, fuera de la nota): percentil frente a 83 trozos de tierra firme al azar.
 const SHAPE = shapeData.pct as Record<string, Record<string, number>>;
-function shapePct(c: { c: number[] }, targetId: string): number | null {
+function shapePct(c: { c: number[]; forma?: number | null }, targetId: string): number | null {
+  if (c.forma != null) return Math.round(c.forma * 100);
   return SHAPE[`${c.c[1].toFixed(2)},${c.c[0].toFixed(2)}`]?.[targetId] ?? null;
 }
 
@@ -120,7 +128,10 @@ export default function CandidatesTab() {
   const available = TARGETS.filter((t) => DATA[t.id]);
   const [targetId, setTargetId] = useState(available[0]?.id ?? TARGETS[0].id);
   const target = TARGETS.find((t) => t.id === targetId)!;
-  const res = DATA[targetId];
+  const [scoring, setScoring] = useState<"v3" | "v2">("v3");
+  const hasV3 = !!DATA3[targetId];
+  const useV3 = scoring === "v3" && hasV3;
+  const res = useV3 ? DATA3[targetId] : DATA[targetId];
   const [view3d, setView3d] = useState<Candidate | null>(null);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [sortShape, setSortShape] = useState(false);
@@ -179,6 +190,29 @@ export default function CandidatesTab() {
         <>
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
             <h2 className="text-lg font-bold">New analogs of {target.short}</h2>
+            {hasV3 && (
+              <div className="my-2 flex flex-wrap gap-1 font-mono text-[11px] uppercase tracking-[.06em]" role="group" aria-label="Scoring">
+                {(["v3", "v2"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    aria-pressed={scoring === v}
+                    onClick={() => setScoring(v)}
+                    className={`btn-cut border px-2 py-1 ${scoring === v ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
+                  >
+                    {v === "v3" ? "Shape + buildability" : "Previous: near a city"}
+                  </button>
+                ))}
+              </div>
+            )}
+            {useV3 ? (
+              <p className="text-xs text-slate-300">
+                Three equal-weight dimensions: Shape (11 km relief, rotated and shifted, compared with the target and
+                ranked against random Earth land), Surface (NASA MODIS) and Buildability (share of nearly flat ground,
+                under 10°, to set up camps and pads; reachable by land). Climate is not scored. Water, urban areas and
+                the 25 known analogs are excluded; candidates are at least 300 km apart.
+              </p>
+            ) : (
             <p className="text-xs text-slate-300">
               All land between 85°N and 85°S in 0.1° cells (~11 km), scored in Earth Engine on three equal-weight
               dimensions: Surface and Relief (analogy with the target, NASA MODIS data) and Access (how easy it is to
@@ -186,6 +220,7 @@ export default function CandidatesTab() {
               water-dominated cells and the 25 already-catalogued analogs (300 km radius) are excluded; candidates are
               at least 300 km apart.
             </p>
+            )}
           </section>
 
           <GlobeView
@@ -273,14 +308,24 @@ export default function CandidatesTab() {
                   <span className="btn-cut bg-[var(--acc)] px-2 py-0.5 font-mono text-sm font-medium text-[var(--bg)]">{pct(c.total)}</span>
                 </header>
                 <div className="space-y-1">
-                  <DimBar label="Surface" v={c.superficie} />
-                  <DimBar label="Relief" v={c.relieve} />
-                  <DimBar label="Access" v={c.accesibilidad} />
+                  {c.forma != null ? (
+                    <>
+                      <DimBar label="Shape" v={c.forma} />
+                      <DimBar label="Surface" v={c.superficie} />
+                      <DimBar label="Buildability" v={c.viabilidad ?? null} />
+                    </>
+                  ) : (
+                    <>
+                      <DimBar label="Surface" v={c.superficie} />
+                      <DimBar label="Relief" v={c.relieve} />
+                      <DimBar label="Access" v={c.accesibilidad} />
+                    </>
+                  )}
                 </div>
                 <dl className="mt-2 grid grid-cols-3 gap-1 text-[11px]">
                   <div>
-                    <dt style={{ color: C.muted }}>To nearest city</dt>
-                    <dd className="font-mono">{fmtHours(c.access_h)}</dd>
+                    <dt style={{ color: C.muted }}>{c.flat_pct != null ? "Flat ground (<10°)" : "To nearest city"}</dt>
+                    <dd className="font-mono">{c.flat_pct != null ? `${Math.round(c.flat_pct)} %` : fmtHours(c.access_h)}</dd>
                   </div>
                   <div>
                     <dt style={{ color: C.muted }}>Elevation</dt>
@@ -318,7 +363,7 @@ export default function CandidatesTab() {
                               {sp >= 95 ? "▲ Shape match:" : "Shape:"}
                             </span>{" "}
                             more similar in relief shape than {sp > 98 ? "over 98" : sp}% of Earth&apos;s land
-                            <span style={{ color: C.muted }}> (informative, not scored)</span>
+                            {c.forma == null && <span style={{ color: C.muted }}> (informative, not scored)</span>}
                           </p>
                         );
                       })()}
