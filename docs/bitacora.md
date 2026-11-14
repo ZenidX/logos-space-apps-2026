@@ -2,6 +2,19 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 6)
+
+### Web en varias páginas
+- La historia se reparte en **5 páginas** con su propia URL:
+  - `/` Home: portada y escena Luna → Tierra.
+  - `/discover/`: elegir destino y deslizador.
+  - `/3d/`: comparación en 3D, ahora con selector de los 5 mejores candidatos de cada objetivo.
+  - `/method/`: validación, dónde se rompe la analogía y fuentes.
+  - `/data/`: las pestañas técnicas.
+- Barra de navegación común con indicador animado de la página activa (`SiteNav.tsx`) y enlace grande «Next →» al final de cada página.
+- El destino elegido y el peso del deslizador se mantienen al cambiar de página (`AppState.tsx`, contexto en el layout).
+- `Story.tsx` recibe `sections` y pinta solo las que pide cada página. El modo «explore» de la antigua portada pasa a `DataExplorer.tsx`.
+
 ## 2026-11-14 (noche, 5)
 
 ### Planetas 3D reales y arreglo del scroll bloqueado

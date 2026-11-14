@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import SiteNav from "@/components/SiteNav";
+import { AppStateProvider } from "@/components/AppState";
 
 const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["300", "400", "500"] });
 const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], weight: ["400", "500"] });
@@ -21,7 +23,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${plex.variable} ${jetbrains.variable} ${grotesk.variable} antialiased`}>{children}</body>
+      <body className={`${plex.variable} ${jetbrains.variable} ${grotesk.variable} antialiased`}>
+        <AppStateProvider>
+          <SiteNav />
+          <div className="relative z-[1]">{children}</div>
+        </AppStateProvider>
+      </body>
     </html>
   );
 }

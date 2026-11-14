@@ -9,6 +9,8 @@ import { TARGETS } from "@/data/targets";
 import { GLOBE_TEX } from "@/lib/globe-tex";
 import { TARGET_TERRAIN } from "@/lib/targetTerrain";
 import type { GlobeMarker } from "@/components/Globe";
+import Link from "next/link";
+import { useAppState } from "@/components/AppState";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
 const Viewer3D = dynamic(() => import("@/components/Viewer3D"), { ssr: false });
@@ -213,11 +215,15 @@ function ExpandOnScroll({ children }: { children: ReactNode }) {
 
 /* ---------- historia ---------- */
 
-export default function Story({ onExplore }: { onExplore: () => void }) {
-  const [targetId, setTargetId] = useState("shackleton");
-  const [w, setW] = useState(1 / 3); // peso de la logística (accesibilidad); 1/3 = la nota oficial
+export type Section = "hero" | "contrast" | "destination" | "tradeoff" | "step3d" | "validation" | "honesty" | "closing";
+
+// La historia se reparte en páginas: cada página pide sus secciones. El destino y el peso viven en AppState.
+export default function Story({ sections }: { sections: Section[] }) {
+  const has = (x: Section) => sections.includes(x);
+  const { targetId, setTargetId, w, setW } = useAppState();
   const [sel, setSel] = useState<string | null>(null);
   const [view3d, setView3d] = useState<Cand | null>(null);
+  const [pick, setPick] = useState(0); // candidato elegido en la página 3D (posición en el ranking)
   const target = TARGETS.find((t) => t.id === targetId)!;
   const res = DATA[targetId];
 
@@ -237,8 +243,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
     kind: "candidate",
     rank: i + 1,
   }));
-  useEffect(() => setSel(null), [targetId]);
+  useEffect(() => {
+    setSel(null);
+    setPick(0);
+  }, [targetId]);
   const best = ranked[0];
+  const picked = ranked[Math.min(pick, ranked.length - 1)];
 
   // Parallax de la portada
   const hero = useRef<HTMLDivElement>(null);
@@ -257,6 +267,8 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
   return (
     <div className="relative">
       {/* ───────── PORTADA ───────── */}
+      {has("hero") && (
+        <>
       <div ref={hero} className="relative min-h-[100svh] overflow-hidden">
         <motion.div style={{ y: globeY }} className="pointer-events-auto absolute inset-0 md:left-[38%]">
           <div className="absolute inset-0 [mask-image:radial-gradient(closest-side,#000_72%,transparent)]">
@@ -300,12 +312,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.35, duration: 0.7 }}
           >
-            <a href="#destino" className="btn-cut bg-[var(--acc)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] text-[var(--bg)]">
-              Start the search ↓
-            </a>
-            <button onClick={onExplore} className="btn-cut border border-[var(--line2)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] hover:text-[var(--acc)]">
+            <Link href="/discover/" className="btn-cut bg-[var(--acc)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] text-[var(--bg)]">
+              Start the search →
+            </Link>
+            <Link href="/data/" className="btn-cut border border-[var(--line2)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] hover:text-[var(--acc)]">
               Explore the data
-            </button>
+            </Link>
           </motion.div>
         </motion.div>
         <motion.div
@@ -316,8 +328,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           scroll
         </motion.div>
       </div>
+        </>
+      )}
 
-      {/* ───────── 01 · EL CONTRASTE (escena fija con scroll) ───────── */}
+{/* ───────── 01 · EL CONTRASTE (escena fija con scroll) ───────── */}
+      {has("contrast") && (
+        <>
       <ContrastScene />
 
       <Chapter n="01" kicker="The problem" title={<>Nowhere on Earth is <em className="not-italic text-[var(--acc)]">really</em> the Moon.</>}>
@@ -339,8 +355,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           ))}
         </div>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── 02 · ELIGE DESTINO ───────── */}
+{/* ───────── 02 · ELIGE DESTINO ───────── */}
+      {has("destination") && (
+        <>
       <Chapter id="destino" n="02" kicker="Your turn" title="Pick a destination.">
         <div className="grid grid-cols-3 gap-3 md:max-w-3xl">
           {TARGETS.map((t, i) => (
@@ -425,8 +445,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           </div>
         </div>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── 03 · CIENCIA VS LOGÍSTICA ───────── */}
+{/* ───────── 03 · CIENCIA VS LOGÍSTICA ───────── */}
+      {has("tradeoff") && (
+        <>
       <Chapter n="03" kicker="Trade-off" title="Science or logistics? You decide.">
         <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
           <Reveal>
@@ -478,18 +502,53 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           </LayoutGroup>
         </div>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── 04 · ENTRA EN 3D ───────── */}
+{/* ───────── 04 · ENTRA EN 3D ───────── */}
+      {has("step3d") && (
+        <>
       <Chapter n="04" kicker="Step inside" title={<>Same scale. Same sunlight.<br />Two worlds.</>}>
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          {TARGETS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTargetId(t.id)}
+              aria-pressed={t.id === targetId}
+              className={`btn-cut border px-3 py-2 font-mono text-[11px] uppercase tracking-[.08em] transition-colors ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] hover:text-[var(--acc)]"}`}
+            >
+              {t.short}
+            </button>
+          ))}
+        </div>
+        <LayoutGroup>
+          <div className="mb-8 flex flex-wrap gap-2">
+            {ranked.slice(0, 5).map((r, i) => (
+              <button
+                key={r.id}
+                onClick={() => setPick(i)}
+                aria-pressed={i === pick}
+                className={`relative border px-3 py-2 text-left text-sm transition-colors ${i === pick ? "border-[var(--acc)]" : "border-[var(--line)] hover:border-[var(--line2)]"}`}
+              >
+                {i === pick && <motion.span layoutId="pick3d" className="absolute inset-0 bg-[rgba(94,230,255,.08)]" />}
+                <span className="relative">
+                  <span className="mr-2 font-mono text-[var(--acc)]">{i + 1}</span>
+                  {short(r.c.place)}
+                  <span className="ml-2 text-xs text-[var(--mut)]">{country(r.c.place)}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </LayoutGroup>
         <ExpandOnScroll>
           <button
-            onClick={() => best && setView3d(best.c)}
+            onClick={() => picked && setView3d(picked.c)}
             className="group relative block w-full overflow-hidden border border-[var(--line2)] text-left"
           >
             <div className="relative flex items-center justify-center gap-[6vw] bg-[radial-gradient(60%_80%_at_50%_50%,rgba(61,125,255,.12),transparent)] px-6 py-14 md:py-20">
               <span className="flex flex-col items-center gap-4">
                 <Orb body="earth" size="min(30vw,240px)" active />
-                <span className="font-mono text-[11px] uppercase tracking-[.12em]">Earth · {short(best?.c.place)}</span>
+                <span className="font-mono text-[11px] uppercase tracking-[.12em]">Earth · {short(picked?.c.place)}</span>
               </span>
               <span className="font-mono text-[clamp(22px,3vw,36px)] text-[var(--dim)]">≈</span>
               <span className="flex flex-col items-center gap-4">
@@ -511,8 +570,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           </p>
         </Reveal>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── 05 · ¿FUNCIONA? ───────── */}
+{/* ───────── 05 · ¿FUNCIONA? ───────── */}
+      {has("validation") && (
+        <>
       <Chapter n="05" kicker="Does it work?" title={<><Counter to={inTop} /> of {known.length} known analogs land in Earth&apos;s top 10%.</>}>
         <Reveal>
           <div className="relative mt-4 h-40 border-b border-[var(--line2)]">
@@ -545,8 +608,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           </p>
         </Reveal>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── 06 · DÓNDE SE ROMPE ───────── */}
+{/* ───────── 06 · DÓNDE SE ROMPE ───────── */}
+      {has("honesty") && (
+        <>
       <Chapter n="06" kicker="Honesty" title="Where every analogy breaks.">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
@@ -568,8 +635,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           </p>
         </Reveal>
       </Chapter>
+        </>
+      )}
 
-      {/* ───────── CIERRE ───────── */}
+{/* ───────── CIERRE ───────── */}
+      {has("closing") && (
+        <>
       <section className="mx-auto max-w-6xl px-5 pb-32 pt-10">
         <Reveal className="cut">
           <div className="in flex flex-col items-start gap-6 p-8 md:flex-row md:items-center md:justify-between md:p-12">
@@ -579,9 +650,9 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
                 The full method, all 20 candidates per target, the layers behind each score and the Moon/Mars maps.
               </p>
             </div>
-            <button onClick={onExplore} className="btn-cut shrink-0 bg-[var(--acc)] px-6 py-4 font-mono text-[13px] uppercase tracking-[.08em] text-[var(--bg)]">
+            <Link href="/data/" className="btn-cut shrink-0 bg-[var(--acc)] px-6 py-4 font-mono text-[13px] uppercase tracking-[.08em] text-[var(--bg)]">
               Explore the data ▸
-            </button>
+            </Link>
           </div>
         </Reveal>
         <p className="mt-8 font-mono text-[10px] uppercase leading-relaxed tracking-[.1em] text-[var(--dim)]">
@@ -589,6 +660,8 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           ESA Sentinel-2 (EOX) · Google Earth Engine
         </p>
       </section>
+        </>
+      )}
 
       {view3d && (
         <Viewer3D

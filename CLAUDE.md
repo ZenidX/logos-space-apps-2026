@@ -17,6 +17,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · publicar con `npm run deploy` (publica el último commit; construye en un worktree aparte).
 
 ## Arquitectura
+- **Web de varias páginas** (App Router, exportación estática): `/` Home (portada + escena Luna→Tierra), `/discover/` (destino + deslizador ciencia↔logística), `/3d/` (comparación 11×11 km), `/method/` (validación + límites + fuentes), `/data/` (pestañas técnicas, `src/components/DataExplorer.tsx`). Barra común `src/components/SiteNav.tsx`; estado compartido (destino y peso) en `src/components/AppState.tsx`; las secciones de la historia están en `src/components/Story.tsx` y cada página elige cuáles pinta con `<Story sections={[…]} />`. `src/app/template.tsx` hace la transición (solo opacidad: un transform rompería los `position:fixed`).
 - `src/app/page.tsx`: 4 pestañas (Candidatos, Análisis, Datos, Mapas).
 - `src/components/CandidatesTab.tsx` ← `src/data/ee-global.json`: búsqueda global, validación y ranking.
 - `src/components/AnalysisTab.tsx` + `src/lib/analysis.ts` ← `src/data/ee-samples.json`: similitud por dimensión en 5 sitios de referencia.
