@@ -7,12 +7,12 @@ import { analyzeVariables, DIMENSIONS, position, scoreSites, type VariableAnalys
 
 // Paleta (referencia dataviz, modo oscuro): serie 1 azul = sitios terrestres, serie 2 naranja = objetivo.
 const C = {
-  site: "#3987e5",
-  target: "#d95926",
-  track: "#2c2c2a",
-  band: "#383835",
-  muted: "#898781",
-  secondary: "#c3c2b7",
+  site: "#3d7dff",
+  target: "#ffb547",
+  track: "#12233a",
+  band: "#1b2f48",
+  muted: "#8197ad",
+  secondary: "#b4c6d8",
 };
 // Rampa secuencial azul (oscuro: bajo = cerca de la superficie, alto = claro).
 const SEQ = ["#0d366b", "#104281", "#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5", "#5598e7", "#6da7ec", "#86b6ef"];
@@ -139,7 +139,7 @@ export default function AnalysisTab() {
     <div className="space-y-6">
       {/* selector de objetivo */}
       <section>
-        <p className="mb-2 text-xs" style={{ color: C.muted }}>
+        <p className="etq mb-3" data-n="02">
           Objetivo a imitar
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -147,9 +147,9 @@ export default function AnalysisTab() {
             <button
               key={t.id}
               onClick={() => setTargetId(t.id)}
-              className={`rounded-xl px-2 py-2 text-xs font-semibold ${t.id === targetId ? "bg-orange-500 text-black" : "bg-white/10"}`}
+              className={`btn-cut border px-2 py-2 font-mono text-[11px] uppercase tracking-[.06em] transition-colors ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
             >
-              {t.body === "moon" ? "🌕" : "🔴"} {t.short}
+              <span className="opacity-60">{t.body === "moon" ? "Luna" : "Marte"} ·</span> {t.short}
             </button>
           ))}
         </div>
@@ -200,7 +200,7 @@ export default function AnalysisTab() {
                     {DIMENSIONS.map((d) => {
                       const c = row.dims[d];
                       return c.score == null ? (
-                        <td key={d} className="rounded text-center" style={{ color: C.muted, background: "#1a1a19" }} title="Sin datos comparables del objetivo o del sitio">
+                        <td key={d} className="rounded text-center" style={{ color: C.muted, background: "#08111c" }} title="Sin datos comparables del objetivo o del sitio">
                           n/d
                         </td>
                       ) : (

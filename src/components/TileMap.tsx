@@ -56,6 +56,7 @@ export default function TileMap({ body, markers = [] }: { body: Body; markers?: 
       maxZoom: 10,
       worldCopyJump: true,
       attributionControl: true,
+      zoomControl: false,
     });
     L.tileLayer(def.url, {
       attribution: def.attribution,
@@ -66,7 +67,7 @@ export default function TileMap({ body, markers = [] }: { body: Body; markers?: 
     for (const m of markers) {
       L.circleMarker([m.lat, m.lon], {
         radius: m.highlight ? 8 : 6,
-        color: m.highlight ? "#f97316" : "#38bdf8",
+        color: m.highlight ? "#ffb547" : "#5ee6ff",
         weight: 2,
         fillOpacity: 0.7,
       })
@@ -84,5 +85,5 @@ export default function TileMap({ body, markers = [] }: { body: Body; markers?: 
     };
   }, [body, markers]);
 
-  return <div ref={ref} className="h-full w-full rounded-xl bg-black" />;
+  return <div ref={ref} className="h-full w-full bg-[var(--bg2)]" />;
 }

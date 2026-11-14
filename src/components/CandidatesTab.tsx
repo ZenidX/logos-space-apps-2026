@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { TARGETS } from "@/data/targets";
+import Visor from "@/components/Visor";
 import eeGlobal from "@/data/ee-global.json";
 import eeSamples from "@/data/ee-samples.json";
 
@@ -68,7 +69,7 @@ function explain(c: Candidate, targetValues: Record<string, number | null>) {
 const worldview = ([lon, lat]: [number, number]) =>
   `https://worldview.earthdata.nasa.gov/?v=${lon - 1.5},${lat - 1},${lon + 1.5},${lat + 1}&l=MODIS_Terra_CorrectedReflectance_TrueColor,Coastlines_15m`;
 
-const C = { site: "#3987e5", target: "#d95926", muted: "#898781", track: "#2c2c2a" };
+const C = { site: "#3d7dff", target: "#ffb547", muted: "#8197ad", track: "#12233a" };
 const pct = (v: number | null | undefined) => (v == null ? "—" : `${Math.round(v * 100)}`);
 const num = (v: number | null | undefined, d = 1) => (v == null ? "—" : v.toFixed(d));
 const coord = ([lon, lat]: [number, number]) =>
@@ -124,7 +125,7 @@ export default function CandidatesTab() {
   return (
     <div className="space-y-6">
       <section>
-        <p className="mb-2 text-xs" style={{ color: C.muted }}>
+        <p className="etq mb-3" data-n="01">
           Objetivo a imitar
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -133,11 +134,9 @@ export default function CandidatesTab() {
               key={t.id}
               disabled={!DATA[t.id]}
               onClick={() => setTargetId(t.id)}
-              className={`rounded-xl px-2 py-2 text-xs font-semibold disabled:opacity-40 ${
-                t.id === targetId ? "bg-orange-500 text-black" : "bg-white/10"
-              }`}
+              className={`btn-cut border px-2 py-2 font-mono text-[11px] uppercase tracking-[.06em] transition-colors disabled:opacity-40 ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
             >
-              {t.body === "moon" ? "🌕" : "🔴"} {t.short}
+              <span className="opacity-60">{t.body === "moon" ? "Luna" : "Marte"} ·</span> {t.short}
             </button>
           ))}
         </div>
@@ -153,12 +152,20 @@ export default function CandidatesTab() {
             </p>
           </section>
 
-          <section className="h-72">
+          <Visor
+            className="h-80"
+            glitchKey={targetId}
+            reticle={false}
+            tl={<><span className="k">Objetivo</span><br />{target.short}</>}
+            tr={<><span className="k">Celdas</span><br />0,1° · 85N–85S</>}
+            bl={<span className="k">Top {res.top.length} · sep ≥ 300 km</span>}
+            br={<span className="k">NASA GIBS · MODIS · GPM</span>}
+          >
             <TileMap body="earth" markers={markers} />
-          </section>
+          </Visor>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-            <h3 className="text-base font-bold">Validación</h3>
+            <p className="etq mb-3" data-n="02">Validación</p>
             <p className="mb-2 text-xs" style={{ color: C.muted }}>
               Puntuación de toda la Tierra: mediana {pct(res.dist.total_p50)} · p90 {pct(res.dist.total_p90)} · p99{" "}
               {pct(res.dist.total_p99)}. Los análogos conocidos deberían caer arriba.
@@ -185,7 +192,7 @@ export default function CandidatesTab() {
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-base font-bold">Ranking de candidatos</h3>
+            <p className="etq mb-3" data-n="03">Ranking de candidatos</p>
             {res.top.map((c, i) => (
               <article key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
                 <header className="mb-2 flex items-start justify-between gap-2">
@@ -196,7 +203,7 @@ export default function CandidatesTab() {
                     </p>
                     {c.place && <p className="text-[11px]" style={{ color: C.muted }}>{coord(c.c)}</p>}
                   </div>
-                  <span className="rounded-lg bg-orange-500 px-2 py-0.5 text-sm font-black text-black">{pct(c.total)}</span>
+                  <span className="btn-cut bg-[var(--acc)] px-2 py-0.5 font-mono text-sm font-medium text-[var(--bg)]">{pct(c.total)}</span>
                 </header>
                 <div className="space-y-1">
                   <DimBar label="Clima" v={c.clima} />
