@@ -11,6 +11,13 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
   - **Jezero:** lugar de aterrizaje de Perseverance (2021), con delta fluvial conservado.
   - **Arcadia Planitia:** hielo a pocos metros según el proyecto SWIM de NASA; candidata para misiones humanas.
 
+## 2026-11-14 (tarde) · Decisión de zexu: nos quedamos con Scoring v2 (Space Apps)
+
+- Se mantiene Scoring v2 de Fer (`2174545`, `9bb7034`): tres dimensiones iguales (Surface, Relief, Access); el clima ya no puntúa. Candidatos = lista actual de `src/data/ee-global.json` (#1 Isfahan, #2 Parwan, #3 Tacna).
+- Mensaje del pitch: «análogos parecidos Y accesibles para entrenar y probar equipos». Irán y Afganistán se presentan como análogo de terreno, no como propuesta de sitio.
+- Todo se alinea con v2: Shape (Datos, repetir sobre la lista v2), guion/diapositivas (Pitch, v4), rediseño (Diseño) y textos de la web. `docs/pitch.md` sigue con la v1: pendiente de actualizar.
+- Nota: el visor 3D de la web publicada salió en negro en el navegador de OpenBot (WebGL activo); sin confirmar si es fallo de la web o de la captura. El vídeo del visor debe grabarse en un ordenador real.
+
 ## 2026-11-14 (noche, 2)
 
 ### Puntuación v2: sin clima y con accesibilidad
