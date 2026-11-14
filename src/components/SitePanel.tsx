@@ -1,4 +1,5 @@
 // AI-assisted (Claude), reviewed by team Logos
+import Count from "@/components/Count";
 import { fmt, idx, type Mission, type Site } from "@/lib/missions";
 
 export function KindChip({ kind }: { kind: Site["kind"] }) {
@@ -21,7 +22,7 @@ function Bar({ v }: { v: number | null }) {
   const c = v === null ? "var(--dim)" : v >= 0.95 ? "var(--earth)" : v >= 0.9 ? "var(--earth)" : "var(--amber)";
   return (
     <span className="relative inline-block h-1.5 w-20 overflow-hidden rounded-full bg-[var(--line)]" aria-hidden>
-      <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${(v ?? 0) * 100}%`, background: c }} />
+      <span className="bar-fill absolute inset-y-0 left-0 rounded-full" style={{ width: `${(v ?? 0) * 100}%`, background: c }} />
     </span>
   );
 }
@@ -32,15 +33,15 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const sun = site.vars.find((v) => v.id === "sun_max_deg");
   const sunW = site.vars.find((v) => v.id === "sun_winter_solstice_deg");
   return (
-    <div className="fade-in">
+    <div className="stagger">
       <button onClick={onBack} className="back-btn label -ml-1 px-1 py-2 hover:text-[var(--ink)]">← All sites</button>
       <div className="mt-3 flex flex-wrap items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="text-[12px] text-[var(--mut)]">Used by: {site.campaign}</span>}</div>
-      <h3 className="display mt-2 text-[22px] font-semibold leading-tight">{site.name}</h3>
+      <h3 className="place mt-2 text-[32px] leading-[1.05]">{site.name}</h3>
       {site.country && <p className="text-[13px] text-[var(--mut)]">{site.country}</p>}
       <p className="mono text-[12px] text-[var(--dim)]">{site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · 0.1° cell (~11 km){site.kind === "new" && ` · region of ${site.areaKm2 ? `~${Math.round(site.areaKm2).toLocaleString("en")} km²` : "several cells"} to investigate, not a surveyed site`}</p>
 
       <section className="mt-4 flex items-end justify-between rounded-xl border border-[var(--line2)] p-3">
-        <div><h4 className="label">Analog index · 0 to 1</h4><p className="display text-[34px] font-semibold leading-none tabular-nums">{idx(site.match)}</p></div>
+        <div><h4 className="label">Analog index · 0 to 1</h4><p className="mono text-[40px] leading-none tracking-[-.03em]"><Count value={site.match} ms={900} /></p></div>
         {site.percentile !== null && <p className="text-right text-[12.5px] text-[var(--mut)]">Higher than<br /><b className="text-[var(--ink)]">{site.percentile.toFixed(1)} %</b> of land cells</p>}
       </section>
       <p className="mt-1 text-[11.5px] text-[var(--dim)]">A ranking index from our mission conditions, not a probability. See “Method & sources”.</p>

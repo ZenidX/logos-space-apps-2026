@@ -46,7 +46,7 @@ AI-assisted outputs are reviewed by the team before submission. AI-assisted code
 - Missions: real analog field campaigns by NASA, ESA and the Mars Society (links in the app and in `docs/missions.md`).
 - Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth. Full list and licences in the app («Method & sources») and `docs/method.md` and `docs/sources.md`.
 - Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
-- Front-end design proposal «Orbit» drafted with AI assistance; fonts Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).
+- Front-end design proposal «Orbit» drafted with AI assistance; fonts Instrument Serif, Instrument Sans, Geist Mono (SIL OFL 1.1).
 
 ## Licence
 Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences (see `docs/sources.md`).

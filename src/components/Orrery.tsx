@@ -19,6 +19,7 @@ interface Props {
   markers: OrreryMarker[];
   arcs: OrreryArc[]; // from = id del marcador objetivo, to = id del candidato
   selectedId: string | null;
+  highlightId?: string | null; // hovered row: highlights its arc and marker without moving the globes
   onSelect?: (id: string) => void;
   paused?: boolean; // «Pause demo»: sin fotones ni inercia
   onError?: (e: unknown) => void; // sin WebGL → el padre pinta el mapa 2D
@@ -34,17 +35,19 @@ const TWEEN_MS = 900, ROTATE_MS = 700;
 interface Body { group: THREE.Group; mesh: THREE.Mesh; mat: THREE.MeshStandardMaterial; hi: boolean }
 interface Tween { t0: number; dur: number; from: Pose; to: Pose; qFrom: Record<BodyId, THREE.Quaternion>; qTo: Partial<Record<BodyId, THREE.Quaternion>>; hideArcs: boolean }
 
-export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paused = false, onError, className = "" }: Props) {
+export default function Orrery({ mode, markers, arcs, selectedId, highlightId = null, onSelect, paused = false, onError, className = "" }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const latest = useRef({ mode, markers, arcs, selectedId, paused, onError });
-  const api = useRef<{ sync: () => void; invalidate: () => void } | null>(null);
+  const api = useRef<{ sync: () => void; invalidate: () => void; highlight: (id: string | null) => void } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     latest.current = { mode, markers, arcs, selectedId, paused, onError };
     api.current?.sync();
   }, [mode, markers, arcs, selectedId, paused, onError]);
+
+  useEffect(() => { api.current?.highlight(highlightId); }, [highlightId]);
 
   useEffect(() => {
     const el = host.current;
@@ -270,7 +273,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
     const io = new IntersectionObserver(([en]) => { onScreen = en.isIntersecting; dirty = true; }); io.observe(el);
     resize(); sync();
     raf = requestAnimationFrame(frame);
-    api.current = { sync, invalidate: () => (dirty = true) };
+    api.current = { sync, invalidate: () => (dirty = true), highlight: (id) => { arcSet.setHighlight(id ?? (latest.current.selectedId && latest.current.arcs.some((a) => a.id === latest.current.selectedId) ? latest.current.selectedId : null)); dirty = true; } };
 
     cleanup = () => {
       disposed = true; api.current = null;
@@ -295,7 +298,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
             key={m.id}
             ref={(n) => { if (n) buttons.current.set(m.id, n); else buttons.current.delete(m.id); }}
             type="button"
-            className={`mk ${m.kind === "target" ? "target" : ""} ${m.id === selectedId ? "sel" : ""} pointer-events-auto`}
+            className={`mk ${m.kind === "target" ? "target" : ""} ${m.id === selectedId || m.id === highlightId ? "sel" : ""} pointer-events-auto`}
             style={{ left: 0, top: 0, visibility: "hidden", ["--c" as string]: `#${COLOR[m.body].toString(16).padStart(6, "0")}` }}
             aria-label={`${m.label}${m.rank ? `, rank ${m.rank}` : ""}`}
             aria-pressed={m.id === selectedId}

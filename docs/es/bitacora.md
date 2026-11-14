@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:47 · «Alma»: tanda visual 1 (feedback de zexu)
+- Tipografía nueva (dirección de arte de Diseño, todas OFL y autoalojadas): Instrument Serif para titulares y nombres de lugar (cursiva), Instrument Sans para texto y botones, Geist Mono para datos.
+- Animaciones: entradas escalonadas, números que cuentan, barras que crecen, panel que entra deslizando, tarjetas y filas con respuesta al pasar y pulsar; al pasar por una fila se resalta su arco y su marcador. Todo desactivado con «reduced motion».
+- Contenido: sección «How it works» en 3 pasos; por misión, «What is rehearsed» y «Why it matters».
+- Siguiente: vista de comparación con relieve (Logos Datos ya entregó 30 mapas de alturas de 11×11 km).
+
 ## 2026-11-14 · 22:39 · Documentos sincronizados con los datos v4
 - `docs/method.md` en una sola versión (método v3, datos v4); `docs/sources.md` rehecho: 154 afirmaciones, 118 verificadas, 21 estimaciones, 4 a quitar, 11 otras. Sin comprobar: licencias de texturas y condiciones de Mars Trek.
 - Valores de objetivo con fuente: albedo de Jezero 0,18 y de Arcadia 0,23 (mapa TES, Christensen 2001); temperatura media de Arcadia −76 °C (Mars Climate Database v6.2, modelo). El albedo de Mons Mouton (0,15) sigue siendo estimación.

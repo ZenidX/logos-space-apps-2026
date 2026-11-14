@@ -1,11 +1,12 @@
 // AI-assisted (Claude), reviewed by team Logos
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Geist_Mono, Instrument_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["400", "500", "600"] });
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], weight: ["400", "500"] });
-const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], weight: ["500", "600"] });
+// All SIL OFL 1.1; next/font self-hosts them (CSP font-src 'self').
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif", display: "swap" });
+const sans = Instrument_Sans({ subsets: ["latin"], weight: "variable", variable: "--font-sans", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], weight: "400", variable: "--font-mono", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   title: "Logos · Mission Analogs",
@@ -22,7 +23,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${plex.variable} ${jetbrains.variable} ${grotesk.variable}`}>{children}</body>
+      <body className={`${serif.variable} ${sans.variable} ${mono.variable}`}>{children}</body>
     </html>
   );
 }
