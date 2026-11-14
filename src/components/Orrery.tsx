@@ -52,10 +52,10 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
   useEffect(() => {
     const el = host.current;
     if (!el) return;
-    // Staged start: yield to the browser between heavy steps so the page stays responsive while the scene boots.
+    // Async start so the effect can be cancelled cleanly (a timer-based staged start measured worse on desktop).
     let cancelled = false;
     let cleanup = () => {};
-    const tick = () => new Promise<void>((r) => setTimeout(r, 0));
+    const tick = () => Promise.resolve();
     void (async () => {
     await tick();
     if (cancelled) return;
@@ -116,7 +116,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
       scene.add(group);
       bodies[id] = { group, mesh, mat, hi: false };
     }
-    for (const id of BODY_IDS) loadTex(GLOBE_TEX[id].lo).then((t) => { setTex(id, t, false); if (id === "earth" && !lite) ensureHi("earth"); if (BODY_IDS.every((b) => bodies[b].mat.map)) setLoading(false); }).catch((e) => { if (!disposed) latest.current.onError?.(e); });
+    for (const id of BODY_IDS) loadTex(GLOBE_TEX[id].lo).then((t) => { setTex(id, t, false); if (id === "earth" && !lite) window.setTimeout(() => { if (!disposed) ensureHi("earth"); }, 6000); if (BODY_IDS.every((b) => bodies[b].mat.map)) setLoading(false); }).catch((e) => { if (!disposed) latest.current.onError?.(e); });
 
     // ---------- arcos ----------
     const arcSet = new ArcSet(lite, reduce);
