@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 9) · Escena Luna → Tierra por tiempo, no por scroll
+
+Pedido del usuario: el viaje de la Luna a la Tierra de la portada dependía del scroll (3,2 pantallas fijas) y se hacía pesado.
+- `ContrastScene` (en `Story.tsx`) ahora ocupa **una pantalla** y se anima por **tiempo** (12 s), usando un `MotionValue` con `animate` en lugar de `useScroll`. Los textos y el movimiento son los mismos.
+- Arranca sola al entrar en vista (55 %) y se **pausa sola** al salir. Los botones **Pause / Play** y **Replay ↺** miden 44 px (WCAG 2.2.2: el contenido que se mueve más de 5 s debe poder pausarse).
+- Con movimiento reducido se ven los tres mensajes en columnas, como antes.
+- Comprobado en Chrome: avanza 5/12 en 5 s, Pause congela la escena, Play la retoma y se pausa sola al subir a la portada.
+
 ## 2026-11-14 (noche, 8) · Estrategias de base y matriz de operaciones análogas
 
 Encargo del usuario (vía C_0), hecho en la sesión C_2.

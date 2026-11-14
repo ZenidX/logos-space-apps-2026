@@ -2,8 +2,8 @@
 
 // Portada en modo «historia»: poco texto, animación e interacción. Las pestañas de datos quedan detrás de «Explore the data».
 import dynamic from "next/dynamic";
-import { AnimatePresence, LayoutGroup, animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { AnimatePresence, LayoutGroup, animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import eeGlobal from "@/data/ee-global.json";
 import { TARGETS } from "@/data/targets";
 import { GLOBE_TEX } from "@/lib/globe-tex";
@@ -143,11 +143,36 @@ function ScrubWord({ p, a, b, children }: { p: ReturnType<typeof useScroll>["scr
   );
 }
 
-// Escena fija (sticky) de 300vh: la Luna se encoge y se aparta, entra la Tierra, y tres mensajes se relevan.
+// Escena de una pantalla, ligada al TIEMPO y no al scroll: al entrar en vista, la Luna se encoge y se aparta,
+// entra la Tierra y tres mensajes se relevan (≈12 s). Se pausa sola al salir de la vista y tiene Pausa / Repetir.
+const SCENE_S = 12;
 function ContrastScene() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const inView = useInView(ref, { amount: 0.55 });
+  const p = useMotionValue(0);
+  const ctl = useRef<ReturnType<typeof animate> | null>(null);
+  const userPaused = useRef(false);
+  const [state, setState] = useState<"idle" | "playing" | "paused" | "done">("idle");
+  const play = useCallback(
+    (from?: number) => {
+      ctl.current?.stop();
+      if (from != null) p.set(from);
+      setState("playing");
+      ctl.current = animate(p, 1, { duration: SCENE_S * (1 - p.get()), ease: "linear", onComplete: () => setState("done") });
+    },
+    [p],
+  );
+  const pause = useCallback(() => {
+    ctl.current?.stop();
+    setState("paused");
+  }, []);
+  useEffect(() => {
+    if (reduce) return;
+    if (inView && (state === "idle" || (state === "paused" && !userPaused.current))) play(state === "idle" ? 0 : undefined);
+    if (!inView && state === "playing") pause();
+  }, [inView, state, play, pause, reduce]);
+  useEffect(() => () => ctl.current?.stop(), []);
   const moonScale = useTransform(p, [0, 0.45, 1], [1.25, 0.55, 0.38]);
   const moonX = useTransform(p, [0, 0.45, 1], ["0vw", "-26vw", "-30vw"]);
   const moonO = useTransform(p, [0.85, 1], [1, 0.6]);
@@ -173,8 +198,8 @@ function ContrastScene() {
     );
   }
   return (
-    <section ref={ref} className="relative h-[320vh]">
-      <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
+    <section ref={ref} aria-label="Moon versus Earth: the coldest places" className="relative">
+      <div className="relative flex h-[100svh] items-center justify-center overflow-hidden">
         <motion.div style={{ scale: moonScale, x: moonX, opacity: moonO }} className="absolute">
           <Orb body="moon" size={420} active />
         </motion.div>
@@ -184,12 +209,49 @@ function ContrastScene() {
         {steps.map((s) => (
           <SceneCaption key={s.k} p={p} r={s.r} k={s.k} big={s.big} t={s.t} />
         ))}
+        <div className="absolute bottom-4 right-5 z-20 flex gap-2 font-mono text-xs uppercase tracking-[.08em]">
+          {state === "playing" ? (
+            <button
+              type="button"
+              onClick={() => {
+                userPaused.current = true;
+                pause();
+              }}
+              className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] bg-[rgba(4,8,15,.7)] px-4 hover:text-[var(--acc)]"
+            >
+              Pause
+            </button>
+          ) : (
+            state === "paused" && (
+              <button
+                type="button"
+                onClick={() => {
+                  userPaused.current = false;
+                  play();
+                }}
+                className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] bg-[rgba(4,8,15,.7)] px-4 hover:text-[var(--acc)]"
+              >
+                Play
+              </button>
+            )
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              userPaused.current = false;
+              play(0);
+            }}
+            className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] bg-[rgba(4,8,15,.7)] px-4 hover:text-[var(--acc)]"
+          >
+            Replay ↺
+          </button>
+        </div>
         <motion.div style={{ scaleX: p }} className="absolute bottom-0 left-0 h-px w-full origin-left bg-[var(--acc)]" />
       </div>
     </section>
   );
 }
-function SceneCaption({ p, r, k, big, t }: { p: ReturnType<typeof useScroll>["scrollYProgress"]; r: number[]; k: string; big: string; t: string }) {
+function SceneCaption({ p, r, k, big, t }: { p: MotionValue<number>; r: number[]; k: string; big: string; t: string }) {
   const o = useTransform(p, r, [0, 1, 1, 0]);
   const y = useTransform(p, r, [40, 0, 0, -40]);
   return (
