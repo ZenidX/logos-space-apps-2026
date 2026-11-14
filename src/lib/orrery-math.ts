@@ -122,3 +122,41 @@ export const segKind = (v: number | null): SegKind => (v === null ? "un" : v >= 
 /** The 4 segments of an arc: up to 3 mission rules (1 = met, 0 = not met, null = no data) + «not scored» (always «un»). */
 /** Order from the target to the Earth site: «not scored» first, then the conditions, the main one landing on the site. */
 export const arcSegments = (dims: Dims): SegKind[] => ["un", segKind(dims[2]), segKind(dims[1]), segKind(dims[0])];
+
+// ---------- arcs that stay outside the globes ----------
+export interface Sphere { c: THREE.Vector3; r: number }
+/** Minimum clearance above any globe, as a fraction of its radius, away from the two endpoints. */
+export const ARC_CLEARANCE = 0.035;
+const TAPER = 0.08; // first/last 8 % of the arc: clearance grows from 0 (the arc touches the surface at its ends)
+
+/**
+ * Points of an arc from `a` (normal `na`) to `b` (normal `nb`) that never go inside any sphere:
+ * the Bézier is sampled, every point closer than r·(1 + clearance) to a sphere centre is pushed out
+ * radially, and the result is smoothed and pushed out again. When the end point is on the far side
+ * of a globe the arc wraps around it at low altitude instead of cutting through.
+ */
+export function arcPoints(a: THREE.Vector3, na: THREE.Vector3, b: THREE.Vector3, nb: THREE.Vector3, spheres: Sphere[], n: number): Float32Array {
+  const curve = arcCurve(a, na, b, nb), pts: THREE.Vector3[] = [];
+  for (let i = 0; i < n; i++) pts.push(arcAt(curve, i / (n - 1), new THREE.Vector3()));
+  const d = new THREE.Vector3();
+  const pushOut = () => {
+    for (let i = 1; i < n - 1; i++) {
+      const t = i / (n - 1), k = Math.min(1, Math.min(t, 1 - t) / TAPER);
+      for (const s of spheres) {
+        const min = s.r * (1 + ARC_CLEARANCE * k);
+        d.copy(pts[i]).sub(s.c);
+        const len = d.length();
+        if (len < min) pts[i].copy(s.c).addScaledVector(len > 1e-9 ? d.divideScalar(len) : d.copy(i < n / 2 ? na : nb), min);
+      }
+    }
+  };
+  pushOut();
+  for (let pass = 0; pass < 3; pass++) {
+    const prev = pts.map((p) => p.clone());
+    for (let i = 1; i < n - 1; i++) pts[i].copy(prev[i - 1]).add(prev[i + 1]).multiplyScalar(0.25).addScaledVector(prev[i], 0.5);
+    pushOut();
+  }
+  const out = new Float32Array(n * 3);
+  pts.forEach((p, i) => { out[i * 3] = p.x; out[i * 3 + 1] = p.y; out[i * 3 + 2] = p.z; });
+  return out;
+}

@@ -5,8 +5,9 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import index from "@/data/terrain-index.json";
+import LocatorMap from "@/components/LocatorMap";
 
-interface Item { name: string; body: "earth" | "moon" | "mars"; file: string; minM: number; maxM: number; stats: { slopeMeanDeg: number; slopeP90Deg: number; roughnessStdM: number; reliefM: number } }
+interface Item { name: string; body: "earth" | "moon" | "mars"; lat: number; lon: number; file: string; minM: number; maxM: number; stats: { slopeMeanDeg: number; slopeP90Deg: number; roughnessStdM: number; reliefM: number } }
 const IDX = index as unknown as { grid: { n: number; sizeM: number; stepM: number }; items: Record<string, Item> };
 export const terrainOf = (id: string): Item | null => IDX.items[id] ?? null;
 
@@ -114,7 +115,9 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg, compact
         {state === "error" && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-[13px] text-[var(--dim)]">3D terrain could not be shown here. The numbers below are the same comparison.</p>}
         <span className="label pointer-events-none absolute left-3 top-3" style={{ color: "var(--earth)" }}>Earth · this site</span>
         <span className="label pointer-events-none absolute right-3 top-3" style={{ color: target.body === "moon" ? "var(--moon)" : "var(--mars)" }}>{target.body === "moon" ? "Moon" : "Mars"} · target</span>
-        <span className="pointer-events-none absolute bottom-2 left-3 text-[11px] text-[var(--dim)]">11 × 11 km each · same scale · heights ×{EXAG} · drag to rotate</span>
+        <span className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px] text-[var(--dim)]">11 × 11 km each · same scale · heights ×{EXAG} · drag to rotate</span>
+        <div className="absolute bottom-2 left-2 hidden origin-bottom-left sm:block [@media(max-height:840px)]:scale-[.68]"><LocatorMap body="earth" lat={site.lat} lon={site.lon > 180 ? site.lon - 360 : site.lon} color="#5db4ff" label={site.name} /></div>
+        <div className="absolute bottom-2 right-2 hidden origin-bottom-right sm:block [@media(max-height:840px)]:scale-[.68]"><LocatorMap body={target.body} lat={target.lat} lon={target.lon > 180 ? target.lon - 360 : target.lon} color={target.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={target.name} /></div>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-[var(--mut)]">
         <label htmlFor="sun" className="label">Sun height</label>

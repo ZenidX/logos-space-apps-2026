@@ -163,11 +163,13 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
     const rebuildArcs = (nowSec: number, keep: boolean) => {
       const { markers: ms, arcs: as } = latest.current, byId = new Map(ms.map((m) => [m.id, m]));
       const specs: ArcSpec[] = [];
+      // Current globes (centre and radius): arcs are routed outside them and depth-tested against them.
+      const spheres = BODY_IDS.map((id) => ({ c: bodies[id].group.position.clone(), r: bodies[id].group.scale.x }));
       for (const a of as) {
         const f = byId.get(a.from), t = byId.get(a.to);
         if (!f || !t) continue;
         const A = markerWorld(f), B = markerWorld(t);
-        specs.push({ id: a.id, dims: a.dims, a: A.p, na: A.n, b: B.p, nb: B.n, color0: COLOR[f.body], color1: COLOR[t.body], hiddenEnd: !facing(B.p, B.n) });
+        specs.push({ id: a.id, dims: a.dims, a: A.p, na: A.n, b: B.p, nb: B.n, color0: COLOR[f.body], color1: COLOR[t.body], hiddenEnd: !facing(B.p, B.n), spheres });
       }
       arcSet.setArcs(specs, nowSec, keep);
       arcSet.setHighlight(latest.current.selectedId && specs.some((s) => s.id === latest.current.selectedId) ? latest.current.selectedId : null);

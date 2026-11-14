@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
-import { arcCurve, sampleArc, type ArcCurve, type Dims } from "./orrery-math.ts";
+import { arcPoints, type Dims, type Sphere } from "./orrery-math.ts";
 
 export interface ArcSpec {
   id: string;
@@ -16,12 +16,13 @@ export interface ArcSpec {
   color0: number; color1: number; // target-body colour → Earth colour
   delay?: number; // s
   hiddenEnd?: boolean; // the Earth end is on the far side
+  spheres?: Sphere[]; // globes the arc must stay outside of
 }
 
 export const PTS = 65, SEGS = PTS - 1;
 export const DRAW_S = 0.9, STAGGER_S = 0.12;
 
-interface Item { id: string; curve: ArcCurve; delay: number; line: Line2; hidden: boolean }
+interface Item { id: string; delay: number; line: Line2; hidden: boolean }
 
 function colors(c0: number, c1: number): Float32Array {
   const a = new THREE.Color(c0), b = a.clone().lerp(new THREE.Color(c1), 0.35), out = new Float32Array(PTS * 3), c = new THREE.Color();
@@ -50,23 +51,23 @@ export class ArcSet {
     this.clear();
     if (!keepProgress) this.t0 = now;
     for (const s of specs) {
-      const curve = arcCurve(s.a, s.na, s.b, s.nb), g = new LineGeometry();
-      g.setPositions(sampleArc(curve, PTS)); g.setColors(colors(s.color0, s.color1));
+      const g = new LineGeometry();
+      g.setPositions(arcPoints(s.a, s.na, s.b, s.nb, s.spheres ?? [], PTS)); g.setColors(colors(s.color0, s.color1));
       const m = new LineMaterial({ vertexColors: true, linewidth: 2, transparent: true, opacity: 0.9, depthTest: true, depthWrite: false });
       m.resolution.copy(this.res);
       const line = new Line2(g, m);
       line.renderOrder = 10; line.visible = false;
       this.group.add(line);
-      this.items.push({ id: s.id, curve, delay: s.delay ?? this.items.length * STAGGER_S, line, hidden: !!s.hiddenEnd });
+      this.items.push({ id: s.id, delay: s.delay ?? this.items.length * STAGGER_S, line, hidden: !!s.hiddenEnd });
     }
   }
 
   private reuse(specs: ArcSpec[]): boolean {
     if (specs.length !== this.items.length || specs.some((s, i) => s.id !== this.items[i].id)) return false;
     specs.forEach((s, k) => {
-      const it = this.items[k], curve = arcCurve(s.a, s.na, s.b, s.nb), g = new LineGeometry();
-      g.setPositions(sampleArc(curve, PTS)); g.setColors(colors(s.color0, s.color1));
-      it.curve = curve; it.hidden = !!s.hiddenEnd; it.line.geometry.dispose(); it.line.geometry = g;
+      const it = this.items[k], g = new LineGeometry();
+      g.setPositions(arcPoints(s.a, s.na, s.b, s.nb, s.spheres ?? [], PTS)); g.setColors(colors(s.color0, s.color1));
+      it.hidden = !!s.hiddenEnd; it.line.geometry.dispose(); it.line.geometry = g;
     });
     return true;
   }
