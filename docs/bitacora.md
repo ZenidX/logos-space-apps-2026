@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Rediseño con globos 3D publicado (Space Apps)
+
+- Con el OK de zexu: `main` en `fd60435` (8 commits a nombre de zexu, sin firma de IA), push y deploy (gh-pages `8c9cf57`). Sin conflictos: `origin/main` no se había movido.
+- Comprobado en vivo (HTML nuevo, con parámetro para evitar la caché): globo de la Tierra con 20 puntos, créditos en el HUD, texturas servidas (200). En local a 390 y 1280 px: Tierra, Luna y Marte, segundo toque abre el visor 11×11 km.
+- Arreglos de última hora: globo con alto 0 en la pestaña Maps; planeta recortado a 390 px (el FOV se ajusta al ancho); texto del HUD solapado.
+- Pendiente: revisión de Crítico (segunda tanda), probar táctil en móvil real y `text-[10px]`.
+
 ## 2026-11-14 (noche) · Rediseño con globos 3D (rama `feature/redesign-globes`, sin push)
 
 - Propuesta de Diseño «Consola v2 + globos 3D», aprobada por zexu. Montada: globo de la Tierra con los 20 candidatos v2 (toque 1 = ficha, toque 2 = visor 11×11 km), globos de Luna y Marte con el objetivo marcado, reserva al mapa 2D sin WebGL, reduced-motion, tokens de contraste AA.
