@@ -1,1 +1,554 @@
-{}
+{
+ "shackleton": {
+  "top": [
+   {
+    "total_sin_amplitud": 0.972,
+    "relieve_m": 394.4,
+    "amp": 0.997,
+    "c": [
+     75.75,
+     35.312
+    ],
+    "total": 0.971,
+    "superficie": 0.927,
+    "forma": 0.99,
+    "forma_p95": true,
+    "viabilidad": 1,
+    "pct_plano": 31,
+    "access_h": 8.24,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6972,
+    "place": "Shigar, Pakistán",
+    "flat_pct": 31
+   },
+   {
+    "total_sin_amplitud": 0.977,
+    "relieve_m": 281.6,
+    "amp": 0.851,
+    "c": [
+     -69.25,
+     -36.476
+    ],
+    "total": 0.927,
+    "superficie": 0.94,
+    "forma": 0.99,
+    "forma_p95": true,
+    "viabilidad": 1,
+    "pct_plano": 50,
+    "access_h": 9.46,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.7033,
+    "place": "Departamento Malargüe, Argentina",
+    "flat_pct": 50
+   },
+   {
+    "total_sin_amplitud": 0.917,
+    "relieve_m": 368.1,
+    "amp": 0.967,
+    "c": [
+     -148.35,
+     61.041
+    ],
+    "total": 0.908,
+    "superficie": 0.912,
+    "forma": 0.84,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 32,
+    "access_h": 10.57,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6126,
+    "place": "Borough No Organizado, Estados Unidos de América",
+    "flat_pct": 32
+   },
+   {
+    "total_sin_amplitud": 0.911,
+    "relieve_m": 381.8,
+    "amp": 0.983,
+    "c": [
+     72.15,
+     36.9
+    ],
+    "total": 0.905,
+    "superficie": 0.932,
+    "forma": 0.94,
+    "forma_p95": false,
+    "viabilidad": 0.86,
+    "pct_plano": 26,
+    "access_h": 22.28,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6352,
+    "place": "Ноҳияи Ишкошим, Tayikistán",
+    "flat_pct": 26
+   },
+   {
+    "total_sin_amplitud": 0.97,
+    "relieve_m": 237.1,
+    "amp": 0.776,
+    "c": [
+     -68.55,
+     -27.265
+    ],
+    "total": 0.895,
+    "superficie": 0.989,
+    "forma": 1,
+    "forma_p95": true,
+    "viabilidad": 0.92,
+    "pct_plano": 28,
+    "access_h": 16.14,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.8229,
+    "place": "Departamento Tinogasta, Argentina",
+    "flat_pct": 28
+   },
+   {
+    "total_sin_amplitud": 0.914,
+    "relieve_m": 473.5,
+    "amp": 0.924,
+    "c": [
+     -73.45,
+     -50.347
+    ],
+    "total": 0.89,
+    "superficie": 0.962,
+    "forma": 0.95,
+    "forma_p95": false,
+    "viabilidad": 0.83,
+    "pct_plano": 25,
+    "access_h": 23.67,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6634,
+    "place": "Provincia de Última Esperanza, Chile",
+    "flat_pct": 25
+   },
+   {
+    "total_sin_amplitud": 0.973,
+    "relieve_m": 199.9,
+    "amp": 0.702,
+    "c": [
+     84.35,
+     29.171
+    ],
+    "total": 0.878,
+    "superficie": 0.968,
+    "forma": 0.95,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 41,
+    "access_h": 10.43,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0.001,
+    "ncc": 0.6693,
+    "place": "萨嘎县 ས་དགའ་རྫོང།, China",
+    "flat_pct": 41
+   },
+   {
+    "total_sin_amplitud": 0.975,
+    "relieve_m": 176.6,
+    "amp": 0.648,
+    "c": [
+     -67.15,
+     -22.288
+    ],
+    "total": 0.863,
+    "superficie": 0.974,
+    "forma": 0.95,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 47,
+    "access_h": 7.7,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6566,
+    "place": "Provincia Sur Lípez, Bolivia",
+    "flat_pct": 47
+   },
+   {
+    "total_sin_amplitud": 0.965,
+    "relieve_m": 176.7,
+    "amp": 0.648,
+    "c": [
+     -72.95,
+     -45.9
+    ],
+    "total": 0.849,
+    "superficie": 0.904,
+    "forma": 0.99,
+    "forma_p95": true,
+    "viabilidad": 1,
+    "pct_plano": 50,
+    "access_h": 15.12,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6974,
+    "place": "Provincia de Aysén, Chile",
+    "flat_pct": 50
+   },
+   {
+    "total_sin_amplitud": 0.971,
+    "relieve_m": 164.3,
+    "amp": 0.617,
+    "c": [
+     33.25,
+     27.159
+    ],
+    "total": 0.849,
+    "superficie": 0.962,
+    "forma": 0.95,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 30,
+    "access_h": 4.67,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6486,
+    "place": "Mar Rojo, Egipto",
+    "flat_pct": 30
+   },
+   {
+    "total_sin_amplitud": 0.941,
+    "relieve_m": 202.2,
+    "amp": 0.707,
+    "c": [
+     -78.85,
+     -1.429
+    ],
+    "total": 0.848,
+    "superficie": 0.873,
+    "forma": 0.95,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 45,
+    "access_h": 0.73,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6477,
+    "place": "Ambato, Ecuador",
+    "flat_pct": 45
+   },
+   {
+    "total_sin_amplitud": 0.972,
+    "relieve_m": 164.8,
+    "amp": 0.618,
+    "c": [
+     -78.95,
+     -7.571
+    ],
+    "total": 0.846,
+    "superficie": 0.927,
+    "forma": 0.99,
+    "forma_p95": true,
+    "viabilidad": 1,
+    "pct_plano": 35,
+    "access_h": 1.81,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.7035,
+    "place": "Contumazá, Perú",
+    "flat_pct": 35
+   },
+   {
+    "total_sin_amplitud": 0.951,
+    "relieve_m": 189.7,
+    "amp": 0.679,
+    "c": [
+     92.15,
+     29.065
+    ],
+    "total": 0.844,
+    "superficie": 0.889,
+    "forma": 1,
+    "forma_p95": true,
+    "viabilidad": 0.963,
+    "pct_plano": 29,
+    "access_h": 3.62,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.7952,
+    "place": "曲松县 ཆུ་གསུམ་རྫོང།, China",
+    "flat_pct": 29
+   },
+   {
+    "total_sin_amplitud": 0.877,
+    "relieve_m": 278.2,
+    "amp": 0.845,
+    "c": [
+     -69.65,
+     -30.018
+    ],
+    "total": 0.843,
+    "superficie": 0.971,
+    "forma": 0.66,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 34,
+    "access_h": 7.67,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.5272,
+    "place": "Iglesia, Argentina",
+    "flat_pct": 34
+   },
+   {
+    "total_sin_amplitud": 0.969,
+    "relieve_m": 161.6,
+    "amp": 0.609,
+    "c": [
+     57.55,
+     33.088
+    ],
+    "total": 0.841,
+    "superficie": 0.926,
+    "forma": 0.98,
+    "forma_p95": true,
+    "viabilidad": 1,
+    "pct_plano": 54,
+    "access_h": 3.78,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6951,
+    "place": "شهرستان طبس, Irán",
+    "flat_pct": 54
+   },
+   {
+    "total_sin_amplitud": 0.886,
+    "relieve_m": 253.3,
+    "amp": 0.805,
+    "c": [
+     -69.55,
+     -54.794
+    ],
+    "total": 0.84,
+    "superficie": 0.961,
+    "forma": 0.7,
+    "forma_p95": false,
+    "viabilidad": 0.997,
+    "pct_plano": 30,
+    "access_h": 15.29,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0.028,
+    "ncc": 0.5529,
+    "place": "Provincia de la Antártica Chilena, Chile",
+    "flat_pct": 30
+   },
+   {
+    "total_sin_amplitud": 0.901,
+    "relieve_m": 224.6,
+    "amp": 0.752,
+    "c": [
+     89.35,
+     27.9
+    ],
+    "total": 0.835,
+    "superficie": 0.902,
+    "forma": 0.8,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 39,
+    "access_h": 4.27,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.5962,
+    "place": "Yadong, China",
+    "flat_pct": 39
+   },
+   {
+    "total_sin_amplitud": 0.946,
+    "relieve_m": 173.2,
+    "amp": 0.64,
+    "c": [
+     100.15,
+     35.524
+    ],
+    "total": 0.833,
+    "superficie": 0.899,
+    "forma": 0.94,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 40,
+    "access_h": 3.66,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6369,
+    "place": "同德县 འབའ་རྫོང།, China",
+    "flat_pct": 40
+   },
+   {
+    "total_sin_amplitud": 0.889,
+    "relieve_m": 242.5,
+    "amp": 0.786,
+    "c": [
+     -136.35,
+     60.3
+    ],
+    "total": 0.832,
+    "superficie": 0.868,
+    "forma": 0.8,
+    "forma_p95": false,
+    "viabilidad": 1,
+    "pct_plano": 44,
+    "access_h": 20.36,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0.002,
+    "ncc": 0.5853,
+    "place": "Yukón, Canadá",
+    "flat_pct": 44
+   },
+   {
+    "total_sin_amplitud": 0.843,
+    "relieve_m": 357.7,
+    "amp": 0.955,
+    "c": [
+     8.05,
+     46.535
+    ],
+    "total": 0.829,
+    "superficie": 0.88,
+    "forma": 0.93,
+    "forma_p95": false,
+    "viabilidad": 0.72,
+    "pct_plano": 22,
+    "access_h": 2.7,
+    "acceso_tierra": true,
+    "agua_proxy_ignorada": false,
+    "agua_frac": 0,
+    "ncc": 0.6293,
+    "place": "Goms, Suiza",
+    "flat_pct": 22
+   }
+  ],
+  "dist": {
+   "n": 1352,
+   "total_p50": 0.651,
+   "total_p90": 0.755,
+   "total_p99": 0.869
+  },
+  "known": [
+   {
+    "name": "Haughton / Devon",
+    "total": null
+   },
+   {
+    "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+    "total": 0.67
+   },
+   {
+    "name": "Svalbard (AMASE)",
+    "total": null
+   },
+   {
+    "name": "Qaidam",
+    "total": 0.623
+   },
+   {
+    "name": "Arkaroola",
+    "total": 0.63
+   },
+   {
+    "name": "Kamchatka",
+    "total": 0.671
+   },
+   {
+    "name": "Death Valley / Mojave",
+    "total": 0.497
+   },
+   {
+    "name": "MDRS Utah",
+    "total": 0.62
+   },
+   {
+    "name": "Pilbara",
+    "total": 0.632
+   },
+   {
+    "name": "Danakil / Dallol",
+    "total": 0.302
+   },
+   {
+    "name": "Sudbury",
+    "total": 0.573
+   },
+   {
+    "name": "Bunge Land",
+    "total": null
+   },
+   {
+    "name": "McMurdo Dry Valleys",
+    "total": null
+   },
+   {
+    "name": "Rio Tinto",
+    "total": 0.609
+   },
+   {
+    "name": "Meteor / SP Crater",
+    "total": 0.642
+   },
+   {
+    "name": "Namib",
+    "total": 0.621
+   },
+   {
+    "name": "Concordia (Dome C)",
+    "total": null
+   },
+   {
+    "name": "Mojave Bristol",
+    "total": 0.633
+   },
+   {
+    "name": "Atacama",
+    "total": 0.654
+   },
+   {
+    "name": "Iceland",
+    "total": 0.614
+   },
+   {
+    "name": "Lanzarote",
+    "total": 0.647
+   },
+   {
+    "name": "Axel Heiberg",
+    "total": null
+   },
+   {
+    "name": "Ries",
+    "total": 0.555
+   },
+   {
+    "name": "Lonar",
+    "total": 0.579
+   },
+   {
+    "name": "Wadi Rum",
+    "total": 0.664
+   }
+  ]
+ }
+}

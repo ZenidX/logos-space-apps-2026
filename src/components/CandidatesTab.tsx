@@ -327,28 +327,28 @@ export default function CandidatesTab() {
                     <dt style={{ color: C.muted }}>{c.flat_pct != null ? "Flat ground (<10°)" : "To nearest city"}</dt>
                     <dd className="font-mono">{c.flat_pct != null ? `${Math.round(c.flat_pct)} %` : fmtHours(c.access_h)}</dd>
                   </div>
-                  <div>
+                  {(c.elev != null || c.forma == null) && <div>
                     <dt style={{ color: C.muted }}>Elevation</dt>
                     <dd className="font-mono">{c.elev == null ? "—" : `${c.elev} m`}</dd>
-                  </div>
-                  <div>
+                  </div>}
+                  {(c.lst_day != null || c.forma == null) && <div>
                     <dt style={{ color: C.muted }}>Climate (not scored)</dt>
                     <dd className="font-mono">
                       {num(c.lst_day, 0)} °C · {num(c.precip, 0)} mm/yr
                     </dd>
-                  </div>
-                  <div>
+                  </div>}
+                  {(c.ndvi != null || c.forma == null) && <div>
                     <dt style={{ color: C.muted }}>NDVI</dt>
                     <dd className="font-mono" title={c.ndvi == null ? "Pending re-export: the stored NDVI was scaled twice" : undefined}>{num(c.ndvi, 2)}</dd>
-                  </div>
-                  <div>
+                  </div>}
+                  {(c.albedo != null || c.forma == null) && <div>
                     <dt style={{ color: C.muted }}>Albedo</dt>
                     <dd className="font-mono">{num(c.albedo, 2)}</dd>
-                  </div>
-                  <div>
+                  </div>}
+                  {(c.slope != null || c.forma == null) && <div>
                     <dt style={{ color: C.muted }}>Slope (5 km)</dt>
                     <dd className="font-mono">{num(c.slope, 1)}°</dd>
-                  </div>
+                  </div>}
                 </dl>
                 {(() => {
                   const e = explain(c, target.values);
@@ -367,10 +367,12 @@ export default function CandidatesTab() {
                           </p>
                         );
                       })()}
-                      <p>
-                        <span className="text-emerald-400">✔ Similar in:</span>{" "}
-                        {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
-                      </p>
+                      {e.strong.length > 0 && (
+                        <p>
+                          <span className="text-emerald-400">✔ Similar in:</span>{" "}
+                          {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
+                        </p>
+                      )}
                       {e.weak.length > 0 && (
                         <p>
                           <span className="text-orange-400">✘ Differs in:</span>{" "}
