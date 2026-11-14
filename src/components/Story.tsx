@@ -19,6 +19,7 @@ const Planet3D = dynamic(() => import("@/components/Planet3D"), { ssr: false });
 interface Cand {
   c: [number, number];
   total: number;
+  forma?: number | null;
   superficie: number | null;
   relieve: number | null;
   accesibilidad: number | null;
@@ -34,7 +35,8 @@ const DATA = eeGlobal as unknown as Record<string, Res>;
 
 const ease = [0.2, 0.7, 0.2, 1] as const;
 const fmtH = (h: number | null) => (h == null ? "—" : h < 1 ? `${Math.max(1, Math.round(h * 60))} min` : `${h.toFixed(1)} h`);
-const analog = (c: Cand) => ((c.superficie ?? 0) + (c.relieve ?? 0)) / 2;
+// v3: analogía = media(fase 1 forma, fase 2 clima) = c.total; v2 (sin forma): media(superficie, relieve)
+const analog = (c: Cand) => (c.forma != null ? c.total : ((c.superficie ?? 0) + (c.relieve ?? 0)) / 2);
 const short = (p?: string | null) => (p ?? "Unnamed").split(",")[0].replace(/ (Province|Governorate|Region)$/, "");
 const country = (p?: string | null) => (p ?? "").split(",").slice(1).join(",").trim();
 

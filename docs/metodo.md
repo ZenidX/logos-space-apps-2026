@@ -1,5 +1,15 @@
 # Método de análisis
 
+> **v3 (14-11-2026, noche): análisis en tres fases** (decisión del equipo).
+> 1. **Forma geográfica.** Media de **Superficie** (NDVI, albedo; MODIS) y **Relieve** (pendiente; GMTED2010). Se calcula en toda la tierra firme y pasa a la **lista corta** lo que queda por encima del p95 (el 5 % de la Tierra con la forma más parecida).
+> 2. **Condicionamiento climático**, solo sobre la lista corta. Media de **Clima** (temperaturas de superficie MODIS de día, de noche, máxima y mínima, y lluvia GPM) y **Atmósfera** (NASA **MERRA-2**, media de 2024: presión en superficie, viento a 10 m, humedad específica y espesor óptico del polvo). **Sobreviven** las celdas con clima ≥ p90 de la lista corta.
+> 3. **Accesibilidad.** Los supervivientes se ordenan por tiempo de viaje a la ciudad más cercana (Oxford MAP). Se eligen 20 separados ≥ 300 km. En la web, el deslizador permite re-ponderar analogía (fases 1+2) frente a accesibilidad.
+> - Exclusiones como en la v2: 25 análogos catalogados (300 km), celdas >5 % urbanas y celdas con albedo < 0,08.
+> - Objetivos de atmósfera (aproximados): la Luna tiene todo 0 (sin atmósfera). En Marte, la presión es de 7–8 hPa, el viento de 4–5 m/s, la humedad de 0,03 g/kg y el polvo de τ ≈ 0,5 (MEDA, Mastcam-Z, Mars Climate Database). La presión marciana o lunar queda **fuera** del rango terrestre: apunta a las mesetas más altas, y es otro punto donde la analogía se rompe.
+> - Scripts: `09_export_atmo.js` (asset `terra_atmo_01deg`), `10_tres_fases.js` y `merge-tres-fases.mjs`.
+>
+> Lo que sigue (v2 y v1) se conserva como historial.
+
 > **v2 (14-11-2026, noche): cambio de criterio del equipo.**
 > - **El clima ya no puntúa.** Las temperaturas y la lluvia se muestran como contexto, pero no entran en la nota.
 > - **Nueva dimensión: Accesibilidad.** Mide si es factible llevar personas y materiales al sitio. Se calcula con el tiempo de viaje a la ciudad más cercana de ≥50 000 habitantes (Oxford Malaria Atlas Project, *accessibility_to_cities_2015*, Weiss et al. 2018, *Nature*), como media en la celda de 0,1°.

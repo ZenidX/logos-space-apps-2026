@@ -41,6 +41,11 @@ export const TARGETS: Target[] = [
       slope: 8,
       elev: null,
       cop_dem: null,
+      // Fase 2 · atmósfera (sin atmósfera: todo 0)
+      ps_hpa: 0,
+      wind_ms: 0,
+      qv_gkg: 0,
+      dust_aod: 0,
     },
     sources: "Approximate literature values (not yet extracted from PDS products): LRO Diviner (temperatures), LRO LOLA (slope), LROC WAC (albedo). Day/max values describe the sunlit rim; the minimum (−230 °C) is the shadowed crater floor.",
     whyChosen:
@@ -69,6 +74,11 @@ export const TARGETS: Target[] = [
       slope: 3,
       elev: null,
       cop_dem: null,
+      // Fase 2 · atmósfera (aprox.: Perseverance MEDA, Mastcam-Z, Mars Climate Database)
+      ps_hpa: 7,
+      wind_ms: 4,
+      qv_gkg: 0.03,
+      dust_aod: 0.5,
     },
     sources: "Approximate literature values (not yet extracted from PDS products): Perseverance MEDA (temperatures), MGS TES (albedo), MOLA (slope).",
     whyChosen:
@@ -94,6 +104,11 @@ export const TARGETS: Target[] = [
       slope: 1,
       elev: null,
       cop_dem: null,
+      // Fase 2 · atmósfera (aprox.: Mars Climate Database, llanura baja → algo más de presión)
+      ps_hpa: 8,
+      wind_ms: 5,
+      qv_gkg: 0.03,
+      dust_aod: 0.5,
     },
     sources: "Approximate literature values (not yet extracted from PDS products): MGS TES / Mars Climate Database (temperatures), MOLA (slope).",
     whyChosen:
