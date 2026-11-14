@@ -20,7 +20,7 @@ export interface ArcSpec {
 
 const PTS = 65, PER = 16; // 64 segmentos → 4 tramos de 16
 const DRAW_S = 0.7, PHOTON_S = 3.6;
-const AMBER = 0xffb454, DIM = 0x8392ac;
+const AMBER = 0xffb454, DIM = 0xc9d2e0; // «not scored»: light enough to read over the Moon
 
 interface Item { id: string; curve: ArcCurve; pts: Float32Array; delay: number; lines: { line: Line2; kind: SegKind; base: number }[]; photon: THREE.Mesh | null; hidden: boolean }
 

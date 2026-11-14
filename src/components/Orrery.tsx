@@ -27,7 +27,7 @@ interface Props {
 
 const BODY_IDS: BodyId[] = ["earth", "moon", "mars"];
 const ATMO_VERT = "varying vec3 n; void main(){ n = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
-const ATMO_FRAG = "uniform vec3 c; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0); }";
+const ATMO_FRAG = "uniform vec3 c; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0) * 0.55; }";
 const COLOR: Record<BodyId, number> = { earth: 0x5db4ff, moon: 0xd7dce6, mars: 0xff8d5e };
 const TWEEN_MS = 900, ROTATE_MS = 700;
 
@@ -59,6 +59,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
       return;
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
     const lite = navigator.hardwareConcurrency <= 4 || window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.5 : 2));
@@ -97,7 +98,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
       group.add(mesh); disposables.push(geo, mat);
       const atm = GLOBE_TEX[id].atmosphere;
       if (atm !== null) {
-        const ag = new THREE.SphereGeometry(1.07, 40, 28), am = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, uniforms: { c: { value: new THREE.Color(atm) } }, vertexShader: ATMO_VERT, fragmentShader: ATMO_FRAG });
+        const ag = new THREE.SphereGeometry(1.045, 40, 28), am = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, uniforms: { c: { value: new THREE.Color(atm) } }, vertexShader: ATMO_VERT, fragmentShader: ATMO_FRAG });
         group.add(new THREE.Mesh(ag, am)); disposables.push(ag, am);
       }
       scene.add(group);
@@ -185,14 +186,14 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
         info.set(m.id, { x, y, vis });
         if (vis && m.kind === "candidate") pts.push({ id: m.id, x, y, rank: m.rank });
       }
-      const show = declutter(pts, latest.current.selectedId, 28);
+      const show = declutter(pts, latest.current.selectedId, coarse ? 40 : 28);
       for (const m of latest.current.markers) {
         const b = buttons.current.get(m.id), i = info.get(m.id);
         if (!b || !i) continue;
         const ok = i.vis && (m.kind === "target" || show.has(m.id));
         b.style.visibility = ok ? "visible" : "hidden";
         b.style.opacity = String(cur.opacity[m.body] < 0.9 ? 0.5 : 1);
-        b.classList.toggle("flip", i.x > width * 0.62);
+        b.classList.toggle("flip", m.kind !== "target" && i.x > width * 0.62);
         if (ok) b.style.transform = `translate(${i.x.toFixed(1)}px, ${i.y.toFixed(1)}px) translate(-50%, -50%)`;
       }
     };

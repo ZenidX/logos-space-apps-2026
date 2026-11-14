@@ -33,7 +33,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const sunW = site.vars.find((v) => v.id === "sun_winter_solstice_deg");
   return (
     <div className="fade-in">
-      <button onClick={onBack} className="label hover:text-[var(--ink)]">← All sites</button>
+      <button onClick={onBack} className="back-btn label -ml-1 px-1 py-2 hover:text-[var(--ink)]">← All sites</button>
       <div className="mt-3 flex flex-wrap items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="text-[12px] text-[var(--mut)]">Used by: {site.campaign}</span>}</div>
       <h3 className="display mt-2 text-[22px] font-semibold leading-tight">{site.name}</h3>
       {site.country && <p className="text-[13px] text-[var(--mut)]">{site.country}</p>}

@@ -67,7 +67,7 @@ export default function Home() {
   );
 
   return (
-    <main className="stars relative min-h-dvh overflow-x-hidden">
+    <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
       <div className={`sticky top-0 z-0 h-[50dvh] w-full transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? "md:left-0 md:right-[404px]" : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
@@ -89,6 +89,7 @@ export default function Home() {
         <button onClick={home} className="display pointer-events-auto text-[17px] font-semibold">Logos <span className="text-[var(--mut)]">· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2">
           <span className="chip hidden text-[var(--amber)] sm:inline-flex" style={{ borderColor: "var(--amber)" }}>Prototype</span>
+          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} onClick={() => setPaused((p) => !p)}>{paused ? "▶ Play motion" : "❚❚ Pause motion"}</button>
           <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method & sources</button>
         </div>
       </header>
@@ -109,7 +110,7 @@ export default function Home() {
             return missionId ? (
               <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={active ? { borderColor: c, color: c } : undefined}>{m.short}</button>
             ) : (
-              <button key={m.id} aria-pressed={false} onClick={() => pick(m.id)} className="glass rounded-xl p-3 text-left transition-colors hover:border-[var(--ink)]" style={active ? { borderColor: c } : undefined}>
+              <button key={m.id} onClick={() => pick(m.id)} className="glass rounded-xl p-3 text-left transition-colors hover:border-[var(--ink)]" style={active ? { borderColor: c } : undefined}>
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                   <b className="display text-[17px]">{m.short}</b>
                   <span className="label" style={{ color: c }}>{m.target.body} · {m.target.name.split(" (")[0]}</span>
@@ -121,12 +122,12 @@ export default function Home() {
         </div>
         {!missionId && (
           <div className="mt-3 flex items-center gap-3">
-            <button className="chip" aria-pressed={paused} onClick={() => setPaused((p) => !p)}>{paused ? "▶ Play demo" : "❚❚ Pause demo"}</button>
             <span className="text-[12px] text-[var(--dim)]">Showing: {shown.short} → {t.name.split(" (")[0]}</span>
           </div>
         )}
       </section>
 
+      {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
         <aside className="glass relative z-10 mx-4 mb-6 rounded-[20px] p-5 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:w-[380px] md:overflow-y-auto" aria-label={shown.title}>
           {site ? (

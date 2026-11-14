@@ -20,7 +20,7 @@ export const PORTRAIT: Layout = {
   moon: { pos: [-0.95, 1.05, -0.5], r: 0.36 },
   mars: { pos: [0.85, 0.95, -0.3], r: 0.5 },
 };
-export const layoutFor = (aspect: number): Layout => (aspect < 0.85 ? PORTRAIT : LANDSCAPE);
+export const layoutFor = (aspect: number): Layout => (aspect < 1.2 ? PORTRAIT : LANDSCAPE);
 export const FOV = 32;
 const FOCUS_SCALE: Record<"moon" | "mars", number> = { moon: 2.0, mars: 1.7 };
 
@@ -60,7 +60,7 @@ export function poseFor(mode: Mode, aspect: number): Pose {
   const scale: Record<BodyId, number> = { earth: 1, moon: 1, mars: 1 };
   const opacity: Record<BodyId, number> = { earth: 1, moon: 1, mars: 1 };
   const layout = layoutFor(aspect);
-  let look = aspect < 0.85 ? new THREE.Vector3(-0.05, 0.1, 0) : new THREE.Vector3(0.2, -0.05, 0);
+  let look = aspect < 1.2 ? new THREE.Vector3(-0.05, 0.1, 0) : new THREE.Vector3(0.2, -0.05, 0);
   if (mode.kind === "focus") {
     for (const b of ["moon", "mars"] as const) { scale[b] = b === mode.body ? FOCUS_SCALE[b] : 0.85; opacity[b] = b === mode.body ? 1 : 0.55; }
     scale.earth = 1.05;

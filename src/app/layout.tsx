@@ -10,6 +10,11 @@ const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], 
 export const metadata: Metadata = {
   title: "Logos · Mission Analogs",
   description: "Where on Earth can we rehearse a specific Moon or Mars mission? NASA Space Apps Challenge 2026, team Logos.",
+  openGraph: {
+    title: "Logos · Mission Analogs",
+    description: "Rehearse the Moon and Mars on Earth: mission-based Earth analogs, where the comparison breaks, and access complexity.",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#04060c" };

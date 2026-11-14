@@ -2,7 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
-## 2026-11-14 · 22:20 · Revisión de Crítico y de Logos Legal aplicadas
+## 2026-11-14 · 22:08 · Arreglos de Diseño (revisión en vivo)
+- Móvil: `overflow-x-clip` (el globo se queda fijo al bajar), disposición vertical con aspecto < 1,2 (globos más grandes), separación de marcadores 40 px en táctil, botones de 44 px en táctil.
+- Etiqueta del objetivo encima del marcador (no tapa los arcos); tramo «no puntuado» más claro; halo de la Tierra más suave.
+- «Pause motion» en la cabecera en todos los modos (WCAG 2.2.2); `<h1>` accesible en modo misión; favicon SVG; Open Graph; caché de 7 días para `/tex`.
+- No aplicado: cambiar la cifra de las filas por el percentil (Crítico pidió mostrar el índice 0–1).
+
+## 2026-11-14 · 22:06 · Revisión de Crítico y de Logos Legal aplicadas
 - Crítico («sí con cambios»): la hoja de método describía la fórmula v2 → reescrita con la v3 (índice = 0,5·F + 0,5·(1−D)) y su circularidad. La nota se muestra como «analog index» 0–1, no como %, con aviso de que no es una probabilidad. «New candidates» → «New regions to investigate». Límite clave de cada misión en ámbar junto al nombre (basalto no confirmado, dunas no confirmadas, hielo inferido).
 - Logos Legal: `vercel.json` con CSP y cabeceras de seguridad; cita completa de WDPCA con enlace; avisos de viaje de EE. UU. y del Reino Unido separados; enlaces a OSM y a la licencia de GLiM («modified»); `LICENSE` MIT que excluye datos de terceros y la marca de WDPCA; README con OSM, NSSDC y GLiM.
 - Quitado el prefijo de continente de los nombres de región. Datos de acceso: citas corregidas en la copia del repo (avisado a Logos Datos).
