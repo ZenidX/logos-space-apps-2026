@@ -1,5 +1,6 @@
 "use client";
 
+import TargetWhy from "@/components/TargetWhy";
 import { useMemo, useState } from "react";
 import { SITES } from "@/data/catalog";
 import { TARGETS } from "@/data/targets";
@@ -157,6 +158,7 @@ export default function AnalysisTab() {
         <p className="mt-1 text-[11px]" style={{ color: C.muted }}>
           Sources: {target.sources}
         </p>
+        <TargetWhy target={target} />
       </section>
 
       {/* matriz sitios × dimensiones */}

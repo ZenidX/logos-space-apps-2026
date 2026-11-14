@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 3)
+
+### «Why this target?» en la web
+- **El reto no da ninguna lista de sitios de la Luna ni de Marte.** Pide análogos de *candidate permanent Moon-base locations* y *future Mars landing and exploration sites* sin nombrar ninguno. Solo nombra análogos terrestres: Atacama, Haughton y Death Valley. Los 3 objetivos los elegimos nosotros.
+- Cada objetivo tiene ahora `whyChosen` y `refs` en `src/data/targets.ts`, y un panel `src/components/TargetWhy.tsx` que se muestra al elegirlo en Candidatos y en Análisis.
+  - **Shackleton:** estaba en la lista de 13 regiones candidatas de Artemis III de NASA en 2022 («Peak Near Shackleton», «Connecting Ridge»). **En la actualización de octubre de 2024 (9 regiones) ya no aparece**: quedan Malapert Massif, Haworth, Mons Mouton, entre otras. Lo mantenemos como referencia de base permanente en el polo sur.
+  - **Jezero:** lugar de aterrizaje de Perseverance (2021), con delta fluvial conservado.
+  - **Arcadia Planitia:** hielo a pocos metros según el proyecto SWIM de NASA; candidata para misiones humanas.
+
 ## 2026-11-14 (noche, 2)
 
 ### Puntuación v2: sin clima y con accesibilidad

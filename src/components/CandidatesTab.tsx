@@ -1,5 +1,6 @@
 "use client";
 
+import TargetWhy from "@/components/TargetWhy";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { TARGETS } from "@/data/targets";
@@ -153,6 +154,7 @@ export default function CandidatesTab() {
             </button>
           ))}
         </div>
+        <TargetWhy target={target} />
       </section>
 
       {res && (
