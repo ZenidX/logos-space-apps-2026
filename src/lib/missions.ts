@@ -58,7 +58,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Drilling through dry soil into ice-cemented ground, as NASA's TRIDENT drill did at Haughton crater (2024).",
     matters: "Ice near the surface could supply water for crews. Drills must be proven on frozen ground first.",
     keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
-    notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — server down when we checked"],
+    notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — not included in this prototype"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },
 };
@@ -85,7 +85,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
   const sites: Site[] = m.sites.map((s) => ({
     id: s.id,
     areaKm2: s.region?.areaKm2 ?? null,
-    name: s.name.replace(/^Candidate cell near /, "").split(" · ").filter((x, i) => !(i === 0 && /^(Asia|Africa|Europe|North America|South America|Oceania)$/.test(x))).slice(0, 2).join(" · "),
+    name: ((parts) => (parts.length > 2 ? parts.slice(-2) : parts).join(" · "))(s.name.replace(/^Candidate cell near /, "").split(" · ")), // administrative names (the last two parts) are more precise than the broad geographic region
     country: s.country,
     lat: s.lat,
     lon: lon180(s.lon),

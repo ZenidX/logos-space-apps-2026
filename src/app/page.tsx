@@ -51,6 +51,16 @@ export default function Home() {
     return () => window.clearInterval(id);
   }, [missionId, paused]);
 
+  // Keep the address bar in sync so any mission or site can be linked and shared.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (missionId) q.set("m", missionId); else q.delete("m");
+    if (missionId && sel) q.set("s", sel); else q.delete("s");
+    const qs = q.toString();
+    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+    if (sel && window.innerWidth < 768) document.getElementById("panel")?.scrollIntoView({ block: "start" });
+  }, [missionId, sel]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
@@ -65,8 +75,9 @@ export default function Home() {
   const known = shown.sites.filter((s) => s.kind === "known");
   const fresh = shown.sites.filter((s) => s.kind === "new");
 
-  const Row = ({ s, n }: { s: Mission["sites"][number]; n: number }) => (
-    <li>
+  // A plain function (not a component defined during render): rows keep their identity, so keyboard focus is not lost.
+  const row = (s: Mission["sites"][number], n: number) => (
+    <li key={s.id}>
       <button onClick={() => { setSel(s.id); setHover(null); }} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
         <span className="mono text-[12px]" style={{ color: BODY_COLOR[t.body] }}>{String(n).padStart(2, "0")}</span>
         <span className="min-w-0"><span className="place block truncate text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
@@ -95,7 +106,7 @@ export default function Home() {
         )}
       </div>
 
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-gradient-to-b from-[var(--bg)] to-transparent px-4 py-2 md:bg-none md:p-4 md:px-8">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-[var(--bg)] px-4 py-2 md:bg-transparent md:p-4 md:px-8">
         <button onClick={home} className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2">
           <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
@@ -137,7 +148,7 @@ export default function Home() {
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside className={`slide-in glass relative z-10 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-6" : "md:w-[380px]"}`} aria-label={shown.title}>
+        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-6" : "md:w-[380px]"}`} aria-label={shown.title}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (
@@ -159,10 +170,10 @@ export default function Home() {
 
               <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono text-[11px] text-[var(--dim)]">index · access</span></div>
               <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">{TOP_NOTE}</p>
-              <ul className="stagger mt-1 grid gap-0.5">{fresh.map((s, i) => <Row key={s.id} s={s} n={i + 1} />)}</ul>
+              <ul className="stagger mt-1 grid gap-0.5">{fresh.map((s, i) => row(s, i + 1))}</ul>
 
               <h3 className="label mt-4">Known analogs · used to validate</h3>
-              <ul className="stagger mt-1 grid gap-0.5">{known.map((s, i) => <Row key={s.id} s={s} n={fresh.length + i + 1} />)}</ul>
+              <ul className="stagger mt-1 grid gap-0.5">{known.map((s, i) => row(s, fresh.length + i + 1))}</ul>
 
               <p className="mt-3 rounded-lg border border-[var(--line)] p-2 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">Validation.</b> {shown.validation.result}</p>
               <p className="mt-2 text-[11.5px] text-[var(--dim)]">Access complexity: Low · Medium · High (team-defined, neutral). Not travel advice.</p>

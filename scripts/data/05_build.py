@@ -54,7 +54,7 @@ def site_breaks(mid, r, kind):
 
 def mk(mid, r, kind, sid, name, a, extra):
     country = a.get("country_name")
-    if a.get("disputed_area"): country = f"{country} (de facto; disputed area)"
+    if a.get("disputed_area"): country = "Disputed area (boundaries de facto; no position on sovereignty)"
     return {"id": sid, "name": name, "country": country, "lat": r["lat"], "lon": r["lon"], "kind": kind,
             "match": r["similarity"], "ruleFraction": r["ruleFraction"], "percentileDistance": r["percentileDistance"],
             "matchPercentile": r["similarityPercentile"], "perVariable": pv_out(mid, r), **extra,

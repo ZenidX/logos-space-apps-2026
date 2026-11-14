@@ -28,8 +28,8 @@ function TempChart({ t, targetC, targetName }: { t: (number | null)[]; targetC: 
   const pts = v.map((c, i) => `${x(i).toFixed(1)},${y(c).toFixed(1)}`).join(" ");
   return (
     <div className="mt-3">
-      <p className="label">Ground temperature by month</p>
-      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`Monthly ground temperature here: ${Math.min(...v).toFixed(0)} to ${hi.toFixed(0)} degrees Celsius.`}>
+      <p className="label">Surface (skin) temperature by month</p>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`Monthly surface temperature here: ${Math.min(...v).toFixed(0)} to ${hi.toFixed(0)} degrees Celsius.`}>
         {lo < 0 && hi > 0 && <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--line2)" strokeWidth={1} />}
         {targetC !== null && <><line x1={0} x2={W} y1={y(targetC)} y2={y(targetC)} stroke="var(--mars)" strokeDasharray="4 3" strokeWidth={1} /><text x={W - 2} y={y(targetC) - 3} textAnchor="end" fontSize="9" fill="var(--mars)" fontFamily="var(--mono)">{targetName} mean {targetC.toFixed(0)} °C</text></>}
         <polyline className="line-draw" points={pts} fill="none" stroke="var(--earth)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" pathLength={1} />
@@ -84,8 +84,10 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
         {targetMax !== null && <><line x1={0} x2={W} y1={y(targetMax)} y2={y(targetMax)} stroke="var(--moon)" strokeDasharray="4 3" strokeWidth={1} /><text x={W - 2} y={y(targetMax) - 3} textAnchor="end" fontSize="9" fill="var(--moon)" fontFamily="var(--mono)">{targetName} max {targetMax.toFixed(0)}°</text></>}
       </svg>
       <p className="mt-1 text-[12.5px] text-[var(--mut)]">
-        {low ? <>Lowest noon Sun: <b className="text-[var(--ink)]">{full[low.i]}</b>, about {low.d.toFixed(0)}° above the horizon{v.some((d) => d <= 0) && "; the Sun stays below the horizon at noon in the darkest months"}.</> : "The Sun stays below the horizon at noon all year at this latitude."}
-        {targetMax !== null && (low && low.d <= targetMax + 8 ? " That is close to the target's grazing light: the best season to rehearse low-Sun work here." : " It never gets as low as at the target, so low-Sun work here needs night operations with artificial light.")}
+        {v.some((d) => d <= 0)
+          ? (low ? <>The Sun stays below the horizon at noon in the darkest months (no direct sunlight). Lowest noon Sun above the horizon: <b className="text-[var(--ink)]">{full[low.i]}</b>, about {Math.max(1, Math.round(low.d))}°.</> : "The Sun stays below the horizon at noon all year at this latitude.")
+          : low && <>Lowest noon Sun: <b className="text-[var(--ink)]">{full[low.i]}</b>, about {low.d.toFixed(0)}° above the horizon.</>}
+        {targetMax !== null && (low && low.d <= targetMax + 8 ? " Around then the light is close to the target's grazing Sun: the best season to rehearse low-Sun work here." : " It never gets as low as at the target, so low-Sun work here needs night operations with artificial light.")}
       </p>
     </div>
   );
@@ -128,10 +130,10 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))_auto]">
           {ts && <div className="hidden lg:block"><LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} /></div>}
-          <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {scored.length}</span></>} sub="in the range the mission needs" color={met === scored.length ? "var(--earth)" : "var(--amber)"} />
+          <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {matchVars.length}</span></>} sub={scored.length < matchVars.length ? `accepted by the mission rule; ${matchVars.length - scored.length} with no data` : "accepted by the mission rule"} color={met === matchVars.length ? "var(--earth)" : "var(--amber)"} />
           <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
           <Fig k="Mean slope" v={ts ? <>{ts.stats.slopeMeanDeg.toFixed(1)}°</> : "–"} sub={tt ? <>target {tt.stats.slopeMeanDeg.toFixed(1)}°</> : undefined} />
-          <Fig k="Access" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={site.access.score !== null ? <>complexity {site.access.score.toFixed(2)} of 1</> : site.access.permit ?? "not scored"} color="var(--sand)" />
+          <Fig k="Permits & politics" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={<>{site.access.score !== null ? `complexity ${site.access.score.toFixed(2)} of 1` : "not scored"}{how?.travelTimeToCityHours != null && <> · travel: about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city</>}</>} color="var(--sand)" />
           {tt && <div className="hidden lg:block"><LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} /></div>}
         </div>
 
@@ -139,14 +141,14 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (
-            <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => setTab(tab === id ? null : id)} className="glass-tab chip">{label}</button>
+            <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => { setTab(tab === id ? null : id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
           ))}
         </div>
       </div>
 
       {/* ---- Detail on demand ---- */}
       {tab && (
-        <section id="site-detail" role="tabpanel" className="fade-in mt-4 border-t border-[var(--line)] pt-4" key={tab}>
+        <section id="site-detail" role="tabpanel" className="fade-in mt-4 scroll-mt-4 border-t border-[var(--line)] pt-4" key={tab}>
           {tab === "why" && <>
           <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? TOP_NOTE : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
@@ -157,7 +159,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               const met = v.similarity !== null && v.similarity >= 0.5;
               return (
                 <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
-                  <div className="flex items-baseline justify-between gap-2"><span>{v.label}</span><span className="mono text-[11.5px]" style={{ color: v.similarity === null ? "var(--dim)" : met ? "var(--earth)" : "var(--amber)" }}>{v.similarity === null ? "no data" : met ? "in range" : "out of range"} · fit {idx(v.similarity)}</span></div>
+                  <div className="flex items-baseline justify-between gap-2"><span>{v.label}</span><span className="mono text-[11.5px]" style={{ color: v.similarity === null ? "var(--dim)" : met ? "var(--earth)" : "var(--amber)" }}>{v.similarity === null ? "no data" : !met ? "out of range" : v.similarity >= 0.999 ? "in range" : "accepted (within tolerance)"} · fit {v.similarity === null ? "–" : v.similarity.toFixed(2)}</span></div>
                   {strip && def ? (
                     <>
                       <ConditionStrip id={v.id} label={v.label} ideal={def.ideal!} tolerance={def.tolerance!} value={v.value!} target={tv} targetEstimate={est} unit={v.unit} />
@@ -198,7 +200,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               {how.nearestLargeAirport && <><dt className="text-[var(--dim)]">Large airport</dt><dd>{how.nearestLargeAirport.name}{how.nearestLargeAirport.iata ? ` (${how.nearestLargeAirport.iata})` : ""} · {Math.round(how.nearestLargeAirport.straightLineKm).toLocaleString("en")} km</dd></>}
             </dl>
           )}
-          {how && <p className="mt-1 text-[11.5px] text-[var(--dim)]">Straight-line distances, not routes; the nearest city or airport may be in another country.</p>}
+          {how && <p className="mt-1 text-[11.5px] text-[var(--dim)]">Straight-line distances, not routes; the nearest city or airport may be in another country. Travel time is the 2015 Oxford MAP model to its own set of urban areas; it may not be the city named above.</p>}
           <div className="mt-3 rounded-xl border border-[var(--line2)] p-3">
             <div className="flex items-center justify-between"><p className="label">Access complexity</p><AccessBars site={site} /></div>
             <p className="mt-1 text-[15px]" style={{ color: "var(--sand)" }}>{site.access.level}{site.access.score !== null && <span className="mono ml-2 text-[12px] text-[var(--mut)]">{site.access.score.toFixed(2)} / 1</span>}</p>

@@ -1,7 +1,8 @@
 # AI-assisted (Claude), to be reviewed by team Logos
 """Heightmaps (96 x 96, Float32 little-endian, row 0 = north, metres) of an 11 x 11 km square around every
 site and target, plus slope and roughness computed the same way on all three bodies.
-Usage: LOGOS_WORK=... python -I 06_terrain.py <sites.json> <out_dir>
+Usage: python -I 06_terrain.py <sites.json> <heightmaps_dir> <terrain-index.json>
+  writes <heightmaps_dir>/{earth,moon,mars-blend}/<id>.bin; index "file" = /heightmaps/<folder>/<id>.bin
 Earth: Copernicus DEM GLO-30 (AWS Open Data COGs). Moon: LRO LOLA south-pole DEM 30 m/px (Moon Trek).
 Mars: MOLA-HRSC blended DEM 200 m/px (Mars Trek). Common grid: 96 x 96 over 11 km = 114.6 m step.
 """
@@ -95,7 +96,9 @@ def stats(z):
 
 
 def main():
-    d = json.load(open(sys.argv[1])); out = sys.argv[2]; os.makedirs(f"{out}/terrain", exist_ok=True)
+    d = json.load(open(sys.argv[1])); hm = sys.argv[2]; idx_path = sys.argv[3]
+    FOLDER = {"earth": "earth", "moon": "moon", "mars": "mars-blend"}
+    for f in FOLDER.values(): os.makedirs(f"{hm}/{f}", exist_ok=True)
     pts = {}
     for m in d["missions"]:
         t = m["target"]; pts[f"target-{m['id']}"] = (t["body"], t["lat"], t["lon"], t["name"])
@@ -110,13 +113,14 @@ def main():
             z = None; err = str(e)[:120]
         rec = {"name": name, "body": body, "lat": lat, "lon": lon, "file": None, "stats": None, "source": body}
         if z is not None and np.isfinite(z).any():
-            zz = np.where(np.isnan(z), np.nanmin(z), z).astype("<f4"); zz.tofile(f"{out}/terrain/{pid}.bin")
-            rec.update(file=f"terrain/{pid}.bin", minM=round(float(np.nanmin(z)), 1), maxM=round(float(np.nanmax(z)), 1), stats=stats(z))
+            zz = np.where(np.isnan(z), np.nanmin(z), z).astype("<f4"); zz.tofile(f"{hm}/{FOLDER[body]}/{pid}.bin")
+            rec.update(file=f"/heightmaps/{FOLDER[body]}/{pid}.bin", minM=round(float(np.nanmin(z)), 1), maxM=round(float(np.nanmax(z)), 1), stats=stats(z))
             if np.isnan(z).any(): rec["note"] = f"{int(np.isnan(z).sum())} nodata cells filled with the minimum"
         else:
             rec["note"] = "no elevation data" + (f": {err}" if z is None and 'err' in dir() else " (ocean or outside DEM)")
         index["items"][pid] = rec; print(pid, rec.get("stats"))
-    json.dump(index, open(f"{out}/terrain-index.json", "w"), indent=1, ensure_ascii=False)
+    index["generatedWith"] = "AI-assisted (Claude), to be reviewed by team Logos"
+    json.dump(index, open(idx_path, "w"), indent=1, ensure_ascii=False)
 
 
 if __name__ == "__main__":

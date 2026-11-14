@@ -78,7 +78,7 @@ Levels: low < 0.25 ≤ medium < 0.5 ≤ high. Weights, radii and levels are team
 ## 7. Limits
 - Moon and Mars comparison values: Jezero and Arcadia albedo from the MGS TES albedo map (Lambert albedo, not white-sky); Arcadia mean temperature from the Mars Climate Database (a model); Mons Mouton albedo 0.15 is an estimate converted from LOLA 1064 nm normal albedo. See `docs/sources.md`.
 - M1 rock type comes from a 0.5° geological map: "basalt within about 80 km", not "on basalt". There is no data for small islands such as Lanzarote.
-- Slope is not used: the available 5 km slope is too coarse for walking or rover slopes.
+- Slope is not used in the index. The site view shows 11 × 11 km terrain (Copernicus DEM GLO-30, LOLA 30 m, MOLA–HRSC 200 m, resampled to 114.6 m) for comparison only; see `scripts/data/README-v5.md`. Mars terrain comes from a 200 m model, so it looks smoother; sea and lake cells read 0 m.
 - M3 infers ground ice from temperature only; no permafrost or ice map is used.
 - One year (2024) of MODIS and GPM data; 0.1° cells (~11 km) describe the cell, not a specific outcrop.
 - The index favours places that resemble the known analogs; it cannot measure absolute closeness to the Moon or Mars.

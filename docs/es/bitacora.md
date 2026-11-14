@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:01 · 4.ª ronda de zexu (arcos que rodean) + primera prueba a ciegas
+- Arcos «que rodeen, no que abracen»: trayectoria tipo órbita de transferencia. Sale y llega por la normal; si un extremo mira al lado contrario, primero rodea su propio planeta a una altura del 34 % del radio y luego cruza; puntos de paso unidos con una spline Catmull-Rom centrípeta. Prueba: 432 arcos, ningún punto dentro de ningún globo y ≥ 25 % del radio libre fuera de las dos zonas de aterrizaje.
+- Logos Tester (a ciegas, 21 capturas en Shared/logos-prueba-ciega-1): sin bloqueantes. Arreglado de sus altos: «in range» solo si el valor está en el rango ideal y «accepted (within tolerance)» si entra por tolerancia; la cifra de acceso se llama «Permits & politics» y lleva al lado el tiempo de viaje; con teclado ya se llega a todos los sitios (las filas se recreaban en cada render y perdían el foco); al abrir una pestaña el contenido sube a la vista; en móvil la cabecera es opaca y el panel sube al abrir un sitio; la URL cambia con la misión y el sitio (se puede enlazar).
+- De la auditoría de Logos Datos (docs/sources.md, 214 afirmaciones): texto del Sol en sitios polares, «Surface (skin) temperature», nota del tiempo de viaje, textos del método (Mons Mouton, «radiation», «suited EVA»), país de la zona disputada, cita del relieve lunar (NOTICE), nombres administrativos en vez de región amplia («Departamento San Carlos · Mendoza»), y los pasos 06/07 en `npm run data`.
+- Sin tocar (dato, no texto): la región antártica sin nombre, las pendientes altas de Tíbet y Karakórum, la arena ~54 % repetida y que el índice no distingue entre regiones nuevas.
+
 ## 2026-11-14 · 23:48 · Índice sin «1.00» perfecto y mini-mapas separados (aviso de Jefe)
 - Las regiones nuevas valen 0,988–0,998 y se veían como «1.00», por encima de análogos reales (SP Crater 0,97). No es un tope de la fórmula: son las celdas elegidas por estar arriba del índice. Ahora todo valor ≥ 0,99 se muestra «≥ 0.99», con una línea que explica por qué una región nueva puede puntuar más que un análogo conocido (el índice compara condiciones de superficie, no idoneidad). También en «Method & sources».
 - Los mapas de situación salen de la caja de los terrenos y pasan a la fila de cifras (uno a cada lado).

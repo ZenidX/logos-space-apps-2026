@@ -1,7 +1,7 @@
 # AI-assisted (Claude), to be reviewed by team Logos
 """Per-site details for the comparison view: WHEN (noon Sun, daylight, monthly temperature) and HOW
 (campaign sentence for known sites; nearest city, travel time and large airport for all sites).
-Usage: LOGOS_IN=... python -I 07_details.py <sites.json> <terrain-index.json> <out site-details.json>
+Usage: LOGOS_IN=... python -I 07_details.py <sites.json> <out site-details.json>   (terrain is in terrain-index.json, not repeated here)
 Inputs in LOGOS_IN: access_hours.tif (team 0.1 deg export of Oxford MAP 2015), ne_10m_populated_places.zip,
 ourairports_airports.csv. Live: NASA POWER climatology API (no key).
 """
@@ -84,12 +84,12 @@ def power(lat, lon):
 
 
 def main():
-    sites = json.load(open(sys.argv[1])); terr = json.load(open(sys.argv[2]))["items"]
+    sites = json.load(open(sys.argv[1]))
     places, airports = load_places(), load_airports()
     acc = rasterio.open(f"{IN}/access_hours.tif"); A = acc.read(1, masked=True)
     out = {"generatedWith": "AI-assisted (Claude), to be reviewed by team Logos", "sources": {
         "sun": "computed: declination by Cooper (1969) for the 15th of each month; noon elevation = 90 - |lat - declination|; daylight from the sunrise hour angle (no refraction, no terrain)",
-        "temperature": "NASA POWER Climatology API v2.10.1 (MERRA-2, 2001-2025 monthly climatology, 0.5 x 0.625 deg), parameters TS (earth skin temperature) and T2M (air at 2 m), retrieved 2026-11-14. Data obtained from the NASA Langley Research Center POWER Project funded through the NASA Earth Science Division",
+        "temperature": "NASA POWER Climatology API v2.10.1 (MERRA-2, 2001-2025 monthly climatology, 0.5 x 0.625 deg), parameters TS (earth skin temperature) and T2M (air at 2 m), retrieved 2026-11-14. POWER Reference: The data was obtained from National Aeronautics and Space Administration (NASA) Langley Research Center's Prediction Of Worldwide Energy Resources (POWER) project funded through the NASA Earth Science Division. POWER Data Reference: The data was obtained from the POWER Project's Climatology API v2.10.1 on 2026/11/14.",
         "temperatureUrl": "https://power.larc.nasa.gov/docs/referencing/",
         "travelTime": "Weiss et al. 2018, Nature 553:333, doi:10.1038/nature25181 (Oxford MAP accessibility to cities 2015), CC BY 4.0; team 0.1 deg cell mean",
         "city": "Natural Earth 10m populated places (public domain), POP_MAX >= 50,000; straight-line (great-circle) distance",
@@ -97,7 +97,7 @@ def main():
         "marsSun": "computed: solar declination = asin(sin 25.19 deg * sin Ls) (Mars obliquity 25.19 deg, NASA NSSDC); noon elevation = 90 - |lat - declination|"}, "items": {}}
     for m in sites["missions"]:
         t = m["target"]; tid = f"target-{m['id']}"
-        rec = {"name": t["name"], "body": t["body"], "terrain": terr.get(tid)}
+        rec = {"name": t["name"], "body": t["body"]}
         if t["body"] == "moon":
             rec["when"] = {"sunNoonMaxDeg": round(90 - (abs(t["lat"]) - 1.54), 1), "sunNoonMinDeg": round(90 - abs(t["lat"]) - 1.54, 1),
                            "note": "computed from latitude and the 1.54 deg tilt of the lunar equator to the ecliptic; terrain ignored. A lunar day lasts about 29.5 Earth days"}
@@ -111,7 +111,7 @@ def main():
             if s["id"] in out["items"]: continue
             la, lo = s["lat"], s["lon"]
             dec = [decl_earth(n) for n in MONTH_DAY15]
-            r = {"name": s["name"], "body": "earth", "kind": s["kind"], "terrain": terr.get(s["id"]),
+            r = {"name": s["name"], "body": "earth", "kind": s["kind"],
                  "when": {"months": MONTHS, "sunNoonDeg": [round(noon_elev(la, d), 1) for d in dec],
                           "daylightHours": [round(daylight_h(la, d), 1) for d in dec], **power(la, lo)}}
             time.sleep(1.0)
@@ -123,7 +123,7 @@ def main():
             if np.ma.is_masked(h): how["travelTimeNote"] = "not available (Oxford MAP covers 85N-60S)"
             if s["id"] in CAMPAIGN: how["campaign"] = {"text": CAMPAIGN[s["id"]][0], "urls": CAMPAIGN[s["id"]][1]}
             r["how"] = how; out["items"][s["id"]] = r; print(s["id"], how["nearestCity50k"]["name"], how["travelTimeToCityHours"], a[0][:30])
-    json.dump(out, open(sys.argv[3], "w"), indent=1, ensure_ascii=False)
+    json.dump(out, open(sys.argv[2], "w"), separators=(",", ":"), ensure_ascii=False)
 
 
 if __name__ == "__main__":

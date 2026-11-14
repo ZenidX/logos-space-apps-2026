@@ -66,26 +66,31 @@ console.log("6 ok · 65 puntos y tramos con datos reales (Alaska → «brk» en 
 // 7) arcs never enter a globe: every sampled point stays at or above the surface of every sphere, for sites on the
 //    near side, the limb and the far side of the Earth, in both layouts; away from the ends the clearance holds.
 {
-  const { arcPoints, ARC_CLEARANCE } = await import("./orrery-math.ts");
-  let worst = Infinity, cases = 0;
+  const { arcPoints, ARC_LANDING } = await import("./orrery-math.ts");
+  let worst = Infinity, cases = 0, maxTurn = 0;
   for (const layout of [LANDSCAPE, PORTRAIT]) for (const target of ["moon", "mars"]) {
     const spheres = ["earth", "moon", "mars"].map((b) => ({ c: V(...layout[b].pos), r: layout[b].r * (b === target ? 1.8 : 1) }));
     const qI = new THREE.Quaternion();
     const A = worldPoint(layout, target, qI, 1.8, target === "moon" ? -84.6 : 18.4, 31);
     for (let lat = -80; lat <= 80; lat += 20) for (let lon = -180; lon < 180; lon += 30) {
-      const B = worldPoint(layout, "earth", qI, 1, lat, lon), n = 65, pts = arcPoints(A.p, A.n, B.p, B.n, spheres, n);
+      const B = worldPoint(layout, "earth", qI, 1, lat, lon), n = 129, pts = arcPoints(A.p, A.n, B.p, B.n, spheres, n);
       cases++;
       for (let i = 0; i < n; i++) {
-        const p = V(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]), t = i / (n - 1), mid = t > 0.1 && t < 0.9;
+        const p = V(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]), dEnd = Math.min(p.distanceTo(A.p), p.distanceTo(B.p));
         for (const s of spheres) {
           const h = p.distanceTo(s.c) / s.r - 1; // altitude as a fraction of the radius
           worst = Math.min(worst, h);
           assert.ok(h > -1e-6, `arc inside a globe: layout ${layout === LANDSCAPE ? "L" : "P"} ${target} site ${lat},${lon} point ${i} altitude ${h}`);
-          if (mid) assert.ok(h >= ARC_CLEARANCE * 0.5, `arc too close to a globe mid-way: ${lat},${lon} point ${i} altitude ${h}`);
+          if (dEnd > ARC_LANDING * s.r) assert.ok(h >= 0.25, `arc too close to a globe mid-way: ${lat},${lon} point ${i} altitude ${h}`);
         }
+      }
+      for (let i = 1; i < n - 1; i++) { // no kinks: consecutive segments never turn more than 42 degrees (129 points; the worst case is a site exactly opposite the target)
+        const u = V(pts[i * 3] - pts[i * 3 - 3], pts[i * 3 + 1] - pts[i * 3 - 2], pts[i * 3 + 2] - pts[i * 3 - 1]), w = V(pts[i * 3 + 3] - pts[i * 3], pts[i * 3 + 4] - pts[i * 3 + 1], pts[i * 3 + 5] - pts[i * 3 + 2]);
+        const ang = (u.angleTo(w) * 180) / Math.PI; maxTurn = Math.max(maxTurn, ang);
+        assert.ok(ang < 42, `kink in arc ${lat},${lon} at point ${i}: ${ang.toFixed(1)} deg`);
       }
       assert.ok(V(pts[0], pts[1], pts[2]).distanceTo(A.p) < 1e-6 && V(pts[(n - 1) * 3], pts[(n - 1) * 3 + 1], pts[(n - 1) * 3 + 2]).distanceTo(B.p) < 1e-6, "arc ends must stay on the two points");
     }
   }
-  console.log(`7 ok · ${cases} arcs (near side, limb and far side; both layouts): no point inside any globe (lowest altitude ${worst.toFixed(4)} r)`);
+  console.log(`7 ok · ${cases} arcs (near side, limb and far side; both layouts): no point inside any globe; ≥ 25 % of the radius clear away from the two landing zones (lowest altitude ${worst.toFixed(4)} r; sharpest turn ${maxTurn.toFixed(1)}°)`);
 }

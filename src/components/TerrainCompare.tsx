@@ -114,7 +114,7 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg, compact
         {state === "error" && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-[13px] text-[var(--dim)]">3D terrain could not be shown here. The numbers below are the same comparison.</p>}
         <span className="label pointer-events-none absolute left-3 top-3" style={{ color: "var(--earth)" }}>Earth · this site</span>
         <span className="label pointer-events-none absolute right-3 top-3" style={{ color: target.body === "moon" ? "var(--moon)" : "var(--mars)" }}>{target.body === "moon" ? "Moon" : "Mars"} · target</span>
-        <span className="pointer-events-none absolute bottom-2 left-3 text-[11px] text-[var(--dim)]">11 × 11 km each · same scale · heights ×{EXAG} · drag to rotate</span>
+        <span className="pointer-events-none absolute bottom-2 left-3 text-[11px] text-[var(--dim)]">11 × 11 km each · same scale · heights ×{EXAG} on both · drag to rotate</span>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-[var(--mut)]">
         <label htmlFor="sun" className="label">Sun height</label>
@@ -143,7 +143,7 @@ export function TerrainStats({ siteId, targetId }: { siteId: string; targetId: s
         <tbody>{rows.map(([k, f]) => <tr key={k} className="border-t border-[var(--line)]"><td className="py-1 text-[var(--mut)]">{k}</td><td>{f(site)}</td><td>{f(target)}</td></tr>)}</tbody>
       </table>
       {target.body === "mars" && <p className="mt-1 text-[11.5px] text-[var(--dim)]">The Mars elevation model is 200 m per pixel, coarser than Earth&apos;s 30 m, so Mars looks smoother than it is.</p>}
-      <p className="mt-1 text-[11.5px] text-[var(--dim)]">Terrain was not used in the analog index; it is shown to compare shape. Sea and lake cells read as 0 m.</p>
+      <p className="mt-1 text-[11.5px] text-[var(--dim)]">Terrain was not used in the analog index; it is shown to compare shape. Sea and lake cells read as 0 m and are included in these figures.</p>
     </div>
   );
 }

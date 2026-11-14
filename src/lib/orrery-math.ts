@@ -123,38 +123,55 @@ export const segKind = (v: number | null): SegKind => (v === null ? "un" : v >= 
 /** Order from the target to the Earth site: «not scored» first, then the conditions, the main one landing on the site. */
 export const arcSegments = (dims: Dims): SegKind[] => ["un", segKind(dims[2]), segKind(dims[1]), segKind(dims[0])];
 
-// ---------- arcs that stay outside the globes ----------
+// ---------- arcs that go AROUND the globes (transfer-orbit style) ----------
 export interface Sphere { c: THREE.Vector3; r: number }
-/** Minimum clearance above any globe, as a fraction of its radius, away from the two endpoints. */
-export const ARC_CLEARANCE = 0.035;
-const TAPER = 0.08; // first/last 8 % of the arc: clearance grows from 0 (the arc touches the surface at its ends)
+/** Clearance above any globe, as a fraction of its radius, along the middle of the arc. */
+export const ARC_CLEARANCE = 0.34;
+/** Within this distance of an end point (in globe radii) the clearance eases to 0: the arc leaves and lands on the surface. */
+export const ARC_LANDING = 0.9;
+const smooth = (x: number) => x * x * (3 - 2 * x);
 
 /**
- * Points of an arc from `a` (normal `na`) to `b` (normal `nb`) that never go inside any sphere:
- * the Bézier is sampled, every point closer than r·(1 + clearance) to a sphere centre is pushed out
- * radially, and the result is smoothed and pushed out again. When the end point is on the far side
- * of a globe the arc wraps around it at low altitude instead of cutting through.
+ * One smooth curve from `a` (normal `na`) to `b` (normal `nb`) that swings wide of every globe, like a transfer orbit:
+ * it takes off and lands along the surface normals; when an end point faces away from the other globe, the curve
+ * first circles its own globe on the clearance shell (way-points on a great circle) and only then crosses over.
+ * The way-points are joined by a centripetal Catmull-Rom spline (no kinks, no loops), and a final guard pushes
+ * any sample that would still be too close to a globe back out. No point is ever inside a sphere.
  */
 export function arcPoints(a: THREE.Vector3, na: THREE.Vector3, b: THREE.Vector3, nb: THREE.Vector3, spheres: Sphere[], n: number): Float32Array {
-  const curve = arcCurve(a, na, b, nb), pts: THREE.Vector3[] = [];
-  for (let i = 0; i < n; i++) pts.push(arcAt(curve, i / (n - 1), new THREE.Vector3()));
+  const own = (p: THREE.Vector3): Sphere => spheres.reduce<{ d: number; s: Sphere }>((best, s) => { const d = Math.abs(p.distanceTo(s.c) - s.r); return d < best.d ? { d, s } : best; }, { d: Infinity, s: { c: p.clone(), r: 0.5 } }).s;
+  const sa = own(a), sb = own(b), shell = (s: Sphere) => s.r * (1 + ARC_CLEARANCE);
+  /** Way-points on the shell of `s`, from its end normal towards the other globe, until the crossing is clear. */
+  const around = (s: Sphere, nEnd: THREE.Vector3, other: THREE.Vector3): THREE.Vector3[] => {
+    const to = other.clone().sub(s.c).normalize(), theta = nEnd.angleTo(to), out: THREE.Vector3[] = [];
+    if (theta < 1.2) return out; // under ~70 degrees the direct crossing already clears the globe
+    const axis = new THREE.Vector3().crossVectors(nEnd, to);
+    if (axis.lengthSq() < 1e-8) { axis.set(0, 1, 0).cross(nEnd); if (axis.lengthSq() < 1e-8) axis.set(1, 0, 0); } // exactly opposite: any great circle will do
+    axis.normalize();
+    for (let ang = 0.6; ang <= theta - 0.95; ang += 0.6) out.push(s.c.clone().addScaledVector(nEnd.clone().applyAxisAngle(axis, ang), shell(s)));
+    return out;
+  };
+  const way = [a.clone(), a.clone().addScaledVector(na, ARC_CLEARANCE * sa.r), ...around(sa, na, sb.c), ...around(sb, nb, sa.c).reverse(), b.clone().addScaledVector(nb, ARC_CLEARANCE * sb.r), b.clone()];
+  const pts = new THREE.CatmullRomCurve3(way, false, "centripetal").getPoints(n - 1);
+  pts[0].copy(a); pts[n - 1].copy(b);
   const d = new THREE.Vector3();
-  const pushOut = () => {
+  const guard = () => { // never closer than the eased clearance to any globe
+    let moved = false;
     for (let i = 1; i < n - 1; i++) {
-      const t = i / (n - 1), k = Math.min(1, Math.min(t, 1 - t) / TAPER);
+      const dEnd = Math.min(pts[i].distanceTo(a), pts[i].distanceTo(b));
       for (const s of spheres) {
-        const min = s.r * (1 + ARC_CLEARANCE * k);
+        const min = s.r * (1 + ARC_CLEARANCE * 0.8 * smooth(Math.min(1, dEnd / (ARC_LANDING * s.r))));
         d.copy(pts[i]).sub(s.c);
-        const len = d.length();
-        if (len < min) pts[i].copy(s.c).addScaledVector(len > 1e-9 ? d.divideScalar(len) : d.copy(i < n / 2 ? na : nb), min);
+        const l = d.length();
+        if (l < min) { pts[i].copy(s.c).addScaledVector(l > 1e-9 ? d.divideScalar(l) : d.copy(nb), min); moved = true; }
       }
     }
+    return moved;
   };
-  pushOut();
-  for (let pass = 0; pass < 3; pass++) {
+  if (guard()) for (let pass = 0; pass < 24; pass++) { // only when the guard had to act: relax the polyline around the pushed points
     const prev = pts.map((p) => p.clone());
     for (let i = 1; i < n - 1; i++) pts[i].copy(prev[i - 1]).add(prev[i + 1]).multiplyScalar(0.25).addScaledVector(prev[i], 0.5);
-    pushOut();
+    guard();
   }
   const out = new Float32Array(n * 3);
   pts.forEach((p, i) => { out[i * 3] = p.x; out[i * 3 + 1] = p.y; out[i * 3 + 2] = p.z; });

@@ -40,8 +40,8 @@ python -I 04_access.py work/sites_list.json "$LOGOS_IN" > work/access.json
 python -I 05_build.py work/sites.json                         # final file
 LOGOS_SITES=work/sites.json python -I test_index.py           # 5 checks (or: pytest test_index.py)
 # site comparison data (v5): heightmaps + when/how
-python -I 06_terrain.py work/sites.json public/v5          # 30 heightmaps, ~50 s, live: AWS Copernicus DEM, NASA Trek
-python -I 07_details.py work/sites.json public/v5/terrain-index.json public/v5/site-details.json   # live: NASA POWER (~1 min)
+python -I 06_terrain.py work/sites.json public/heightmaps src/data/terrain-index.json   # 30 heightmaps (public/heightmaps/{earth,moon,mars-blend}/<id>.bin), ~50 s, live: AWS Copernicus DEM, NASA Trek
+python -I 07_details.py work/sites.json src/data/site-details.json                     # when/how per site (no terrain field), live: NASA POWER (~1 min)
 ```
 `npm run data` could wrap these lines. `-I` keeps Python from importing files from the data folder.
 

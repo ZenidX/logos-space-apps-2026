@@ -19,7 +19,7 @@ export interface ArcSpec {
   spheres?: Sphere[]; // globes the arc must stay outside of
 }
 
-export const PTS = 65, SEGS = PTS - 1;
+export const PTS = 129, SEGS = PTS - 1; // dense enough for a wide loop around a globe to read as a curve
 export const DRAW_S = 0.9, STAGGER_S = 0.12;
 
 interface Item { id: string; delay: number; line: Line2; hidden: boolean }
