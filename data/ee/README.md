@@ -8,8 +8,9 @@ Copia completa (14-11-2026) de lo que hay en el proyecto de Earth Engine **`terr
 - Los demás scripts están en [`scripts/ee/`](../../scripts/ee/). Para usarlos, se copian en el [Code Editor](https://code.earthengine.google.com/) con un proyecto de Cloud propio registrado en Earth Engine.
 
 ## Formato común de todos los GeoTIFF
-- Rejilla de **0,1° (≈11 km)**, de **85°N a 85°S**, 3600 × 1700 píxeles, `EPSG:4326`, transformación `[0.1, 0, -180, 0, -0.1, 85]`.
-- Float32, una banda por archivo. Mar y sin dato = nodata (máscara).
+- Rejilla de **0,1° (≈11 km)** con celdas cuadradas, de **85°N a 85°S**, 3600 × 1700 píxeles, `EPSG:4326`, transformación `[0.1, 0, -180, 0, -0.1, 85]`: la misma rejilla que los assets de Earth Engine. Fila = `floor((85 − lat) / 0.1)`, columna = `floor((lon + 180) / 0.1)`.
+- Float32, una banda por archivo. **Sin dato = −9999** (mar, fuera de cobertura). Ojo: la altitud y la pendiente de GMTED2010 valen 0 sobre el mar, no −9999.
+- ⚠ **Corrección del 14-11 (aviso de C_2):** la primera versión de estos archivos se descargó por error en una rejilla de 90°N a 90°S con filas de 0,10588°, y el sin dato era −Infinity. La georreferencia interna era coherente, pero este README decía otra cosa. Se volvieron a descargar todos los archivos fijando la región a ±85° (`getDownloadURL` con `region` + `dimensions`; con `crsTransform` + `dimensions` Earth Engine ignora la transformación).
 
 ## `terra_features_01deg/`: variables de la Tierra (= las bandas del asset)
 Las genera `scripts/ee/05_export_features.js` (año 2024).
@@ -21,12 +22,12 @@ Las genera `scripts/ee/05_export_features.js` (año 2024).
 | `lst_max.tif` | Temperatura diurna máxima | °C | NASA MODIS MOD11A2 |
 | `lst_min.tif` | Temperatura nocturna mínima | °C | NASA MODIS MOD11A2 |
 | `precip.tif` | Precipitación | mm/año | NASA GPM IMERG V07 mensual |
-| `ndvi.tif` | Vegetación (NDVI) | índice **×10⁻⁴** ⚠ | NASA MODIS MOD13C1 |
+| `ndvi.tif` | Vegetación (NDVI) | índice (ya corregido) | NASA MODIS MOD13C1 |
 | `albedo.tif` | Albedo de onda corta (white-sky) | 0–1 | NASA MODIS MCD43C3 |
 | `slope.tif` | Pendiente a 5 km | ° | USGS GMTED2010 |
 | `elev.tif` | Altitud media | m | USGS GMTED2010 |
 
-⚠ **NDVI:** el asset se exportó con un factor de escala aplicado dos veces, así que los valores son 10 000 veces más pequeños. **Hay que multiplicarlos por 10 000** para tener el NDVI real (de −0,2 a 1). `06_puntuar_asset.js` y la web ya lo corrigen.
+**NDVI:** el asset de Earth Engine guarda el NDVI 10 000 veces más pequeño (factor de escala aplicado dos veces), pero **este `ndvi.tif` ya está corregido** (valores reales de −0,2 a 1).
 
 ## `access/`: accesibilidad (v2)
 
