@@ -89,7 +89,8 @@ b, strong { font-weight: 600; }
 }
 
 /* Inset figure tiles and detail tabs */
-.glass-inset { background: rgba(150, 175, 230, .06); border: 1px solid var(--line); }
+/* Figures: a big number and a small label, no box (no boxes inside boxes) */
+.glass-inset { background: none; border: 0; }
 
 /* A site marker pulses once when its arc lands */
 .mk.cand i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1.5px solid var(--earth); opacity: 0; animation: land 900ms var(--ease) var(--land, 900ms) 1 both; }
@@ -107,14 +108,15 @@ b, strong { font-weight: 600; }
    Regla de oro: el texto pequeño y los datos van en .glass-strong; los chips y pestañas solo llevan texto --ink. */
 :root {
   --glass-tint: 9 13 24;                 /* rgb del fondo (--bg2) */
-  --glass-blur: 22px; --glass-sat: 170%;
+  --glass-blur: 30px; --glass-sat: 180%; --glass-dim: .5;
   --glass-edge: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.07) 36%, rgba(93,180,255,.12) 64%, rgba(255,255,255,.30));
   --glass-solid: #0b1020;                /* reserva sin transparencia (≥ 15:1 con --ink) */
 }
 .glass, .glass-strong, .glass-chip, .glass-tab {
   position: relative; isolation: isolate; color: var(--ink);
   background: rgb(var(--glass-tint) / var(--a));
-  -webkit-backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)); backdrop-filter: blur(var(--b)) saturate(var(--glass-sat));
+  /* brightness() dims whatever is behind, so text keeps AA contrast even over the bright side of a planet */
+  -webkit-backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim)); backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim));
 }
 /* borde luminoso fino (gradiente de 1 px) y reflejo superior; van DETRÁS del contenido (z-index -1 dentro del contexto aislado) */
 .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before {
@@ -128,7 +130,7 @@ b, strong { font-weight: 600; }
 }
 
 /* Capa 1: panel principal (texto corrido, listas, tarjetas) */
-.glass { --a: .58; --b: 24px; border-radius: 20px;
+.glass { --a: .46; --b: var(--glass-blur); border-radius: 28px;
   box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(0,0,0,.35) inset, 0 2px 6px rgba(0,0,0,.35), 0 14px 34px -10px rgba(0,0,0,.6); }
 /* Capa 2: encima de un .glass o sobre zonas muy claras (dossier, datos pequeños, avisos) */
 .glass-strong { --a: .90; --b: 26px; border-radius: 18px;

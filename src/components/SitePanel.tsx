@@ -104,7 +104,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const ts = terrainOf(site.id), tt = terrainOf(`target-${mission.id}`);
   const TABS = [["why", "Why"], ["shape", "Shape"], ["when", "When"], ["how", "How"], ["limits", "Limits & sources"]] as const;
   const Fig = ({ k, v, sub, color }: { k: string; v: React.ReactNode; sub?: React.ReactNode; color?: string }) => (
-    <div className="glass-inset rounded-xl px-3 py-2"><p className="label">{k}</p><p className="mono mt-1 text-[22px] leading-none tracking-[-.03em]" style={color ? { color } : undefined}>{v}</p>{sub && <p className="mt-1 text-[11.5px] leading-tight text-[var(--mut)]">{sub}</p>}</div>
+    <div className="glass-inset py-1"><p className="label">{k}</p><p className="mono mt-1.5 text-[30px] leading-none tracking-[-.04em]" style={color ? { color } : undefined}>{v}</p>{sub && <p className="mt-1 text-[11.5px] leading-tight text-[var(--mut)]">{sub}</p>}</div>
   );
   return (
     <div>
@@ -128,7 +128,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         <div className="mt-2"><TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact /></div>
 
-        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))_auto]">
+        <div className="mt-4 grid grid-cols-2 items-start gap-x-5 gap-y-3 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))_auto]">
           {ts && <div className="hidden lg:block"><LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} /></div>}
           <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {matchVars.length}</span></>} sub={scored.length < matchVars.length ? `accepted by the mission rule; ${matchVars.length - scored.length} with no data` : "accepted by the mission rule"} color={met === matchVars.length ? "var(--earth)" : "var(--amber)"} />
           <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
@@ -137,9 +137,9 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           {tt && <div className="hidden lg:block"><LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} /></div>}
         </div>
 
-        <p className="mt-2 flex gap-2 rounded-xl border px-3 py-2 text-[12.5px] leading-snug" style={{ borderColor: "color-mix(in srgb, var(--amber) 60%, transparent)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
+        <p className="mt-4 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
 
-        <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Details">
+        <div className="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (
             <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => { setTab(tab === id ? null : id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
           ))}
@@ -179,10 +179,17 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           {tab === "when" && <>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Noon Sun height through the year, computed from latitude only (terrain ignored).</p>
           <SunChart lat={site.lat} targetMax={t.body === "moon" ? tSun : null} targetName={targetShort} />
+          {det?.when?.surfaceTempC && (() => {
+            const tv = det.when!.surfaceTempC!.map((x, i) => ({ x, i })).filter((o): o is { x: number; i: number } => o.x !== null);
+            if (tv.length < 12) return null;
+            const hot = tv.reduce((p, c) => (c.x > p.x ? c : p)), cold = tv.reduce((p, c) => (c.x < p.x ? c : p)), mn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return <p className="mt-3 text-[13px] text-[var(--mut)]">Warmest month: <b className="text-[var(--ink)]">{mn[hot.i]}</b> ({hot.x.toFixed(0)} °C at the surface). Coldest: <b className="text-[var(--ink)]">{mn[cold.i]}</b> ({cold.x.toFixed(0)} °C).{mission.id === "m3-ground-ice" && " Frozen ground is easier to drill and travel over outside the summer thaw; daylight and access are best in summer."}</p>;
+          })()}
           {det?.when?.surfaceTempC && <TempChart t={det.when.surfaceTempC} targetC={t.values.lst_mean?.value ?? null} targetName={targetShort} />}
           {t.body === "moon" && <p className="mt-1 text-[12px] text-[var(--dim)]">NASA&apos;s JETT3 test rehearsed the low polar Sun with night moonwalks and a lighting cart; JETT5 used a portable spotlight acting as the Sun (USGS).</p>}
         </>}
           {tab === "how" && <>
+          <p className="mb-2 text-[13px]"><span className="label mr-2">What would be rehearsed</span><span className="text-[var(--mut)]">{mission.rehearse}</span></p>
           {how?.campaign ? (
             <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">{how.campaign.text} {how.campaign.urls.map((u, k) => <a key={u} href={u} target="_blank" rel="noopener noreferrer" className="underline">[{k + 1}]</a>)}</p>
           ) : (

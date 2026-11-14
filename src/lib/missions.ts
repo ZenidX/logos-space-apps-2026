@@ -28,7 +28,7 @@ export interface Target { name: string; body: GlobeBody; lat: number; lon: numbe
 export interface Mission {
   id: MissionId; short: string; title: string; blurb: string; target: Target;
   campaigns: { name: string; url: string }[]; variables: Variable[]; sites: Site[];
-  validation: { method: string; result: string; controlPercentile: number | null }; notScored: string[]; keyLimit: string; rehearse: string; matters: string;
+  validation: { method: string; result: string; controlPercentile: number | null }; landCells: number | null; notScored: string[]; keyLimit: string; rehearse: string; matters: string;
   always: { text: string; source: string; url: string | null }[];
 }
 
@@ -108,6 +108,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
     campaigns: m.campaigns,
     variables: vars,
     sites,
+    landCells: m.validation.landCells ?? null,
     validation: { method: m.validation.method, result: m.validation.result, controlPercentile: m.validation.control?.matchPercentile ?? null },
   };
 });

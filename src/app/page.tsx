@@ -11,6 +11,13 @@ import { MISSIONS, TOP, TOP_NOTE, arcDims, type Mission, type MissionId } from "
 
 const Orrery = dynamic(() => import("@/components/Orrery"), { ssr: false });
 const DEMO_MS = 7000;
+// Project in numbers, computed from the data file (nothing typed by hand).
+const STATS: [string, string][] = [
+  [String(MISSIONS.length), "missions from real field campaigns"],
+  [`${(Math.min(...MISSIONS.map((m) => m.landCells ?? Infinity)) / 1e6).toFixed(1)}M+`, "land cells scored per mission"],
+  [String(MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.kind === "new").length, 0)), "new regions to investigate"],
+  [String(MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.kind === "known").length, 0)), "known analogs used to validate"],
+];
 const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
 
 function sceneFor(m: Mission) {
@@ -58,7 +65,7 @@ export default function Home() {
     if (missionId && sel) q.set("s", sel); else q.delete("s");
     const qs = q.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-    if (sel && window.innerWidth < 768) document.getElementById("panel")?.scrollIntoView({ block: "start" });
+    if (sel && window.innerWidth < 768) window.scrollTo({ top: 0 }); // phones: the site panel sits right under the small scene, so start from the top
   }, [missionId, sel]);
 
   useEffect(() => {
@@ -141,14 +148,17 @@ export default function Home() {
             );
           })}
         </div>
-        {!missionId && (
+        {!missionId && (<>
+          <dl className="mt-4 grid grid-cols-4 gap-3" aria-label="Project in numbers">
+            {STATS.map(([n, l]) => <div key={l} className="flex flex-col"><dt className="order-2 mt-1 text-[11px] leading-tight text-[var(--dim)]">{l}</dt><dd className="mono order-1 text-[20px] leading-none tracking-[-.03em]">{n}</dd></div>)}
+          </dl>
           <p className="mt-3 text-[12px] text-[var(--dim)]" aria-live="polite">Showing: {shown.short} → {t.name.split(" (")[0]}</p>
-        )}
+        </>)}
       </section>
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-6" : "md:w-[380px]"}`} aria-label={shown.title}>
+        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-8" : "md:w-[380px] md:p-6"}`} aria-label={shown.title}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (
@@ -161,7 +171,7 @@ export default function Home() {
                 <div><dt className="label">Why it matters</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.matters}</dd></div>
               </dl>
               {t.description && <p className="mt-2 text-[12px] text-[var(--dim)]">About the target: {t.description}</p>}
-              <p className="mt-2 rounded-lg border p-2 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>▲ {shown.keyLimit}</p>
+              <p className="mt-3 border-l-2 pl-3 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>{shown.keyLimit}</p>
 
               <h3 className="label mt-4">Rehearsed for real by</h3>
               <ul className="mt-2 grid gap-1 text-[13px]">
@@ -175,7 +185,7 @@ export default function Home() {
               <h3 className="label mt-4">Known analogs · used to validate</h3>
               <ul className="stagger mt-1 grid gap-0.5">{known.map((s, i) => row(s, fresh.length + i + 1))}</ul>
 
-              <p className="mt-3 rounded-lg border border-[var(--line)] p-2 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">Validation.</b> {shown.validation.result}</p>
+              <p className="mt-4 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">Validation.</b> {shown.validation.result}</p>
               <p className="mt-2 text-[11.5px] text-[var(--dim)]">Access complexity: Low · Medium · High (team-defined, neutral). Not travel advice.</p>
               <div className="mt-3 flex flex-wrap gap-1.5"><KindChip kind="new" /><KindChip kind="known" /></div>
             </div>

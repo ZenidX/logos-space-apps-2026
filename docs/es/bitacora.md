@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:04 · Cristal más translúcido y minimal, franja de datos, más información y referencias
+- Cristal de escritorio: paneles más translúcidos (alfa 0,46), desenfoque de 30 px, esquinas de 28 px; el fondo se oscurece con `brightness()` para mantener el contraste AA aunque detrás quede la cara iluminada de un planeta. Sin cajas dentro de cajas: las cifras van como número grande + etiqueta pequeña, el aviso de «dónde se rompe» es una línea con filete ámbar, y el relieve ya no lleva marco.
+- Portada: franja «en cifras» calculada del archivo de datos (misiones, celdas puntuadas por misión, regiones nuevas, análogos conocidos).
+- Pestañas con más contenido real: mes más cálido y más frío (NASA POWER) en When; qué se ensayaría allí en How.
+- `docs/design-rationale.md`: 12 repos de GitHub revisados por Consulta (licencia leída del LICENSE) y qué idea se tomó de cada uno; no se copió código.
+
 ## 2026-11-15 · 00:01 · 4.ª ronda de zexu (arcos que rodean) + primera prueba a ciegas
 - Arcos «que rodeen, no que abracen»: trayectoria tipo órbita de transferencia. Sale y llega por la normal; si un extremo mira al lado contrario, primero rodea su propio planeta a una altura del 34 % del radio y luego cruza; puntos de paso unidos con una spline Catmull-Rom centrípeta. Prueba: 432 arcos, ningún punto dentro de ningún globo y ≥ 25 % del radio libre fuera de las dos zonas de aterrizaje.
 - Logos Tester (a ciegas, 21 capturas en Shared/logos-prueba-ciega-1): sin bloqueantes. Arreglado de sus altos: «in range» solo si el valor está en el rango ideal y «accepted (within tolerance)» si entra por tolerancia; la cifra de acceso se llama «Permits & politics» y lleva al lado el tiempo de viaje; con teclado ya se llega a todos los sitios (las filas se recreaban en cada render y perdían el foco); al abrir una pestaña el contenido sube a la vista; en móvil la cabecera es opaca y el panel sube al abrir un sitio; la URL cambia con la misión y el sitio (se puede enlazar).
