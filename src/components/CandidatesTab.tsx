@@ -185,6 +185,10 @@ export default function CandidatesTab() {
             tileMarkers={markers}
             selectedId={selectedCard}
             onSelect={(id) => {
+              if (selectedCard === id) {
+                setView3d(res.top[Number(id)]);
+                return;
+              }
               setSelectedCard(id);
               document.getElementById(`cand-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
             }}

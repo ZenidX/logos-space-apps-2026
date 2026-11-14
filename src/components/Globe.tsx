@@ -8,7 +8,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { declutter, easeInOutCubic, flyPosition, isFacing, latLonToVec3, viewLat } from "@/lib/globe-math";
 
-export type GlobeBody = "earth" | "moon" | "mars";
+import { GLOBE_TEX, type GlobeBody } from "@/lib/globe-tex";
+export type { GlobeBody };
 export interface GlobeMarker {
   id: string;
   lat: number;
@@ -26,13 +27,6 @@ interface Props {
   className?: string;
 }
 
-// IMPORTANTE: el sitio se publica bajo basePath (/logos-space-apps-2026): sin este prefijo las texturas dan 404 en Pages.
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-export const GLOBE_TEX: Record<GlobeBody, { lo: string; hi: string; credit: string; atmosphere: number | null }> = {
-  earth: { lo: `${BASE}/tex/earth-1024.jpg`, hi: `${BASE}/tex/earth-2048.jpg`, credit: "NASA GIBS · Blue Marble", atmosphere: 0x5aaaff },
-  moon: { lo: `${BASE}/tex/moon-1024.jpg`, hi: `${BASE}/tex/moon-2048.jpg`, credit: "LROC WAC · NASA SVS", atmosphere: null },
-  mars: { lo: `${BASE}/tex/mars-1024.jpg`, hi: `${BASE}/tex/mars-2048.jpg`, credit: "Viking MDIM 2.1 · NASA/USGS", atmosphere: 0xe68c5a },
-};
 
 const ATMO_VERT = "varying vec3 n; void main(){ n = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
 const ATMO_FRAG = "uniform vec3 c; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0); }";
@@ -67,7 +61,7 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
     const def = GLOBE_TEX[body];
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block";
+    renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y";
     renderer.domElement.setAttribute("aria-hidden", "true");
     el.prepend(renderer.domElement);
 

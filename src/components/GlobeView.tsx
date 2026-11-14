@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Visor from "@/components/Visor";
-import { GLOBE_TEX, type GlobeBody, type GlobeMarker } from "@/components/Globe";
+import { GLOBE_TEX, type GlobeBody } from "@/lib/globe-tex";
+import type { GlobeMarker } from "@/components/Globe";
 import type { Body } from "@/components/TileMap";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
