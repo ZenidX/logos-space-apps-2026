@@ -44,6 +44,11 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{varSources.map((v) => <li key={v}>• {v}</li>)}<li>• Sand fraction: ISRIC SoilGrids 2.0 (CC BY 4.0), model prediction.</li>
           <li>• Volcanic rock: GLiM, Hartmann &amp; Moosdorf (2012), G³ 13, Q12004, doi:10.1029/2012GC004370; data doi:10.1594/PANGAEA.788537, <a className="underline" href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a>; modified: basic-volcanic class aggregated in a 3×3 window of 0.5° cells.</li>
           <li>• Place names: Natural Earth (public domain) and © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL).</li>
+          <li>• Elevation (Earth, 30 m): produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved. Not endorsed by the European Union, ESA, DLR or Airbus.</li>
+          <li>• Elevation (Moon): NASA LRO LOLA 30 m/px south-pole DEM v04 (NASA GSFC) via NASA Moon Trek.</li>
+          <li>• Elevation (Mars): Fergason, Hare &amp; Laura (2018), HRSC and MOLA Blended DEM 200 m v2, USGS Astrogeology. MOLA: NASA/GSFC (CC0); HRSC: ESA/DLR/FU Berlin (<a className="underline" href="https://creativecommons.org/licenses/by-sa/3.0/igo/" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0 IGO</a>); cropped and resampled by the team, shared under the same licence.</li>
+          <li>• Monthly temperature: NASA POWER Climatology API v2.10.1, retrieved 2026-11-14. The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resource (POWER) Project funded through the NASA Earth Science Division.</li>
+          <li>• Nearest city: Natural Earth populated places (public domain). Travel time: Weiss et al. 2018, Nature 553:333 (CC BY 4.0). Airports: OurAirports (public domain).</li>
           <li>• Target constants (gravity, pressure, temperature): NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC).</li></ul>
         <h3 className="label mt-6">Access data</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{accessSources.map((v) => <li key={v}>• {v}</li>)}</ul>
@@ -52,7 +57,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>
           <li>• Moon: LROC WAC mosaic, CGI Moon Kit, NASA&apos;s Scientific Visualization Studio (NASA/GSFC/Arizona State University).</li>
           <li>• Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.</li>
-          <li>• three.js, Next.js, React (MIT). Fonts: Instrument Serif, Instrument Sans, Geist Mono (SIL OFL 1.1).</li>
+          <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Instrument Serif © 2022 The Instrument Serif Project Authors; Instrument Sans © 2022 The Instrument Sans Project Authors; Geist Mono © 2024 The Geist Project Authors.</li>
         </ul>
         <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>
         <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and the problem framing are our team&apos;s own. AI assistants (Claude) were used as tools, under the team&apos;s direction, for code, data search, drafting the scoring method, design proposals and texts; outputs are reviewed by the team before submission. No AI-generated images or video.</p>

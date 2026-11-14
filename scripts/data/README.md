@@ -23,6 +23,9 @@ python -m venv .venv && .venv/bin/pip install numpy rasterio scipy shapely pyshp
 | `ged261-csv.zip` | UCDP GED 26.1 | https://ucdp.uu.se/downloads/ged/ged261-csv.zip | CC BY 4.0 | 8c941d84954e555e |
 | `GEDEvent_v26_0_9.csv` | UCDP Candidate Events v26.0.9 | https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_9.csv | CC BY 4.0 | 20256b0d674f4c58 |
 | `us_travel_advisories.json` | US State Dept advisories (snapshot 2026-11-14) | https://cadataapi.state.gov/api/TravelAdvisories | US public domain | 8eda2365936bfd32 |
+| `access_hours.tif` | Oxford MAP 2015 travel time, team 0.1° export (`projects/terra-analog/assets/terra_access_01deg`) | CC BY 4.0 | — |
+| `ne_10m_populated_places.zip` | Natural Earth populated places | https://naciscdn.org/naturalearth/10m/cultural/ne_10m_populated_places.zip | public domain | — |
+| `ourairports_airports.csv` | OurAirports airports | https://davidmegginson.github.io/ourairports-data/airports.csv | public domain | — |
 | `wgidataset_with_sourcedata-2026.xlsx` | World Bank WGI 2026 (sheet `pv`) | https://www.worldbank.org/content/dam/sites/govindicators/doc/wgidataset_with_sourcedata-2026.xlsx | CC BY 4.0 | 67c38d2e9253fb1a |
 Live calls during step 3–4 (no key needed): OpenStreetMap Nominatim reverse geocode (1 req/s, ODbL) and GOV.UK Content API for FCDO advice (OGL v3). Results can change on a later date.
 No protected-area dataset is used; every site carries `accessRisk.note` "Check national park and research permits before fieldwork."
@@ -36,6 +39,9 @@ python -I 03_names.py                                         # -> work/names.js
 python -I 04_access.py work/sites_list.json "$LOGOS_IN" > work/access.json
 python -I 05_build.py work/sites.json                         # final file
 LOGOS_SITES=work/sites.json python -I test_index.py           # 5 checks (or: pytest test_index.py)
+# site comparison data (v5): heightmaps + when/how
+python -I 06_terrain.py work/sites.json public/v5          # 30 heightmaps, ~50 s, live: AWS Copernicus DEM, NASA Trek
+python -I 07_details.py work/sites.json public/v5/terrain-index.json public/v5/site-details.json   # live: NASA POWER (~1 min)
 ```
 `npm run data` could wrap these lines. `-I` keeps Python from importing files from the data folder.
 

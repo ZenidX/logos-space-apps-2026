@@ -40,7 +40,8 @@ export default function Home() {
   // Deep link: ?m=<mission id> opens a mission directly (useful for sharing and for recording).
   useEffect(() => {
     const m = new URLSearchParams(window.location.search).get("m");
-    if (m && MISSIONS.some((x) => x.id === m)) setMissionId(m as MissionId);
+    const q = new URLSearchParams(window.location.search), mm = MISSIONS.find((x) => x.id === m);
+    if (mm) { setMissionId(mm.id); const sid = q.get("s"); if (sid && mm.sites.some((x) => x.id === sid)) setSel(sid); }
   }, []);
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 h-[46dvh] w-full pt-12 md:pt-0 transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? "md:left-0 md:right-[404px]" : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 h-[46dvh] w-full pt-12 md:pt-0 transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(784px,62vw)]" : "md:left-0 md:right-[404px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
@@ -137,7 +138,7 @@ export default function Home() {
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside className="slide-in glass relative z-10 mx-4 mb-6 rounded-[20px] p-5 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:w-[380px] md:overflow-y-auto" aria-label={shown.title}>
+        <aside className={`slide-in glass relative z-10 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-6" : "md:w-[380px]"}`} aria-label={shown.title}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (

@@ -23,4 +23,5 @@ SOFTWARE.
 ---
 This licence covers the source code only. Third-party data and imagery keep
 their own licences (see "Method & sources" in the app, README.md and
-docs/sources.md).
+docs/sources.md). Heightmaps in public/heightmaps/ keep their source licences
+(see each folder's NOTICE or LICENSE); they are not covered by the MIT licence.
