@@ -64,6 +64,7 @@ npm run dev   # http://localhost:3000
 ## Documentation (Spanish)
 
 - [Bitácora](docs/bitacora.md): log of what was done and when
+- [Valor añadido y modelo de impacto](docs/valor-anadido.md): business case, storytelling, dual-engine solution and ROI
 - [Datos](docs/datos.md): layers, types, resolutions, ranges and samples
 - [Método](docs/metodo.md): how similarity is computed
 - [Normas](docs/normas.md): challenge rules that affect us
