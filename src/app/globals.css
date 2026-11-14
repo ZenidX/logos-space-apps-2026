@@ -107,7 +107,7 @@ b, strong { font-weight: 600; }
    Regla de oro: el texto pequeño y los datos van en .glass-strong; los chips y pestañas solo llevan texto --ink. */
 :root {
   --glass-tint: 9 13 24;                 /* rgb del fondo (--bg2) */
-  --glass-blur: 18px; --glass-sat: 160%;
+  --glass-blur: 22px; --glass-sat: 170%;
   --glass-edge: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.07) 36%, rgba(93,180,255,.12) 64%, rgba(255,255,255,.30));
   --glass-solid: #0b1020;                /* reserva sin transparencia (≥ 15:1 con --ink) */
 }
@@ -128,7 +128,7 @@ b, strong { font-weight: 600; }
 }
 
 /* Capa 1: panel principal (texto corrido, listas, tarjetas) */
-.glass { --a: .78; --b: var(--glass-blur); border-radius: 20px;
+.glass { --a: .58; --b: 24px; border-radius: 20px;
   box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(0,0,0,.35) inset, 0 2px 6px rgba(0,0,0,.35), 0 14px 34px -10px rgba(0,0,0,.6); }
 /* Capa 2: encima de un .glass o sobre zonas muy claras (dossier, datos pequeños, avisos) */
 .glass-strong { --a: .90; --b: 26px; border-radius: 18px;
@@ -173,3 +173,6 @@ b, strong { font-weight: 600; }
 }
 
 }
+
+/* Phones: system font for the hero title (performance over ornament: the web font delayed the largest paint) */
+@media (max-width: 700px) { h1.display { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: -.03em; } }

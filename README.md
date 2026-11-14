@@ -2,7 +2,9 @@
 
 **NASA Space Apps Challenge 2026** · Challenge: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* · Team **Logos**.
 
-> Work in progress (14–15 November 2026).
+**Live demo: https://spaceapp-logos.vercel.app** · try a site: https://spaceapp-logos.vercel.app/?m=m1-eva-basalt&s=sp_crater_az
+
+> Prototype built during the hackathon (14–15 November 2026).
 
 ## Idea
 Instead of asking "which place on Earth looks like the Moon?", we ask **"where on Earth can we rehearse this specific mission?"** — and we add a neutral **access complexity** layer (how much coordination would a field team need to work there?).

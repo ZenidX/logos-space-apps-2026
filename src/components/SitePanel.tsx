@@ -114,7 +114,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         <header className="mt-1 grid items-end gap-x-3 gap-y-1 sm:grid-cols-[1fr_auto]">
           <div className="min-w-0">
             <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
-            <p className="truncate text-[13px] text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "region to investigate, not a surveyed site" : "0.1° cell around the site"}</span></p>
+            <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "region to investigate, not a surveyed site" : "0.1° cell around the site"}</span></p>
           </div>
           <div className="flex items-baseline gap-3 sm:block sm:text-right">
             <p className="label">Analog index</p>

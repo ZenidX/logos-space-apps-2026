@@ -85,7 +85,7 @@ export class ArcSet {
       it.line.visible = count > 0;
       if (count > 0) (it.line.geometry as unknown as { instanceCount: number }).instanceCount = count;
       const on = this.highlight === null || this.highlight === it.id;
-      it.line.material.opacity = on ? 0.9 : 0.22;
+      it.line.material.opacity = on ? 0.9 : 0.07; // with one site in focus the other arcs almost disappear
       it.line.material.linewidth = this.highlight === it.id ? 3 : 2;
       if (p < 1) busy = true;
     }

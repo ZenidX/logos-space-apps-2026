@@ -2,6 +2,10 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 23:35 · Pulido tras la revisión de Jefe
+- Los dos terrenos ocupan el alto libre del panel; con un sitio abierto solo se ve su arco (los demás casi desaparecen); cristal de escritorio más translúcido y con más desenfoque; subtítulo del sitio sin cortar.
+- Móvil: paneles sólidos y titular con fuente del sistema (zexu prefiere rendimiento a adorno). URL pública en el README.
+
 ## 2026-11-14 · 23:26 · Tipografía con más carácter, portada sin scroll y criterio documentado
 - Tipografía v3 de Diseño: Bricolage Grotesque (titulares y texto, peso 700 en titulares) y Martian Mono (datos). Sin cursivas.
 - Portada: título, frase y las 3 misiones caben sin scroll a 1366×768 y a 390×844; «How it works» queda debajo.

@@ -31,7 +31,7 @@ const red = new ArcSet(false, true); red.setArcs([spec("a")], 0); assert.equal(r
 console.log("3 ok · reduced motion: drawn at once");
 
 // 4) highlight: others dim, and it resets
-set.setHighlight("a"); set.update(200); assert.equal(set.items[0].line.material.opacity, 0.9); assert.ok(set.items[1].line.material.opacity < 0.3);
+set.setHighlight("a"); set.update(200); assert.equal(set.items[0].line.material.opacity, 0.9); assert.ok(set.items[1].line.material.opacity < 0.1);
 set.setHighlight(null); set.update(200); assert.equal(set.items[1].line.material.opacity, 0.9);
 console.log("4 ok · highlight dims the other arcs");
 
