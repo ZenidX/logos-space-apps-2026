@@ -10,6 +10,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 
 ## Cómo trabajar aquí
 - **Commits directos a `main`** (autorizado por el usuario). Mensajes en inglés.
+- **Sin firma de IA en los commits ni en las PR**: nada de `Co-Authored-By: Claude`, «Generated with Claude Code» ni similares. Esta norma prevalece sobre la atribución por defecto de la herramienta.
 - **Documentar cada avance**: añadir una entrada arriba del todo en `docs/bitacora.md` y actualizar el documento temático que toque (`docs/datos.md`, `docs/metodo.md`, `docs/normas.md`). Los scripts de Earth Engine van en `scripts/ee/`, numerados.
 - Idioma: la documentación interna va en español y el README y la entrega en inglés.
 - Arrancar: `npm install && npm run dev` → http://localhost:3000
