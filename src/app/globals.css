@@ -165,4 +165,11 @@ b, strong { font-weight: 600; }
 }
 @media (prefers-reduced-motion: reduce) { .glass-chip, .glass-tab { transition: none; } .glass-chip:active { transform: none; } }
 
+/* Phones and touch screens: solid panels (no blur, masks or reflections). Measured: the glass effect cost about
+   3 s of blocked main thread in a throttled mobile run; the solid variant keeps the layout and contrast. */
+@media (max-width: 700px), (pointer: coarse) {
+  .glass, .glass-strong, .glass-chip, .glass-tab { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgb(11 16 32 / .94); border: 1px solid var(--line2); box-shadow: none; }
+  .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before, .glass::after, .glass-strong::after { display: none; }
+}
+
 }
