@@ -2,6 +2,10 @@
 
 Entradas nuevas arriba.
 
+## 2026-11-14 · 23:40 · Tabla de misiones y elección de 3
+- Logos Datos: 21 campañas reales con fuente (`misiones.md`).
+- Elegidas (veto de zexu pendiente): EVA en basalto (Luna, Mons Mouton), rover en arena y pendiente (Marte, Jezero), hielo somero para ISRU (Marte, Arcadia). Ángulo del Sol como atributo en la misión lunar. Ver `misiones-elegidas.md`.
+
 ## 2026-11-14 · 22:35 · La entrega se adelanta a las 16:00
 - zexu adelanta la entrega al domingo a las 16:00 (todo listo a las 15:00). Plan rehecho en `plan.md`.
 - Líder elige 3 misiones con la tabla de Datos y zexu las veta; el diseño se aplica en cuanto llega; Vercel se crea ya; la revisión es de madrugada.
