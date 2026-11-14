@@ -2,6 +2,11 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 12) · «How it works» con el análisis en 3 fases (C_1)
+
+- «01 Measure» añade presión del aire, viento y polvo (NASA MERRA-2, de ahí «satellites and models»).
+- «03 Rank» explica los tres filtros (1 forma del terreno, 2 clima y aire, 3 que un equipo pueda llegar) y el embudo, de ≈1,7 millones de sitios a 20.
+
 ## 2026-11-14 (noche, 11) · Matriz de operaciones: solo sitios nuevos, MERRA-2 y calibración (C_2)
 
 - **Solo análogos nuevos.** El enunciado pide evitarlos, así que, como en la búsqueda global, ninguna celda a ≤ 300 km de los 25 catalogados puede protagonizar una tarea. El mejor catalogado de cada tarea aparece aparte como **referencia** (`operations.json → tasks[].reference`).

@@ -11,7 +11,7 @@ const STEPS = [
   {
     n: "1",
     title: "Measure",
-    text: "NASA satellites measure every 11 km of land on Earth: heat, cold, rain, plants, brightness and steepness.",
+    text: "NASA satellites and models measure every 11 km of land on Earth: heat, cold, rain, plants, brightness and steepness, plus air pressure, wind and dust.",
   },
   {
     n: "2",
@@ -21,7 +21,7 @@ const STEPS = [
   {
     n: "3",
     title: "Rank",
-    text: "The closest matches that a team can actually reach rise to the top. We also show where each match breaks down.",
+    text: "Every place must pass three filters: 1 the shape of the land, 2 climate and air, 3 a team can get there. About 1.7 million places go in; 20 come out. We also show where each match breaks down.",
   },
 ];
 
