@@ -2,6 +2,10 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 23:11 · «Why» con tiras de rango (aviso de Jefe)
+- La fila decía «Precipitation 0.99 · here 283 mm · target 0 mm» y se leía como que 283 mm se parece un 99 % a 0 mm. Ahora cada condición es una tira: banda ideal de la misión, banda aceptada, punto del sitio y marca del objetivo; el texto dice «in range / out of range · fit» y «mission needs …». La similitud se mide contra el rango de la misión, no contra el valor del objetivo.
+- Componente de Diseño (ConditionStrip + rules.ts) con prueba que reproduce las 105 similitudes de `sites.json`. Relieve 3D más grande. Corregido: las fuentes nuevas no se aplicaban (choque de variables con Tailwind).
+
 ## 2026-11-14 · 22:51 · «Alma»: tanda visual 2, vista de comparación
 - Al abrir un sitio, el panel se ensancha y cuenta la historia: Shape (relieve 3D de 11×11 km del sitio junto al del objetivo, misma escala, con control de altura del Sol), Why (condiciones con barras), When (Sol a mediodía por mes y temperatura mensual), How (campaña real, ciudad y aeropuerto más cercanos, access complexity) y Where it breaks.
 - Datos nuevos de Logos Datos: 30 mapas de alturas (Tierra: Copernicus DEM GLO-30, ESA; Luna: LOLA 30 m; Marte: mezcla MOLA–HRSC 200 m), temperatura mensual de NASA POWER, ciudad (Natural Earth), tiempo de viaje (Oxford MAP) y aeropuerto (OurAirports). Licencias revisadas por Logos Legal; los mapas de Marte van con CC BY-SA 3.0 IGO en su carpeta.

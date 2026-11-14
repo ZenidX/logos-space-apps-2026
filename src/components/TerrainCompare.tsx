@@ -71,7 +71,7 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg }: { sit
         const wide = w / h > 1.25, gap = 0.7;
         a.position.set(wide ? -gap : 0, 0, wide ? 0 : -gap); b.position.set(wide ? gap : 0, 0, wide ? 0 : gap);
         renderer.setSize(w, h, false); camera.aspect = w / h;
-        const d = wide ? 2.55 / Math.min(1, camera.aspect / 2.3) : 3.4;
+        const d = wide ? 2.5 / Math.min(1, camera.aspect / 2.0) : 3.3;
         camera.position.set(0, d * 0.62, d * 0.9); camera.lookAt(0, 0, 0); camera.updateProjectionMatrix(); dirty = true;
       };
       const setSunDeg = (deg: number) => {
@@ -115,7 +115,7 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg }: { sit
   ];
   return (
     <div>
-      <div ref={host} className="relative h-[240px] w-full cursor-grab overflow-hidden rounded-xl border border-[var(--line)] bg-[rgba(4,6,12,.6)] active:cursor-grabbing md:h-[300px]" role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
+      <div ref={host} className="relative h-[280px] w-full cursor-grab overflow-hidden rounded-xl border border-[var(--line)] bg-[rgba(4,6,12,.6)] active:cursor-grabbing md:h-[360px]" role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
         {state === "loading" && <div className="skel absolute inset-4 rounded-lg" role="status" aria-label="Loading terrain" />}
         {state === "error" && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-[13px] text-[var(--dim)]">3D terrain could not be shown here. The numbers below are the same comparison.</p>}
         <span className="label pointer-events-none absolute left-3 top-3" style={{ color: "var(--earth)" }}>Earth · this site</span>

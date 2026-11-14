@@ -20,7 +20,7 @@ interface RawMission {
 }
 const data = raw as unknown as { generatedAt: string; missions: RawMission[] };
 
-export interface Variable { id: string; label: string; unit: string; why: string; inMatch: boolean; ideal: string | null; weight: number }
+export interface Variable { id: string; label: string; unit: string; why: string; inMatch: boolean; ideal: string | null; tolerance: number | null; weight: number }
 export interface PerVar { id: string; label: string; unit: string; value: number | null; similarity: number | null; source: string; inMatch: boolean }
 export interface Access { level: "Low" | "Medium" | "High" | "Not assessed"; score: number | null; basis: string; sources: string[]; note: string; permit: string | null }
 export interface Site { areaKm2: number | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; percentile: number | null; vars: PerVar[]; breaks: string[]; access: Access; campaign: string | null }
@@ -80,7 +80,7 @@ function accessOf(a: RawAccess | null): Access {
 const lon180 = (l: number) => (l > 180 ? l - 360 : l);
 
 export const MISSIONS: Mission[] = data.missions.map((m) => {
-  const vars: Variable[] = m.variables.map((v) => ({ id: v.id, label: v.label, unit: v.unit, why: v.why, inMatch: v.inMatch, ideal: v.ideal ?? null, weight: v.weight ?? 0 }));
+  const vars: Variable[] = m.variables.map((v) => ({ id: v.id, label: v.label, unit: v.unit, why: v.why, inMatch: v.inMatch, ideal: v.ideal ?? null, tolerance: v.tolerance ?? null, weight: v.weight ?? 0 }));
   const byId = new Map(vars.map((v) => [v.id, v]));
   const sites: Site[] = m.sites.map((s) => ({
     id: s.id,

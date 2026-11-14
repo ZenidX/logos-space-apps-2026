@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Count from "@/components/Count";
 import { fmt, idx, type Mission, type Site } from "@/lib/missions";
+import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
 import detailsRaw from "@/data/site-details.json";
 
 interface Details {
@@ -18,7 +19,7 @@ const DETAILS = (detailsRaw as unknown as { items: Record<string, Details> }).it
 function TempChart({ t, targetC, targetName }: { t: (number | null)[]; targetC: number | null; targetName: string }) {
   const v = t.filter((x): x is number => x !== null);
   if (v.length < 12) return null;
-  const lo = Math.min(...v, targetC ?? Infinity), hi = Math.max(...v), W = 300, H = 70, pad = 6;
+  const lo = Math.min(...v, targetC ?? Infinity), hi = Math.max(...v), W = 300, H = 78, pad = 14;
   const y = (c: number) => pad + (1 - (c - lo) / Math.max(1, hi - lo)) * (H - 2 * pad), x = (i: number) => (i + 0.5) * (W / 12);
   const pts = v.map((c, i) => `${x(i).toFixed(1)},${y(c).toFixed(1)}`).join(" ");
   return (
@@ -86,15 +87,6 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
   );
 }
 
-function Bar({ v }: { v: number | null }) {
-  const c = v === null ? "var(--dim)" : v >= 0.95 ? "var(--earth)" : v >= 0.9 ? "var(--earth)" : "var(--amber)";
-  return (
-    <span className="relative inline-block h-1.5 w-20 overflow-hidden rounded-full bg-[var(--line)]" aria-hidden>
-      <span className="bar-fill absolute inset-y-0 left-0 rounded-full" style={{ width: `${(v ?? 0) * 100}%`, background: c }} />
-    </span>
-  );
-}
-
 export default function SitePanel({ site, mission, onBack }: { site: Site; mission: Mission; onBack: () => void }) {
   const t = mission.target;
   const matchVars = site.vars.filter((v) => v.inMatch);
@@ -131,14 +123,24 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         <section>
           <H>Why</H>
-          <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each mission condition, measured here and at the target.</p>
+          <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
           <ul className="grid gap-1.5">
             {matchVars.map((v) => {
-              const tval = t.values[v.id], tv = tval?.value ?? null, est = /approx|^estimate/i.test(tval?.source ?? "");
+              const def = mission.variables.find((x) => x.id === v.id), tval = t.values[v.id], tv = tval?.value ?? null, est = /approx|^estimate/i.test(tval?.source ?? "");
+              const strip = def && v.value !== null && hasStrip(v.id, def.ideal, def.tolerance);
+              const met = v.similarity !== null && v.similarity >= 0.5;
               return (
                 <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
-                  <div className="flex items-center justify-between gap-2"><span>{v.label}</span><span className="flex items-center gap-2"><Bar v={v.similarity} /><span className="mono w-9 text-right text-[12px]">{idx(v.similarity)}</span></span></div>
-                  <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · <span title={tval?.source}>target {tv === null ? "n/a" : `${est ? "≈ " : ""}${fmt(tv, v.unit)}`}{est && " (estimate)"}</span></div>
+                  <div className="flex items-baseline justify-between gap-2"><span>{v.label}</span><span className="mono text-[11.5px]" style={{ color: v.similarity === null ? "var(--dim)" : met ? "var(--earth)" : "var(--amber)" }}>{v.similarity === null ? "no data" : met ? "in range" : "out of range"} · fit {idx(v.similarity)}</span></div>
+                  {strip && def ? (
+                    <>
+                      <ConditionStrip id={v.id} label={v.label} ideal={def.ideal!} tolerance={def.tolerance!} value={v.value!} target={tv} targetEstimate={est} unit={v.unit} />
+                      <div className="mono text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · mission needs {rangeText(def.ideal!, v.unit)}</div>
+                    </>
+                  ) : (
+                    <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no data") : `here ${fmt(v.value, v.unit)}`}</div>
+                  )}
+                  {def?.why && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">{def.why}</div>}
                 </li>
               );
             })}
