@@ -13,12 +13,15 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - **Documentar cada avance**: añadir una entrada arriba del todo en `docs/bitacora.md` y actualizar el documento temático que toque (`docs/datos.md`, `docs/metodo.md`, `docs/normas.md`). Los scripts de Earth Engine van en `scripts/ee/`, numerados.
 - Idioma: la documentación interna va en español y el README y la entrega en inglés.
 - Arrancar: `npm install && npm run dev` → http://localhost:3000
+- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · publicar con `npm run deploy` (publica el último commit; construye en un worktree aparte).
 
 ## Arquitectura
 - `src/app/page.tsx`: 4 pestañas (Candidatos, Análisis, Datos, Mapas).
 - `src/components/CandidatesTab.tsx` ← `src/data/ee-global.json`: búsqueda global, validación y ranking.
 - `src/components/AnalysisTab.tsx` + `src/lib/analysis.ts` ← `src/data/ee-samples.json`: similitud por dimensión en 5 sitios de referencia.
 - `src/components/DataTab.tsx` ← `src/data/catalog.ts` + `ee-samples.json`: fichas de cada capa.
+- `src/components/Viewer3D.tsx` + `Terrain3D.tsx` + `src/lib/terrain.ts`: visor 3D de 11 × 11 km, candidato frente a objetivo. Luna/Marte desde el **ArcGIS ImageServer de Trek** (`exportImage`, F32, `format=bsq`); las teselas WMTS de Trek NO son alturas.
+- Estilo «Consola» (animaciones.zenidx.com): tokens en `src/app/globals.css` (la paleta de Tailwind slate/orange/sky está remapeada) y marco HUD en `src/components/Visor.tsx`.
 - `src/components/TileMap.tsx`: Leaflet con NASA GIBS (Tierra, EPSG:3857) y Moon/Mars Trek (EPSG:4326).
 - `src/data/targets.ts`: huellas de Shackleton, Jezero y Arcadia (valores **aproximados**).
 - Método: posición relativa dentro del rango terrestre p1–p99. «Fuera de rango» se marca contra el mín./máx. real. Ver `docs/metodo.md`.
@@ -48,5 +51,5 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
   - Valores de los objetivos desde productos PDS reales.
   - La pendiente a 5 km se queda corta (p99 ≈ 4,4°).
   - Ajustar los pesos.
-  - Ficha y foto de los 3–5 mejores candidatos.
+  - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
   - Pitch: borrador en `docs/pitch.md` (guion 3 min, vídeo 30 s, campos de la página). Falta ensayar, grabar el vídeo y rellenar la página del proyecto.
