@@ -2,6 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:28 · «Órbita compartida» (decisión de zexu) y cribado del suelo
+- Sustituye a los arcos: la Tierra en el centro girando despacio; la Luna y Marte recorren dos órbitas dibujadas (línea discontinua, inclinadas, distinto radio y velocidad) y pasan por delante y por detrás de la Tierra con oclusión por profundidad. Un sitio se une a su objetivo con una línea recta de luz del color de ese mundo, solo cuando el objetivo pasa por su lado y cerca; se desvanece con la distancia y nunca cruza un globo.
+- Al elegir misión se atenúa el otro mundo; al abrir un sitio, el objetivo viaja por su órbita hasta aparcar delante, la Tierra gira para poner el sitio de frente, la línea se fija y el otro mundo se aparta al lado contrario. «Pause motion» y «reduced motion» detienen las órbitas (la selección es directa). Órbitas más cerradas en pantallas estrechas.
+- Pruebas nuevas (`orbit-math.test.mjs`): todo cabe en el encuadre en 7 tamaños de escena (1366×768 y 390×844 incluidos); 616 líneas dibujadas sin cruzar ningún globo y 15 384 correctamente no dibujadas; el sitio abierto siempre tiene línea libre. Se elimina el código de arcos.
+- Es un esquema y se dice en el pie: tamaños y distancias no son reales y Marte no orbita la Tierra.
+- Cribado de Logos Datos (ventana de 11 km: pendiente ≤ 10°, nieve/hielo ≤ 10 %, agua ≤ 20 %; Copernicus DEM y ESA WorldCover): se retiran 3 regiones más de la misión del hielo (Sakha, 54 % agua; costa de Coats Land, capa de hielo; costa de Baffin, glaciar y agua). Quedan 12 regiones nuevas; Datos prepara sustitutas.
+
 ## 2026-11-15 · 00:11 · Credibilidad primero (prioridades de Jefe tras la prueba a ciegas)
 - Regla mostrada = regla calculada: la etiqueta sale de una función con prueba («in range» solo dentro del rango que se enseña; «accepted (within tolerance)» = regla cumplida por tolerancia), y el texto dice hasta dónde se acepta («0.05 or less (accepted up to 0.17)»). Comprobado en 96 valores de los datos.
 - El índice se muestra con 3 decimales y con su puesto («#1 of 5 new regions»); se explica que las regiones nuevas distan milésimas y son una lista corta, no un ranking.

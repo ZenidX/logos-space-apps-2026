@@ -64,14 +64,18 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
 };
 
 /**
- * New regions removed after checking their terrain (11 × 11 km window, src/data/terrain-index.json):
- * a mean slope above 10° is not ground for a suited traverse, a rover test or a drill rig, whatever the index says.
+ * New regions removed after screening their 11 × 11 km window: mean slope above 10° (Copernicus DEM), more than 10 % snow or ice,
+ * or more than 20 % water (ESA WorldCover 2021; Natural Earth glaciated areas south of 60°S). Such ground is not for a suited
+ * traverse, a rover test or a drill rig, whatever the index says.
  * Known analogs are kept as they are, because they are only used to validate the index.
  */
 export const REMOVED: Record<string, { name: string; reason: string }> = {
   "m1-eva-basalt-new6": { name: "Departamento San Carlos, Mendoza (Argentina)", reason: "mean slope 15.3°, relief 1,974 m over 11 km" },
   "m2-rover-sand-new5": { name: "Ngari Prefecture (Tibetan Plateau)", reason: "mean slope 16.4°, relief 1,007 m over 11 km" },
   "m3-ground-ice-new4": { name: "Karakoram (disputed area)", reason: "mean slope 17.9°, relief 1,355 m over 11 km" },
+  "m3-ground-ice-new3": { name: "Allaikhovsky Ulus, Sakha (Russia)", reason: "54 % of the 11 km window is water (lake-covered tundra; ESA WorldCover 2021)" },
+  "m3-ground-ice-new5": { name: "Coats Land coast (Antarctica)", reason: "inside the ice sheet (Natural Earth glaciated areas) and 31 % sea" },
+  "m3-ground-ice-new6": { name: "Baffin coast, Nunavut (Canada)", reason: "18 % glacier and 56 % water in the window (ESA WorldCover 2021)" },
 };
 
 const LEVEL: Record<string, Access["level"]> = { low: "Low", medium: "Medium", high: "High" };
@@ -131,14 +135,6 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
 export const DATA_DATE = data.generatedAt.slice(0, 10);
 export const missionById = (id: MissionId) => MISSIONS.find((m) => m.id === id)!;
 
-/** Up to 3 match variables' similarities, for the arc segments (null = no data). */
-export function arcDims(m: Mission, s: Site): [number | null, number | null, number | null] {
-  const ids = m.variables.filter((v) => v.inMatch).sort((a, b) => b.weight - a.weight).slice(0, 3).map((v) => v.id);
-  const sim = (id?: string) => (id ? s.vars.find((v) => v.id === id)?.similarity ?? null : null);
-  return [sim(ids[0]), sim(ids[1]), sim(ids[2])];
-}
-
-/** Analog index (0–1): a ranking index built from team choices and Earth percentiles, not a probability. */
 /** The index is shown to three decimals so that the top regions can be told apart; it never rounds to a perfect 1.000 in this data. */
 export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(3));
 export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";

@@ -3,13 +3,13 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import type { OrreryArc, OrreryMarker } from "@/components/Orrery";
+import type { SceneLink, SceneMarker } from "@/components/OrbitScene";
 import SitePanel, { AccessBars, KindChip } from "@/components/SitePanel";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
-import { MISSIONS, TOP_NOTE, arcDims, type Mission, type MissionId } from "@/lib/missions";
+import { MISSIONS, TOP_NOTE, type Mission, type MissionId } from "@/lib/missions";
 
-const Orrery = dynamic(() => import("@/components/Orrery"), { ssr: false });
+const OrbitScene = dynamic(() => import("@/components/OrbitScene"), { ssr: false });
 const DEMO_MS = 7000;
 // Project in numbers, computed from the data file (nothing typed by hand).
 const STATS: [string, string][] = [
@@ -22,12 +22,12 @@ const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--ear
 
 function sceneFor(m: Mission) {
   const tId = `t-${m.id}`;
-  const markers: OrreryMarker[] = [
+  const markers: SceneMarker[] = [
     { id: tId, body: m.target.body, lat: m.target.lat, lon: m.target.lon, kind: "target", label: m.target.name.split(" (")[0] },
-    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1, primary: s.kind === "new" })),
+    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1 })),
   ];
-  const arcs: OrreryArc[] = m.sites.map((s) => ({ id: s.id, from: tId, to: s.id, dims: arcDims(m, s) }));
-  return { markers, arcs };
+  const links: SceneLink[] = m.sites.map((s) => ({ id: s.id, from: tId, to: s.id }));
+  return { markers, links };
 }
 
 export default function Home() {
@@ -96,14 +96,14 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(600px,46vw)]" : "md:left-0 md:right-[270px]") : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[396px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
-          <Orrery
+          <OrbitScene
             mode={missionId ? { kind: "focus", body: t.body as "moon" | "mars" } : { kind: "overview" }}
             markers={scene.markers}
-            arcs={scene.arcs}
+            links={scene.links}
             selectedId={sel}
             highlightId={hover}
             onSelect={(id) => { if (!missionId) pick(shown.id); setSel(id.startsWith("t-") ? null : id); }}
@@ -207,7 +207,7 @@ export default function Home() {
       )}
 
       <footer className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
-        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. Globes not to scale. This project is not endorsed by NASA.
+        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. Schematic, not to scale: sizes and distances are not real, and Mars does not orbit the Earth. This project is not endorsed by NASA.
       </footer>
 
       {method && <MethodSheet onClose={() => setMethod(false)} />}
