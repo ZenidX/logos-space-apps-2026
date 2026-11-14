@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { TARGETS } from "@/data/targets";
 import eeGlobal from "@/data/ee-global.json";
+import eeSamples from "@/data/ee-samples.json";
 
 const TileMap = dynamic(() => import("@/components/TileMap"), { ssr: false });
 
@@ -29,6 +30,43 @@ interface TargetResult {
   known: { name: string; total: number | null }[];
 }
 const DATA = eeGlobal as unknown as Record<string, TargetResult | undefined>;
+// Extremos reales de la Tierra (mín./máx. global de 01_inventario_capas.js) para decidir "fuera de la Tierra".
+const EXTREMES: Record<string, [number, number]> = Object.fromEntries(
+  (eeSamples as unknown as { layers: { id: string; stats?: Record<string, number | null> | null }[] }).layers
+    .filter((l) => l.stats?.v_min != null && l.stats?.v_max != null)
+    .map((l) => [l.id, [l.stats!.v_min!, l.stats!.v_max!]]),
+);
+const RANGES = (eeGlobal as unknown as { ranges?: Record<string, number> }).ranges ?? {};
+
+const VAR_LABEL: Record<string, string> = {
+  lst_day: "Temp. diurna",
+  lst_night: "Temp. nocturna",
+  lst_max: "Temp. máxima",
+  lst_min: "Temp. mínima",
+  precip: "Lluvia",
+  ndvi: "Vegetación",
+  albedo: "Albedo",
+  slope: "Pendiente",
+};
+
+// Similitud por variable (misma fórmula que en Earth Engine): 1 − |pos(sitio) − pos(objetivo)| en p1–p99.
+function explain(c: Candidate, targetValues: Record<string, number | null>) {
+  const rows: { k: string; sim: number; beyond: boolean }[] = [];
+  for (const k of Object.keys(VAR_LABEL)) {
+    const lo = RANGES[`${k}_p1`];
+    const hi = RANGES[`${k}_p99`];
+    const v = c[k as keyof Candidate] as number | null;
+    const t = targetValues[k];
+    if (lo == null || hi == null || v == null || t == null) continue;
+    const pos = (x: number) => Math.min(1, Math.max(0, (x - lo) / (hi - lo)));
+    rows.push({ k, sim: 1 - Math.abs(pos(v) - pos(t)), beyond: EXTREMES[k] != null && (t < EXTREMES[k][0] || t > EXTREMES[k][1]) });
+  }
+  rows.sort((a, b) => b.sim - a.sim);
+  return { strong: rows.slice(0, 3), weak: rows.slice(-2).reverse(), beyond: rows.filter((r) => r.beyond) };
+}
+
+const worldview = ([lon, lat]: [number, number]) =>
+  `https://worldview.earthdata.nasa.gov/?v=${lon - 1.5},${lat - 1},${lon + 1.5},${lat + 1}&l=MODIS_Terra_CorrectedReflectance_TrueColor,Coastlines_15m`;
 
 const C = { site: "#3987e5", target: "#d95926", muted: "#898781", track: "#2c2c2a" };
 const pct = (v: number | null | undefined) => (v == null ? "—" : `${Math.round(v * 100)}`);
@@ -195,6 +233,35 @@ export default function CandidatesTab() {
                     <dd className="font-mono">{num(c.slope, 1)}°</dd>
                   </div>
                 </dl>
+                {(() => {
+                  const e = explain(c, target.values);
+                  return (
+                    <div className="mt-2 space-y-0.5 text-[11px]">
+                      <p>
+                        <span className="text-emerald-400">✔ Se parece en:</span>{" "}
+                        {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
+                      </p>
+                      <p>
+                        <span className="text-orange-400">✘ Se aleja en:</span>{" "}
+                        {e.weak.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
+                      </p>
+                      {e.beyond.length > 0 && (
+                        <p style={{ color: C.muted }}>
+                          Ningún lugar de la Tierra alcanza a {target.short} en:{" "}
+                          {e.beyond.map((r) => VAR_LABEL[r.k]).join(", ")}.
+                        </p>
+                      )}
+                      <a
+                        href={worldview(c.c)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block pt-1 text-sky-300 underline"
+                      >
+                        Ver en NASA Worldview ↗
+                      </a>
+                    </div>
+                  );
+                })()}
               </article>
             ))}
           </section>
