@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche) · Prototipo v3: forma + superficie + viabilidad (rama `feature/shape`, para revisión)
+
+- zexu redefine «Access»: viabilidad de llegar por tierra y montar cosas (% de terreno con pendiente <10° a ~29 m y acceso <24 h), no cercanía a una ciudad. Nueva nota = media de Forma, Superficie y Viabilidad.
+- Space Apps Datos (prototipo Node, fuera de Earth Engine): prefiltro global desde las GeoTIFF de `data/ee` (con la georreferencia de la cabecera), forma por correlación/RMSE de alturas frente a tierra al azar o con relieve, y factor de desnivel.
+- Objetivos: Shackleton (excepción: ninguna pared de cráter de 21 km en la Tierra), Arcadia y **Mons Mouton** (región Artemis III 2024; centro del parche elegido por nosotros en la cima con LOLA 30 m; USGS 16070).
+- **Resultado honesto:** a ojo, los mejores candidatos de Shackleton y Mons Mouton NO se parecen al objetivo (Datos y zexu). En Mons Mouton, solo Pisco (Perú) se parece en parte. La web lo avisa como prototipo.
+- Validación frente al planeta: análogos conocidos en el 10 % mejor, 6/19 (Shackleton) y 3/19 (Arcadia); en Mons Mouton, mediana p69 frente a tierra con relieve.
+- No se ha unido a `main` ni publicado: queda en la rama para que el equipo decida frente a la v2 publicada.
+
 ## 2026-11-14 (noche) · Georreferencia de las GeoTIFF y nueva búsqueda (Space Apps)
 
 - `data/ee/README.md` daba una transformación equivocada (`[0.1,0,-180,0,-0.1,85]`). La cabecera de las TIFF (etiqueta 34264) dice origen 90°N y píxel de 0,10588° en latitud. Lo detectó Space Apps Datos con puntos conocidos (Mar Muerto, Qattara) y lo comprobé en `elev.tif`, `access_hours.tif` y `shackleton_total.tif`. README corregido. La web no lee estas TIFF (usa `ee-global.json`).

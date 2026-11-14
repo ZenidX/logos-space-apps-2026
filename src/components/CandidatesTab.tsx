@@ -130,7 +130,7 @@ export default function CandidatesTab() {
   const target = TARGETS.find((t) => t.id === targetId)!;
   const [scoring, setScoring] = useState<"v3" | "v2">("v3");
   const hasV3 = !!DATA3[targetId];
-  const useV3 = scoring === "v3" && hasV3;
+  const useV3 = hasV3 && (scoring === "v3" || !DATA[targetId]);
   const res = useV3 ? DATA3[targetId] : DATA[targetId];
   const [view3d, setView3d] = useState<Candidate | null>(null);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -190,7 +190,7 @@ export default function CandidatesTab() {
         <>
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
             <h2 className="text-lg font-bold">New analogs of {target.short}</h2>
-            {hasV3 && (
+            {hasV3 && !!DATA[targetId] && (
               <div className="my-2 flex flex-wrap gap-1 font-mono text-[11px] uppercase tracking-[.06em]" role="group" aria-label="Scoring">
                 {(["v3", "v2"] as const).map((v) => (
                   <button
@@ -211,6 +211,12 @@ export default function CandidatesTab() {
                 ranked against random Earth land), Surface (NASA MODIS) and Buildability (share of nearly flat ground,
                 under 10°, to set up camps and pads; reachable by land). Climate is not scored. Water, urban areas and
                 the 25 known analogs are excluded; candidates are at least 300 km apart.
+              </p>
+            ) : null}
+            {useV3 ? (
+              <p className="mt-1 text-xs" style={{ color: "var(--warn)" }}>
+                Prototype: in a visual check the top candidates do not yet look like the target. Shape is a first
+                attempt, not a validated result.
               </p>
             ) : (
             <p className="text-xs text-slate-300">
