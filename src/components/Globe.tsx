@@ -173,7 +173,7 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
     const ro = new ResizeObserver(() => {
       const w = el.clientWidth, h = el.clientHeight;
       if (!w || !h) return;
-      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = (2 * Math.atan(Math.tan((35 * Math.PI) / 360) / Math.min(1, camera.aspect)) * 180) / Math.PI; camera.updateProjectionMatrix(); dirty = true;
     });
     ro.observe(el);
     const io = new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; dirty = true; });

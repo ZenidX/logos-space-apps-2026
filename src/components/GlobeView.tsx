@@ -30,14 +30,14 @@ interface Props {
 }
 
 // Globo 3D girable con reserva automática al mapa 2D (sin WebGL o si falla la textura) y botón manual.
-export default function GlobeView({ body, markers, tileMarkers, selectedId, onSelect, className = "h-80", tl, tr, bl }: Props) {
+export default function GlobeView({ body, markers, tileMarkers, selectedId, onSelect, className = "h-[22rem]", tl, tr, bl }: Props) {
   const [failed, setFailed] = useState(false);
   const [flat, setFlat] = useState(false);
   const show2d = failed || flat;
   return (
-    <div className="space-y-1.5">
+    <div className={`flex flex-col gap-1.5 ${className}`}>
       <Visor
-        className={`${className} globo`}
+        className="globo min-h-0 flex-1"
         glitchKey={body}
         reticle={false}
         tl={tl}
@@ -57,7 +57,7 @@ export default function GlobeView({ body, markers, tileMarkers, selectedId, onSe
           onClick={() => setFlat((f) => !f)}
           className="font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc2-t)] underline underline-offset-2"
         >
-          {flat ? "Show 3D globe" : "Show 2D map"}
+          {flat ? "Show 3D globe" : "Show 2D map · tap a point for details"}
         </button>
       )}
     </div>

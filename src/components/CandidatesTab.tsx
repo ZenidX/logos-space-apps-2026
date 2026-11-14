@@ -194,7 +194,7 @@ export default function CandidatesTab() {
             }}
             tl={<><span className="k">Target</span><br />{target.short}</>}
             tr={<><span className="k">Cells</span><br />0.1° · 85N–85S</>}
-            bl={<span className="k">Top {res.top.length} · ≥ 300 km apart · tap a point</span>}
+            bl={<span className="k">Top {res.top.length}</span>}
           />
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
