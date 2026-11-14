@@ -15,3 +15,12 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+*.pem
+npm-debug.log*
