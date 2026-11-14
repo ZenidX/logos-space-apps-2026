@@ -12,7 +12,7 @@ MB = {
  "m1-eva-basalt": [
   {"text": "Gravity: 1.62 m/s2 on the Moon vs 9.80 on Earth (0.165 g); suits, walking and sampling loads differ.", "source": "NASA NSSDC Moon fact sheet", "url": NS + "moonfact.html"},
   {"text": "Vacuum: lunar surface pressure ~3e-15 bar (night) vs 1014 mb on Earth; no air for cooling or to slow dust.", "source": "NASA NSSDC Moon and Earth fact sheets", "url": NS + "moonfact.html"},
-  {"text": "Lighting: at Mons Mouton the Sun stays below ~7 deg (computed from latitude 84.6 S and 1.54 deg obliquity); low-latitude Earth sites see it near overhead.", "source": "computed", "url": None},
+  {"text": "Lighting: at Mons Mouton the Sun stays below ~7 deg (computed from latitude 84.6 S and the 1.54 deg tilt of the lunar equator to the ecliptic); low-latitude Earth sites see it near overhead.", "source": "computed", "url": None},
   {"text": "Rock: the lunar south pole is highland terrain with anorthosite (feldspar-rich rock), not mare basalt; basalt sites train EVA operations, not target composition.", "source": "NASA JSC, Houston We Have a Podcast ep. 236 (D. Kring, LPI)", "url": "https://www.nasa.gov/johnson/HWHAP/moon-geology"}],
  "m2-rover-sand": [
   {"text": "Gravity: 3.73 m/s2 on Mars (0.38 g); a rover weighs ~2.6x more on Earth, so sinkage differs unless mass is reduced (JPL's Scarecrow).", "source": "NASA NSSDC Mars fact sheet; JPL 2012", "url": NS + "marsfact.html"},
@@ -20,7 +20,7 @@ MB = {
   {"text": "Temperature: Mars average ~-59 C (Viking 1 site range -89 to -31 C); Earth sand deserts are far warmer.", "source": "NASA NSSDC Mars fact sheet", "url": NS + "marsfact.html"}],
  "m3-ground-ice": [
   {"text": "Low pressure (6.36 mb): on Mars drilled ice sublimes instead of melting and refreezing on the bit, unlike Earth permafrost.", "source": "NASA NSSDC Mars fact sheet; Honeybee chamber tests (phys.org 2010)", "url": "https://phys.org/news/2010-06-drilling-mars.html"},
-  {"text": "Temperature: Mars average ~-59 C; Earth candidates have mean surface temperatures of about -5 to -30 C and a summer thaw layer.", "source": "NASA NSSDC Mars fact sheet; MODIS 2024 (this dataset)", "url": NS + "marsfact.html"},
+  {"text": "Temperature: Mars average ~-59 C; Arcadia annual mean about -76 C (Mars Climate Database); the Earth sites in this mission have 2024 mean surface temperatures of about -13 to -29 C (MODIS) and a summer thaw layer.", "source": "NASA NSSDC Mars fact sheet; Mars Climate Database v6.2 (http://www-mars.lmd.jussieu.fr/mcd_python/); MODIS 2024 (this dataset)", "url": NS + "marsfact.html"},
   {"text": "Gravity 0.38 g and no liquid precipitation on Mars; Earth polar deserts still get snow.", "source": "NASA NSSDC Mars fact sheet", "url": NS + "marsfact.html"}],
 }
 MISSIONS["m1-eva-basalt"]["variables"].insert(3, {"id": "volcanic", "label": "Basic volcanic rock nearby (GLiM)", "unit": "0/1", "why": "the EVA campaigns ran on basalt lava fields", "inMatch": True, "ideal": "1", "tolerance": 0.5, "weight": 1.0})

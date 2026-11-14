@@ -1,12 +1,12 @@
 {
  "generatedWith": "AI-assisted (Claude), reviewed by team Logos",
- "generatedAt": "2026-11-14T22:25:26+01:00",
+ "generatedAt": "2026-11-14T22:37:23+01:00",
  "version": "v4",
  "method": "see method.md (section v3) in the same folder",
  "missions": [
   {
    "id": "m1-eva-basalt",
-   "title": "Suited EVA traverse and field geology on basaltic terrain",
+   "title": "Suited EVA on volcanic terrain",
    "campaigns": [
     {
      "name": "NASA JETT3 (2022)",
@@ -34,6 +34,17 @@
     "name": "Mons Mouton (lunar south pole)",
     "lat": -84.6,
     "lon": 31.0,
+    "description": "A lunar south-pole region NASA listed among its Artemis III landing candidates in 2024. NASA now describes Artemis III as a crewed demonstration in low Earth orbit (launch 2027), with lunar landings beginning with Artemis IV.",
+    "descriptionSources": [
+     {
+      "name": "NASA (2024): update to 9 Artemis III landing regions",
+      "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"
+     },
+     {
+      "name": "NASA Artemis III mission page (read 2026-11-14)",
+      "url": "https://www.nasa.gov/mission/artemis-III/"
+     }
+    ],
     "coordSource": "USGS Gazetteer Feature 16070, https://planetarynames.wr.usgs.gov/Feature/16070",
     "values": {
      "ndvi": {
@@ -45,8 +56,8 @@
      "albedo": {
       "value": 0.15,
       "unit": "0-1",
-      "source": "approximate literature value (LROC WAC), team targets.ts; not extracted from PDS",
-      "url": null
+      "source": "estimate: broadband albedo = 0.49 x LOLA 1064 nm normal albedo (Hayne et al. 2017, doi:10.1002/2017JE005387) with typical highland normal albedo ~0.3 (Lucey et al. 2014, doi:10.1002/2013JE004592); not a site-specific measurement",
+      "url": "https://doi.org/10.1002/2017JE005387"
      },
      "precip": {
       "value": 0,
@@ -89,7 +100,7 @@
      "id": "albedo",
      "label": "Surface albedo",
      "unit": "0-1",
-     "why": "dark basaltic ground like lunar regolith (~0.15)",
+     "why": "dark ground like lunar regolith (broadband ~0.15, estimate)",
      "inMatch": true,
      "ideal": "0.07-0.20",
      "tolerance": 0.06,
@@ -154,7 +165,7 @@
      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
     },
     {
-     "text": "Lighting: at Mons Mouton the Sun stays below ~7 deg (computed from latitude 84.6 S and 1.54 deg obliquity); low-latitude Earth sites see it near overhead.",
+     "text": "Lighting: at Mons Mouton the Sun stays below ~7 deg (computed from latitude 84.6 S and the 1.54 deg tilt of the lunar equator to the ecliptic); low-latitude Earth sites see it near overhead.",
      "source": "computed",
      "url": null
     },
@@ -1029,10 +1040,10 @@
       "url": null
      },
      "albedo": {
-      "value": 0.2,
+      "value": 0.18,
       "unit": "0-1",
-      "source": "approximate literature value (MGS TES), team targets.ts; not extracted from PDS",
-      "url": null
+      "source": "MGS TES bolometric (Lambert) albedo, 8 ppd global map, mean of 18.2-18.7N/77.3-77.9E (Christensen et al. 2001, doi:10.1029/2000JE001370; PDS GLOBAL_ALBEDO_8PPD). In-situ MEDA noon albedo 0.10-0.23 (Vicente-Retortillo et al. 2026, doi:10.5194/epsc2026-1140)",
+      "url": "https://doi.org/10.1029/2000JE001370"
      }
     }
    },
@@ -1071,7 +1082,7 @@
      "id": "albedo",
      "label": "Surface albedo",
      "unit": "0-1",
-     "why": "Mars-like brightness (~0.2)",
+     "why": "Mars-like brightness (Jezero TES albedo ~0.18)",
      "inMatch": true,
      "ideal": "0.12-0.28",
      "tolerance": 0.08,
@@ -1768,10 +1779,10 @@
     "coordSource": "USGS Gazetteer Feature 348 web page (planetocentric, +East 0-360), https://planetarynames.wr.usgs.gov/Feature/348; the gazetteer GIS file gives 49.02 N, 188.15 E. Arcadia spans ~2,245 km, so the centre is nominal",
     "values": {
      "lst_mean": {
-      "value": -80,
+      "value": -76,
       "unit": "degC",
-      "source": "mean of approximate day/night values (-60/-100) from team targets.ts (MGS TES / Mars Climate Database); not extracted from PDS",
-      "url": null
+      "source": "annual and diurnal mean surface temperature (197 K) at 46.7N, 192E, Mars Climate Database v6.2 (climatology, average solar scenario; all Ls in 15 deg steps, all local times, equal Ls weighting); Mars Climate Database (c) LMD/OU/IAA/ESA/CNES. Model value",
+      "url": "http://www-mars.lmd.jussieu.fr/mcd_python/"
      },
      "precip": {
       "value": 0,
@@ -1780,10 +1791,10 @@
       "url": null
      },
      "albedo": {
-      "value": 0.2,
+      "value": 0.23,
       "unit": "0-1",
-      "source": "approximate literature value, team targets.ts",
-      "url": null
+      "source": "MGS TES bolometric (Lambert) albedo, 8 ppd global map, mean of 47-49N/188-192E (Christensen et al. 2001, doi:10.1029/2000JE001370; PDS GLOBAL_ALBEDO_8PPD)",
+      "url": "https://doi.org/10.1029/2000JE001370"
      },
      "ndvi": {
       "value": 0,
@@ -1824,7 +1835,7 @@
      "id": "albedo",
      "label": "Surface albedo",
      "unit": "0-1",
-     "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (~0.2) over ice",
+     "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (TES albedo ~0.23) over ice",
      "inMatch": true,
      "ideal": "<= 0.5",
      "tolerance": 0.12,
@@ -1848,8 +1859,8 @@
      "url": "https://phys.org/news/2010-06-drilling-mars.html"
     },
     {
-     "text": "Temperature: Mars average ~-59 C; Earth candidates have mean surface temperatures of about -5 to -30 C and a summer thaw layer.",
-     "source": "NASA NSSDC Mars fact sheet; MODIS 2024 (this dataset)",
+     "text": "Temperature: Mars average ~-59 C; Arcadia annual mean about -76 C (Mars Climate Database); the Earth sites in this mission have 2024 mean surface temperatures of about -13 to -29 C (MODIS) and a summer thaw layer.",
+     "source": "NASA NSSDC Mars fact sheet; Mars Climate Database v6.2 (http://www-mars.lmd.jussieu.fr/mcd_python/); MODIS 2024 (this dataset)",
      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
     },
     {
@@ -2255,7 +2266,7 @@
       "level": null,
       "score": null,
       "permitFlag": "NONE",
-      "basis": "Access complexity None (0-1, relative); Governance perception (WGI, perceptions-based) None; nearby organised-violence events 0.0; travel advice None",
+      "basis": "Not computed: disputed area (boundaries de facto, no country attributed). Only nearby organised-violence events are shown: 0.0 (0-1, UCDP).",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",

@@ -1,9 +1,9 @@
-# AI-assisted (Claude), reviewed by team Logos
+# AI-assisted (Claude), to be reviewed by team Logos
 
 # Logos data pipeline → `sites.json` (v4)
 
 Regenerates `src/data/sites.json`: 3 missions, known analogs, 6 new candidate regions each, Analog index 0–1, accessRisk. Method: `docs/method.md` (section v3).
-Checked 2026-11-14: a clean run of steps 1–5 reproduced the repo v3 `sites.json` (main 7523cd0) with 0 differences apart from `generatedAt`. v4 then removed WDPCA and fixed per-mission ranges in site breaks.
+Checked 2026-11-14: a clean run of steps 1–5 reproduces `src/data/sites.json` (data v4) with 0 differences apart from `generatedAt`.
 
 ## Environment
 Python 3.12 · numpy 2.5.4 · rasterio 1.5.2 (GDAL 3.12.2) · scipy 1.18.1 · shapely 2.2.0 · pyshp 3.1.8 · openpyxl 3.1.5
@@ -25,7 +25,7 @@ python -m venv .venv && .venv/bin/pip install numpy rasterio scipy shapely pyshp
 | `us_travel_advisories.json` | US State Dept advisories (snapshot 2026-11-14) | https://cadataapi.state.gov/api/TravelAdvisories | US public domain | 8eda2365936bfd32 |
 | `wgidataset_with_sourcedata-2026.xlsx` | World Bank WGI 2026 (sheet `pv`) | https://www.worldbank.org/content/dam/sites/govindicators/doc/wgidataset_with_sourcedata-2026.xlsx | CC BY 4.0 | 67c38d2e9253fb1a |
 Live calls during step 3–4 (no key needed): OpenStreetMap Nominatim reverse geocode (1 req/s, ODbL) and GOV.UK Content API for FCDO advice (OGL v3). Results can change on a later date.
-v4: WDPCA/Protected Planet is **not used** (licence is non-commercial); every site carries `accessRisk.note` "Check national park and research permits before fieldwork."
+No protected-area dataset is used; every site carries `accessRisk.note` "Check national park and research permits before fieldwork."
 
 ## Commands
 ```bash

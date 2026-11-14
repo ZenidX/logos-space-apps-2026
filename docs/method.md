@@ -1,95 +1,85 @@
-# Method · mission-based analog similarity (Logos, v2, 2026-11-14)
+# Method · mission-based analog index (method v3, data v4; 2026-11-14)
 
-AI-assisted (Claude), to be reviewed by team Logos. Data: `sites.json`. Scripts (Logos Datos folder): `scripts/missions.py`, `scripts/access_risk.py`, `scripts/build_v2.py`.
-This replaces the old ~/spaceapp p1–p99 relative-position score: nothing from it is reused except the raw 0.1° Earth grids.
+AI-assisted (Claude), to be reviewed by team Logos.
+Scripts: scripts/data/02_missions.py (scoring), scripts/data/index.py (index), scripts/data/05_build.py (JSON build); inputs and commands: scripts/data/README.md.
+Data: `src/data/sites.json` (v4). Rebuild with `LOGOS_IN=/path/to/inputs npm run data`; test with `npm run test:data`. Sources and checks: `docs/sources.md`.
 
 ## 1. Idea
-An Earth site is a good analog **for a mission**, not in general. Each mission (from real field campaigns, see `misiones.md`) needs a few surface conditions. We score each Earth cell on those conditions only, in physical units, and check that the score rediscovers the places where agencies actually ran that mission.
+An Earth site is an analog **for a mission**, not in general. We took three tasks that agencies have rehearsed in real field campaigns (`docs/missions.md`), wrote down the surface conditions each task needs, scored every 0.1° land cell (~11 km) on Earth against those conditions, and checked that the score finds the places where the campaigns actually ran. The top-scoring places outside those known sites are the **new candidate regions**.
 
-## 2. Per-variable similarity
-For each variable *k* the mission has an **ideal range** [lo, hi] (from the target value where it is physically comparable, otherwise from the mission's need) and a **tolerance** τ in the same unit:
+| Mission | Target | Campaigns it is based on |
+|---|---|---|
+| M1 Suited EVA on volcanic terrain | Mons Mouton, a lunar south-pole region NASA listed among its Artemis III landing candidates in 2024 (NASA now describes Artemis III as a crewed low-Earth-orbit demonstration, with landings from Artemis IV) | NASA JETT3/JETT5, Desert RATS, BASALT; ESA PANGAEA |
+| M2 Rover mobility on loose sand and slopes | Jezero crater, Mars | JPL Scarecrow tests, ESA SAFER, NASA ARADS, Mars Society MDRS |
+| M3 Shallow ground ice for ISRU and drilling | Arcadia Planitia, Mars | NASA TRIDENT at Haughton, IceBite (ASTEP), RESOLVE |
 
-    d_k = 0 if lo ≤ x ≤ hi;  lo − x if x < lo;  x − hi if x > hi
-    s_k = exp(−½ (d_k / τ_k)²)            (1 = inside the range; 0.61 at one τ outside; 0.14 at two τ)
+## 2. Variables and rules
+Each variable *k* has an **ideal range** [lo, hi] and a **tolerance** τ in its own unit. The range comes from the target where the quantity is physically comparable (e.g. no vegetation), otherwise from what the task needs (e.g. loose sand). All Earth layers are 2024 values on a 0.1° grid.
 
-Missing value → variable skipped (cell needs ≥ 75 % of the weight available, else no score).
-
-## 3. Match (0–1)
-Weighted **geometric** mean, so one failed condition cannot be hidden by the others:
-
-    match = exp( Σ w_k ln s_k / Σ w_k )
-
-Ties at match = 1 are ordered by closeness to the target-side values (tie-break only).
-
-## 4. Variables, ranges and why
-| Mission → target | Variable | Ideal | τ | w | Basis |
+| Mission | Variable (Earth source) | Ideal range | τ | Weight | Why |
 |---|---|---|---|---|---|
-| M1 EVA on basalt → Mons Mouton | NDVI | ≤ 0.05 | 0.10 | 1 | target has no vegetation |
-| | albedo | 0.07–0.20 | 0.06 | 1 | Mons Mouton ≈ 0.15 (approx.); dark basalt |
-| | precipitation | ≤ 250 mm/yr | 300 | 0.5 | target 0; bare, unweathered ground |
-| | Sun elevation (attribute, not in match) | ≈ 6.9° max | 15 | 0 | computed from latitude: Earth `90 − max(|φ| − 23.44, 0)`; winter solstice `90 − |φ| − 23.44`. Mons Mouton: `90 − (84.6 − 1.54)` = 6.9° max, 3.9° min |
-| M2 rover on sand → Jezero | sand fraction | ≥ 50 % | 12 | 1 | mission need (loose sand); Jezero % not available |
-| | NDVI | ≤ 0.05 | 0.10 | 1 | no plants binding sand |
-| | precipitation | ≤ 150 mm/yr | 250 | 0.5 | dry, uncemented |
-| | albedo | 0.12–0.28 | 0.08 | 0.5 | Jezero ≈ 0.2 (approx.) |
-| M3 ground ice → Arcadia Planitia | mean LST (day+night)/2 | ≤ −5 °C | 6 | 1 | permafrost proxy; Arcadia ≈ −80 °C (approx.) cannot be reached on Earth, so "below freezing" is the need |
-| | precipitation | ≤ 250 mm/yr | 250 | 1 | polar desert |
-| | albedo | ≤ 0.5 | 0.12 | 1 | excludes ice sheets/glaciers (~0.8); Arcadia is dark ground over ice |
-| | NDVI | ≤ 0.10 | 0.10 | 0.5 | bare ground |
-Ranges, tolerances and weights are **team design choices**, written down here. They were set knowing where the known analogs are, so the validation is not fully independent.
+| M1 | NDVI (MODIS MOD13C1) | ≤ 0.05 | 0.10 | 1 | bare rock; the target has no vegetation |
+| M1 | Albedo, white-sky shortwave (MODIS MCD43C3) | 0.07–0.20 | 0.06 | 1 | dark basaltic ground |
+| M1 | Precipitation (GPM IMERG V07) | ≤ 250 mm/yr | 300 | 0.5 | arid ground stays bare |
+| M1 | Basic volcanic rock nearby (GLiM 0.5°, class `vb` in the 3×3 window) | = 1 | — | 1 | the campaigns ran on basalt lava fields |
+| M2 | Sand fraction 0–5 cm (SoilGrids 2.0, 5 km → 0.1°) | ≥ 50 % | 12 | 1 | loose sand is where rovers sink and slip |
+| M2 | NDVI | ≤ 0.05 | 0.10 | 1 | no plants binding the sand |
+| M2 | Precipitation | ≤ 150 mm/yr | 250 | 0.5 | dry, uncemented sand |
+| M2 | Albedo | 0.12–0.28 | 0.08 | 0.5 | Mars-like brightness (approximate) |
+| M3 | Mean surface temperature, (day + night)/2 (MODIS MOD11A2) | ≤ −5 °C | 6 | 1 | ground ice persists below freezing (permafrost proxy) |
+| M3 | Precipitation | ≤ 250 mm/yr | 250 | 1 | polar desert |
+| M3 | Albedo | ≤ 0.5 | 0.12 | 1 | excludes ice sheets and glaciers |
+| M3 | NDVI | ≤ 0.10 | 0.10 | 0.5 | bare ground |
+
+Per-variable similarity:
+
+    d_k = 0 inside [lo, hi];  otherwise the distance to the nearest bound
+    s_k = exp(−½ · (d_k / τ_k)²)          1 inside the range · 0.61 at one τ outside · 0.14 at two τ
+
+A rule is **met** when s_k ≥ 0.5, i.e. within about 1.18 τ of the range. Ranges are tolerance bands, not hard cut-offs.
+Sun elevation is shown for M1 as an attribute and does **not** enter the index. It is computed from latitude: highest noon Sun = 90° − max(|φ| − ε, 0); noon Sun at winter solstice = 90° − |φ| − ε, with ε = 23.44° for Earth and 1.54° for the Moon (lunar equator tilt to the ecliptic). For Mons Mouton (84.6° S) this gives about 7°, ignoring terrain.
+
+## 3. Analog index (0–1)
+    F = rules met / rules with data
+    D = mean over variables of |P_k(site) − median of P_k over the mission's known analogs| / 100
+        (P_k = percentile of the value among all Earth land cells; the volcanic layer uses its 0/1 value)
+    Analog index = 0.5 · F + 0.5 · (1 − D)
+
+F says **whether** a place meets the task's conditions. D says **how close** it sits, within Earth's own range of values, to where the task was actually rehearsed. A cell needs data for ≥ 66 % of the variable weight. Reference implementation: `scripts/data/index.py`; hand-computed cases: `scripts/data/test_index.py`.
+
+## 4. New candidate regions
+1. Candidate cells have all available rules met (minimum 66% of weight coverage), i.e. F = 1 over the variables with data. Example: one Antarctic candidate has no NDVI value and is scored on the other three variables.
+2. Excluded: cells within 300 km of any known analog site (the 9 sites in `sites.json`, plus Death Valley, Mauna Kea, Etna, Dhofar, the Negev, Ararat province, Lanzarote, Axel Heiberg Island and Svalbard, using approximate centres).
+3. Neighbouring candidate cells (8-connected) form a region; regions with fewer than 4 cells are dropped.
+4. Each region is represented by its best cell. Regions are ranked by that cell's index and picked with at least 800 km between them, 6 per mission.
+5. Names come from Natural Earth geography regions and an OpenStreetMap reverse geocode. In disputed areas only the Natural Earth region name is used.
 
 ## 5. Validation
-1. Score every 0.1° land cell (land = Natural Earth polygons; ocean is stored as 0 in the source grids and was masked).
-2. Report the percentile of each **known analog** (where the campaign actually ran) among all land cells.
-3. Negative control: central Amazonia (−3.4, −60.0) must score low.
+We compare each known analog's index with all land cells, and use central Amazonia (−3.4°, −60.0°) as a negative control.
 
-| Mission | Known analogs (percentile) | Result | Control (Amazonia) |
-|---|---|---|---|
-| M1 | SP Crater 94.8 · Craters of the Moon 88.7 · Timanfaya 98.1 · Kīlauea Iki 14.0 | 2 of 4 in top 10 %, 3 of 4 in top 12 % | 8.9th pct |
-| M2 | Dumont Dunes 99.1 · Yungay 97.9 · MDRS 98.2 | 3 of 3 in top 3 % | 0.2th pct |
-| M3 | Haughton 98.9 · McMurdo Dry Valleys 98.9 | 2 of 2 in top 2 % | 0.0th pct |
-Honest reading: M2 and M3 rediscover their analogs well. M1 is **not specific**: without a rock-type layer, any bare, dark desert scores 1. Kīlauea Iki fails because its 11 km cell is mostly rainforest (a resolution limit). M3 has only 2 verified known sites. Ties: 0.2 % (M1), 0.2 % (M2), 1.5 % (M3) of land cells score ≥ 0.999.
-
-## 6. New candidates
-Greedy pick of the highest-scoring cells, ≥ 300 km from any known/classic analog and ≥ 800 km from each other, 5 per mission. They are **cells to investigate**, not surveyed sites. Names: OpenStreetMap reverse geocode (region, country).
-
-## 7. accessRisk
-`access_complexity` from `geopolitica.md` (G governance perception, WGI · C nearby organised-violence events, UCDP · A travel advice from two governments, US and UK; weights 0.40/0.35/0.25) plus a separate permit flag (protected area from WDPCA as yes/no only; Antarctic Treaty area). Level: **low < 0.25 ≤ medium < 0.5 ≤ high** (team choice). Antarctica: not computed, permit text only. For US sites the US advisory does not apply, so A = UK only. Not travel advice.
-
-## 8. Known gaps
-- Rock type (basalt) not used: ASTER GED emissivity needs Earthdata/Earth Engine login (see `suelo-espectral.md`).
-- Slope not used: the 5 km GMTED slope is too coarse for EVA/rover slopes; Copernicus DEM 30 m needs Earth Engine.
-- Moon/Mars target values are approximate literature values (team `targets.ts`), not extracted from PDS. Jezero sand %, Arcadia ice map (SWIM server down 2026-11-14): null.
-- Single year (2024) of MODIS/GPM; 0.1° cells (~11 km).
-
----
-# v3 (23:10) · new-analog search and ranking score — supersedes sections 3, 5 and 6 above
-
-## v3.1 Similarity score (0–1), used to rank sites (`match` in sites.json)
-    rule met for variable k  :=  s_k ≥ 0.5     (s_k from section 2, i.e. within ~1.18 τ of the ideal range)
-    F = rules met / rules available
-    D = mean over variables of |P_k(x) − median_known P_k| / 100      (P_k = percentile of x among all land cells; binary layers use the raw 0/1 difference)
-    similarity = 0.5·F + 0.5·(1 − D)
-F says **whether** a place meets the mission's conditions; D says **how close** it sits, in Earth's own distribution, to the places where agencies actually ran the mission. Cells need ≥ 66 % of the variable weight available.
-Limits: (a) the 50/50 mix and the ≥ 0.5 rule threshold are team choices; (b) D pulls candidates toward the known analogs, so the score favours "more of the same" rather than novel terrain; (c) with 2–4 known sites the median is fragile (M3 uses 2); (d) percentiles are Earth-relative, so D cannot say how close a site is to the Moon or Mars in absolute terms; that is what F and the target-based ranges in section 4 do.
-
-## v3.2 Extra layer for M1: volcanic lithology
-GLiM, Global Lithological Map v1.0, gridded to 0.5° (Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537, **CC BY 3.0**, licence read on PANGAEA 2026-11-14). Variable = 1 if class `vb` (basic volcanic) appears in the 3×3 window of 0.5° cells around the point (~±0.75°), else 0; NaN where GLiM has no data (small islands, e.g. Lanzarote). The window is needed because the 0.5° majority class misses small lava fields (SP Crater's own cell is `sc`). Rule: = 1. Limit: ~80 km neighbourhood, so "basalt nearby", not "on basalt".
-
-## v3.3 New candidate regions
-1. Candidate cells: all rules met (F = 1), score available.
-2. Exclusion: ≥ 300 km from every known analog in misiones.md plus Death Valley, Mauna Kea, Etna, Dhofar, Negev, Ararat, Lanzarote, Axel Heiberg Island and Svalbard Bockfjorden (approximate centres, used only for exclusion). Antarctica allowed for M3 outside the Dry Valleys radius.
-3. Contiguous candidate cells (8-connectivity) form a region; regions < 4 cells are dropped.
-4. Each region is represented by its best cell; regions ranked by that score; picked greedily with ≥ 800 km between representatives (spread across the globe); 6 per mission.
-5. Names: Natural Earth geography regions (public domain) + OpenStreetMap reverse geocode (ODbL). In disputed areas only the Natural Earth region name is used.
-
-## v3.4 Validation (same procedure as section 5, new score)
-| Mission | Known analogs (percentile of land cells) | Control (Amazonia) |
+| Mission | Known analogs (percentile among land cells) | Control |
 |---|---|---|
-| M1 | SP Crater 99.9 · Craters of the Moon 98.6 · Timanfaya 99.6 · Kīlauea Iki 86.4 → 3 of 4 in top 2 % | 31.2th |
-| M2 | Dumont Dunes 100.0 · Yungay 97.9 · MDRS 100.0 → 3 of 3 in top 2.1 % | 1.5th |
-| M3 | Haughton 99.6 · McMurdo Dry Valleys 99.2 → 2 of 2 in top 1 % | 2.8th |
-Not independent: the known analogs define the median used in D, so their high rank is partly by construction. The control and the rule fraction F are the independent checks. M1's control sits higher (31st) because NDVI/precip percentiles are close to some arid analogs; it still fails 3 of 4 rules.
+| M1 | SP Crater 99.9 · Craters of the Moon 98.6 · Timanfaya 99.6 · Kīlauea Iki 86.4 → 3 of 4 in the top 2 % | 31.2 |
+| M2 | Dumont Dunes 100.0 · Yungay 97.9 · MDRS 100.0 → 3 of 3 in the top 2.1 % | 1.5 |
+| M3 | Haughton 99.6 · McMurdo Dry Valleys 99.2 → 2 of 2 in the top 1 % | 2.8 |
 
-## v3.5 Mission-level breaks
-Each mission in sites.json has `breaks` (gravity, pressure, temperature, lighting, ice behaviour) with sources (NASA NSSDC fact sheets; JPL; Honeybee drilling tests). One statement (lunar south-pole crust is feldspathic, not basaltic) is marked "not sourced tonight".
+How to read this: the known analogs also set the median used in D, so their high rank is partly built in. The more independent checks are the rule fraction F and the control. F is only partly independent: the ranges come from the task and the target, but they were set with the known sites in mind. Kīlauea Iki ranks lower because its 11 km cell is mostly rainforest.
+
+## 6. Access complexity (shown next to each site)
+A relative, neutral estimate of how much administrative and security coordination fieldwork would need. It is not a rating of any country or travel advice.
+
+    access_complexity = (0.40·G + 0.35·C + 0.25·A) / (sum of weights of available parts)
+    G = 1 − WGI Political Stability score/100 (World Bank WGI 2026, 2025 data; perceptions-based)
+    C = 1 − exp(−Σ exp(−d_i / 50 km)) over UCDP organised-violence events within 200 km, 2021–2025 (GED 26.1, weight 1) and 2026 (Candidate v26.0.9, weight 0.5)
+    A = mean of US advisory (level − 1)/3 and UK FCDO alert (none 0 · parts 0.33–0.5 · whole country 0.67–1)
+
+Levels: low < 0.25 ≤ medium < 0.5 ≤ high. Weights, radii and levels are team design choices. Countries are de facto (Natural Earth) with no position on sovereignty. Not computed in Antarctica (Antarctic Treaty area, permits only) or in disputed areas. Every site carries the note "Check national park and research permits before fieldwork."
+
+## 7. Limits
+- Moon and Mars comparison values: Jezero and Arcadia albedo from the MGS TES albedo map (Lambert albedo, not white-sky); Arcadia mean temperature from the Mars Climate Database (a model); Mons Mouton albedo 0.15 is an estimate converted from LOLA 1064 nm normal albedo. See `docs/sources.md`.
+- M1 rock type comes from a 0.5° geological map: "basalt within about 80 km", not "on basalt". There is no data for small islands such as Lanzarote.
+- Slope is not used: the available 5 km slope is too coarse for walking or rover slopes.
+- M3 infers ground ice from temperature only; no permafrost or ice map is used.
+- One year (2024) of MODIS and GPM data; 0.1° cells (~11 km) describe the cell, not a specific outcrop.
+- The index favours places that resemble the known analogs; it cannot measure absolute closeness to the Moon or Mars.
+- Ranges, tolerances, weights and the 50/50 mix are team choices.

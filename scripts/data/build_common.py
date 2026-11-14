@@ -27,22 +27,24 @@ CREDITS = [
 C = lambda n, u: {"name": n, "url": u}
 MISSIONS = {
  "m1-eva-basalt": {
-  "title": "Suited EVA traverse and field geology on basaltic terrain",
+  "title": "Suited EVA on volcanic terrain",
   "campaigns": [C("NASA JETT3 (2022)", "https://www.nasa.gov/humans-in-space/nasa-to-practice-artemis-moonwalking-roving-operations-in-arizona-desert"),
                 C("NASA JETT5 (2024)", "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field"),
                 C("NASA Desert RATS (2022, with JAXA)", "https://www.nasa.gov/humans-in-space/nasa-practices-rover-operations-in-simulated-lunar-environment/"),
                 C("NASA BASALT (2016-2017)", "https://www.nasa.gov/general/basalt-research-program-hawaii-2017-field-deployment/"),
                 C("ESA PANGAEA", "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/CAVES_and_PANGAEA/What_is_PANGAEA")],
   "target": {"body": "moon", "name": "Mons Mouton (lunar south pole)", "lat": -84.60, "lon": 31.00,
+             "description": "A lunar south-pole region NASA listed among its Artemis III landing candidates in 2024. NASA now describes Artemis III as a crewed demonstration in low Earth orbit (launch 2027), with lunar landings beginning with Artemis IV.",
+             "descriptionSources": [{"name": "NASA (2024): update to 9 Artemis III landing regions", "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"}, {"name": "NASA Artemis III mission page (read 2026-11-14)", "url": "https://www.nasa.gov/mission/artemis-III/"}],
              "coordSource": "USGS Gazetteer Feature 16070, https://planetarynames.wr.usgs.gov/Feature/16070",
              "values": {"ndvi": {"value": 0, "unit": "index", "source": "no vegetation (by definition)", "url": None},
-                        "albedo": {"value": 0.15, "unit": "0-1", "source": "approximate literature value (LROC WAC), team targets.ts; not extracted from PDS", "url": None},
+                        "albedo": {"value": 0.15, "unit": "0-1", "source": "estimate: broadband albedo = 0.49 x LOLA 1064 nm normal albedo (Hayne et al. 2017, doi:10.1002/2017JE005387) with typical highland normal albedo ~0.3 (Lucey et al. 2014, doi:10.1002/2013JE004592); not a site-specific measurement", "url": "https://doi.org/10.1002/2017JE005387"},
                         "precip": {"value": 0, "unit": "mm/yr", "source": "airless body", "url": None},
                         "sun_max_deg": {"value": 6.9, "unit": "deg", "source": "computed: 90 - (84.6 - 1.54); lunar equator tilt to the ecliptic 1.54 deg (Cassini state); terrain and summit height ignored", "url": None},
                         "sun_winter_solstice_deg": {"value": 3.9, "unit": "deg", "source": "computed: 90 - 84.6 - 1.54", "url": None}}},
   "variables": [
    {"id": "ndvi", "label": "Vegetation (NDVI)", "unit": "index", "why": "EVA analogs need bare rock; target has none", "inMatch": True, "ideal": "<= 0.05", "tolerance": 0.10, "weight": 1.0},
-   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "dark basaltic ground like lunar regolith (~0.15)", "inMatch": True, "ideal": "0.07-0.20", "tolerance": 0.06, "weight": 1.0},
+   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "dark ground like lunar regolith (broadband ~0.15, estimate)", "inMatch": True, "ideal": "0.07-0.20", "tolerance": 0.06, "weight": 1.0},
    {"id": "precip", "label": "Precipitation", "unit": "mm/yr", "why": "arid ground stays bare and unweathered", "inMatch": True, "ideal": "<= 250", "tolerance": 300, "weight": 0.5},
    {"id": "sun_max_deg", "label": "Highest noon Sun elevation in the year", "unit": "deg", "why": "south-pole EVAs work under a Sun always near the horizon (JETT3/5 used a 'sun cart')", "inMatch": False, "ideal": "~6.9", "tolerance": 15, "weight": 0},
    {"id": "sun_winter_solstice_deg", "label": "Noon Sun elevation at winter solstice", "unit": "deg", "why": "<= 0 means polar night", "inMatch": False, "weight": 0},
@@ -58,12 +60,12 @@ MISSIONS = {
              "values": {"sand": {"value": None, "unit": "%", "source": "no comparable measurement found; scored against mission need (loose sand), not a Mars value", "url": None},
                         "ndvi": {"value": 0, "unit": "index", "source": "no vegetation", "url": None},
                         "precip": {"value": 0, "unit": "mm/yr", "source": "no liquid precipitation", "url": None},
-                        "albedo": {"value": 0.2, "unit": "0-1", "source": "approximate literature value (MGS TES), team targets.ts; not extracted from PDS", "url": None}}},
+                        "albedo": {"value": 0.18, "unit": "0-1", "source": "MGS TES bolometric (Lambert) albedo, 8 ppd global map, mean of 18.2-18.7N/77.3-77.9E (Christensen et al. 2001, doi:10.1029/2000JE001370; PDS GLOBAL_ALBEDO_8PPD). In-situ MEDA noon albedo 0.10-0.23 (Vicente-Retortillo et al. 2026, doi:10.5194/epsc2026-1140)", "url": "https://doi.org/10.1029/2000JE001370"}}},
   "variables": [
    {"id": "sand", "label": "Sand fraction (topsoil)", "unit": "%", "why": "loose sand is where rovers sink and slip (Spirit was lost in soft soil)", "inMatch": True, "ideal": ">= 50", "tolerance": 12, "weight": 1.0},
    {"id": "ndvi", "label": "Vegetation (NDVI)", "unit": "index", "why": "plants bind sand; Mars has none", "inMatch": True, "ideal": "<= 0.05", "tolerance": 0.10, "weight": 1.0},
    {"id": "precip", "label": "Precipitation", "unit": "mm/yr", "why": "dry, uncemented sand", "inMatch": True, "ideal": "<= 150", "tolerance": 250, "weight": 0.5},
-   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "Mars-like brightness (~0.2)", "inMatch": True, "ideal": "0.12-0.28", "tolerance": 0.08, "weight": 0.5},
+   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "Mars-like brightness (Jezero TES albedo ~0.18)", "inMatch": True, "ideal": "0.12-0.28", "tolerance": 0.08, "weight": 0.5},
    {"id": "slope", "label": "Slope", "unit": "deg", "why": "dune slopes; needs Copernicus DEM 30 m (not available tonight)", "inMatch": False, "value": None}]},
  "m3-ground-ice": {
   "title": "Shallow ground ice for ISRU and drilling",
@@ -72,15 +74,15 @@ MISSIONS = {
                 C("NASA/CSA RESOLVE at Mauna Kea (2010)", "https://ntrs.nasa.gov/citations/20100033667")],
   "target": {"body": "mars", "name": "Arcadia Planitia", "lat": 46.66, "lon": 192.00,
              "coordSource": "USGS Gazetteer Feature 348 web page (planetocentric, +East 0-360), https://planetarynames.wr.usgs.gov/Feature/348; the gazetteer GIS file gives 49.02 N, 188.15 E. Arcadia spans ~2,245 km, so the centre is nominal",
-             "values": {"lst_mean": {"value": -80, "unit": "degC", "source": "mean of approximate day/night values (-60/-100) from team targets.ts (MGS TES / Mars Climate Database); not extracted from PDS", "url": None},
+             "values": {"lst_mean": {"value": -76, "unit": "degC", "source": "annual and diurnal mean surface temperature (197 K) at 46.7N, 192E, Mars Climate Database v6.2 (climatology, average solar scenario; all Ls in 15 deg steps, all local times, equal Ls weighting); Mars Climate Database (c) LMD/OU/IAA/ESA/CNES. Model value", "url": "http://www-mars.lmd.jussieu.fr/mcd_python/"},
                         "precip": {"value": 0, "unit": "mm/yr", "source": "no liquid precipitation", "url": None},
-                        "albedo": {"value": 0.2, "unit": "0-1", "source": "approximate literature value, team targets.ts", "url": None},
+                        "albedo": {"value": 0.23, "unit": "0-1", "source": "MGS TES bolometric (Lambert) albedo, 8 ppd global map, mean of 47-49N/188-192E (Christensen et al. 2001, doi:10.1029/2000JE001370; PDS GLOBAL_ALBEDO_8PPD)", "url": "https://doi.org/10.1029/2000JE001370"},
                         "ndvi": {"value": 0, "unit": "index", "source": "no vegetation", "url": None},
                         "ice": {"value": None, "unit": "", "source": "SWIM ice-consistency map exists (1/20 deg GeoTIFF) but server was down on 2026-11-14", "url": "https://swim.psi.edu/"}}},
   "variables": [
    {"id": "lst_mean", "label": "Mean surface temperature", "unit": "degC", "why": "ground ice persists where the mean is below freezing (permafrost proxy)", "inMatch": True, "ideal": "<= -5", "tolerance": 6, "weight": 1.0},
    {"id": "precip", "label": "Precipitation", "unit": "mm/yr", "why": "polar desert: ice in the ground, not snow on top", "inMatch": True, "ideal": "<= 250", "tolerance": 250, "weight": 1.0},
-   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (~0.2) over ice", "inMatch": True, "ideal": "<= 0.5", "tolerance": 0.12, "weight": 1.0},
+   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (TES albedo ~0.23) over ice", "inMatch": True, "ideal": "<= 0.5", "tolerance": 0.12, "weight": 1.0},
    {"id": "ndvi", "label": "Vegetation (NDVI)", "unit": "index", "why": "bare ground", "inMatch": True, "ideal": "<= 0.10", "tolerance": 0.10, "weight": 0.5}]},
 }
 KNOWN_NAMES = {
@@ -107,6 +109,9 @@ def access(a):
     if a.get("permit_flag") == "ANTARCTIC_TREATY_AREA":
         basis = ("Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national "
                  "authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.")
+    elif a.get("access_complexity") is None:
+        basis = (f"Not computed: disputed area (boundaries de facto, no country attributed). Only nearby organised-violence "
+                 f"events are shown: {a.get('C')} (0-1, UCDP).") if a.get("disputed_area") else "Not computed (missing sources)."
     else:
         parts = [f"Access complexity {a['access_complexity']} (0-1, relative)",
                  f"Governance perception (WGI, perceptions-based) {a['G']}", f"nearby organised-violence events {a['C']}",
@@ -135,7 +140,7 @@ def breaks(mid, rec, kind):
         b.append("Earth gravity is ~2.6x Mars: wheel sinkage differs unless rover mass is reduced (as JPL did with Scarecrow)")
         if kind == "new": b.append("Sand fraction is a 5 km model value: dunes not confirmed on imagery")
     if mid == "m3-ground-ice":
-        b.append("Earth permafrost thaws seasonally at the surface; Arcadia is far colder (about -80 C, approximate) with no active layer")
+        b.append("Earth permafrost thaws seasonally at the surface; Arcadia is far colder (annual mean about -76 C, Mars Climate Database) with no active layer")
         if kind == "new": b.append("Ground ice inferred from temperature only: no ice or permafrost map used")
     b.append("0.1 deg cell (~11 km): value describes the cell, not a specific outcrop")
     return b

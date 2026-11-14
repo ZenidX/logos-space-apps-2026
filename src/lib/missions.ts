@@ -14,7 +14,7 @@ interface RawAccess { level: "low" | "medium" | "high" | null; score: number | n
 interface RawSite { region?: { cells: number; areaKm2: number } | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; matchPercentile?: number | null; perVariable: Record<string, RawPV | null>; breaks: string[]; accessRisk: RawAccess | null; campaign?: string }
 interface RawMission {
   id: MissionId; title: string; campaigns: { name: string; url: string }[];
-  target: { body: GlobeBody; name: string; lat: number; lon: number; coordSource: string; values: Record<string, RawValue> };
+  target: { body: GlobeBody; name: string; lat: number; lon: number; coordSource: string; description?: string; values: Record<string, RawValue> };
   variables: RawVar[]; breaks?: { text: string; source: string; url: string | null }[]; sites: RawSite[];
   validation: { method: string; result: string; landCells?: number; control?: { match: number; matchPercentile: number } };
 }
@@ -24,7 +24,7 @@ export interface Variable { id: string; label: string; unit: string; why: string
 export interface PerVar { id: string; label: string; unit: string; value: number | null; similarity: number | null; source: string; inMatch: boolean }
 export interface Access { level: "Low" | "Medium" | "High" | "Not assessed"; score: number | null; basis: string; sources: string[]; note: string; permit: string | null }
 export interface Site { areaKm2: number | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; percentile: number | null; vars: PerVar[]; breaks: string[]; access: Access; campaign: string | null }
-export interface Target { name: string; body: GlobeBody; lat: number; lon: number; coordSource: string; values: Record<string, RawValue> }
+export interface Target { name: string; body: GlobeBody; lat: number; lon: number; coordSource: string; description?: string; values: Record<string, RawValue> }
 export interface Mission {
   id: MissionId; short: string; title: string; blurb: string; target: Target;
   campaigns: { name: string; url: string }[]; variables: Variable[]; sites: Site[];

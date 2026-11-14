@@ -54,7 +54,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           {matchVars.map((v) => {
             const tval = t.values[v.id];
             const tv = tval?.value ?? null;
-            const est = /approx/i.test(tval?.source ?? "");
+            const est = /approx|^estimate/i.test(tval?.source ?? "");
             return (
               <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
                 <div className="flex items-center justify-between gap-2"><span>{v.label}</span><span className="flex items-center gap-2"><Bar v={v.similarity} /><span className="mono w-10 text-right text-[12px]">{idx(v.similarity)}</span></span></div>

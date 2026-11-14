@@ -142,6 +142,7 @@ export default function Home() {
               <p className="label" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body} · {t.name}</p>
               <h2 className="display mt-1 text-[24px] font-semibold leading-tight">{shown.short}</h2>
               <p className="mt-1 text-[13.5px] text-[var(--mut)]">{shown.blurb}</p>
+              {t.description && <p className="mt-1 text-[12px] text-[var(--dim)]">{t.description}</p>}
               <p className="mt-2 rounded-lg border p-2 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>▲ {shown.keyLimit}</p>
 
               <h3 className="label mt-4">Rehearsed for real by</h3>

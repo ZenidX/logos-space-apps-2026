@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:39 · Documentos sincronizados con los datos v4
+- `docs/method.md` en una sola versión (método v3, datos v4); `docs/sources.md` rehecho: 154 afirmaciones, 118 verificadas, 21 estimaciones, 4 a quitar, 11 otras. Sin comprobar: licencias de texturas y condiciones de Mars Trek.
+- Valores de objetivo con fuente: albedo de Jezero 0,18 y de Arcadia 0,23 (mapa TES, Christensen 2001); temperatura media de Arcadia −76 °C (Mars Climate Database v6.2, modelo). El albedo de Mons Mouton (0,15) sigue siendo estimación.
+- Artemis III: NASA la describe ahora como demostración tripulada en órbita baja (2027), con alunizajes desde Artemis IV; la web lo dice junto al objetivo.
+- Uso de IA, más exacto: la fórmula, los umbrales y los pesos se redactaron con ayuda de IA a partir de la idea del equipo; la idea y el planteamiento son del equipo.
+
 ## 2026-11-14 · 22:37 · Segunda pasada de Crítico (como jurado)
 - Misión 1 renombrada a «Suited EVA on volcanic terrain»: el polo sur lunar es terreno de tierras altas, no basalto; es un análogo operativo, no de composición. Mons Mouton descrito como región que NASA listó entre las candidatas de Artemis III en 2024.
 - Misión 3: «regions to screen for possible near-surface ice; the score does not detect ice».
