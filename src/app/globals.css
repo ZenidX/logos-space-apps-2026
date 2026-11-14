@@ -17,9 +17,10 @@
   --tap: 44px; --ease: cubic-bezier(.2, .7, .2, 1);
   --t-xs: 11px; --t-sm: 13px; --t-md: 15px; --t-lg: 18px; --t-xl: 24px; --t-hero: clamp(44px, min(5.6vw, 8.6vh), 84px);
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
-  --display: var(--font-serif), "Iowan Old Style", Georgia, serif; --sans: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif; --mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 html { color-scheme: dark; }
+/* Font tokens live on body: next/font sets its variables on <body>, so they must be resolved there (not on :root). */
+body { --display: var(--f-serif), "Iowan Old Style", Georgia, serif; --sans: var(--f-sans), system-ui, -apple-system, "Segoe UI", sans-serif; --mono: var(--f-mono), ui-monospace, "SF Mono", Menlo, monospace; }
 body { background: var(--bg); color: var(--ink); font: 400 15.5px/1.55 var(--sans); font-optical-sizing: auto; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
 b, strong { font-weight: 600; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

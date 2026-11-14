@@ -4,9 +4,9 @@ import { Geist_Mono, Instrument_Sans, Instrument_Serif } from "next/font/google"
 import "./globals.css";
 
 // All SIL OFL 1.1; next/font self-hosts them (CSP font-src 'self').
-const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif", display: "swap" });
-const sans = Instrument_Sans({ subsets: ["latin"], weight: "variable", variable: "--font-sans", display: "swap" });
-const mono = Geist_Mono({ subsets: ["latin"], weight: "400", variable: "--font-mono", display: "swap", preload: false });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--f-serif", display: "swap" });
+const sans = Instrument_Sans({ subsets: ["latin"], weight: "variable", variable: "--f-sans", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], weight: "400", variable: "--f-mono", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   title: "Logos · Mission Analogs",
