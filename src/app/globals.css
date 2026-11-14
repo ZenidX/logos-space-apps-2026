@@ -357,3 +357,20 @@ h1, h2, h3 {
   opacity: 0.55;
   pointer-events: none;
 }
+
+/* ===== Accesibilidad (C_1, 2026-11-14) ===== */
+/* Saltar la navegación con el teclado: invisible hasta que recibe el foco */
+.skip-link {
+  position: fixed; left: 12px; top: -60px; z-index: 2000;
+  padding: 10px 14px; background: var(--acc); color: var(--bg);
+  font: 500 13px/1 var(--font-jetbrains), monospace; text-transform: uppercase; letter-spacing: .06em;
+  transition: top var(--d2) var(--ease);
+}
+.skip-link:focus { top: 12px; }
+/* Tamaño mínimo de texto: las clases de 9 y 10 px suben al mínimo del sistema (--t-xs = 11 px) */
+.text-\[9px\], .text-\[10px\] { font-size: var(--t-xs) !important; }
+.leaflet-control-attribution { font-size: var(--t-xs) !important; }
+/* Movimiento reducido: ninguna animación en bucle (flecha de «Next», indicador de scroll) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

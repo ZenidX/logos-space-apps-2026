@@ -24,9 +24,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${plex.variable} ${jetbrains.variable} ${grotesk.variable} antialiased`}>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <AppStateProvider>
           <SiteNav />
-          <div className="relative z-[1]">{children}</div>
+          <main id="main" tabIndex={-1} className="relative z-[1] outline-none">
+            {children}
+          </main>
         </AppStateProvider>
       </body>
     </html>

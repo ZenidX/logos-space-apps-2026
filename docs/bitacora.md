@@ -2,6 +2,19 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 7) · Accesibilidad y una web que se explica sola
+
+Prioridad del usuario: que se pueda usar y entender sin nadie que la presente.
+- **«How it works»** en la portada (`src/components/HowItWorks.tsx`): qué es un análogo, en una frase, y los 3 pasos (Measure → Compare → Rank) con lenguaje llano.
+- **Introducción en cada página** (`PageIntro`): «Step N of 5» con barra de progreso, un `h1` y una frase que explica qué se ve y qué se puede hacer. En /data va dentro de la cabecera de `DataExplorer`.
+- **Estructura:** enlace «Skip to content», un único `<main>` en el layout (el de `DataExplorer` pasa a `div`) y `aria-label` en la navegación.
+- **Navegación:** objetivos táctiles de 44 px.
+- **Letra:** las clases de 9 y 10 px suben al mínimo del sistema (`--t-xs`, 11 px), y la atribución de Leaflet también.
+- **Movimiento reducido:** la flecha de «Next» y el indicador «scroll» ya no se mueven en bucle, y ninguna animación CSS se repite.
+- **Texto:** «Nobody had searched the whole planet» pasa a «We searched the whole planet» (lo primero no se puede demostrar, ver la auditoría).
+- Lo que ya estaba hecho y no se ha tocado: el contraste AA de `--mut` y `--dim`, el foco visible y los marcadores de 44 px del globo («Consola v2» en `globals.css`).
+- Comprobado: `tsc` y `eslint` sin errores, y revisado en Chrome a 767 px y 519 px de ancho. Lighthouse no se pudo pasar.
+
 ## 2026-11-14 (noche, 6)
 
 ### Web en varias páginas

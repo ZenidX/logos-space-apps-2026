@@ -222,6 +222,7 @@ export type Section = "hero" | "contrast" | "destination" | "tradeoff" | "step3d
 // La historia se reparte en páginas: cada página pide sus secciones. El destino y el peso viven en AppState.
 export default function Story({ sections }: { sections: Section[] }) {
   const has = (x: Section) => sections.includes(x);
+  const reduceMotion = useReducedMotion();
   const { targetId, setTargetId, w, setW } = useAppState();
   const [sel, setSel] = useState<string | null>(null);
   const [view3d, setView3d] = useState<Cand | null>(null);
@@ -324,7 +325,8 @@ export default function Story({ sections }: { sections: Section[] }) {
         </motion.div>
         <motion.div
           className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[.2em] text-[var(--dim)]"
-          animate={{ y: [0, 6, 0] }}
+          aria-hidden
+          animate={reduceMotion ? undefined : { y: [0, 6, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
           scroll
@@ -341,7 +343,7 @@ export default function Story({ sections }: { sections: Section[] }) {
       <Chapter n="01" kicker="The problem" title={<>Nowhere on Earth is <em className="not-italic text-[var(--acc)]">really</em> the Moon.</>}>
         <ScrubText
           className="max-w-[30ch] text-[clamp(24px,3vw,40px)] font-light leading-snug"
-          text="Today's analog sites were picked one by one, by experience. Nobody had searched the whole planet, and nobody said where each analog stops being useful."
+          text="Today's analog sites were picked one by one, by experience. We searched the whole planet, and we say where each analog stops being useful."
         />
         <div className="mt-12 grid gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] md:grid-cols-3">
           {[

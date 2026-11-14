@@ -56,11 +56,14 @@ export default function DataExplorer() {
           </div>
         </div>
         <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[.12em] text-[var(--dim)]">
-          NASA Space Apps 2026 · Team Logos · Barcelona 41.39N 2.17E
+          Step 5 of 5 · NASA Space Apps 2026 · Team Logos
+        </p>
+        <p className="mt-3 text-[15px] text-[var(--mut)]">
+          The full ranking, the score of each variable and the NASA datasets behind them. This page is for checking our work.
         </p>
       </header>
 
-      <main key={tab} className="entra flex-1 px-4 py-5 pb-28">
+      <div key={tab} className="entra flex-1 px-4 py-5 pb-28">
         {tab === "candidatos" && <CandidatesTab />}
         {tab === "analisis" && <AnalysisTab />}
         {tab === "datos" && <DataTab />}
@@ -99,7 +102,7 @@ export default function DataExplorer() {
             />
           </div>
         )}
-      </main>
+      </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-[1000] border-t border-[var(--line)] bg-[rgba(4,8,15,.92)] backdrop-blur">
         <div className="mx-auto grid max-w-3xl grid-cols-4 gap-1.5 px-4 pt-0 pb-[max(env(safe-area-inset-bottom),10px)]">
