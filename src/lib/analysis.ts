@@ -77,7 +77,7 @@ export function analyzeVariables(target: Target): VariableAnalysis[] {
   });
 }
 
-export const DIMENSIONS = ["Clima", "Superficie", "Relieve", "Geología", "Hielo y agua"] as const;
+export const DIMENSIONS = ["Climate", "Surface", "Relief", "Geology", "Ice & water"] as const;
 
 export interface SiteDimensionScore {
   siteId: string;

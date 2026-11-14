@@ -1,7 +1,11 @@
 // terra-analog · Google Earth Engine Code Editor (proyecto terra-analog)
 // Puntúa la Tierra contra los objetivos usando el asset precalculado de 05_export_features.js (0,1°).
 // Rangos p1–p99 calculados aquí sobre el mismo asset. Exclusión de análogos conocidos con paint (barato).
-var A = ee.Image('projects/terra-analog/assets/terra_features_01deg');
+// NDVI_FIX: el asset del 14-11 guardó el NDVI 10 000 veces pequeño (escala aplicada dos veces).
+// Con este asset, NDVI_FIX = 10000. Si se reexporta con 05 ya corregido, poner NDVI_FIX = 1.
+var NDVI_FIX = 10000;
+var A0 = ee.Image('projects/terra-analog/assets/terra_features_01deg');
+var A = A0.addBands(A0.select('ndvi').multiply(NDVI_FIX), null, true);
 var world = ee.Geometry.Rectangle([-180, -90, 180, 90], null, false);
 var SCALE = 11132;
 var land = A.select('lst_day').mask().gt(0);
@@ -17,12 +21,12 @@ var T = {
 };
 var KNOWN = [
   ['Atacama', -24.1, -69.9], ['Haughton / Devon', 75.4, -89.7], ['Death Valley / Mojave', 36.5, -116.9],
-  ['Valles Secos McMurdo', -77.5, 161.8], ['Islandia', 64.9, -18.6], ['Mauna Kea / HI-SEAS', 19.7, -155.5],
-  ['MDRS Utah', 38.4, -110.8], ['Río Tinto', 37.7, -6.6], ['Lanzarote', 29.0, -13.6], ['Svalbard (AMASE)', 79.4, 13.4],
+  ['McMurdo Dry Valleys', -77.5, 161.8], ['Iceland', 64.9, -18.6], ['Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)', 19.7, -155.5],
+  ['MDRS Utah', 38.4, -110.8], ['Rio Tinto', 37.7, -6.6], ['Lanzarote', 29.0, -13.6], ['Svalbard (AMASE)', 79.4, 13.4],
   ['Pilbara', -21.2, 119.0], ['Meteor / SP Crater', 35.3, -111.3], ['Axel Heiberg', 79.4, -90.8],
   ['Qaidam', 37.5, 94.0], ['Danakil / Dallol', 14.2, 40.3], ['Namib', -24.0, 15.0], ['Ries', 48.9, 10.6],
   ['Arkaroola', -30.3, 139.3], ['Sudbury', 46.6, -81.2], ['Concordia (Dome C)', -75.1, 123.3], ['Lonar', 20.0, 76.5],
-  ['Kamchatka', 54.0, 159.0], ['Tierra de Bunge', 74.9, 140.0], ['Mojave Bristol', 34.5, -115.7], ['Wadi Rum', 29.6, 35.4]
+  ['Kamchatka', 54.0, 159.0], ['Bunge Land', 74.9, 140.0], ['Mojave Bristol', 34.5, -115.7], ['Wadi Rum', 29.6, 35.4]
 ];
 var knownFC = ee.FeatureCollection(KNOWN.map(function (k) { return ee.Feature(ee.Geometry.Point([k[2], k[1]]), {name: k[0]}); }));
 var excluded = ee.Image(0).paint(knownFC.map(function (f) { return f.buffer(300000, 5000); }), 1);
@@ -66,11 +70,13 @@ function hav(a, b) {
     .sample({region: world, scale: SCALE, geometries: true, tileScale: 4})
     .sort('total', false).limit(500);
   var known = s.select('total').reduceRegions({collection: knownFC, reducer: ee.Reducer.mean(), scale: SCALE});
-  ee.Dictionary({cands: cands, dist: dist, stats: stats, known: known.aggregate_array('mean'), names: known.aggregate_array('name')}).evaluate(function (r, err) {
+  // toList + map conserva los nulos (aggregate_array los descarta y desemparejaría nombres y notas).
+  var knownPairs = known.toList(100).map(function (f) { f = ee.Feature(f); return [f.get('name'), f.get('mean')]; });
+  ee.Dictionary({cands: cands.toList(500), dist: dist, stats: stats, known: knownPairs}).evaluate(function (r, err) {
     if (err) { print('TERRA_ERR_' + tid, err); return; }
     var rd = function (v) { return v == null ? null : Math.round(v * 1000) / 1000; };
     var top = [];
-    r.cands.features.forEach(function (f) {
+    r.cands.forEach(function (f) {
       var c = f.geometry.coordinates;
       if (top.length < 20 && top.every(function (o) { return hav(o.c, c) >= 300; })) {
         var o = {c: [rd(c[0]), rd(c[1])]};
@@ -78,8 +84,7 @@ function hav(a, b) {
         top.push(o);
       }
     });
-    // nombres alineados con sus valores (aggregate_array descarta nulos: se emparejan por índice solo si coinciden longitudes)
-    var known2 = r.names.length === r.known.length ? r.names.map(function (n, i) { return {name: n, total: rd(r.known[i])}; }) : [];
+    var known2 = r.known.map(function (k) { return {name: k[0], total: rd(k[1])}; });
     print('TERRA_GLOBAL_' + tid + '::' + JSON.stringify({top: top, dist: r.dist, ranges: r.stats, known: known2}));
   });
 });

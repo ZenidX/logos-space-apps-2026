@@ -27,18 +27,18 @@ const SITE_LETTER: Record<string, string> = {
 
 const fmt = (v: number | null | undefined, unit = "") => {
   if (v == null || Number.isNaN(v)) return "—";
-  const n = Math.abs(v) >= 100 ? Math.round(v).toLocaleString("es-ES") : Math.abs(v) >= 1 ? v.toFixed(1) : v.toFixed(2);
-  return unit && unit !== "índice" && unit !== "0–1" ? `${n} ${unit}` : n;
+  const n = Math.abs(v) >= 100 ? Math.round(v).toLocaleString("en-US") : Math.abs(v) >= 1 ? v.toFixed(1) : v.toFixed(2);
+  return unit && unit !== "index" && unit !== "0–1" ? `${n} ${unit}` : n;
 };
 
 function RangeStrip({ v }: { v: VariableAnalysis }) {
   if (!v.range) {
-    return <p className="text-xs text-slate-500">Sin rango global comparable.</p>;
+    return <p className="text-xs text-slate-500">No comparable global range.</p>;
   }
   const r = v.range;
   const pct = (x: number) => `${position(r, x) * 100}%`;
   return (
-    <div className="relative mt-5 mb-1 h-10" role="img" aria-label={`Rango terrestre de ${v.layer.name}`}>
+    <div className="relative mt-5 mb-1 h-10" role="img" aria-label={`Earth range of ${v.layer.name}`}>
       {/* pista */}
       <div className="absolute top-4 h-2 w-full rounded-full" style={{ background: C.track }} />
       {/* mediana */}
@@ -46,7 +46,7 @@ function RangeStrip({ v }: { v: VariableAnalysis }) {
         <div
           className="absolute top-3 h-4 w-0.5"
           style={{ left: pct(v.median), background: C.muted }}
-          title={`Mediana terrestre: ${fmt(v.median, v.layer.unit)}`}
+          title={`Earth median: ${fmt(v.median, v.layer.unit)}`}
         />
       )}
       {/* sitios */}
@@ -74,12 +74,12 @@ function RangeStrip({ v }: { v: VariableAnalysis }) {
         <div
           className="absolute -top-3 -translate-x-1/2 text-center"
           style={{ left: `${v.targetPos * 100}%` }}
-          title={`Objetivo: ${fmt(v.target, v.layer.unit)}${v.targetBeyond ? " (fuera del rango terrestre)" : ""}`}
+          title={`Target: ${fmt(v.target, v.layer.unit)}${v.targetBeyond ? " (outside Earth's range)" : ""}`}
         >
           <div className="mx-auto h-3 w-3 rotate-45" style={{ background: C.target }} />
           {v.targetBeyond && (
             <span className="absolute top-0 whitespace-nowrap text-[10px] font-bold" style={{ color: C.target, [v.targetBeyond === "below" ? "left" : "right"]: "14px" }}>
-              {v.targetBeyond === "below" ? "◀ fuera" : "fuera ▶"}
+              {v.targetBeyond === "below" ? "◀ beyond" : "beyond ▶"}
             </span>
           )}
         </div>
@@ -105,12 +105,12 @@ function VariableRow({ v }: { v: VariableAnalysis }) {
       <RangeStrip v={v} />
       <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
         <div>
-          <span style={{ color: C.muted }}>Objetivo: </span>
-          <span className="font-mono">{v.target == null ? "sin dato aún" : fmt(v.target, v.layer.unit)}</span>
-          {v.targetBeyond && <span style={{ color: C.target }}> · la analogía se rompe</span>}
+          <span style={{ color: C.muted }}>Target: </span>
+          <span className="font-mono">{v.target == null ? "no data yet" : fmt(v.target, v.layer.unit)}</span>
+          {v.targetBeyond && <span style={{ color: C.target }}> · the analogy breaks</span>}
         </div>
         <div className="text-right">
-          <span style={{ color: C.muted }}>Discrimina análogos: </span>
+          <span style={{ color: C.muted }}>Separates analogs: </span>
           <span className="font-mono">{v.discrimination == null ? "—" : `${Math.round(v.discrimination * 100)}%`}</span>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function AnalysisTab() {
       {/* selector de objetivo */}
       <section>
         <p className="etq mb-3" data-n="02">
-          Objetivo a imitar
+          Target to match
         </p>
         <div className="grid grid-cols-3 gap-2">
           {TARGETS.map((t) => (
@@ -149,29 +149,29 @@ export default function AnalysisTab() {
               onClick={() => setTargetId(t.id)}
               className={`btn-cut border px-2 py-2 font-mono text-[11px] uppercase tracking-[.06em] transition-colors ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
             >
-              <span className="opacity-60">{t.body === "moon" ? "Luna" : "Marte"} ·</span> {t.short}
+              <span className="opacity-60">{t.body === "moon" ? "Moon" : "Mars"} ·</span> {t.short}
             </button>
           ))}
         </div>
         <p className="mt-2 text-xs text-slate-300">{target.description}</p>
         <p className="mt-1 text-[11px]" style={{ color: C.muted }}>
-          Fuentes: {target.sources}
+          Sources: {target.sources}
         </p>
       </section>
 
       {/* matriz sitios × dimensiones */}
       <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-        <h2 className="text-base font-bold">Similitud por dimensión</h2>
+        <h2 className="text-base font-bold">Similarity by dimension</h2>
         <p className="mb-3 text-xs" style={{ color: C.muted }}>
-          1 − distancia entre la posición del sitio y la del objetivo dentro del rango terrestre (p1–p99). 100% = mismo
-          extremo de la Tierra.
+          1 − distance between the site&apos;s and the target&apos;s positions inside Earth&apos;s range (p1–p99). 100% =
+          same end of Earth&apos;s range.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full border-separate text-xs" style={{ borderSpacing: 2 }}>
             <thead>
               <tr>
                 <th className="text-left font-normal" style={{ color: C.muted }}>
-                  Sitio
+                  Site
                 </th>
                 {DIMENSIONS.map((d) => (
                   <th key={d} className="px-1 font-normal" style={{ color: C.muted }}>
@@ -200,8 +200,8 @@ export default function AnalysisTab() {
                     {DIMENSIONS.map((d) => {
                       const c = row.dims[d];
                       return c.score == null ? (
-                        <td key={d} className="rounded text-center" style={{ color: C.muted, background: "#08111c" }} title="Sin datos comparables del objetivo o del sitio">
-                          n/d
+                        <td key={d} className="rounded text-center" style={{ color: C.muted, background: "#08111c" }} title="No comparable data for the target or the site">
+                          n/a
                         </td>
                       ) : (
                         <td
@@ -222,19 +222,19 @@ export default function AnalysisTab() {
           </table>
         </div>
         <p className="mt-2 text-[11px]" style={{ color: C.muted }}>
-          Validación: los análogos conocidos (A, H, D, M) deberían puntuar más que el control Z (Amazonía).
+          Validation: known analogs (A, H, D, M) should score higher than the control Z (Amazon).
         </p>
       </section>
 
       {/* dónde se rompe la analogía */}
       <section className="rounded-2xl border border-orange-500/30 bg-orange-500/5 p-3 text-xs">
-        <h2 className="mb-1 text-base font-bold">Dónde se rompe la analogía</h2>
+        <h2 className="mb-1 text-base font-bold">Where the analogy breaks</h2>
         {breaks.length ? (
           <ul className="list-disc space-y-0.5 pl-4">
             {breaks.map((v) => (
               <li key={v.layer.id}>
                 <b>{v.layer.name}</b>: {target.short} {fmt(v.target, v.layer.unit)} —{" "}
-                {v.targetBeyond === "below" ? "más extremo que el mínimo" : "más extremo que el máximo"} terrestre (
+                {v.targetBeyond === "below" ? "more extreme than Earth&apos;s minimum" : "more extreme than Earth&apos;s maximum"} (
                 {fmt(
                   v.targetBeyond === "below" ? (v.extremes ?? v.range!)[0] : (v.extremes ?? v.range!)[1],
                   v.layer.unit,
@@ -244,16 +244,16 @@ export default function AnalysisTab() {
             ))}
           </ul>
         ) : (
-          <p>Todas las variables comparables caen dentro del rango terrestre.</p>
+          <p>All comparable variables fall inside Earth&apos;s range.</p>
         )}
         {missing.length > 0 && (
           <p className="mt-2" style={{ color: C.secondary }}>
-            Aún sin comparar ({missing.map((v) => v.layer.name).join(", ")}): requieren procesar productos planetarios
-            (Diviner/TES para emisividad, LEND/SWIM para hielo).
+            Not compared yet ({missing.map((v) => v.layer.name).join(", ")}): they need planetary products to be processed
+            (Diviner/TES for emissivity, LEND/SWIM for ice).
           </p>
         )}
         <p className="mt-2" style={{ color: C.muted }}>
-          La Tierra nunca reproduce la baja gravedad, el vacío lunar ni la radiación: eso queda siempre fuera.
+          Earth never reproduces low gravity, the lunar vacuum, the thin Martian atmosphere or space radiation: those always stay outside the analogy.
         </p>
       </section>
 
@@ -261,7 +261,7 @@ export default function AnalysisTab() {
       <section className="space-y-5">
         <div className="flex flex-wrap items-center gap-3 text-[11px]" style={{ color: C.secondary }}>
           <span className="flex items-center gap-1">
-            <span className="inline-block h-3 w-3 rounded-full" style={{ background: C.site }} /> Análogo conocido
+            <span className="inline-block h-3 w-3 rounded-full" style={{ background: C.site }} /> Known analog
           </span>
           <span className="flex items-center gap-1">
             <span className="inline-block h-3 w-3 rounded-full" style={{ background: C.muted }} /> Control
@@ -270,7 +270,7 @@ export default function AnalysisTab() {
             <span className="inline-block h-2.5 w-2.5 rotate-45" style={{ background: C.target }} /> {target.short}
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block h-3 w-0.5" style={{ background: C.muted }} /> Mediana Tierra
+            <span className="inline-block h-3 w-0.5" style={{ background: C.muted }} /> Earth median
           </span>
         </div>
         {DIMENSIONS.map((d) => {
@@ -288,9 +288,9 @@ export default function AnalysisTab() {
           );
         })}
         <p className="text-[11px]" style={{ color: C.muted }}>
-          A = Atacama · H = Haughton · D = Death Valley · M = Valles Secos McMurdo · Z = Amazonía (control). «Discrimina
-          análogos» = diferencia entre la media de los análogos conocidos y el control, relativa al rango terrestre: indica
-          qué variables separan mejor un análogo de un lugar cualquiera.
+          A = Atacama · H = Haughton · D = Death Valley · M = McMurdo Dry Valleys · Z = Amazon (control). &quot;Separates
+          analogs&quot; = difference between the mean of the known analogs and the control, relative to Earth&apos;s range: it
+          shows which variables best tell an analog apart from an ordinary place.
         </p>
       </section>
     </div>

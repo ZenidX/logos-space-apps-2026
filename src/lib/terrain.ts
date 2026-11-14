@@ -32,7 +32,7 @@ const loadImage = (url: string) =>
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`No se pudo cargar ${url}`));
+    img.onerror = () => reject(new Error(`Could not load ${url}`));
     img.src = url;
   });
 
@@ -96,7 +96,7 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
   // Imagen Sentinel-2: si no hay teselas a zoom 14 (latitudes muy altas), se prueba zoom 11;
   // si tampoco, textura de sombreado del relieve. La imagen nunca impide ver el relieve.
   let texture: HTMLCanvasElement | null = null;
-  let imagery = "Imagen: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)";
+  let imagery = "Imagery: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)";
   for (const tz of [14, 11]) {
     try {
       texture = await mercatorMosaic("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", bbox, tz, 1024);
@@ -107,7 +107,7 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
   }
   if (!texture) {
     texture = hillshadeTexture(heights, n, sizeM, sizeM, minH, maxH);
-    imagery = "Textura: sombreado del relieve (sin imagen Sentinel-2 disponible aquí)";
+    imagery = "Texture: hillshade (no Sentinel-2 imagery available here)";
   }
   const latR = (lat * Math.PI) / 180;
   return {
@@ -119,7 +119,7 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     minH,
     maxH,
     resolutionM: (40075016 * Math.cos(latR)) / 2 ** z / 256,
-    source: `Elevación: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · ${imagery}`,
+    source: `Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · ${imagery}`,
   };
 }
 
@@ -192,7 +192,7 @@ async function trekExport(base: string, bbox: string, n: number, extra = "") {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Trek ${res.status}`);
   const buf = await res.arrayBuffer();
-  if (buf.byteLength < n * n * 4) throw new Error("Respuesta de Trek incompleta");
+  if (buf.byteLength < n * n * 4) throw new Error("Incomplete response from Trek");
   return new Float32Array(buf.slice(0, n * n * 4));
 }
 
@@ -208,7 +208,7 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
   const y = rho * Math.cos((lon * Math.PI) / 180);
   const hs = sizeM / 2;
   const h = await trekExport(MOON_SP, `${x - hs},${y - hs},${x + hs},${y + hs}`, n);
-  return finish(h, n, sizeM, sizeM, 5, "Elevación: NASA LRO LOLA DEM polo sur 5 m/px (Moon Trek ImageServer) · Textura: sombreado del relieve");
+  return finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px (Moon Trek ImageServer) · Texture: hillshade");
 }
 
 // Marte: mezcla HRSC + MOLA (~200 m/px), coordenadas lat/lon.
@@ -217,7 +217,7 @@ export async function loadMarsBlend(lat: number, lon: number, sizeM = 11000, n =
   const dLon = dLat / Math.cos((lat * Math.PI) / 180);
   const bbox = `${lon - dLon / 2},${lat - dLat / 2},${lon + dLon / 2},${lat + dLat / 2}`;
   const h = await trekExport(MARS_BLEND, bbox, n);
-  return finish(h, n, sizeM, sizeM, 200, "Elevación: MOLA + Mars Express HRSC blend ~200 m/px (Mars Trek ImageServer) · Textura: sombreado del relieve");
+  return finish(h, n, sizeM, sizeM, 200, "Elevation: MOLA + Mars Express HRSC blend ~200 m/px (Mars Trek ImageServer) · Texture: hillshade");
 }
 
 // Marte, Jezero: CTX DTM de 20 m (USGS Astrogeology, Mars 2020). GeoTIFF Float32 sin comprimir,
@@ -250,5 +250,5 @@ export async function loadJezeroCTX(lat: number, lon: number, sizeM = 11000, n =
       out[r * n + col] = view.getFloat32((sr * W + sc) * 4, true);
     }
   }
-  return finish(out, n, side * PX, side * PX, 20, "Elevación: CTX DTM 20 m Jezero (USGS Astrogeology / Mars 2020 TRN) · Textura: sombreado del relieve");
+  return finish(out, n, side * PX, side * PX, 20, "Elevation: CTX DTM 20 m Jezero (USGS Astrogeology / Mars 2020 TRN) · Texture: hillshade");
 }

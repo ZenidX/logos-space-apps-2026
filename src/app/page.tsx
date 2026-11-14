@@ -13,21 +13,21 @@ const TileMap = dynamic(() => import("@/components/TileMap"), { ssr: false });
 
 const TARGET_MARKERS: Record<Body, { lat: number; lon: number; label: string; highlight?: boolean }[]> = {
   earth: SITES.map((s) => ({ lat: s.lat, lon: s.lon, label: s.name, highlight: s.known })),
-  moon: [{ lat: -89.5, lon: 0, label: "Borde de Shackleton (polo sur)", highlight: true }],
+  moon: [{ lat: -89.5, lon: 0, label: "Shackleton rim (south pole)", highlight: true }],
   mars: [
-    { lat: 18.4, lon: 77.5, label: "Cráter Jezero", highlight: true },
-    { lat: 40, lon: -160, label: "Arcadia Planitia (hielo)", highlight: true },
+    { lat: 18.4, lon: 77.5, label: "Jezero crater", highlight: true },
+    { lat: 40, lon: -160, label: "Arcadia Planitia (ice)", highlight: true },
   ],
 };
 
-const BODY_LABEL: Record<Body, string> = { earth: "Tierra", moon: "Luna", mars: "Marte" };
+const BODY_LABEL: Record<Body, string> = { earth: "Earth", moon: "Moon", mars: "Mars" };
 const BODY_SRC: Record<Body, string> = { earth: "NASA GIBS · BLUE MARBLE", moon: "MOON TREK · LRO WAC", mars: "MARS TREK · MGS MOLA" };
 
 const TABS = [
-  ["candidatos", "Candidatos"],
-  ["analisis", "Análisis"],
-  ["datos", "Datos"],
-  ["mapas", "Mapas"],
+  ["candidatos", "Candidates"],
+  ["analisis", "Analysis"],
+  ["datos", "Data"],
+  ["mapas", "Maps"],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
@@ -77,7 +77,7 @@ export default function Home() {
         {tab === "mapas" && (
           <div className="flex h-[calc(100dvh-13rem)] flex-col gap-3">
             <p className="etq" data-n="04">
-              Cartografía planetaria
+              Planetary maps
             </p>
             <div className="grid grid-cols-3 gap-2">
               {(Object.keys(BODY_LABEL) as Body[]).map((b) => (
@@ -100,7 +100,7 @@ export default function Home() {
               reticle={false}
               tl={
                 <>
-                  <span className="k">Cuerpo</span>
+                  <span className="k">Body</span>
                   <br />
                   {BODY_LABEL[body]}
                 </>

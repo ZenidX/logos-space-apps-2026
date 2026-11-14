@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14 · Google Earth Engine (proyecto terra-analog) · estadísticas globales a 50 km, muestras a resolución nativa",
+  "generatedAt": "2026-11-14 · Google Earth Engine (project terra-analog) · global statistics at 50 km, samples at native resolution",
   "sites": ["atacama", "haughton", "deathvalley", "dryvalleys", "amazonia"],
   "layers": [
     { "id": "lst_day", "bandType": { "precision": "int", "min": 0, "max": 65535 }, "nominalScale": 927,

@@ -190,21 +190,21 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
         tr={
           stats && (
             <>
-              <span className="k">Relieve</span> {Math.round(stats.reliefM)} m
+              <span className="k">Relief</span> {Math.round(stats.reliefM)} m
               <br />
-              <span className="k">Pend. media</span> {stats.meanSlopeDeg.toFixed(1)}°
+              <span className="k">Mean slope</span> {stats.meanSlopeDeg.toFixed(1)}°
               <br />
-              <span className="k">Pend. máx</span> {stats.maxSlopeDeg.toFixed(0)}°
+              <span className="k">Max slope</span> {stats.maxSlopeDeg.toFixed(0)}°
             </>
           )
         }
         bl={
           state === "cargando" ? (
-            <span className="vivo">Cargando elevación…</span>
+            <span className="vivo">Loading elevation…</span>
           ) : state === "error" ? (
             <span style={{ color: "var(--warn)" }}>Error: {err}</span>
           ) : (
-            <span className="k">Malla ≈ {res ? Math.round(res) : "?"} m/px · ×{exaggeration} vertical</span>
+            <span className="k">Mesh ≈ {res ? Math.round(res) : "?"} m/px · ×{exaggeration} vertical</span>
           )
         }
       >

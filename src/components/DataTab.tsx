@@ -13,7 +13,7 @@ interface EeLayer {
 const ee = eeSamples as unknown as { generatedAt: string | null; layers: EeLayer[] };
 
 const fmt = (v: number | null | undefined, d = 2) =>
-  v == null || Number.isNaN(v) ? "—" : Math.abs(v) >= 1000 ? Math.round(v).toLocaleString("es-ES") : v.toFixed(d);
+  v == null || Number.isNaN(v) ? "—" : Math.abs(v) >= 1000 ? Math.round(v).toLocaleString("en-US") : v.toFixed(d);
 
 const date = (ms?: number | null) => (ms ? new Date(ms).toISOString().slice(0, 10) : "—");
 
@@ -39,27 +39,27 @@ function LayerCard({ layer }: { layer: Layer }) {
       <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
         <dt className="text-slate-400">Earth Engine</dt>
         <dd className="truncate font-mono">{layer.eeId}</dd>
-        <dt className="text-slate-400">Banda</dt>
+        <dt className="text-slate-400">Band</dt>
         <dd className="font-mono">{layer.band}</dd>
-        <dt className="text-slate-400">Tipo crudo</dt>
+        <dt className="text-slate-400">Raw type</dt>
         <dd className="font-mono">
-          {bt ? `${bt.precision ?? bt.type ?? "?"} [${fmt(bt.min, 0)} … ${fmt(bt.max, 0)}]` : "pendiente"}
+          {bt ? `${bt.precision ?? bt.type ?? "?"} [${fmt(bt.min, 0)} … ${fmt(bt.max, 0)}]` : "pending"}
         </dd>
-        <dt className="text-slate-400">Resolución</dt>
-        <dd>{data?.nominalScale ? `${fmt(data.nominalScale, 0)} m` : "pendiente"}</dd>
-        <dt className="text-slate-400">Conversión</dt>
+        <dt className="text-slate-400">Resolution</dt>
+        <dd>{data?.nominalScale ? `${fmt(data.nominalScale, 0)} m` : "pending"}</dd>
+        <dt className="text-slate-400">Conversion</dt>
         <dd>{layer.transform}</dd>
-        <dt className="text-slate-400">Imágenes / fechas</dt>
+        <dt className="text-slate-400">Images / dates</dt>
         <dd>
-          {data?.meta ? `${fmt(data.meta.n, 0)} · ${date(data.meta.t0)} → ${date(data.meta.t1)}` : "pendiente"}
+          {data?.meta ? `${fmt(data.meta.n, 0)} · ${date(data.meta.t0)} → ${date(data.meta.t1)}` : "pending"}
         </dd>
-        <dt className="text-slate-400">Resumen MVP</dt>
+        <dt className="text-slate-400">Summary used</dt>
         <dd>{layer.aggregation}</dd>
       </dl>
 
       {data?.stats && (
         <div className="mt-3">
-          <p className="mb-1 text-xs text-slate-400">Rango terrestre ({layer.unit}, muestreo global 50 km)</p>
+          <p className="mb-1 text-xs text-slate-400">Earth range ({layer.unit}, global 50 km sampling)</p>
           <div className="grid grid-cols-5 gap-1 text-center text-[11px]">
             {(["v_min", "v_p1", "v_p50", "v_p99", "v_max"] as const).map((k) => (
               <div key={k} className="rounded bg-black/30 py-1">
@@ -73,7 +73,7 @@ function LayerCard({ layer }: { layer: Layer }) {
 
       {data?.samples && (
         <div className="mt-3">
-          <p className="mb-1 text-xs text-slate-400">Muestras ({layer.unit})</p>
+          <p className="mb-1 text-xs text-slate-400">Site samples ({layer.unit})</p>
           <ul className="space-y-0.5 text-xs">
             {SITES.map((s, i) => (
               <li key={s.id} className="flex justify-between">
@@ -109,13 +109,13 @@ export default function DataTab() {
   return (
     <div className="space-y-6">
       <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4 text-sm">
-        <h2 className="mb-1 text-lg font-bold">Capas de datos</h2>
+        <h2 className="mb-1 text-lg font-bold">Data layers</h2>
         <p className="text-slate-300">
-          Cada capa terrestre se calcula en Google Earth Engine con datos de NASA/ESA y se empareja con su
-          equivalente en la Luna y Marte (NASA PDS/Trek).
+          Each Earth layer is computed in Google Earth Engine from NASA/ESA data and paired with its Moon and Mars
+          counterpart (NASA PDS/Trek).
         </p>
         <p className="mt-2 text-xs text-slate-400">
-          {ee.generatedAt ? `Muestras generadas: ${ee.generatedAt}` : "Muestras de Earth Engine: pendientes"}
+          {ee.generatedAt ? `Samples generated: ${ee.generatedAt}` : "Earth Engine samples: pending"}
         </p>
       </section>
       {dims.map((d) => (

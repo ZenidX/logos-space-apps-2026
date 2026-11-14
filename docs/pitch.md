@@ -1,6 +1,6 @@
 # Pitch y entrega
 
-Borrador basado en los resultados reales de `src/data/ee-global.json` (14-11-2026). Si se vuelve a ejecutar la búsqueda, hay que revisar las cifras marcadas con ⚠.
+Borrador basado en los resultados reales de `src/data/ee-global.json` (14-11-2026). Revisado por Jefe el 14-11: el ensayo de Arizona fue JETT5, en mayo de 2024 ([NASA](https://www.nasa.gov/image-article/a-moonlit-moonwalk/)), no en 2022; se quita «nobody has searched…» porque no se puede demostrar, y se dice abiertamente que Death Valley y Mauna Kea también entran en el top 10 % de Shackleton. Si se vuelve a ejecutar la búsqueda, hay que revisar las cifras marcadas con ⚠.
 
 La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse en el idioma que acepte el evento de Barcelona: hay que confirmarlo con la organización local.
 
@@ -9,17 +9,17 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 ## 1. Pitch local de 3 minutos (guion en inglés, ~420 palabras)
 
 **[0:00–0:20] Hook**
-> In 2022, to rehearse a Moon landing at the lunar south pole, NASA took astronauts to a volcanic field in Arizona — and had to fake the Sun with a lighting cart at night, because the light there is nothing like the Moon. Finding the right place on Earth to practise for the Moon and Mars is still mostly guesswork.
+> In May 2024, to rehearse moonwalks for the lunar south pole, NASA took astronauts to a volcanic field in Arizona — and ran the test at night, with artificial lights, because daylight there is nothing like the low Sun at the Moon's pole. Choosing where on Earth to practise for the Moon and Mars still depends a lot on experience.
 
 **[0:20–0:50] Problem**
-> Today's analog sites — Atacama, Iceland, Antarctica — were chosen one by one, by experience. Nobody has searched the *whole* planet systematically, and nobody tells you *where* an analog stops being useful. The challenge asks exactly that: find new analogs, and explain what is similar, how similar, and where the analogy breaks.
+> Today's analog sites — Atacama, Iceland, Antarctica — were chosen one by one, by experience. There is no open tool that scores the *whole* planet against a real Moon or Mars site and tells you *where* each analog stops being useful. The challenge asks exactly that: find new analogs, and explain what is similar, how similar, and where the analogy breaks.
 
 **[0:50–1:50] Solution + demo** *(live demo of the app on a phone)*
 > This is **Terra Analog**. We took NASA Earth observation data — MODIS land temperature, vegetation and albedo, GPM rainfall, and terrain — and scored every 11-kilometre cell of land on Earth against three real targets: the Shackleton crater rim at the lunar south pole, Jezero crater on Mars, and Arcadia Planitia, a candidate Mars landing site with buried ice.
 >
 > The Moon reaches −230 °C — no place on Earth does. So instead of comparing raw numbers, we ask: *where does the target sit within Earth's range?* and find the places that sit at the same extreme.
 >
-> First, we checked it works: for Shackleton, the polar analogs NASA and ESA already use — Svalbard, the McMurdo Dry Valleys, Axel Heiberg, Concordia — land in the top 10 % of the planet. Desert analogs like Atacama don't — and that's correct: they are Mars analogs, not Moon analogs.
+> First, we checked it works: for Shackleton, the polar analog sites — Svalbard, the McMurdo Dry Valleys, Axel Heiberg, Concordia — land in the top 10 % of the planet, while Atacama, a Mars analog, does not. It is not perfect: Death Valley and Mauna Kea also reach that top 10 %, because with only climate, surface and slope, any dry, bare and steep place looks lunar. That is exactly why we show, for every site, *which* variables match and which don't.
 >
 > Then we removed the 25 analogs that are already catalogued and asked what is left. Our top new candidates: **northern Ellesmere Island in the Canadian high Arctic**, and the **high cold deserts of the Karakoram–Kunlun plateau** in western China. ⚠
 >
@@ -59,16 +59,18 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 **High-level summary (borrador):**
 Terra Analog systematically searches the whole Earth for new terrestrial analogs of future Moon and Mars base sites. Using NASA MODIS, GPM IMERG and terrain data in Google Earth Engine, it scores every ~11 km land cell against three real targets (Shackleton rim, Jezero crater, Arcadia Planitia) by comparing *relative positions within Earth's range*, since the Moon and Mars are more extreme than anywhere on Earth. It validates the method against 25 known analogs, excludes them, and ranks new candidates, explaining for each one what is analogous, how much, and where the analogy breaks.
 
-**NASA Data:** MODIS MOD11A2 (land surface temperature), MOD13A2 / MOD13C1 (NDVI), MCD43A3 / MCD43C3 (albedo), MOD10A1 (snow), GPM IMERG monthly V07 (precipitation), ASTER GED (emissivity), NASADEM (elevation), NASA GIBS / Worldview (imagery), Moon Trek LRO WAC and Mars Trek MGS MOLA (basemaps). Moon/Mars reference values from LRO Diviner and LOLA, MGS TES and MOLA, and Perseverance MEDA.
+**NASA Data:** *Global search:* MODIS MOD11A2 (land surface temperature), MOD13C1 (NDVI), MCD43C3 (albedo) and GPM IMERG monthly V07 (precipitation), accessed via Google Earth Engine. *Reference-site analysis:* MOD13A2, MCD43A3, MOD10A1 (snow), ASTER GED (emissivity), NASADEM (elevation). *Maps and 3D:* NASA GIBS / Worldview, Moon Trek (LRO WAC, LOLA south-pole DEM) and Mars Trek (MGS MOLA, HRSC+MOLA blend), USGS/NASA Mars 2020 CTX DTM of Jezero. *Moon/Mars target values* are approximate figures from the literature on LRO Diviner and LOLA, MGS TES and MOLA and Perseverance MEDA; they were not computed from PDS products.
 
-**Space Agency Partner Data and Other References:** ESA Copernicus DEM GLO-30; USGS GMTED2010; Google Earth Engine (data access and processing); OpenStreetMap Nominatim (place names); Next.js, React, Tailwind CSS, Leaflet.
+**Space Agency Partner Data and Other References:** ESA Copernicus DEM GLO-30; USGS GMTED2010 (global slope); AWS Terrain Tiles (SRTM/NASADEM/ArcticDEM) and EOX Sentinel-2 cloudless (3D viewer); Google Earth Engine (data access and processing); OpenStreetMap Nominatim (place names); Next.js, React, Tailwind CSS, Leaflet, three.js.
 
 **Use of SI:** pendiente de redactar con honestidad por el equipo. Hay que indicar que se usó un asistente de IA (Claude Code) para programar, procesar datos y redactar la documentación, y que la idea y el planteamiento son del equipo. Las normas prohíben usar IA para tener la idea.
 
 ---
 
 ## 4. Riesgos a decir en voz alta si preguntan
-- Los valores de la Luna y Marte de los objetivos son **aproximados** (de la literatura); todavía no salen de los productos PDS.
+- Los valores de la Luna y Marte de los objetivos son **aproximados** (de la literatura); todavía no salen de los productos PDS. Como casi todas las temperaturas de la Luna y Marte quedan por debajo del mínimo terrestre, en la práctica la puntuación de clima premia «lo más frío de la Tierra».
+- La pendiente global se mide a 5 km: a esa escala casi toda montaña queda «en el techo» y saca Relieve 100. La web lo marca como «Tie at Earth's limit».
+- Death Valley y Mauna Kea entran en el top 10 % de Shackleton: con solo clima, superficie y pendiente, cualquier sitio seco, sin plantas y empinado parece lunar.
 - La resolución es de unos 11 km: un cráter o una cueva concreta necesitan un análisis más fino.
 - La validación es parcial: los análogos conocidos quedan por encima de la mediana, pero no todos entran en el top 10 %.
 - La Tierra no reproduce la gravedad, el vacío ni la radiación.

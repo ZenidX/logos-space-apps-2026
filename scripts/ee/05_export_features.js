@@ -11,10 +11,10 @@ var featImg = ee.Image.cat([
   lst.select('LST_Day_1km').max().rename('lst_max'),
   lst.select('LST_Night_1km').min().rename('lst_min'),
   col('NASA/GPM_L3/IMERG_MONTHLY_V07', 'precipitation').mean().multiply(8760).rename('precip'),
-  // OJO: el asset actual se exportó con .multiply(0.0001) y el NDVI quedó 10 000 veces pequeño.
-  // La puntuación no cambia (posición relativa), y la web corrige los valores mostrados (x10000).
-  // Si se reexporta, quitar el multiply.
-  col('MODIS/061/MOD13C1', 'NDVI').mean().multiply(0.0001).rename('ndvi'),
+  // MOD13C1 en Earth Engine YA trae aplicado el factor de escala (ver la ficha del catálogo):
+  // NO multiplicar por 0.0001. El asset del 14-11 se exportó con ese multiply de más y su NDVI
+  // es 10 000 veces pequeño; 06_puntuar_asset.js lo compensa con NDVI_FIX mientras no se reexporte.
+  col('MODIS/061/MOD13C1', 'NDVI').mean().rename('ndvi'),
   col('MODIS/061/MCD43C3', 'Albedo_WSA_shortwave').filter(ee.Filter.calendarRange(15, 15, 'day_of_month')).mean().multiply(0.001).rename('albedo'),
   ee.Terrain.slope(gmted.reproject('EPSG:4326', null, 5000)).rename('slope'),
   gmted.rename('elev')

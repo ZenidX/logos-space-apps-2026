@@ -2,6 +2,18 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (tarde, 3) · Auditoría y arreglos (Jefe, rama `fix/auditoria-jefe`, sin push)
+
+Revisión completa del repo comprobada en la web (página oficial del reto, web publicada, catálogo de Earth Engine, nasa.gov). Fallos encontrados y qué se ha hecho:
+
+1. **NDVI escalado dos veces.** La ficha de `MODIS/061/MOD13C1` en Earth Engine dice que la escala ya viene aplicada; `05` multiplicaba por 0,0001 otra vez. Los 59 candidatos guardaban NDVI = 0 y la web decía «Vegetation 100» en todos. Lo de «la web lo corrige» era falso: no había código que lo hiciera. **Arreglo:** el NDVI de los candidatos pasa a `null` (se muestra «—»); `05` sin multiply; `06` con `NDVI_FIX`; scripts nuevos `07_ndvi_candidatos.js` y `merge-ndvi.mjs` para recuperar el valor real (pendiente: la cuenta de Google del navegador no tiene acceso al proyecto `terra-analog`). La puntuación no cambia.
+2. **Pendiente saturada.** A 5 km, el p99 de la Tierra es 4,4° y Shackleton tiene 8°: cualquier montaña sacaba Relieve 100. **Arreglo:** si el sitio y el objetivo superan los dos el p99, la web ya no lo cuenta como «Similar in» y lo muestra como «Tie at Earth's limit».
+3. **Pitch.** El ensayo nocturno en Arizona fue JETT5, en **mayo de 2024**, no en 2022 ([NASA](https://www.nasa.gov/image-article/a-moonlit-moonwalk/)). Fuera «nobody has searched the whole planet» (no se puede demostrar). Se dice que Death Valley y Mauna Kea también entran en el top 10 % de Shackleton. Campo «NASA Data» separado entre lo que se usa en la búsqueda global y lo que se usa solo en otras pestañas.
+4. **Interfaz en inglés** (la entrega exige inglés). Nombres de lugares y de análogos en inglés.
+5. **HI-SEAS** está en Mauna Loa, no en Mauna Kea: la etiqueta pasa a «Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)».
+6. **`06`: nombres y notas de los análogos conocidos** se emparejaban por posición con `aggregate_array` (que descarta nulos). Ahora van juntos con `toList`.
+7. README: Geología e Hielo ya no aparecen como puntuadas (no tienen valor del objetivo) y hay una sección «Known limitations».
+
 ## 2026-11-14 (tarde, 2)
 
 ### Web publicada, estilo «Consola» y visor 3D

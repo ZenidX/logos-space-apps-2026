@@ -15,10 +15,10 @@ export interface Target {
 export const TARGETS: Target[] = [
   {
     id: "shackleton",
-    name: "Borde de Shackleton · polo sur lunar",
+    name: "Shackleton crater rim · lunar south pole",
     short: "Shackleton",
     body: "moon",
-    description: "Candidata a base permanente de Artemis: luz rasante casi continua y cráteres en sombra con hielo.",
+    description: "Candidate Artemis base region: near-continuous low-angle sunlight next to permanently shadowed craters with ice.",
     values: {
       lst_day: -100,
       lst_night: -180,
@@ -33,14 +33,14 @@ export const TARGETS: Target[] = [
       elev: null,
       cop_dem: null,
     },
-    sources: "LRO Diviner (temperaturas), LRO LOLA (pendiente), LROC WAC (albedo) · aproximados",
+    sources: "Approximate literature values (not yet extracted from PDS products): LRO Diviner (temperatures), LRO LOLA (slope), LROC WAC (albedo). Day/max values describe the sunlit rim; the minimum (−230 °C) is the shadowed crater floor.",
   },
   {
     id: "jezero",
-    name: "Cráter Jezero · Marte",
+    name: "Jezero crater · Mars",
     short: "Jezero",
     body: "mars",
-    description: "Antiguo delta lacustre explorado por Perseverance; referencia astrobiológica.",
+    description: "Ancient lake delta explored by Perseverance; an astrobiology reference site.",
     values: {
       lst_day: -40,
       lst_night: -80,
@@ -55,14 +55,14 @@ export const TARGETS: Target[] = [
       elev: null,
       cop_dem: null,
     },
-    sources: "Perseverance MEDA (temperaturas), MGS TES (albedo), MOLA (pendiente) · aproximados",
+    sources: "Approximate literature values (not yet extracted from PDS products): Perseverance MEDA (temperatures), MGS TES (albedo), MOLA (slope).",
   },
   {
     id: "arcadia",
     name: "Arcadia Planitia · Marte",
     short: "Arcadia",
     body: "mars",
-    description: "Llanura de latitud media con hielo a poca profundidad, candidata a misiones humanas (SWIM).",
+    description: "Mid-latitude plain with shallow buried ice, a candidate region for human missions (SWIM project).",
     values: {
       lst_day: -60,
       lst_night: -100,
@@ -77,6 +77,6 @@ export const TARGETS: Target[] = [
       elev: null,
       cop_dem: null,
     },
-    sources: "MGS TES / Mars Climate Database (temperaturas), MOLA (pendiente) · aproximados",
+    sources: "Approximate literature values (not yet extracted from PDS products): MGS TES / Mars Climate Database (temperatures), MOLA (slope).",
   },
 ];

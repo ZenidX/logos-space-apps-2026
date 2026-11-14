@@ -21,6 +21,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - `src/components/AnalysisTab.tsx` + `src/lib/analysis.ts` ← `src/data/ee-samples.json`: similitud por dimensión en 5 sitios de referencia.
 - `src/components/DataTab.tsx` ← `src/data/catalog.ts` + `ee-samples.json`: fichas de cada capa.
 - `src/components/Viewer3D.tsx` + `Terrain3D.tsx` + `src/lib/terrain.ts`: visor 3D de 11 × 11 km, candidato frente a objetivo. Luna/Marte desde el **ArcGIS ImageServer de Trek** (`exportImage`, F32, `format=bsq`); las teselas WMTS de Trek NO son alturas.
+- Interfaz en inglés (la entrega tiene que ir en inglés); la documentación interna sigue en español.
 - Estilo «Consola» (animaciones.zenidx.com): tokens en `src/app/globals.css` (la paleta de Tailwind slate/orange/sky está remapeada) y marco HUD en `src/components/Visor.tsx`.
 - `src/components/TileMap.tsx`: Leaflet con NASA GIBS (Tierra, EPSG:3857) y Moon/Mars Trek (EPSG:4326).
 - `src/data/targets.ts`: huellas de Shackleton, Jezero y Arcadia (valores **aproximados**).
@@ -39,7 +40,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 3. `MODIS/061/MOD11C3` y `MOD13C2` **no existen**. Sí existen `MOD13C1` y `MCD43C3`.
 4. El modo interactivo se corta a los ~5 min. Lo global pesado se exporta a un asset en batch.
 5. Exportar hasta ±90° falla («Unable to transform edge»). Hay que usar ±85°.
-6. `MOD13C1` NDVI: el asset actual lo tiene ×1e-4 de más. La web lo corrige al convertir. Si se reexporta, quitar el multiply.
+6. `MOD13C1` NDVI: Earth Engine YA aplica la escala (ficha del catálogo). El asset del 14-11 se exportó con `.multiply(0.0001)` de más: su NDVI es 10 000 veces pequeño y, al redondear, salió 0 en todos los candidatos (la web mostraba «Vegetation 100» falso; la web NO lo corregía). Arreglo: `05` ya sin multiply; `06` usa `NDVI_FIX = 10000` mientras no se reexporte; `07_ndvi_candidatos.js` + `node scripts/ee/merge-ndvi.mjs` recuperan el NDVI de los candidatos actuales. Mientras tanto, `ndvi` = null en `ee-global.json`.
 7. Un `FeatureCollection` dentro de un `ee.Dictionary` evaluado no trae `.features`. Usar `.toList(n)`.
 8. `clip` con muchos buffers unidos es lento. Para máscaras, usar `ee.Image(0).paint(fc, 1)`.
 
@@ -49,7 +50,8 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - Pendiente:
   - Dimensiones de Geología (ASTER/Diviner/TES) y de Hielo (todavía sin dato de los objetivos).
   - Valores de los objetivos desde productos PDS reales.
-  - La pendiente a 5 km se queda corta (p99 ≈ 4,4°).
+  - La pendiente a 5 km se satura (p99 ≈ 4,4°): la web la marca como «Tie at Earth's limit». Arreglo de fondo: pendiente a otra escala o rugosidad.
+  - Recuperar el NDVI real de los candidatos (necesita la cuenta de Google dueña del proyecto EE `terra-analog`).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
   - Pitch: borrador en `docs/pitch.md` (guion 3 min, vídeo 30 s, campos de la página). Falta ensayar, grabar el vídeo y rellenar la página del proyecto.

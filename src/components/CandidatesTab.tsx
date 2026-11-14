@@ -42,19 +42,25 @@ const EXTREMES: Record<string, [number, number]> = Object.fromEntries(
 const RANGES = (eeGlobal as unknown as { ranges?: Record<string, number> }).ranges ?? {};
 
 const VAR_LABEL: Record<string, string> = {
-  lst_day: "Temp. diurna",
-  lst_night: "Temp. nocturna",
-  lst_max: "Temp. máxima",
-  lst_min: "Temp. mínima",
-  precip: "Lluvia",
-  ndvi: "Vegetación",
+  lst_day: "Day temp.",
+  lst_night: "Night temp.",
+  lst_max: "Max temp.",
+  lst_min: "Min temp.",
+  precip: "Rainfall",
+  ndvi: "Vegetation",
   albedo: "Albedo",
-  slope: "Pendiente",
+  slope: "Slope",
 };
+
+// La pendiente global se mide a 5 km (GMTED2010): a esa escala el p99 de la Tierra es ~4,4°.
+// Si el sitio y el objetivo superan los dos el p99, la similitud sale 1 pero no significa nada
+// (los dos están "en el techo" de la escala). Se muestra aparte como empate en el límite.
+const SATURABLE = new Set(["slope"]);
 
 // Similitud por variable (misma fórmula que en Earth Engine): 1 − |pos(sitio) − pos(objetivo)| en p1–p99.
 function explain(c: Candidate, targetValues: Record<string, number | null>) {
   const rows: { k: string; sim: number; beyond: boolean }[] = [];
+  const saturated: string[] = [];
   for (const k of Object.keys(VAR_LABEL)) {
     const lo = RANGES[`${k}_p1`];
     const hi = RANGES[`${k}_p99`];
@@ -62,10 +68,14 @@ function explain(c: Candidate, targetValues: Record<string, number | null>) {
     const t = targetValues[k];
     if (lo == null || hi == null || v == null || t == null) continue;
     const pos = (x: number) => Math.min(1, Math.max(0, (x - lo) / (hi - lo)));
+    if (SATURABLE.has(k) && v >= hi && t >= hi) {
+      saturated.push(k);
+      continue;
+    }
     rows.push({ k, sim: 1 - Math.abs(pos(v) - pos(t)), beyond: EXTREMES[k] != null && (t < EXTREMES[k][0] || t > EXTREMES[k][1]) });
   }
   rows.sort((a, b) => b.sim - a.sim);
-  return { strong: rows.slice(0, 3), weak: rows.slice(-2).reverse(), beyond: rows.filter((r) => r.beyond) };
+  return { strong: rows.slice(0, 3), weak: rows.slice(-2).reverse(), beyond: rows.filter((r) => r.beyond), saturated };
 }
 
 const worldview = ([lon, lat]: [number, number]) =>
@@ -78,11 +88,11 @@ const coord = ([lon, lat]: [number, number]) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
 
 function tier(v: number | null, d: TargetResult["dist"]) {
-  if (v == null) return { label: "sin dato", cls: "text-slate-500" };
-  if (v >= d.total_p99) return { label: "top 1 %", cls: "text-emerald-400" };
-  if (v >= d.total_p90) return { label: "top 10 %", cls: "text-sky-300" };
-  if (v >= d.total_p50) return { label: "mitad alta", cls: "text-slate-300" };
-  return { label: "mitad baja", cls: "text-orange-400" };
+  if (v == null) return { label: "no data", cls: "text-slate-500" };
+  if (v >= d.total_p99) return { label: "top 1%", cls: "text-emerald-400" };
+  if (v >= d.total_p90) return { label: "top 10%", cls: "text-sky-300" };
+  if (v >= d.total_p50) return { label: "upper half", cls: "text-slate-300" };
+  return { label: "lower half", cls: "text-orange-400" };
 }
 
 function DimBar({ label, v }: { label: string; v: number | null }) {
@@ -119,7 +129,7 @@ export default function CandidatesTab() {
   );
 
   if (!available.length) {
-    return <p className="text-sm text-slate-400">Calculando la búsqueda global en Earth Engine…</p>;
+    return <p className="text-sm text-slate-400">Running the global search in Earth Engine…</p>;
   }
 
   const knownSorted = [...(res?.known ?? [])].sort((a, b) => (b.total ?? -1) - (a.total ?? -1));
@@ -130,7 +140,7 @@ export default function CandidatesTab() {
     <div className="space-y-6">
       <section>
         <p className="etq mb-3" data-n="01">
-          Objetivo a imitar
+          Target to match
         </p>
         <div className="grid grid-cols-3 gap-2">
           {TARGETS.map((t) => (
@@ -140,7 +150,7 @@ export default function CandidatesTab() {
               onClick={() => setTargetId(t.id)}
               className={`btn-cut border px-2 py-2 font-mono text-[11px] uppercase tracking-[.06em] transition-colors disabled:opacity-40 ${t.id === targetId ? "border-[var(--acc)] bg-[var(--acc)] text-[var(--bg)]" : "border-[var(--line2)] text-[var(--ink)] hover:text-[var(--acc)]"}`}
             >
-              <span className="opacity-60">{t.body === "moon" ? "Luna" : "Marte"} ·</span> {t.short}
+              <span className="opacity-60">{t.body === "moon" ? "Moon" : "Mars"} ·</span> {t.short}
             </button>
           ))}
         </div>
@@ -149,10 +159,10 @@ export default function CandidatesTab() {
       {res && (
         <>
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
-            <h2 className="text-lg font-bold">Nuevos análogos de {target.short}</h2>
+            <h2 className="text-lg font-bold">New analogs of {target.short}</h2>
             <p className="text-xs text-slate-300">
-              Toda la tierra firme entre 85°N y 85°S en celdas de 0,1° (~11 km), puntuada con datos NASA en Earth Engine.
-              Excluidos 25 análogos ya catalogados (radio 300 km). Candidatos separados ≥ 300 km entre sí.
+              All land between 85°N and 85°S in 0.1° cells (~11 km), scored with NASA data in Earth Engine. The 25
+              already-catalogued analogs are excluded (300 km radius). Candidates are at least 300 km apart.
             </p>
           </section>
 
@@ -160,25 +170,25 @@ export default function CandidatesTab() {
             className="h-80"
             glitchKey={targetId}
             reticle={false}
-            tl={<><span className="k">Objetivo</span><br />{target.short}</>}
-            tr={<><span className="k">Celdas</span><br />0,1° · 85N–85S</>}
-            bl={<span className="k">Top {res.top.length} · sep ≥ 300 km</span>}
+            tl={<><span className="k">Target</span><br />{target.short}</>}
+            tr={<><span className="k">Cells</span><br />0.1° · 85N–85S</>}
+            bl={<span className="k">Top {res.top.length} · ≥ 300 km apart</span>}
             br={<span className="k">NASA GIBS · MODIS · GPM</span>}
           >
             <TileMap body="earth" markers={markers} />
           </Visor>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-            <p className="etq mb-3" data-n="02">Validación</p>
+            <p className="etq mb-3" data-n="02">Validation</p>
             <p className="mb-2 text-xs" style={{ color: C.muted }}>
-              Puntuación de toda la Tierra: mediana {pct(res.dist.total_p50)} · p90 {pct(res.dist.total_p90)} · p99{" "}
-              {pct(res.dist.total_p99)}. Los análogos conocidos deberían caer arriba.
+              Score over all of Earth&apos;s land: median {pct(res.dist.total_p50)} · p90 {pct(res.dist.total_p90)} · p99{" "}
+              {pct(res.dist.total_p99)}. Known analogs should score high.
             </p>
             <p className="mb-2 text-sm">
               <b>
-                {knownAboveP90} de {knownWithData}
+                {knownAboveP90} of {knownWithData}
               </b>{" "}
-              análogos conocidos están en el top 10 % del planeta.
+              known analogs are in the planet&apos;s top 10%.
             </p>
             <ul className="grid grid-cols-1 gap-x-4 gap-y-0.5 text-xs sm:grid-cols-2">
               {knownSorted.map((k) => {
@@ -196,7 +206,7 @@ export default function CandidatesTab() {
           </section>
 
           <section className="space-y-2">
-            <p className="etq mb-3" data-n="03">Ranking de candidatos</p>
+            <p className="etq mb-3" data-n="03">Candidate ranking</p>
             {res.top.map((c, i) => (
               <article key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
                 <header className="mb-2 flex items-start justify-between gap-2">
@@ -210,37 +220,37 @@ export default function CandidatesTab() {
                   <span className="btn-cut bg-[var(--acc)] px-2 py-0.5 font-mono text-sm font-medium text-[var(--bg)]">{pct(c.total)}</span>
                 </header>
                 <div className="space-y-1">
-                  <DimBar label="Clima" v={c.clima} />
-                  <DimBar label="Superficie" v={c.superficie} />
-                  <DimBar label="Relieve" v={c.relieve} />
+                  <DimBar label="Climate" v={c.clima} />
+                  <DimBar label="Surface" v={c.superficie} />
+                  <DimBar label="Relief" v={c.relieve} />
                 </div>
                 <dl className="mt-2 grid grid-cols-3 gap-1 text-[11px]">
                   <div>
-                    <dt style={{ color: C.muted }}>T. día / noche</dt>
+                    <dt style={{ color: C.muted }}>Day / night</dt>
                     <dd className="font-mono">
                       {num(c.lst_day, 0)} / {num(c.lst_night, 0)} °C
                     </dd>
                   </div>
                   <div>
-                    <dt style={{ color: C.muted }}>Mín. / máx.</dt>
+                    <dt style={{ color: C.muted }}>Min / max</dt>
                     <dd className="font-mono">
                       {num(c.lst_min, 0)} / {num(c.lst_max, 0)} °C
                     </dd>
                   </div>
                   <div>
-                    <dt style={{ color: C.muted }}>Lluvia</dt>
-                    <dd className="font-mono">{num(c.precip, 0)} mm/a</dd>
+                    <dt style={{ color: C.muted }}>Rainfall</dt>
+                    <dd className="font-mono">{num(c.precip, 0)} mm/yr</dd>
                   </div>
                   <div>
                     <dt style={{ color: C.muted }}>NDVI</dt>
-                    <dd className="font-mono">{num(c.ndvi, 2)}</dd>
+                    <dd className="font-mono" title={c.ndvi == null ? "Pending re-export: the stored NDVI was scaled twice" : undefined}>{num(c.ndvi, 2)}</dd>
                   </div>
                   <div>
                     <dt style={{ color: C.muted }}>Albedo</dt>
                     <dd className="font-mono">{num(c.albedo, 2)}</dd>
                   </div>
                   <div>
-                    <dt style={{ color: C.muted }}>Pendiente</dt>
+                    <dt style={{ color: C.muted }}>Slope (5 km)</dt>
                     <dd className="font-mono">{num(c.slope, 1)}°</dd>
                   </div>
                 </dl>
@@ -249,17 +259,24 @@ export default function CandidatesTab() {
                   return (
                     <div className="mt-2 space-y-0.5 text-[11px]">
                       <p>
-                        <span className="text-emerald-400">✔ Se parece en:</span>{" "}
+                        <span className="text-emerald-400">✔ Similar in:</span>{" "}
                         {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
                       </p>
                       <p>
-                        <span className="text-orange-400">✘ Se aleja en:</span>{" "}
+                        <span className="text-orange-400">✘ Differs in:</span>{" "}
                         {e.weak.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
                       </p>
+                      {e.saturated.length > 0 && (
+                        <p style={{ color: C.muted }}>
+                          Tie at Earth&apos;s limit (not a real match):{" "}
+                          {e.saturated.map((k) => VAR_LABEL[k]).join(", ")}. At 5 km scale both are steeper than 99% of
+                          Earth, so this variable cannot tell them apart.
+                        </p>
+                      )}
                       {e.beyond.length > 0 && (
                         <p style={{ color: C.muted }}>
-                          Ningún lugar de la Tierra alcanza a {target.short} en:{" "}
-                          {e.beyond.map((r) => VAR_LABEL[r.k]).join(", ")}.
+                          Where the analogy breaks: no place on Earth reaches {target.short} in{" "}
+                          {e.beyond.map((r) => VAR_LABEL[r.k].replace(/\.$/, "")).join(", ")}.
                         </p>
                       )}
                       <a
@@ -268,13 +285,13 @@ export default function CandidatesTab() {
                         rel="noreferrer"
                         className="inline-block pt-1 text-sky-300 underline"
                       >
-                        Ver en NASA Worldview ↗
+                        View in NASA Worldview ↗
                       </a>{" "}
                       <button
                         onClick={() => setView3d(c)}
                         className="btn-cut ml-2 border border-[var(--acc)] px-2 py-1 font-mono text-[10px] uppercase tracking-[.08em] text-[var(--acc)] hover:bg-[var(--acc)] hover:text-[var(--bg)]"
                       >
-                        Ver en 3D ▸
+                        View in 3D ▸
                       </button>
                     </div>
                   );
