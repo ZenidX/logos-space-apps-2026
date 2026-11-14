@@ -3,10 +3,11 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
-import { TOP, TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
+import { TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import LocatorMap from "@/components/LocatorMap";
 import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
+import { conditionStatus } from "@/lib/rules";
 import detailsRaw from "@/data/site-details.json";
 
 interface Details {
@@ -94,7 +95,7 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
 }
 
 export default function SitePanel({ site, mission, onBack }: { site: Site; mission: Mission; onBack: () => void }) {
-  const [tab, setTab] = useState<"why" | "when" | "how" | "limits" | "shape" | null>(null);
+  const [tab, setTab] = useState<"why" | "when" | "how" | "limits" | "shape" | null>("why"); // Why is open by default
   const t = mission.target;
   const matchVars = site.vars.filter((v) => v.inMatch);
   const tSun = t.values.sun_max_deg?.value ?? null;
@@ -121,8 +122,8 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           </div>
           <div className="flex items-baseline gap-3 sm:block sm:text-right">
             <p className="label">Analog index</p>
-            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} cap={TOP} /></p>
-            <p className="text-[11px] text-[var(--dim)]" title={TOP_NOTE}>0–1 ranking index,<br className="sm:hidden" /> not suitability</p>
+            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></p>
+            <p className="text-[11px] text-[var(--dim)]" title={TOP_NOTE}>{site.rank ? `#${site.rank} of ${site.of} new regions · ` : ""}0–1 index,<br className="sm:hidden" /> not suitability</p>
           </div>
         </header>
 
@@ -133,7 +134,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {matchVars.length}</span></>} sub={scored.length < matchVars.length ? `accepted by the mission rule; ${matchVars.length - scored.length} with no data` : "accepted by the mission rule"} color={met === matchVars.length ? "var(--earth)" : "var(--amber)"} />
           <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
           <Fig k="Mean slope" v={ts ? <>{ts.stats.slopeMeanDeg.toFixed(1)}°</> : "–"} sub={tt ? <>target {tt.stats.slopeMeanDeg.toFixed(1)}°</> : undefined} />
-          <Fig k="Permits & politics" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={<>{site.access.score !== null ? `complexity ${site.access.score.toFixed(2)} of 1` : "not scored"}{how?.travelTimeToCityHours != null && <> · travel: about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city</>}</>} color="var(--sand)" />
+          <Fig k="Permits & politics" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={<>{site.access.score !== null ? `access complexity ${site.access.score.toFixed(2)} of 1` : "not scored"}{how?.travelTimeToCityHours != null && <><br /><b className="text-[var(--ink)]">Remoteness:</b> about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city</>}</>} color="var(--sand)" />
           {tt && <div className="hidden lg:block"><LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} /></div>}
         </div>
 
@@ -159,11 +160,11 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               const met = v.similarity !== null && v.similarity >= 0.5;
               return (
                 <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
-                  <div className="flex items-baseline justify-between gap-2"><span>{v.label}</span><span className="mono text-[11.5px]" style={{ color: v.similarity === null ? "var(--dim)" : met ? "var(--earth)" : "var(--amber)" }}>{v.similarity === null ? "no data" : !met ? "out of range" : v.similarity >= 0.999 ? "in range" : "accepted (within tolerance)"} · fit {v.similarity === null ? "–" : v.similarity.toFixed(2)}</span></div>
+                  <div className="flex items-baseline justify-between gap-2"><span>{v.label}</span><span className="mono text-[11.5px]" style={{ color: v.similarity === null ? "var(--dim)" : met ? "var(--earth)" : "var(--amber)" }}>{v.similarity === null || v.value === null ? "no data" : strip && def ? conditionStatus(v.value, def.ideal!, def.tolerance!) : met ? "in range" : "out of range"} · fit {v.similarity === null ? "–" : v.similarity.toFixed(2)}</span></div>
                   {strip && def ? (
                     <>
                       <ConditionStrip id={v.id} label={v.label} ideal={def.ideal!} tolerance={def.tolerance!} value={v.value!} target={tv} targetEstimate={est} unit={v.unit} />
-                      <div className="mono text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · mission needs {rangeText(def.ideal!, v.unit)}</div>
+                      <div className="mono text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · mission needs {rangeText(def.ideal!, v.unit, def.tolerance)}</div>
                     </>
                   ) : (
                     <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no data") : `here ${fmt(v.value, v.unit)}`}</div>

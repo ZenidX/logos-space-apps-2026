@@ -10,11 +10,12 @@ const W = 380, X0 = 8, SPAN = 364;
 
 export const hasStrip = (id: string, ideal: string | null, tol: number | null) => id in AXES && !!ideal && !!tol;
 
-export function rangeText(ideal: string, unit: string) {
+export function rangeText(ideal: string, unit: string, tolerance?: number | null) {
   const [lo, hi] = parseIdeal(ideal), u = unit === "index" || unit === "0-1" ? "" : unit;
-  if (lo === -Infinity) return `${fmt(hi, u)} or less`;
-  if (hi === Infinity) return `${fmt(lo, u)} or more`;
-  return `${fmt(lo)} to ${fmt(hi, u)}`;
+  const acc = tolerance ? acceptance(ideal, tolerance) : null;
+  if (lo === -Infinity) return `${fmt(hi, u)} or less${acc ? ` (accepted up to ${fmt(acc[1], u)})` : ""}`;
+  if (hi === Infinity) return `${fmt(lo, u)} or more${acc ? ` (accepted from ${fmt(acc[0], u)})` : ""}`;
+  return `${fmt(lo)} to ${fmt(hi, u)}${acc ? ` (accepted ${fmt(Math.max(0, acc[0]))} to ${fmt(acc[1], u)})` : ""}`;
 }
 
 export default function ConditionStrip({ id, label, ideal, tolerance, value, target, targetEstimate, unit }: { id: string; label: string; ideal: string; tolerance: number; value: number; target: number | null; targetEstimate: boolean; unit: string }) {

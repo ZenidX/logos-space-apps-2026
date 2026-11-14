@@ -12,7 +12,7 @@ import { ArcSet, type ArcSpec } from "@/lib/arcs";
 import { FOV, lerpPose, orientToFace, poseFor, worldPoint, type BodyId, type Dims, type Mode, type Pose } from "@/lib/orrery-math";
 import { latLonToVec3 } from "@/lib/globe-math";
 
-export interface OrreryMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number }
+export interface OrreryMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number; primary?: boolean }
 export interface OrreryArc { id: string; from: string; to: string; dims: Dims }
 interface Props {
   mode: Mode; // overview | focus(luna|marte)
@@ -149,10 +149,15 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
       if (selM?.body === "earth") face("earth", selM);
       else {
         // No Earth site selected: turn the Earth to the centre of its candidate sites so the arcs land in view.
-        const cs = ms.filter((m) => m.body === "earth");
+        const all = ms.filter((m) => m.body === "earth"), prim = all.filter((m) => m.primary), cs = prim.length ? prim : all; // face the new regions
         if (cs.length) {
           const c = cs.reduce((acc, m) => acc.add(latLonToVec3(m.lat, m.lon)), new THREE.Vector3());
-          if (c.lengthSq() > 1e-6) { c.normalize(); out.earth = orientToFace(c, to.pos.clone().sub(centerOf(to, "earth")).normalize()); }
+          if (c.lengthSq() > 1e-6) {
+            // Face half-way between the camera and the target globe: sites stay visible and their arcs cross over directly, without wide loops.
+            const toCam = to.pos.clone().sub(centerOf(to, "earth")).normalize(), tgt = ms.find((m) => m.kind === "target");
+            const dir = tgt ? toCam.clone().multiplyScalar(0.6).addScaledVector(centerOf(to, tgt.body).sub(centerOf(to, "earth")).normalize(), 0.4).normalize() : toCam;
+            c.normalize(); out.earth = orientToFace(c, dir);
+          }
         }
       }
       return out;
@@ -169,6 +174,11 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
         const f = byId.get(a.from), t = byId.get(a.to);
         if (!f || !t) continue;
         const A = markerWorld(f), B = markerWorld(t);
+        // Sites on the far side of the Earth get no arc (it would have to loop around the planet); their arc appears when the globe turns or the site is opened.
+        // An arc is drawn when its site is visible and looks towards the target, so it crosses over directly. Sites on the far side,
+        // or facing away from the target, get their arc when the globe turns or the site is opened (no loops around the planet).
+        const towards = B.n.dot(A.p.clone().sub(B.p).normalize());
+        if ((!facing(B.p, B.n) || towards < -0.25) && a.id !== latest.current.selectedId) continue;
         specs.push({ id: a.id, dims: a.dims, a: A.p, na: A.n, b: B.p, nb: B.n, color0: COLOR[f.body], color1: COLOR[t.body], hiddenEnd: !facing(B.p, B.n), spheres });
       }
       arcSet.setArcs(specs, nowSec, keep);

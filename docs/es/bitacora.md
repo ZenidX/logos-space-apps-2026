@@ -2,6 +2,14 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:11 · Credibilidad primero (prioridades de Jefe tras la prueba a ciegas)
+- Regla mostrada = regla calculada: la etiqueta sale de una función con prueba («in range» solo dentro del rango que se enseña; «accepted (within tolerance)» = regla cumplida por tolerancia), y el texto dice hasta dónde se acepta («0.05 or less (accepted up to 0.17)»). Comprobado en 96 valores de los datos.
+- El índice se muestra con 3 decimales y con su puesto («#1 of 5 new regions»); se explica que las regiones nuevas distan milésimas y son una lista corta, no un ranking.
+- RETIRADAS 3 regiones nuevas por pendiente media > 10° en 11 km: Mendoza (15,3°), Ngari/Tíbet (16,4°) y Karakórum (17,9°). Quedan 15; el motivo se ve en «Method & sources». Logos Datos verifica el resto (tierra firme, nombre, hielo) y busca respaldo independiente.
+- Acceso separado en dos: «Permits & politics» (access complexity) y «Remoteness» (horas a una ciudad). Pestaña Why abierta por defecto. Nombres de la lista sin cortar.
+- Arcos: la Tierra se orienta hacia las regiones nuevas y solo se dibujan los arcos de sitios visibles que miran al objetivo (los demás aparecen al girar o al abrir el sitio): sin lazos alrededor del planeta.
+- Legal: referencias de GitHub como «ideas only», cita del relieve lunar y Oxford MAP CC BY 4.0 (catálogo de Earth Engine) en el README.
+
 ## 2026-11-15 · 00:04 · Cristal más translúcido y minimal, franja de datos, más información y referencias
 - Cristal de escritorio: paneles más translúcidos (alfa 0,46), desenfoque de 30 px, esquinas de 28 px; el fondo se oscurece con `brightness()` para mantener el contraste AA aunque detrás quede la cara iluminada de un planeta. Sin cajas dentro de cajas: las cifras van como número grande + etiqueta pequeña, el aviso de «dónde se rompe» es una línea con filete ámbar, y el relieve ya no lleva marco.
 - Portada: franja «en cifras» calculada del archivo de datos (misiones, celdas puntuadas por misión, regiones nuevas, análogos conocidos).

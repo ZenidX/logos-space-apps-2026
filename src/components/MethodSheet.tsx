@@ -1,5 +1,5 @@
 // AI-assisted (Claude), reviewed by team Logos
-import { DATA_DATE, MISSIONS } from "@/lib/missions";
+import { DATA_DATE, MISSIONS, REMOVED } from "@/lib/missions";
 
 export default function MethodSheet({ onClose }: { onClose: () => void }) {
   const accessSources = Array.from(new Set(MISSIONS.flatMap((m) => m.sites.flatMap((s) => s.access.sources))));
@@ -24,7 +24,8 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <p className="mt-2 text-[12.5px] text-[var(--dim)]">Negative control (central Amazonia), percentile among land cells: {MISSIONS.map((m) => `${m.short} ${m.validation.controlPercentile ?? "–"}`).join(" · ")}. Partly circular: the known analogs also set the median used in D, so their high rank is partly by construction; the independent checks are the condition fraction F and the control. Few known sites per mission (two for ground ice). This is a screening hypothesis: independent field validation is still needed.</p>
 
         <h3 className="label mt-6">4 · New regions to investigate</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Only cells meeting every available condition are eligible (missing variables are skipped, with at least 66 % of the total condition weight required); regions under 4 cells dropped; each represented by its best cell and picked at least 800 km apart. They are regions to investigate, not surveyed sites. Because they are picked from the top of the index, they can score above a known analog; values of 0.99 and above are shown as “≥ 0.99”. The index compares surface conditions; it is not a measure of suitability. Key limits: suited EVA — volcanic rock within ~80 km, not confirmed basalt; ground ice — inferred from temperature, not detected.</p>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Only cells meeting every available condition are eligible (missing variables are skipped, with at least 66 % of the total condition weight required); regions under 4 cells dropped; each represented by its best cell and picked at least 800 km apart. They are regions to investigate, not surveyed sites. Because they are picked from the top of the index, they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability. No independent field check of the new regions has been done yet.</p>
+        <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Removed after checking the terrain</b> (mean slope above 10° over 11 km): {Object.values(REMOVED).map((r) => `${r.name} — ${r.reason}`).join("; ")}. Key limits: suited EVA — volcanic rock within ~80 km, not confirmed basalt; ground ice — inferred from temperature, not detected.</p>
 
         <h3 className="label mt-6">5 · Where the analogy breaks</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each site lists what was not scored and what Earth cannot reproduce (gravity, vacuum or thin air, lighting, cold). On the globes, each arc links the target to one Earth region; the comparison itself is in the site view.</p>

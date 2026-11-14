@@ -20,3 +20,11 @@ export const acceptance = (ideal: string, tol: number): [number, number] => {
   const [lo, hi] = parseIdeal(ideal);
   return [lo - K * tol, hi + K * tol];
 };
+
+/** What the app says about one condition: "in range" only inside the ideal range; "accepted" when the rule is met by tolerance. */
+export type ConditionStatus = "in range" | "accepted (within tolerance)" | "out of range";
+export function conditionStatus(value: number, ideal: string, tol: number): ConditionStatus {
+  const [lo, hi] = parseIdeal(ideal), [alo, ahi] = acceptance(ideal, tol);
+  if (value >= lo && value <= hi) return "in range";
+  return value >= alo && value <= ahi ? "accepted (within tolerance)" : "out of range";
+}

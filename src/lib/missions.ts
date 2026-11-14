@@ -23,7 +23,7 @@ const data = raw as unknown as { generatedAt: string; missions: RawMission[] };
 export interface Variable { id: string; label: string; unit: string; why: string; inMatch: boolean; ideal: string | null; tolerance: number | null; weight: number }
 export interface PerVar { id: string; label: string; unit: string; value: number | null; similarity: number | null; source: string; inMatch: boolean }
 export interface Access { level: "Low" | "Medium" | "High" | "Not assessed"; score: number | null; basis: string; sources: string[]; note: string; permit: string | null }
-export interface Site { areaKm2: number | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; percentile: number | null; vars: PerVar[]; breaks: string[]; access: Access; campaign: string | null }
+export interface Site { rank: number | null; of: number | null; areaKm2: number | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; percentile: number | null; vars: PerVar[]; breaks: string[]; access: Access; campaign: string | null }
 export interface Target { name: string; body: GlobeBody; lat: number; lon: number; coordSource: string; description?: string; values: Record<string, RawValue> }
 export interface Mission {
   id: MissionId; short: string; title: string; blurb: string; target: Target;
@@ -63,6 +63,17 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
   },
 };
 
+/**
+ * New regions removed after checking their terrain (11 × 11 km window, src/data/terrain-index.json):
+ * a mean slope above 10° is not ground for a suited traverse, a rover test or a drill rig, whatever the index says.
+ * Known analogs are kept as they are, because they are only used to validate the index.
+ */
+export const REMOVED: Record<string, { name: string; reason: string }> = {
+  "m1-eva-basalt-new6": { name: "Departamento San Carlos, Mendoza (Argentina)", reason: "mean slope 15.3°, relief 1,974 m over 11 km" },
+  "m2-rover-sand-new5": { name: "Ngari Prefecture (Tibetan Plateau)", reason: "mean slope 16.4°, relief 1,007 m over 11 km" },
+  "m3-ground-ice-new4": { name: "Karakoram (disputed area)", reason: "mean slope 17.9°, relief 1,355 m over 11 km" },
+};
+
 const LEVEL: Record<string, Access["level"]> = { low: "Low", medium: "Medium", high: "High" };
 const PERMIT_NOTE = "Check national park and research permits before fieldwork.";
 function accessOf(a: RawAccess | null): Access {
@@ -82,7 +93,9 @@ const lon180 = (l: number) => (l > 180 ? l - 360 : l);
 export const MISSIONS: Mission[] = data.missions.map((m) => {
   const vars: Variable[] = m.variables.map((v) => ({ id: v.id, label: v.label, unit: v.unit, why: v.why, inMatch: v.inMatch, ideal: v.ideal ?? null, tolerance: v.tolerance ?? null, weight: v.weight ?? 0 }));
   const byId = new Map(vars.map((v) => [v.id, v]));
-  const sites: Site[] = m.sites.map((s) => ({
+  const sites: Site[] = m.sites.filter((s) => !(s.id in REMOVED)).map((s) => ({
+    rank: null,
+    of: null,
     id: s.id,
     areaKm2: s.region?.areaKm2 ?? null,
     name: ((parts) => (parts.length > 2 ? parts.slice(-2) : parts).join(" · "))(s.name.replace(/^Candidate cell near /, "").split(" · ")), // administrative names (the last two parts) are more precise than the broad geographic region
@@ -99,6 +112,8 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
   }));
   // New candidates keep the order Logos Datos ranked them in; known analogs by match.
   sites.sort((a, b) => Number(b.kind === "new") - Number(a.kind === "new") || (a.kind === "new" ? 0 : (b.match ?? -1) - (a.match ?? -1)));
+  const fresh = sites.filter((x) => x.kind === "new");
+  fresh.forEach((x, i) => { x.rank = i + 1; x.of = fresh.length; });
   return {
     id: m.id,
     title: m.title,
@@ -124,10 +139,9 @@ export function arcDims(m: Mission, s: Site): [number | null, number | null, num
 }
 
 /** Analog index (0–1): a ranking index built from team choices and Earth percentiles, not a probability. */
-/** The index is shown to two decimals and never as a perfect 1.00: values of 0.99 and above read "≥ 0.99". */
-export const TOP = 0.99;
-export const idx = (x: number | null) => (x === null ? "–" : x >= TOP ? "≥ 0.99" : x.toFixed(2));
-export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they can score above a known analog. The index compares surface conditions; it is not a measure of suitability.";
+/** The index is shown to three decimals so that the top regions can be told apart; it never rounds to a perfect 1.000 in this data. */
+export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(3));
+export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";
 
 export const fmt = (x: number | null, unit = "") => {
   if (x === null || Number.isNaN(x)) return "–";

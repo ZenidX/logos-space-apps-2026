@@ -7,7 +7,7 @@ import type { OrreryArc, OrreryMarker } from "@/components/Orrery";
 import SitePanel, { AccessBars, KindChip } from "@/components/SitePanel";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
-import { MISSIONS, TOP, TOP_NOTE, arcDims, type Mission, type MissionId } from "@/lib/missions";
+import { MISSIONS, TOP_NOTE, arcDims, type Mission, type MissionId } from "@/lib/missions";
 
 const Orrery = dynamic(() => import("@/components/Orrery"), { ssr: false });
 const DEMO_MS = 7000;
@@ -24,7 +24,7 @@ function sceneFor(m: Mission) {
   const tId = `t-${m.id}`;
   const markers: OrreryMarker[] = [
     { id: tId, body: m.target.body, lat: m.target.lat, lon: m.target.lon, kind: "target", label: m.target.name.split(" (")[0] },
-    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1 })),
+    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1, primary: s.kind === "new" })),
   ];
   const arcs: OrreryArc[] = m.sites.map((s) => ({ id: s.id, from: tId, to: s.id, dims: arcDims(m, s) }));
   return { markers, arcs };
@@ -87,8 +87,8 @@ export default function Home() {
     <li key={s.id}>
       <button onClick={() => { setSel(s.id); setHover(null); }} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
         <span className="mono text-[12px]" style={{ color: BODY_COLOR[t.body] }}>{String(n).padStart(2, "0")}</span>
-        <span className="min-w-0"><span className="place block truncate text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
-        <span className="flex flex-col items-end gap-1"><span className="mono text-[13px]"><Count value={s.match} cap={TOP} /></span><AccessBars site={s} /></span>
+        <span className="min-w-0"><span className="place block text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
+        <span className="flex flex-col items-end gap-1"><span className="mono text-[13px]"><Count value={s.match} decimals={3} /></span><AccessBars site={s} /></span>
       </button>
     </li>
   );
@@ -178,7 +178,7 @@ export default function Home() {
                 {shown.campaigns.map((c) => <li key={c.name}><a href={c.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{c.name}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></li>)}
               </ul>
 
-              <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono text-[11px] text-[var(--dim)]">index · access</span></div>
+              <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
               <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">{TOP_NOTE}</p>
               <ul className="stagger mt-1 grid gap-0.5">{fresh.map((s, i) => row(s, i + 1))}</ul>
 
