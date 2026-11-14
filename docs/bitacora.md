@@ -8,7 +8,23 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 - El código pasa de la carpeta local `terra-analog` al repo del equipo `ZenidX/logos-space-apps-2026` (rama `main`). README actualizado al reto de los análogos (el anterior mencionaba «Junior Astronaut Mission Trainer»).
 - El benchmark de retos se incluye como `docs/benchmark-retos.md`.
 
-### Búsqueda global de nuevos análogos (en curso)
+### Resultados de la búsqueda global
+- Exportación del asset `terra_features_01deg` terminada (≈6 min en batch). La puntuación sobre el asset tarda ≈1 min.
+- Los resultados se descargan con `getDownloadURL` + `curl` (ver CLAUDE.md) y se guardan en `src/data/ee-global.json`. Los nombres de lugar salen de geocodificación inversa con OpenStreetMap Nominatim.
+- **Validación** (25 análogos conocidos frente a la distribución de toda la Tierra):
+
+| Objetivo | Mediana / p90 / p99 de la Tierra | Conocidos ≥ mediana | Conocidos en el top 10 % |
+|---|---|---|---|
+| Shackleton | 0,43 / 0,55 / 0,71 | 17/25 | 6/25 |
+| Jezero | 0,55 / 0,65 / 0,79 | 20/25 | 8/25 |
+| Arcadia | 0,64 / 0,75 / 0,80 | 19/25 | 2/25 |
+
+  El método separa bien de la mitad baja, pero todavía no concentra los análogos conocidos en el top 10 %. Para Shackleton, los análogos polares (McMurdo, Svalbard, Axel Heiberg, Concordia) sí llegan al top 10 %. Los desérticos (Atacama, Pilbara) no, y tiene sentido: son análogos de Marte, no de la Luna.
+- **Candidatos nuevos:** casi todos en el **Ártico canadiense (Nunavut)** y la **Alta Asia (Sinkiang, Gilgit-Baltistán, Pamir, Tíbet)**, y alguno en Mongolia (Hovd), Rusia (óblast de Arcángel), los Andes y Alaska/Yukón. Son desiertos fríos de altura o de latitud alta.
+- Fallo detectado: el NDVI de `MOD13C1` se escaló dos veces. La puntuación no cambia (posición relativa) y la web lo corrige al mostrarlo. Detalle en CLAUDE.md.
+- Pendiente: el mapa de la pestaña Candidatos sale negro en la primera carga.
+
+### Búsqueda global de nuevos análogos (proceso)
 - Objetivo: puntuar toda la tierra firme contra Shackleton, Jezero y Arcadia, excluir 25 análogos ya catalogados (radio 300 km) y validar dónde caen los conocidos.
 - Pestaña nueva **«Candidatos»** en la web (`src/components/CandidatesTab.tsx`): validación, mapa y ranking con desglose por dimensión. Lee `src/data/ee-global.json`.
 - Problemas que encontramos en Earth Engine y cómo los resolvimos:

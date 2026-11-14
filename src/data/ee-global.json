@@ -1,1 +1,1537 @@
-{}
+{
+ "generatedAt": "2026-11-14T09:59:55.022Z",
+ "source": "Google Earth Engine · projects/terra-analog/assets/terra_features_01deg (0.1°) · scripts/ee/06_puntuar_asset.js",
+ "ranges": {
+  "albedo_p1": 0.049,
+  "albedo_p99": 0.842,
+  "elev_p1": 6.856,
+  "elev_p99": 4528.105,
+  "lst_day_p1": -57.239,
+  "lst_day_p99": 39.741,
+  "lst_max_p1": -32.248,
+  "lst_max_p99": 53.244,
+  "lst_min_p1": -75.736,
+  "lst_min_p99": 21.74,
+  "lst_night_p1": -59.244,
+  "lst_night_p99": 25.239,
+  "ndvi_p1": -0.06,
+  "ndvi_p99": 0.842,
+  "precip_p1": 6.467,
+  "precip_p99": 3167.391,
+  "slope_p1": 0.05,
+  "slope_p99": 4.437
+ },
+ "shackleton": {
+  "dist": {
+   "total_p50": 0.432,
+   "total_p90": 0.553,
+   "total_p99": 0.709
+  },
+  "known": [
+   {
+    "name": "Atacama",
+    "total": 0.45
+   },
+   {
+    "name": "Haughton / Devon",
+    "total": 0.518
+   },
+   {
+    "name": "Death Valley / Mojave",
+    "total": 0.636
+   },
+   {
+    "name": "Valles Secos McMurdo",
+    "total": 0.678
+   },
+   {
+    "name": "Islandia",
+    "total": 0.537
+   },
+   {
+    "name": "Mauna Kea / HI-SEAS",
+    "total": 0.6
+   },
+   {
+    "name": "MDRS Utah",
+    "total": 0.461
+   },
+   {
+    "name": "Río Tinto",
+    "total": 0.365
+   },
+   {
+    "name": "Lanzarote",
+    "total": 0.431
+   },
+   {
+    "name": "Svalbard (AMASE)",
+    "total": 0.705
+   },
+   {
+    "name": "Pilbara",
+    "total": 0.386
+   },
+   {
+    "name": "Meteor / SP Crater",
+    "total": 0.462
+   },
+   {
+    "name": "Axel Heiberg",
+    "total": 0.69
+   },
+   {
+    "name": "Qaidam",
+    "total": 0.445
+   },
+   {
+    "name": "Danakil / Dallol",
+    "total": 0.405
+   },
+   {
+    "name": "Namib",
+    "total": 0.4
+   },
+   {
+    "name": "Ries",
+    "total": 0.357
+   },
+   {
+    "name": "Arkaroola",
+    "total": 0.472
+   },
+   {
+    "name": "Sudbury",
+    "total": 0.395
+   },
+   {
+    "name": "Concordia (Dome C)",
+    "total": 0.568
+   },
+   {
+    "name": "Lonar",
+    "total": 0.313
+   },
+   {
+    "name": "Kamchatka",
+    "total": 0.494
+   },
+   {
+    "name": "Tierra de Bunge",
+    "total": 0.462
+   },
+   {
+    "name": "Mojave Bristol",
+    "total": 0.458
+   },
+   {
+    "name": "Wadi Rum",
+    "total": 0.453
+   }
+  ],
+  "top": [
+   {
+    "c": [
+     -68.549,
+     82.55
+    ],
+    "total": 0.86,
+    "clima": 0.64,
+    "superficie": 0.95,
+    "relieve": 1,
+    "lst_day": -17.83,
+    "lst_night": -19.9,
+    "lst_max": 13.57,
+    "lst_min": -39.63,
+    "precip": 147.46,
+    "ndvi": 0,
+    "albedo": 0.22,
+    "slope": 12.34,
+    "elev": 123,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     76.951,
+     36.15
+    ],
+    "total": 0.85,
+    "clima": 0.58,
+    "superficie": 0.96,
+    "relieve": 1,
+    "lst_day": -0.68,
+    "lst_night": -15.75,
+    "lst_max": 16.31,
+    "lst_min": -33.55,
+    "precip": 75.92,
+    "ndvi": 0,
+    "albedo": 0.2,
+    "slope": 5.21,
+    "elev": 5320,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     75.251,
+     38.65
+    ],
+    "total": 0.84,
+    "clima": 0.61,
+    "superficie": 0.92,
+    "relieve": 1,
+    "lst_day": -8.53,
+    "lst_night": -17.36,
+    "lst_max": 6.83,
+    "lst_min": -34.27,
+    "precip": 267.91,
+    "ndvi": 0,
+    "albedo": 0.22,
+    "slope": 6.07,
+    "elev": 5018,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     80.351,
+     42.25
+    ],
+    "total": 0.84,
+    "clima": 0.63,
+    "superficie": 0.88,
+    "relieve": 1,
+    "lst_day": -11.31,
+    "lst_night": -19.11,
+    "lst_max": 2.87,
+    "lst_min": -37.71,
+    "precip": 312.44,
+    "ndvi": 0,
+    "albedo": 0.31,
+    "slope": 5.27,
+    "elev": 5273,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     -73.35,
+     79.75
+    ],
+    "total": 0.83,
+    "clima": 0.68,
+    "superficie": 0.82,
+    "relieve": 1,
+    "lst_day": -20.04,
+    "lst_night": -21.5,
+    "lst_max": 3.27,
+    "lst_min": -44.67,
+    "precip": 121.18,
+    "ndvi": 0,
+    "albedo": 0.44,
+    "slope": 6.23,
+    "elev": 38,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -78.55,
+     72.35
+    ],
+    "total": 0.83,
+    "clima": 0.61,
+    "superficie": 0.88,
+    "relieve": 1,
+    "lst_day": -13.83,
+    "lst_night": -16.04,
+    "lst_max": 13.83,
+    "lst_min": -39.99,
+    "precip": 289.81,
+    "ndvi": 0,
+    "albedo": 0.34,
+    "slope": 5.76,
+    "elev": 265,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     85.351,
+     43.65
+    ],
+    "total": 0.83,
+    "clima": 0.55,
+    "superficie": 0.94,
+    "relieve": 1,
+    "lst_day": -3.34,
+    "lst_night": -12.66,
+    "lst_max": 15.71,
+    "lst_min": -26.21,
+    "precip": 244.55,
+    "ndvi": 0,
+    "albedo": 0.21,
+    "slope": 5.03,
+    "elev": 3957,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     84.651,
+     36.85
+    ],
+    "total": 0.83,
+    "clima": 0.58,
+    "superficie": 0.91,
+    "relieve": 1,
+    "lst_day": -2.99,
+    "lst_night": -14.22,
+    "lst_max": 15.81,
+    "lst_min": -38.87,
+    "precip": 173.01,
+    "ndvi": 0,
+    "albedo": 0.26,
+    "slope": 6.36,
+    "elev": 5071,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     -71.25,
+     70.35
+    ],
+    "total": 0.83,
+    "clima": 0.62,
+    "superficie": 0.86,
+    "relieve": 1,
+    "lst_day": -13.72,
+    "lst_night": -16.89,
+    "lst_max": 6.21,
+    "lst_min": -39.23,
+    "precip": 339.45,
+    "ndvi": 0,
+    "albedo": 0.36,
+    "slope": 6.01,
+    "elev": 8,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -69.549,
+     -33.151
+    ],
+    "total": 0.83,
+    "clima": 0.5,
+    "superficie": 0.99,
+    "relieve": 1,
+    "lst_day": 4.54,
+    "lst_night": -8.68,
+    "lst_max": 21.75,
+    "lst_min": -23.37,
+    "precip": 332.88,
+    "ndvi": 0,
+    "albedo": 0.17,
+    "slope": 5.51,
+    "elev": 4443,
+    "place": "Mendoza, Argentina"
+   },
+   {
+    "c": [
+     96.751,
+     39.45
+    ],
+    "total": 0.83,
+    "clima": 0.52,
+    "superficie": 0.96,
+    "relieve": 1,
+    "lst_day": 4.27,
+    "lst_night": -10.91,
+    "lst_max": 21.41,
+    "lst_min": -25.07,
+    "precip": 146.73,
+    "ndvi": 0,
+    "albedo": 0.18,
+    "slope": 7.2,
+    "elev": 4467,
+    "place": "Gansu, China"
+   },
+   {
+    "c": [
+     -68.749,
+     -28.051
+    ],
+    "total": 0.83,
+    "clima": 0.51,
+    "superficie": 0.96,
+    "relieve": 1,
+    "lst_day": 6.11,
+    "lst_night": -13.72,
+    "lst_max": 26.27,
+    "lst_min": -23.61,
+    "precip": 81.76,
+    "ndvi": 0,
+    "albedo": 0.13,
+    "slope": 5.22,
+    "elev": 5876,
+    "place": "La Rioja, Argentina"
+   },
+   {
+    "c": [
+     -142.85,
+     61.95
+    ],
+    "total": 0.83,
+    "clima": 0.6,
+    "superficie": 0.89,
+    "relieve": 0.99,
+    "lst_day": -10.16,
+    "lst_night": -15.05,
+    "lst_max": 7.75,
+    "lst_min": -35.33,
+    "precip": 413.18,
+    "ndvi": 0,
+    "albedo": 0.32,
+    "slope": 4.38,
+    "elev": 1589,
+    "place": "Alaska, Estados Unidos de América"
+   },
+   {
+    "c": [
+     -72.35,
+     -47.651
+    ],
+    "total": 0.82,
+    "clima": 0.52,
+    "superficie": 0.95,
+    "relieve": 1,
+    "lst_day": -1.05,
+    "lst_night": -9.44,
+    "lst_max": 12.37,
+    "lst_min": -21.25,
+    "precip": 427.78,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 4.72,
+    "elev": 2239,
+    "place": "Santa Cruz, Argentina"
+   },
+   {
+    "c": [
+     -80.85,
+     77.25
+    ],
+    "total": 0.82,
+    "clima": 0.63,
+    "superficie": 0.84,
+    "relieve": 1,
+    "lst_day": -16.55,
+    "lst_night": -17.84,
+    "lst_max": 9.61,
+    "lst_min": -39.15,
+    "precip": 245.28,
+    "ndvi": 0,
+    "albedo": 0.39,
+    "slope": 4.94,
+    "elev": 165,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     78.751,
+     33.85
+    ],
+    "total": 0.82,
+    "clima": 0.51,
+    "superficie": 0.95,
+    "relieve": 1,
+    "lst_day": 6.47,
+    "lst_night": -11.49,
+    "lst_max": 27.77,
+    "lst_min": -30.13,
+    "precip": 161.33,
+    "ndvi": 0,
+    "albedo": 0.19,
+    "slope": 4.82,
+    "elev": 5597,
+    "place": "Ladaj, India"
+   },
+   {
+    "c": [
+     90.951,
+     48.65
+    ],
+    "total": 0.82,
+    "clima": 0.59,
+    "superficie": 0.87,
+    "relieve": 1,
+    "lst_day": -7.85,
+    "lst_night": -13.44,
+    "lst_max": 10.83,
+    "lst_min": -33.67,
+    "precip": 177.39,
+    "ndvi": 0,
+    "albedo": 0.31,
+    "slope": 4.88,
+    "elev": 3488,
+    "place": "Bayan-Ölgiy, Mongolia"
+   },
+   {
+    "c": [
+     90.251,
+     28.95
+    ],
+    "total": 0.82,
+    "clima": 0.51,
+    "superficie": 0.95,
+    "relieve": 1,
+    "lst_day": 4.38,
+    "lst_night": -10.74,
+    "lst_max": 17.35,
+    "lst_min": -24.21,
+    "precip": 465.01,
+    "ndvi": 0,
+    "albedo": 0.21,
+    "slope": 5.16,
+    "elev": 5646,
+    "place": "Xizang, China"
+   },
+   {
+    "c": [
+     81.351,
+     36.05
+    ],
+    "total": 0.82,
+    "clima": 0.53,
+    "superficie": 0.93,
+    "relieve": 1,
+    "lst_day": 1.16,
+    "lst_night": -8.91,
+    "lst_max": 14.37,
+    "lst_min": -24.87,
+    "precip": 357.7,
+    "ndvi": 0,
+    "albedo": 0.19,
+    "slope": 7.38,
+    "elev": 4793,
+    "place": "Sinkiang, China"
+   }
+  ]
+ },
+ "jezero": {
+  "dist": {
+   "total_p50": 0.545,
+   "total_p90": 0.654,
+   "total_p99": 0.787
+  },
+  "known": [
+   {
+    "name": "Atacama",
+    "total": 0.614
+   },
+   {
+    "name": "Haughton / Devon",
+    "total": 0.681
+   },
+   {
+    "name": "Death Valley / Mojave",
+    "total": 0.677
+   },
+   {
+    "name": "Valles Secos McMurdo",
+    "total": 0.735
+   },
+   {
+    "name": "Islandia",
+    "total": 0.689
+   },
+   {
+    "name": "Mauna Kea / HI-SEAS",
+    "total": 0.664
+   },
+   {
+    "name": "MDRS Utah",
+    "total": 0.619
+   },
+   {
+    "name": "Río Tinto",
+    "total": 0.509
+   },
+   {
+    "name": "Lanzarote",
+    "total": 0.575
+   },
+   {
+    "name": "Svalbard (AMASE)",
+    "total": 0.752
+   },
+   {
+    "name": "Pilbara",
+    "total": 0.535
+   },
+   {
+    "name": "Meteor / SP Crater",
+    "total": 0.609
+   },
+   {
+    "name": "Axel Heiberg",
+    "total": 0.761
+   },
+   {
+    "name": "Qaidam",
+    "total": 0.609
+   },
+   {
+    "name": "Danakil / Dallol",
+    "total": 0.563
+   },
+   {
+    "name": "Namib",
+    "total": 0.565
+   },
+   {
+    "name": "Ries",
+    "total": 0.505
+   },
+   {
+    "name": "Arkaroola",
+    "total": 0.616
+   },
+   {
+    "name": "Sudbury",
+    "total": 0.547
+   },
+   {
+    "name": "Concordia (Dome C)",
+    "total": 0.542
+   },
+   {
+    "name": "Lonar",
+    "total": 0.456
+   },
+   {
+    "name": "Kamchatka",
+    "total": 0.656
+   },
+   {
+    "name": "Tierra de Bunge",
+    "total": 0.628
+   },
+   {
+    "name": "Mojave Bristol",
+    "total": 0.622
+   },
+   {
+    "name": "Wadi Rum",
+    "total": 0.617
+   }
+  ],
+  "top": [
+   {
+    "c": [
+     -78.15,
+     81.25
+    ],
+    "total": 0.89,
+    "clima": 0.77,
+    "superficie": 0.92,
+    "relieve": 0.99,
+    "lst_day": -18.5,
+    "lst_night": -19.19,
+    "lst_max": 11.77,
+    "lst_min": -38.35,
+    "precip": 114.61,
+    "ndvi": 0,
+    "albedo": 0.32,
+    "slope": 2.95,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     85.851,
+     37.25
+    ],
+    "total": 0.88,
+    "clima": 0.71,
+    "superficie": 0.96,
+    "relieve": 0.98,
+    "lst_day": -3.95,
+    "lst_night": -14.97,
+    "lst_max": 13.17,
+    "lst_min": -28.29,
+    "precip": 139.43,
+    "ndvi": 0,
+    "albedo": 0.24,
+    "slope": 2.92,
+    "elev": 5440,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     79.251,
+     35.85
+    ],
+    "total": 0.88,
+    "clima": 0.68,
+    "superficie": 0.97,
+    "relieve": 1,
+    "lst_day": 2.05,
+    "lst_night": -12.89,
+    "lst_max": 19.19,
+    "lst_min": -27.21,
+    "precip": 86.87,
+    "ndvi": 0,
+    "albedo": 0.2,
+    "slope": 3.02,
+    "elev": 5593,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     55.751,
+     74.45
+    ],
+    "total": 0.88,
+    "clima": 0.66,
+    "superficie": 0.99,
+    "relieve": 0.99,
+    "lst_day": -7.22,
+    "lst_night": -8.22,
+    "lst_max": 16.99,
+    "lst_min": -22.83,
+    "precip": 489.1,
+    "ndvi": 0,
+    "albedo": 0.19,
+    "slope": 3.06,
+    "elev": 109,
+    "place": "Óblast de Arcángel, Rusia"
+   },
+   {
+    "c": [
+     80.951,
+     42.15
+    ],
+    "total": 0.88,
+    "clima": 0.7,
+    "superficie": 0.94,
+    "relieve": 0.99,
+    "lst_day": -4.75,
+    "lst_night": -12.79,
+    "lst_max": 13.53,
+    "lst_min": -32.71,
+    "precip": 277.4,
+    "ndvi": 0,
+    "albedo": 0.28,
+    "slope": 2.95,
+    "elev": 4353,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     94.451,
+     43.05
+    ],
+    "total": 0.88,
+    "clima": 0.69,
+    "superficie": 0.95,
+    "relieve": 0.99,
+    "lst_day": -2.43,
+    "lst_night": -11.76,
+    "lst_max": 16.69,
+    "lst_min": -30.33,
+    "precip": 261.34,
+    "ndvi": 0,
+    "albedo": 0.25,
+    "slope": 2.94,
+    "elev": 4015,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     75.151,
+     36.95
+    ],
+    "total": 0.88,
+    "clima": 0.71,
+    "superficie": 0.92,
+    "relieve": 1,
+    "lst_day": -3.44,
+    "lst_night": -14.34,
+    "lst_max": 16.35,
+    "lst_min": -33.93,
+    "precip": 81.03,
+    "ndvi": 0,
+    "albedo": 0.32,
+    "slope": 2.98,
+    "elev": 4976,
+    "place": "Gilgit-Baltistán, Pakistán"
+   },
+   {
+    "c": [
+     93.651,
+     46.65
+    ],
+    "total": 0.88,
+    "clima": 0.67,
+    "superficie": 0.96,
+    "relieve": 1,
+    "lst_day": 0.39,
+    "lst_night": -11.56,
+    "lst_max": 20.93,
+    "lst_min": -30.03,
+    "precip": 203.67,
+    "ndvi": 0,
+    "albedo": 0.21,
+    "slope": 2.98,
+    "elev": 3424,
+    "place": "Hovd, Mongolia"
+   },
+   {
+    "c": [
+     76.051,
+     34.05
+    ],
+    "total": 0.87,
+    "clima": 0.71,
+    "superficie": 0.93,
+    "relieve": 0.99,
+    "lst_day": -7.63,
+    "lst_night": -13.72,
+    "lst_max": 8.99,
+    "lst_min": -33.33,
+    "precip": 384.71,
+    "ndvi": 0,
+    "albedo": 0.31,
+    "slope": 3.06,
+    "elev": 5324,
+    "place": "Ladaj, India"
+   },
+   {
+    "c": [
+     81.051,
+     32.85
+    ],
+    "total": 0.87,
+    "clima": 0.71,
+    "superficie": 0.92,
+    "relieve": 1,
+    "lst_day": -2.41,
+    "lst_night": -14.2,
+    "lst_max": 13.39,
+    "lst_min": -29.41,
+    "precip": 129.94,
+    "ndvi": 0,
+    "albedo": 0.27,
+    "slope": 2.98,
+    "elev": 6033,
+    "place": "Xizang, China"
+   },
+   {
+    "c": [
+     -70.649,
+     70.45
+    ],
+    "total": 0.87,
+    "clima": 0.74,
+    "superficie": 0.89,
+    "relieve": 1,
+    "lst_day": -11.99,
+    "lst_night": -14.86,
+    "lst_max": 9.45,
+    "lst_min": -38.61,
+    "precip": 307.33,
+    "ndvi": 0,
+    "albedo": 0.37,
+    "slope": 2.98,
+    "elev": 755,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     88.351,
+     43.75
+    ],
+    "total": 0.87,
+    "clima": 0.68,
+    "superficie": 0.96,
+    "relieve": 0.98,
+    "lst_day": -4.24,
+    "lst_night": -12.31,
+    "lst_max": 13.23,
+    "lst_min": -27.25,
+    "precip": 497.13,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 3.08,
+    "elev": 4011,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     138.951,
+     67.55
+    ],
+    "total": 0.87,
+    "clima": 0.71,
+    "superficie": 0.91,
+    "relieve": 1,
+    "lst_day": -11.39,
+    "lst_night": -16.07,
+    "lst_max": 22.97,
+    "lst_min": -37.75,
+    "precip": 292,
+    "ndvi": 0,
+    "albedo": 0.34,
+    "slope": 2.98,
+    "elev": 1573,
+    "place": "República de Sajá, Rusia"
+   },
+   {
+    "c": [
+     89.351,
+     38.25
+    ],
+    "total": 0.87,
+    "clima": 0.66,
+    "superficie": 0.95,
+    "relieve": 0.99,
+    "lst_day": 2.36,
+    "lst_night": -11.53,
+    "lst_max": 20.65,
+    "lst_min": -25.37,
+    "precip": 124.1,
+    "ndvi": 0,
+    "albedo": 0.22,
+    "slope": 3.04,
+    "elev": 4640,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     -68.949,
+     -28.051
+    ],
+    "total": 0.87,
+    "clima": 0.64,
+    "superficie": 0.97,
+    "relieve": 1,
+    "lst_day": 7.24,
+    "lst_night": -12.57,
+    "lst_max": 26.55,
+    "lst_min": -21.93,
+    "precip": 77.38,
+    "ndvi": 0,
+    "albedo": 0.22,
+    "slope": 2.98,
+    "elev": 5306,
+    "place": "La Rioja, Argentina"
+   },
+   {
+    "c": [
+     -80.55,
+     72.05
+    ],
+    "total": 0.87,
+    "clima": 0.74,
+    "superficie": 0.88,
+    "relieve": 0.98,
+    "lst_day": -13.37,
+    "lst_night": -15.75,
+    "lst_max": 13.31,
+    "lst_min": -39.77,
+    "precip": 294.19,
+    "ndvi": 0,
+    "albedo": 0.36,
+    "slope": 2.93,
+    "elev": 1,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     98.551,
+     39.25
+    ],
+    "total": 0.87,
+    "clima": 0.65,
+    "superficie": 0.96,
+    "relieve": 0.99,
+    "lst_day": 1.06,
+    "lst_night": -10.92,
+    "lst_max": 19.69,
+    "lst_min": -25.25,
+    "precip": 340.18,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 2.94,
+    "elev": 4774,
+    "place": "Gansu, China"
+   },
+   {
+    "c": [
+     -81.15,
+     77.25
+    ],
+    "total": 0.87,
+    "clima": 0.76,
+    "superficie": 0.84,
+    "relieve": 0.99,
+    "lst_day": -16.42,
+    "lst_night": -18.39,
+    "lst_max": 13.25,
+    "lst_min": -42.19,
+    "precip": 246.74,
+    "ndvi": 0,
+    "albedo": 0.44,
+    "slope": 3.03,
+    "elev": 373,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -111.05,
+     72.45
+    ],
+    "total": 0.87,
+    "clima": 0.72,
+    "superficie": 0.88,
+    "relieve": 1,
+    "lst_day": -12.74,
+    "lst_night": -14.88,
+    "lst_max": 17.35,
+    "lst_min": -35.91,
+    "precip": 313.9,
+    "ndvi": 0,
+    "albedo": 0.37,
+    "slope": 3,
+    "elev": 55,
+    "place": "Territorios del Noroeste, Canadá"
+   },
+   {
+    "c": [
+     -139.75,
+     61.25
+    ],
+    "total": 0.87,
+    "clima": 0.68,
+    "superficie": 0.97,
+    "relieve": 0.95,
+    "lst_day": -5.53,
+    "lst_night": -11.94,
+    "lst_max": 19.07,
+    "lst_min": -33.53,
+    "precip": 397.12,
+    "ndvi": 0,
+    "albedo": 0.24,
+    "slope": 3.24,
+    "elev": 1914,
+    "place": "Yukón, Canadá"
+   }
+  ]
+ },
+ "arcadia": {
+  "dist": {
+   "total_p50": 0.639,
+   "total_p90": 0.748,
+   "total_p99": 0.799
+  },
+  "known": [
+   {
+    "name": "Atacama",
+    "total": 0.725
+   },
+   {
+    "name": "Haughton / Devon",
+    "total": 0.792
+   },
+   {
+    "name": "Death Valley / Mojave",
+    "total": 0.568
+   },
+   {
+    "name": "Valles Secos McMurdo",
+    "total": 0.735
+   },
+   {
+    "name": "Islandia",
+    "total": 0.714
+   },
+   {
+    "name": "Mauna Kea / HI-SEAS",
+    "total": 0.526
+   },
+   {
+    "name": "MDRS Utah",
+    "total": 0.72
+   },
+   {
+    "name": "Río Tinto",
+    "total": 0.631
+   },
+   {
+    "name": "Lanzarote",
+    "total": 0.699
+   },
+   {
+    "name": "Svalbard (AMASE)",
+    "total": 0.656
+   },
+   {
+    "name": "Pilbara",
+    "total": 0.659
+   },
+   {
+    "name": "Meteor / SP Crater",
+    "total": 0.721
+   },
+   {
+    "name": "Axel Heiberg",
+    "total": 0.664
+   },
+   {
+    "name": "Qaidam",
+    "total": 0.733
+   },
+   {
+    "name": "Danakil / Dallol",
+    "total": 0.665
+   },
+   {
+    "name": "Namib",
+    "total": 0.689
+   },
+   {
+    "name": "Ries",
+    "total": 0.629
+   },
+   {
+    "name": "Arkaroola",
+    "total": 0.704
+   },
+   {
+    "name": "Sudbury",
+    "total": 0.672
+   },
+   {
+    "name": "Concordia (Dome C)",
+    "total": 0.581
+   },
+   {
+    "name": "Lonar",
+    "total": 0.581
+   },
+   {
+    "name": "Kamchatka",
+    "total": 0.708
+   },
+   {
+    "name": "Tierra de Bunge",
+    "total": 0.753
+   },
+   {
+    "name": "Mojave Bristol",
+    "total": 0.696
+   },
+   {
+    "name": "Wadi Rum",
+    "total": 0.717
+   }
+  ],
+  "top": [
+   {
+    "c": [
+     -70.75,
+     81.75
+    ],
+    "total": 0.87,
+    "clima": 0.73,
+    "superficie": 0.89,
+    "relieve": 0.98,
+    "lst_day": -19.47,
+    "lst_night": -20.9,
+    "lst_max": 5.67,
+    "lst_min": -46.75,
+    "precip": 72.27,
+    "ndvi": 0,
+    "albedo": 0.36,
+    "slope": 0.93,
+    "elev": 246,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     78.651,
+     35.25
+    ],
+    "total": 0.86,
+    "clima": 0.62,
+    "superficie": 0.97,
+    "relieve": 0.99,
+    "lst_day": 2.81,
+    "lst_night": -18.05,
+    "lst_max": 20.93,
+    "lst_min": -36.07,
+    "precip": 86.87,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 0.95,
+    "elev": 5815,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     89.351,
+     36.35
+    ],
+    "total": 0.86,
+    "clima": 0.59,
+    "superficie": 0.99,
+    "relieve": 1,
+    "lst_day": -0.79,
+    "lst_night": -6.05,
+    "lst_max": 12.05,
+    "lst_min": -24.13,
+    "precip": 154.76,
+    "ndvi": 0,
+    "albedo": 0.22,
+    "slope": 1.02,
+    "elev": 4713,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     -74.55,
+     78.65
+    ],
+    "total": 0.86,
+    "clima": 0.7,
+    "superficie": 0.87,
+    "relieve": 0.99,
+    "lst_day": -16.8,
+    "lst_night": -18.33,
+    "lst_max": 2.03,
+    "lst_min": -37.33,
+    "precip": 209.51,
+    "ndvi": 0,
+    "albedo": 0.4,
+    "slope": 1.04,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -64.649,
+     61.45
+    ],
+    "total": 0.85,
+    "clima": 0.59,
+    "superficie": 0.98,
+    "relieve": 0.99,
+    "lst_day": -5.17,
+    "lst_night": -8.94,
+    "lst_max": 11.71,
+    "lst_min": -31.33,
+    "precip": 598.6,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 0.94,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -78.85,
+     75.85
+    ],
+    "total": 0.85,
+    "clima": 0.66,
+    "superficie": 0.95,
+    "relieve": 0.94,
+    "lst_day": -11.3,
+    "lst_night": -12.94,
+    "lst_max": 6.89,
+    "lst_min": -37.17,
+    "precip": 210.97,
+    "ndvi": 0,
+    "albedo": 0.24,
+    "slope": 1.24,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -65.349,
+     64.75
+    ],
+    "total": 0.85,
+    "clima": 0.63,
+    "superficie": 0.94,
+    "relieve": 0.98,
+    "lst_day": -8.69,
+    "lst_night": -11.64,
+    "lst_max": 11.57,
+    "lst_min": -31.81,
+    "precip": 278.13,
+    "ndvi": 0,
+    "albedo": 0.29,
+    "slope": 0.92,
+    "elev": 8,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -80.75,
+     72.25
+    ],
+    "total": 0.85,
+    "clima": 0.65,
+    "superficie": 0.9,
+    "relieve": 0.99,
+    "lst_day": -13.07,
+    "lst_night": -15.81,
+    "lst_max": 14.57,
+    "lst_min": -39.19,
+    "precip": 340.18,
+    "ndvi": 0,
+    "albedo": 0.34,
+    "slope": 1.03,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     82.451,
+     35.25
+    ],
+    "total": 0.85,
+    "clima": 0.62,
+    "superficie": 0.94,
+    "relieve": 0.98,
+    "lst_day": -0.03,
+    "lst_night": -16.09,
+    "lst_max": 16.81,
+    "lst_min": -32.57,
+    "precip": 117.53,
+    "ndvi": 0,
+    "albedo": 0.23,
+    "slope": 0.93,
+    "elev": 5484,
+    "place": "Xizang, China"
+   },
+   {
+    "c": [
+     148.652,
+     76.65
+    ],
+    "total": 0.85,
+    "clima": 0.68,
+    "superficie": 0.88,
+    "relieve": 1,
+    "lst_day": -14.35,
+    "lst_night": -15.59,
+    "lst_max": 5.95,
+    "lst_min": -32.51,
+    "precip": 118.26,
+    "ndvi": 0,
+    "albedo": 0.36,
+    "slope": 0.98,
+    "elev": 87,
+    "place": "República de Sajá, Rusia"
+   },
+   {
+    "c": [
+     55.851,
+     74.45
+    ],
+    "total": 0.85,
+    "clima": 0.57,
+    "superficie": 0.98,
+    "relieve": 1,
+    "lst_day": -7.22,
+    "lst_night": -8.22,
+    "lst_max": 16.99,
+    "lst_min": -22.83,
+    "precip": 495.67,
+    "ndvi": 0,
+    "albedo": 0.21,
+    "slope": 1.01,
+    "elev": 202,
+    "place": "Óblast de Arcángel, Rusia"
+   },
+   {
+    "c": [
+     85.851,
+     37.15
+    ],
+    "total": 0.85,
+    "clima": 0.59,
+    "superficie": 0.96,
+    "relieve": 0.99,
+    "lst_day": 2.86,
+    "lst_night": -14.15,
+    "lst_max": 23.87,
+    "lst_min": -29.39,
+    "precip": 70.08,
+    "ndvi": 0,
+    "albedo": 0.24,
+    "slope": 1.03,
+    "elev": 5049,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     57.951,
+     81.25
+    ],
+    "total": 0.85,
+    "clima": 0.67,
+    "superficie": 0.94,
+    "relieve": 0.93,
+    "lst_day": -13.45,
+    "lst_night": -14.31,
+    "lst_max": 1.39,
+    "lst_min": -35.07,
+    "precip": 345.29,
+    "ndvi": 0,
+    "albedo": 0.24,
+    "slope": 0.68,
+    "elev": 12,
+    "place": "Óblast de Arcángel, Rusia"
+   },
+   {
+    "c": [
+     90.551,
+     81.25
+    ],
+    "total": 0.85,
+    "clima": 0.65,
+    "superficie": 0.93,
+    "relieve": 0.96,
+    "lst_day": -12.8,
+    "lst_night": -14.2,
+    "lst_max": 4.65,
+    "lst_min": -30.73,
+    "precip": 389.09,
+    "ndvi": 0,
+    "albedo": 0.25,
+    "slope": 0.8,
+    "elev": 14,
+    "place": "Krai de Krasnoyarsk, Rusia"
+   },
+   {
+    "c": [
+     -97.15,
+     73.05
+    ],
+    "total": 0.85,
+    "clima": 0.66,
+    "superficie": 0.88,
+    "relieve": 0.99,
+    "lst_day": -14.02,
+    "lst_night": -16.57,
+    "lst_max": 12.35,
+    "lst_min": -38.07,
+    "precip": 303.68,
+    "ndvi": 0,
+    "albedo": 0.36,
+    "slope": 1.02,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   },
+   {
+    "c": [
+     -123.15,
+     74.45
+    ],
+    "total": 0.85,
+    "clima": 0.65,
+    "superficie": 0.91,
+    "relieve": 0.98,
+    "lst_day": -13.05,
+    "lst_night": -15.42,
+    "lst_max": 16.23,
+    "lst_min": -35.57,
+    "precip": 156.22,
+    "ndvi": 0,
+    "albedo": 0.29,
+    "slope": 0.91,
+    "elev": 35,
+    "place": "Territorios del Noroeste, Canadá"
+   },
+   {
+    "c": [
+     75.451,
+     38.65
+    ],
+    "total": 0.85,
+    "clima": 0.62,
+    "superficie": 0.95,
+    "relieve": 0.97,
+    "lst_day": -4.72,
+    "lst_night": -14.55,
+    "lst_max": 13.19,
+    "lst_min": -29.09,
+    "precip": 202.94,
+    "ndvi": 0,
+    "albedo": 0.26,
+    "slope": 1.13,
+    "elev": 4497,
+    "place": "Sinkiang, China"
+   },
+   {
+    "c": [
+     83.451,
+     30.95
+    ],
+    "total": 0.85,
+    "clima": 0.6,
+    "superficie": 0.94,
+    "relieve": 1,
+    "lst_day": 1.9,
+    "lst_night": -12.77,
+    "lst_max": 15.45,
+    "lst_min": -27.73,
+    "precip": 156.95,
+    "ndvi": 0,
+    "albedo": 0.27,
+    "slope": 1.02,
+    "elev": 5780,
+    "place": "Xizang, China"
+   },
+   {
+    "c": [
+     -116.95,
+     70.15
+    ],
+    "total": 0.85,
+    "clima": 0.62,
+    "superficie": 0.92,
+    "relieve": 0.99,
+    "lst_day": -10.45,
+    "lst_night": -12.25,
+    "lst_max": 13.07,
+    "lst_min": -31.31,
+    "precip": 402.23,
+    "ndvi": 0,
+    "albedo": 0.31,
+    "slope": 0.98,
+    "elev": 0,
+    "place": "Territorios del Noroeste, Canadá"
+   },
+   {
+    "c": [
+     -84.55,
+     65.75
+    ],
+    "total": 0.84,
+    "clima": 0.61,
+    "superficie": 0.94,
+    "relieve": 0.98,
+    "lst_day": -7.67,
+    "lst_night": -11.47,
+    "lst_max": 18.23,
+    "lst_min": -33.11,
+    "precip": 393.47,
+    "ndvi": 0,
+    "albedo": 0.16,
+    "slope": 0.93,
+    "elev": 0,
+    "place": "Nunavut, Canadá"
+   }
+  ]
+ }
+}

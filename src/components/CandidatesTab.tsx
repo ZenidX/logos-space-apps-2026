@@ -110,8 +110,8 @@ export default function CandidatesTab() {
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
             <h2 className="text-lg font-bold">Nuevos análogos de {target.short}</h2>
             <p className="text-xs text-slate-300">
-              Toda la tierra firme a 50 km (~60 000 celdas), puntuada con datos NASA en Earth Engine. Excluidos 25 análogos
-              ya catalogados (radio 300 km). Candidatos separados ≥ 300 km entre sí.
+              Toda la tierra firme entre 85°N y 85°S en celdas de 0,1° (~11 km), puntuada con datos NASA en Earth Engine.
+              Excluidos 25 análogos ya catalogados (radio 300 km). Candidatos separados ≥ 300 km entre sí.
             </p>
           </section>
 
