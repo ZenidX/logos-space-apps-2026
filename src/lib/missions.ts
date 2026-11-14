@@ -10,7 +10,7 @@ export type MissionId = "m1-eva-basalt" | "m2-rover-sand" | "m3-ground-ice";
 interface RawValue { value: number | null; unit?: string; source?: string; url?: string | null }
 interface RawVar { id: string; label: string; unit: string; why: string; inMatch: boolean; ideal?: string; tolerance?: number; weight?: number; value?: null }
 interface RawPV { value: number | null; similarity: number | null; source: string; inMatch?: boolean }
-interface RawAccess { level: "low" | "medium" | "high" | null; score: number | null; insideProtectedArea?: boolean; permitFlag?: string; basis?: string; sources?: string[] }
+interface RawAccess { level: "low" | "medium" | "high" | null; score: number | null; permitFlag?: string; basis?: string; note?: string; sources?: string[] }
 interface RawSite { region?: { cells: number; areaKm2: number } | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; matchPercentile?: number | null; perVariable: Record<string, RawPV | null>; breaks: string[]; accessRisk: RawAccess | null; campaign?: string }
 interface RawMission {
   id: MissionId; title: string; campaigns: { name: string; url: string }[];
@@ -22,7 +22,7 @@ const data = raw as unknown as { generatedAt: string; missions: RawMission[] };
 
 export interface Variable { id: string; label: string; unit: string; why: string; inMatch: boolean; ideal: string | null; weight: number }
 export interface PerVar { id: string; label: string; unit: string; value: number | null; similarity: number | null; source: string; inMatch: boolean }
-export interface Access { level: "Low" | "Medium" | "High" | "Not assessed"; score: number | null; basis: string; sources: string[]; protectedArea: boolean; permit: string | null }
+export interface Access { level: "Low" | "Medium" | "High" | "Not assessed"; score: number | null; basis: string; sources: string[]; note: string; permit: string | null }
 export interface Site { areaKm2: number | null; id: string; name: string; country: string | null; lat: number; lon: number; kind: "known" | "new"; match: number | null; percentile: number | null; vars: PerVar[]; breaks: string[]; access: Access; campaign: string | null }
 export interface Target { name: string; body: GlobeBody; lat: number; lon: number; coordSource: string; values: Record<string, RawValue> }
 export interface Mission {
@@ -39,35 +39,35 @@ const COPY: Record<MissionId, { short: string; blurb: string; keyLimit: string; 
     blurb: "Bare, dark volcanic ground to rehearse spacesuit traverses and field geology.",
     keyLimit: "Volcanic rock is mapped within ~80 km (0.5° geological map); basalt at the site itself is not confirmed.",
     notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Walkable slope — needs a 30 m elevation model"],
-    always: ["Gravity: 1.62 m/s² on the Moon vs 9.81 on Earth.", "Hard vacuum: no air drag on dust, no convective cooling."],
+    always: ["Gravity: 1.62 m/s² on the Moon vs 9.80 on Earth."],
   },
   "m2-rover-sand": {
     short: "Rover on sand",
     blurb: "Loose, sandy, bare ground where rovers can get stuck — and learn not to.",
     keyLimit: "Sand fraction is a soil-model value; dunes are not confirmed on imagery.",
     notScored: ["Dune slopes — needs a 30 m elevation model", "Jezero sand fraction — no comparable value yet"],
-    always: ["Gravity: 3.72 m/s² on Mars vs 9.81 on Earth.", "Thin CO₂ air, about 0.6 % of Earth's surface pressure."],
+    always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },
   "m3-ground-ice": {
     short: "Water from ground ice",
     blurb: "Cold, dry polar desert where ice survives just below the surface.",
     keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
     notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — server down when we checked"],
-    always: ["Mars air pressure is too low for liquid water: ice sublimates.", "No global magnetic field or thick air: radiation reaches the ground."],
+    always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },
 };
 
 const LEVEL: Record<string, Access["level"]> = { low: "Low", medium: "Medium", high: "High" };
+const PERMIT_NOTE = "Check national park and research permits before fieldwork.";
 function accessOf(a: RawAccess | null): Access {
-  if (!a) return { level: "Not assessed", score: null, basis: "Antarctic Treaty area: no country attributed; national permit required.", sources: [], protectedArea: false, permit: "Antarctic Treaty area" };
-  const flag = a.permitFlag && a.permitFlag !== "NONE" ? a.permitFlag : null;
+  if (!a) return { level: "Not assessed", score: null, basis: "", sources: [], note: PERMIT_NOTE, permit: null };
   return {
     level: a.level ? LEVEL[a.level] : "Not assessed",
     score: a.score,
     basis: a.basis ?? "",
     sources: a.sources ?? [],
-    protectedArea: a.insideProtectedArea === true,
-    permit: flag === "ANTARCTIC_TREATY_AREA" ? "Antarctic Treaty area: national permit required" : flag === "PROTECTED_AREA" || a.insideProtectedArea ? "Inside a protected area: check national permits" : null,
+    note: a.note ?? PERMIT_NOTE,
+    permit: a.permitFlag === "ANTARCTIC_TREATY_AREA" ? "Antarctic Treaty area: no country attributed; a national permit is required" : null,
   };
 }
 

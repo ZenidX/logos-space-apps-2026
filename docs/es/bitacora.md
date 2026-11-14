@@ -2,6 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:28 · Auditoría total: segunda tanda (fuentes y verdad)
+- Datos v4 (Logos Datos): WDPCA eliminado (no comercial; Legal retiró su OK); en su lugar, aviso «Check national park and research permits before fieldwork». Arreglado un fallo: las frases de «dónde se rompe» citaban rangos de otra misión.
+- Auditoría de fuentes en `docs/sources.md`: cada afirmación con fuente, URL, estado HTTP, fecha, licencia y veredicto. Corregido: enlace de IceBite (el anterior era de IceBreaker), fechas de JETT3 (4–9 oct 2022), «sun cart» de JETT5 → «portable spotlight» (USGS), coordenadas de Jezero con el Gazetteer de USGS, gravedad 9,80 / 3,73 (NSSDC), frase sobre la corteza del polo sur con fuente de NASA JSC, enlace de MDRS, README sin misiones que la web no tiene.
+- Valores de objetivo aproximados marcados «≈ … (estimate)» en la ficha (albedo de Mons Mouton y Jezero, −80 °C de Arcadia).
+- Reproducible: `scripts/data/` (pipeline de Python con entradas, versiones y sha256) + `npm run data` y `npm run test:data` (5 casos, 3 calculados a mano).
+- No hecho: subir a Next 16 por las 2 vulnerabilidades de `npm audit` (solo afectan a la compilación; web estática sin servidor; cambio mayor a horas de la entrega). Lighthouse móvil 81 (objetivo 90): el resto del coste es evaluar three.js con CPU ×4 más lenta.
+
 ## 2026-11-14 · 22:24 · Auditoría total (orden de zexu): primera tanda
 - Legal: documentos en español movidos a `docs/es/` (la guía exige inglés en todo lo enlazado); `docs/idea-origin.md` y `docs/missions.md` en inglés; término «Super Intelligence (SI) / AI»; WDPCA fuera de README y LICENSE (los datos los regenera Logos Datos sin WDPCA).
 - Móvil 390 px: cabecera compacta sin pisar los globos, escena al 46 % del alto. Enlace directo `?m=<misión>`.

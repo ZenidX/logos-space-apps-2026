@@ -10,7 +10,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-between"><h2 className="display text-[26px] font-semibold">Method & sources</h2><button onClick={onClose} className="chip" autoFocus>Close ✕</button></div>
 
         <h3 className="label mt-6">1 · Start from real missions</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">We did not ask “which place looks like the Moon?”. We listed real analog field campaigns run by NASA and ESA, read which task each one rehearsed, and turned each task into a few surface conditions that open global data can measure.</p>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">We did not ask “which place looks like the Moon?”. We listed real analog field campaigns run by NASA, ESA and the Mars Society, read which task each one rehearsed, and turned each task into a few surface conditions that open global data can measure.</p>
 
         <h3 className="label mt-6">2 · Analog index (0–1), condition by condition</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each condition has an ideal range in physical units. A condition&apos;s similarity is 1 inside the range and falls off smoothly outside it (Gaussian with a tolerance); it counts as <b>met</b> when the similarity is at least 0.5. Then, for every 0.1° land cell on Earth:</p>
@@ -30,7 +30,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each site lists what was not scored and what Earth cannot reproduce (gravity, vacuum, radiation, cold). On the globes, arc segments show the top conditions: solid = met, amber dashes = the analogy breaks, faint dots = not scored.</p>
 
         <h3 className="label mt-6">6 · Access complexity (neutral)</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">A relative 0–1 score of how much coordination an external field team may need: governance perception 40 %, nearby recorded organised-violence events 35 %, travel advice from two governments (US, UK) 25 %, plus permit flags. Weights and levels (Low &lt; 0.25 ≤ Medium &lt; 0.5 ≤ High) are our team&apos;s choice. Antarctica is not scored (Antarctic Treaty). Not travel advice and not a judgement of any country. Boundaries are de facto and imply no position on sovereignty.</p>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">A relative 0–1 score of how much coordination an external field team may need: governance perception 40 %, nearby recorded organised-violence events 35 %, travel advice from two governments (US, UK) 25 %, plus an Antarctic Treaty flag. Protected areas are not mapped: check national park and research permits before fieldwork. Weights and levels (Low &lt; 0.25 ≤ Medium &lt; 0.5 ≤ High) are our team&apos;s choice. Antarctica is not scored (Antarctic Treaty). Not travel advice and not a judgement of any country. Boundaries are de facto and imply no position on sovereignty.</p>
 
         <h3 className="label mt-6">Mission campaigns</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
@@ -38,7 +38,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         </ul>
         <h3 className="label mt-6">Targets</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
-          {MISSIONS.map((m) => <li key={m.id}>• {m.target.name}: {m.target.coordSource}. Target surface values are approximate literature values, not yet extracted from NASA PDS products.</li>)}
+          {MISSIONS.map((m) => <li key={m.id}>• {m.target.name}: {m.target.coordSource}. Target surface values marked “estimate” are approximate literature values, not yet extracted from NASA PDS products; they informed the ideal ranges of the conditions and are shown for context.</li>)}
         </ul>
         <h3 className="label mt-6">Earth data</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{varSources.map((v) => <li key={v}>• {v}</li>)}<li>• Sand fraction: ISRIC SoilGrids 2.0 (CC BY 4.0), model prediction.</li>
@@ -46,7 +46,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Place names: Natural Earth (public domain) and © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL).</li>
           <li>• Target constants (gravity, pressure, temperature): NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC).</li></ul>
         <h3 className="label mt-6">Access data</h3>
-        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{accessSources.map((v) => <li key={v}>• {v.includes("protectedplanet") ? <>{v.replace("www.protectedplanet.net", "")}<a className="underline" href="https://www.protectedplanet.net" target="_blank" rel="noopener noreferrer">www.protectedplanet.net</a></> : v}</li>)}</ul>
+        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{accessSources.map((v) => <li key={v}>• {v}</li>)}</ul>
         <h3 className="label mt-6">Imagery and code</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>

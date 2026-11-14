@@ -52,11 +52,13 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         <h4 className="label">Condition by condition (similarity 0–1) · vs {t.name}</h4>
         <ul className="mt-2 grid gap-1.5">
           {matchVars.map((v) => {
-            const tv = t.values[v.id]?.value ?? null;
+            const tval = t.values[v.id];
+            const tv = tval?.value ?? null;
+            const est = /approx/i.test(tval?.source ?? "");
             return (
               <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
                 <div className="flex items-center justify-between gap-2"><span>{v.label}</span><span className="flex items-center gap-2"><Bar v={v.similarity} /><span className="mono w-10 text-right text-[12px]">{idx(v.similarity)}</span></span></div>
-                <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · target {tv === null ? "n/a" : fmt(tv, v.unit)}</div>
+                <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · <span title={tval?.source}>target {tv === null ? "n/a" : `${est ? "≈ " : ""}${fmt(tv, v.unit)}`}{est && " (estimate)"}</span></div>
               </li>
             );
           })}
@@ -71,7 +73,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             <div className="rounded-lg border border-[var(--line)] p-2"><div className="text-[var(--mut)]">Here: highest · winter</div><div className="mono">{fmt(sun.value, "deg")} · {sunW?.value !== null && sunW?.value !== undefined && sunW.value <= 0 ? "polar night" : fmt(sunW?.value ?? null, "deg")}</div></div>
             <div className="rounded-lg border border-[var(--line)] p-2"><div className="text-[var(--mut)]">{t.name.split(" (")[0]}</div><div className="mono">{fmt(t.values.sun_max_deg?.value ?? null, "deg")} · {fmt(t.values.sun_winter_solstice_deg?.value ?? null, "deg")}</div></div>
           </div>
-          <p className="mt-2 text-[12.5px] text-[var(--mut)]">At the lunar south pole the Sun never climbs more than a few degrees. NASA&apos;s JETT3 and JETT5 tests rehearsed this by walking at night with a light cart.</p>
+          <p className="mt-2 text-[12.5px] text-[var(--mut)]">Computed from latitude only; terrain is ignored. At Mons Mouton the noon Sun stays below about 7°. NASA&apos;s JETT3 test rehearsed this with night moonwalks and a lighting cart; JETT5 used a portable spotlight acting as the Sun (USGS).</p>
         </section>
       )}
 
@@ -92,6 +94,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         </p>
         {site.access.permit && <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.permit}</p>}
         <p className="mt-1 text-[12px] text-[var(--mut)]">{site.access.basis}</p>
+        <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.note}</p>
         <p className="mt-2 text-[11.5px] text-[var(--dim)]">How much coordination an external field team may need. Not travel advice and not a judgement of any country. Sources in “Method & sources”.</p>
       </section>
     </div>

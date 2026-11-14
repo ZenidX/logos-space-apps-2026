@@ -1,7 +1,7 @@
 {
  "generatedWith": "AI-assisted (Claude), reviewed by team Logos",
- "generatedAt": "2026-11-14T23:10:00+01:00",
- "version": "v3",
+ "generatedAt": "2026-11-14T22:25:26+01:00",
+ "version": "v4",
  "method": "see method.md (section v3) in the same folder",
  "missions": [
   {
@@ -57,7 +57,7 @@
      "sun_max_deg": {
       "value": 6.9,
       "unit": "deg",
-      "source": "computed: 90 - (84.6 - 1.54); lunar obliquity 1.54 deg; summit relief ignored",
+      "source": "computed: 90 - (84.6 - 1.54); lunar equator tilt to the ecliptic 1.54 deg (Cassini state); terrain and summit height ignored",
       "url": null
      },
      "sun_winter_solstice_deg": {
@@ -159,9 +159,9 @@
      "url": null
     },
     {
-     "text": "Rock: south-pole highland crust is feldspathic, not basalt; basalt sites train EVA operations, not target composition.",
-     "source": "general lunar geology; not sourced tonight",
-     "url": null
+     "text": "Rock: the lunar south pole is highland terrain with anorthosite (feldspar-rich rock), not mare basalt; basalt sites train EVA operations, not target composition.",
+     "source": "NASA JSC, Houston We Have a Podcast ep. 236 (D. Kring, LPI)",
+     "url": "https://www.nasa.gov/johnson/HWHAP/moon-geology"
     }
    ],
    "sites": [
@@ -225,16 +225,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.159,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -294,22 +293,21 @@
      },
      "campaign": "BASALT",
      "breaks": [
-      "Surface albedo 0.285 0-1 outside the mission range (<= 0.5)",
+      "Surface albedo 0.285 0-1 outside the mission range (0.07-0.20)",
       "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
      ],
      "accessRisk": {
       "level": "low",
       "score": 0.159,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -368,16 +366,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.167,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.313; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-07-31); UK: no travel alert; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.313; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-07-31); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -437,23 +434,22 @@
      },
      "campaign": "BASALT",
      "breaks": [
-      "Vegetation (NDVI) 0.7 index outside the mission range (<= 0.10)",
+      "Vegetation (NDVI) 0.7 index outside the mission range (<= 0.05)",
       "Precipitation 1273.12 mm/yr outside the mission range (<= 250)",
       "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
      ],
      "accessRisk": {
       "level": "low",
       "score": 0.159,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -530,16 +526,15 @@
      "accessRisk": {
       "level": "high",
       "score": 0.619,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.619 (0-1, relative); Governance perception (WGI, perceptions-based) 0.341; nearby organised-violence events 0.963; travel advice 0.583; US level 3 of 4 (2026-10-22); UK advice mentions specific regions; see source; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.619 (0-1, relative); Governance perception (WGI, perceptions-based) 0.341; nearby organised-violence events 0.963; travel advice 0.583; US level 3 of 4 (2026-10-22); UK advice mentions specific regions; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -616,16 +611,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.126,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -702,16 +696,15 @@
      "accessRisk": {
       "level": "high",
       "score": 0.518,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.518 (0-1, relative); Governance perception (WGI, perceptions-based) 0.54; nearby organised-violence events 0.447; travel advice 0.583; US level 3 of 4 (2026-10-18); UK advice mentions specific regions; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -788,16 +781,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.083,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.083 (0-1, relative); Governance perception (WGI, perceptions-based) 0.207; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-08-17); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -874,16 +866,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.126,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -960,16 +951,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.126,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1010,7 +1000,7 @@
     },
     {
      "name": "Mars Society MDRS, Utah",
-     "url": "https://mdrs.marssociety.org/"
+     "url": "https://www.marssociety.org/"
     }
    ],
    "target": {
@@ -1018,7 +1008,7 @@
     "name": "Jezero crater",
     "lat": 18.4,
     "lon": 77.7,
-    "coordSource": "The Planetary Society, https://www.planetary.org/articles/jezero-landing-site-mars-2020-rover (gazetteer crater entry not found)",
+    "coordSource": "USGS Gazetteer Feature 14300: 18.4082 N, 77.6873 E (planetocentric, +East), https://planetarynames.wr.usgs.gov/Feature/14300",
     "values": {
      "sand": {
       "value": null,
@@ -1162,16 +1152,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.159,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1217,23 +1206,22 @@
        "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
       }
      },
-     "campaign": "ARADS / SAFER",
+     "campaign": "ARADS (SAFER ran elsewhere in the Atacama, near Paranal)",
      "breaks": [
       "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
      ],
      "accessRisk": {
       "level": "low",
       "score": 0.167,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.314; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-08-18); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1286,16 +1274,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.159,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1360,16 +1347,15 @@
      "accessRisk": {
       "level": "high",
       "score": 0.856,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.856 (0-1, relative); Governance perception (WGI, perceptions-based) 0.64; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1434,16 +1420,15 @@
      "accessRisk": {
       "level": "high",
       "score": 0.913,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.783; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1508,16 +1493,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.179,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.179 (0-1, relative); Governance perception (WGI, perceptions-based) 0.24; nearby organised-violence events 0.0; travel advice 0.333; US level 3 of 4 (2026-10-22); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1582,16 +1566,15 @@
      "accessRisk": {
       "level": "high",
       "score": 0.913,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.782; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-06-07); UK advice covers whole country; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1656,16 +1639,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.178,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.178 (0-1, relative); Governance perception (WGI, perceptions-based) 0.34; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-10-18); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1730,16 +1712,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.126,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1771,8 +1752,8 @@
      "url": "https://ntrs.nasa.gov/api/citations/20250004164/downloads/LSIC25-Glass_abst2.docx"
     },
     {
-     "name": "IceBite, Antarctic Dry Valleys (planned ~2010)",
-     "url": "https://astrobiology.nasa.gov/news/drilling-into-arctic-ice/"
+     "name": "IceBite, University Valley, Antarctica (NASA ASTEP, selected 2008)",
+     "url": "https://astrobiology.nasa.gov/news/new-astep-projects-reach-from-arctic-to-antarctic-mars-to-europa/"
     },
     {
      "name": "NASA/CSA RESOLVE at Mauna Kea (2010)",
@@ -1784,7 +1765,7 @@
     "name": "Arcadia Planitia",
     "lat": 46.66,
     "lon": 192.0,
-    "coordSource": "USGS Gazetteer Feature 348 (planetocentric, +East 0-360), https://planetarynames.wr.usgs.gov/Feature/348",
+    "coordSource": "USGS Gazetteer Feature 348 web page (planetocentric, +East 0-360), https://planetarynames.wr.usgs.gov/Feature/348; the gazetteer GIS file gives 49.02 N, 188.15 E. Arcadia spans ~2,245 km, so the centre is nominal",
     "values": {
      "lst_mean": {
       "value": -80,
@@ -1926,16 +1907,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.081,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -1982,16 +1962,15 @@
      "accessRisk": {
       "level": null,
       "score": null,
-      "insideProtectedArea": null,
       "permitFlag": "ANTARCTIC_TREATY_AREA",
       "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2056,16 +2035,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.081,
-      "insideProtectedArea": true,
-      "permitFlag": "PROTECTED_AREA",
-      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert; inside a protected area: check national permits",
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2130,16 +2108,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.081,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2204,16 +2181,15 @@
      "accessRisk": {
       "level": "medium",
       "score": 0.454,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.454 (0-1, relative); Governance perception (WGI, perceptions-based) 0.51; nearby organised-violence events 0.0; travel advice 1.0; US level 4 of 4 (2025-12-28); UK advice covers whole country; see source",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2278,16 +2254,15 @@
      "accessRisk": {
       "level": null,
       "score": null,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity None (0-1, relative); Governance perception (WGI, perceptions-based) None; nearby organised-violence events 0.0; travel advice None",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2346,16 +2321,15 @@
      "accessRisk": {
       "level": null,
       "score": null,
-      "insideProtectedArea": null,
       "permitFlag": "ANTARCTIC_TREATY_AREA",
       "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
@@ -2420,16 +2394,15 @@
      "accessRisk": {
       "level": "low",
       "score": 0.081,
-      "insideProtectedArea": false,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
       "sources": [
        "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
        "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
        "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
-       "UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected and Conserved Areas (WDPCA) [On-line], October 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net (flag only, not downloadable)",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
       ]
      }
