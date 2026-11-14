@@ -26,5 +26,24 @@ for (const m of d.missions) {
     if (s.accessRisk?.score != null) assert.ok(s.accessRisk.sources?.length, `${s.id}: access score without sources`);
   }
 }
+// Every site and target shown in the comparison view has terrain and detail data, with finite numbers.
+const terrain = JSON.parse(readFileSync(new URL("./terrain-index.json", import.meta.url))).items;
+const details = JSON.parse(readFileSync(new URL("./site-details.json", import.meta.url))).items;
+for (const m of d.missions) {
+  const ids = [`target-${m.id}`, ...m.sites.map((s) => s.id)];
+  for (const id of ids) {
+    const t = terrain[id];
+    assert.ok(t, `${id}: no terrain`);
+    for (const k of ["reliefM", "slopeMeanDeg", "slopeP90Deg", "roughnessStdM"]) assert.ok(Number.isFinite(t.stats[k]) && t.stats[k] >= 0, `${id}: terrain ${k}`);
+    assert.ok(readFileSync(new URL(`../../public${t.file}`, import.meta.url)).length === 96 * 96 * 4, `${id}: heightmap size`);
+    assert.ok(details[id], `${id}: no details`);
+  }
+  for (const s of m.sites) {
+    const w = details[s.id].when;
+    assert.equal(w.sunNoonDeg.length, 12, `${s.id}: 12 monthly Sun values`);
+    // the app recomputes the noon Sun from latitude: it must agree with the data file
+    w.sunNoonDeg.forEach((v, i) => { const day = 15 + Math.round(i * 30.44), decl = 23.44 * Math.sin((2 * Math.PI * (284 + day)) / 365); assert.ok(Math.abs(v - (90 - Math.abs(s.lat - decl))) < 1.2, `${s.id}: Sun month ${i + 1}`); });
+  }
+}
 assert.ok(formula >= 18, `formula checked on only ${formula} sites`);
 console.log(`data ok · ${sites} sites · index formula verified on ${formula}`);

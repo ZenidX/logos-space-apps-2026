@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 h-[46dvh] w-full pt-12 md:pt-0 transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(784px,62vw)]" : "md:left-0 md:right-[404px]") : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : "h-[46dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[min(600px,46vw)]" : "md:left-0 md:right-[270px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
@@ -96,7 +96,7 @@ export default function Home() {
       </div>
 
       <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-gradient-to-b from-[var(--bg)] to-transparent px-4 py-2 md:bg-none md:p-4 md:px-8">
-        <button onClick={home} className="title-sm pointer-events-auto text-[16px]">Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
+        <button onClick={home} className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2">
           <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
@@ -105,7 +105,7 @@ export default function Home() {
       </header>
 
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
-      <section className={`relative z-10 px-4 pb-6 md:px-8 ${missionId ? "md:absolute md:left-0 md:top-0 md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
+      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? "md:absolute md:left-0 md:top-0 md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
         {!missionId && (
           <div className="fade-in pt-4 md:pt-0">
             <p className="label">NASA Space Apps Challenge 2026</p>

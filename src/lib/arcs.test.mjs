@@ -1,56 +1,43 @@
 // AI-assisted (Claude), reviewed by team Logos
-// Prueba la lógica de ArcSet SIN GPU (Line2/LineMaterial se construyen en Node). `bash probar.sh` la ejecuta junto a orrery-math.
+// ArcSet logic without a GPU (Line2/LineMaterial build fine in Node).
 import assert from "node:assert/strict";
 import * as THREE from "three";
-import { ArcSet } from "./arcs.ts";
+import { ArcSet, SEGS, DRAW_S, STAGGER_S } from "./arcs.ts";
 import { latLonToVec3 } from "./globe-math.ts";
 import { LANDSCAPE, orientToFace, worldPoint } from "./orrery-math.ts";
 const qE = orientToFace(latLonToVec3(42.94, 93.75), new THREE.Vector3(0.8, 0.1, 0.6)), qM = orientToFace(latLonToVec3(40, -160), new THREE.Vector3(-0.9, 0.2, 0.4));
 const A = worldPoint(LANDSCAPE, "mars", qM, 1.7, 40, -160), B = worldPoint(LANDSCAPE, "earth", qE, 1, 42.94, 93.75);
-const spec = (id, dims, delay = 0, hiddenEnd = false) => ({ id, dims, a: A.p, na: A.n, b: B.p, nb: B.n, color0: 0xff8d5e, color1: 0x5db4ff, delay, hiddenEnd });
-const counts = (set, i = 0) => set.items[i].lines.map((l) => (l.line.visible ? l.line.geometry.instanceCount : 0));
+const spec = (id) => ({ id, a: A.p, na: A.n, b: B.p, nb: B.n, color0: 0xff8d5e, color1: 0x5db4ff });
+const count = (it) => (it.line.visible ? it.line.geometry.instanceCount : 0);
 
-// 1) dibujo progresivo con tiempos calculados a mano: t=0,3 s (arco sin retardo) → p=0,3/0,7=0,4286; e=1-(1-p)^3=0,8135; e·4=3,254 → [16,16,16,4]
-let set = new ArcSet(false, false); set.setArcs([spec("a", [0.96, 0.99, 1]), spec("b", [0.912, 0.84, 1], 0.3)], 100);
-set.update(100); assert.deepEqual(counts(set), [0, 0, 0, 0]);
-set.update(100.3); assert.deepEqual(counts(set), [16, 16, 16, 4]);
-assert.deepEqual(counts(set, 1), [0, 0, 0, 0]); // el 2.º arco aún no empieza (retardo 0,3 s)
-const busy = set.update(101.2); assert.deepEqual(counts(set), [16, 16, 16, 16]); assert.ok(busy, "con fotón debe seguir animando");
-console.log("1 ok · dibujo progresivo: [16,16,16,4] a 0,3 s; segundo arco con retardo; completo a 1,2 s");
+// 1) one line per arc; progressive draw with stagger; complete after DRAW_S (+ stagger)
+let set = new ArcSet(false, false); set.setArcs([spec("a"), spec("b")], 100);
+assert.equal(set.group.children.length, 2, "one Line2 per arc, nothing else (no dots, no photons)");
+set.update(100); assert.deepEqual(set.items.map(count), [0, 0]);
+assert.equal(set.update(100 + DRAW_S / 2), true); assert.ok(count(set.items[0]) > count(set.items[1]) && count(set.items[1]) > 0, "second arc starts later");
+assert.equal(set.update(100 + DRAW_S + STAGGER_S + 0.01), false, "after drawing, nothing keeps moving");
+assert.deepEqual(set.items.map(count), [SEGS, SEGS]);
+console.log("1 ok · one line per arc, staggered draw-in, then still");
 
-// 2) tipos de tramo, trazo punteado y datos reales (Alaska: Shape 84 % → ámbar punteado)
-const kinds = set.items[1].lines.map((l) => l.kind); assert.deepEqual(kinds, ["un", "ok", "brk", "thin"]);
-assert.deepEqual(set.items[1].lines.map((l) => l.line.material.dashed), [true, false, true, false]);
-assert.ok(set.items[1].lines[2].line.geometry.attributes.instanceDistanceStart, "falta computeLineDistances en el tramo punteado");
-assert.equal(set.items[1].lines[2].line.material.color.getHex(), 0xffb454);
-console.log("2 ok · tramos [un, ok, brk, thin]; punteados con distancias; el roto es ámbar #ffb454");
+// 2) solid, depth-tested (hidden behind planets), single hue with a gradient
+const m = set.items[0].line.material, col = set.items[0].line.geometry.attributes.instanceColorStart;
+assert.equal(m.dashed, false); assert.equal(m.depthTest, true); assert.equal(m.vertexColors, true); assert.ok(col, "gradient colours missing");
+const first = new THREE.Color(col.getX(0), col.getY(0), col.getZ(0)), last = new THREE.Color(col.getX(SEGS - 1), col.getY(SEGS - 1), col.getZ(SEGS - 1));
+assert.ok(Math.abs(first.r - new THREE.Color(0xff8d5e).r) < 1e-3 && first.r > last.r && last.r > new THREE.Color(0x5db4ff).r, "gradient should stay close to the mission colour");
+console.log("2 ok · solid line, depth-tested, subtle gradient from the mission colour");
 
-// 3) pausa: sin fotón y sin «busy»; modo lite: sin fotón
-assert.equal(set.update(105, true), false);
-assert.equal(new ArcSet(true, false).update(0), false);
-set.setArcs([spec("a", [0.96, 0.99, 1])], 200); const lite = new ArcSet(true, false); lite.setArcs([spec("a", [0.96, 0.99, 1])], 0); lite.update(5); assert.equal(lite.update(5), false); assert.equal(lite.items[0].photon, null);
-console.log("3 ok · pausa y modo lite: sin animación continua ni fotón");
+// 3) reduced motion: fully drawn on the first frame
+const red = new ArcSet(false, true); red.setArcs([spec("a")], 0); assert.equal(red.update(0), false); assert.equal(count(red.items[0]), SEGS);
+console.log("3 ok · reduced motion: drawn at once");
 
-// 4) movimiento reducido: todo dibujado al instante
-const red = new ArcSet(false, true); red.setArcs([spec("a", [0.96, 0.99, 1])], 0); red.update(0); assert.deepEqual(counts(red), [16, 16, 16, 16]); assert.equal(red.items[0].photon, null);
-console.log("4 ok · movimiento reducido: arcos completos en el primer fotograma, sin fotón");
+// 4) highlight: others dim, and it resets
+set.setHighlight("a"); set.update(200); assert.equal(set.items[0].line.material.opacity, 0.9); assert.ok(set.items[1].line.material.opacity < 0.3);
+set.setHighlight(null); set.update(200); assert.equal(set.items[1].line.material.opacity, 0.9);
+console.log("4 ok · highlight dims the other arcs");
 
-// 5) resalte: los demás arcos bajan al 35 %
-set = new ArcSet(false, true); set.setArcs([spec("a", [0.96, 0.99, 1]), spec("b", [0.95, 0.95, 1])], 0); set.setHighlight("a"); set.update(1);
-assert.equal(set.items[0].lines[3].line.material.opacity, 1); assert.ok(Math.abs(set.items[1].lines[3].line.material.opacity - 0.35) < 1e-9);
-set.setHighlight(null); set.update(1); assert.equal(set.items[1].lines[3].line.material.opacity, 1);
-console.log("5 ok · resalte: 100 % / 35 %, y se restablece");
-
-// 6) reutilización al arrastrar: mismos objetos Line2 y material, posiciones nuevas, sin crecer la escena
-const before = set.items[0].lines[0].line, mat = before.material, n = set.group.children.length;
-const B2 = worldPoint(LANDSCAPE, "earth", orientToFace(latLonToVec3(42.94, 93.75), new THREE.Vector3(0.6, 0.3, 0.7)), 1, 42.94, 93.75);
-const p0 = before.geometry.attributes.instanceEnd.getX(15);
-set.setArcs([{ ...spec("a", [0.96, 0.99, 1]), b: B2.p, nb: B2.n }, spec("b", [0.95, 0.95, 1])], 5, true);
-assert.equal(set.items[0].lines[0].line, before); assert.equal(before.material, mat); assert.equal(set.group.children.length, n);
-assert.notEqual(before.geometry.attributes.instanceEnd.getX(15), p0, "las posiciones no se actualizaron");
-set.setArcs([spec("a", [0.96, 0.99, 1])], 6, true); assert.equal(set.items[0].lines.length, 4); assert.equal(set.items.length, 1); // distinto número de arcos → reconstruye
-console.log("6 ok · reutilización: mismos Line2/materiales con posiciones nuevas; reconstruye si cambian los arcos");
-
-// 7) liberar
+// 5) reuse while dragging: same Line2 and material, new positions; rebuild when the set changes; dispose empties
+const before = set.items[0].line, mat = before.material; set.setArcs([spec("a"), spec("b")], 300, true);
+assert.equal(set.items[0].line, before); assert.equal(before.material, mat); assert.equal(count(set.items[0]), SEGS, "progress kept");
+set.setArcs([spec("c")], 400, true); assert.equal(set.items.length, 1); assert.notEqual(set.items[0].line, before);
 set.dispose(); assert.equal(set.group.children.length, 0);
-console.log("7 ok · dispose deja la escena vacía");
+console.log("5 ok · reuse, rebuild, dispose");

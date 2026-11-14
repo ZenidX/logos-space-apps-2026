@@ -11,7 +11,11 @@ const mono = Geist_Mono({ subsets: ["latin"], weight: "400", variable: "--f-mono
 export const metadata: Metadata = {
   title: "Logos · Mission Analogs",
   description: "Where on Earth can we rehearse a specific Moon or Mars mission? NASA Space Apps Challenge 2026, team Logos.",
+  metadataBase: new URL("https://spaceapp-logos.vercel.app"),
+  icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
+  twitter: { card: "summary_large_image" },
   openGraph: {
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Logos: rehearse the Moon and Mars on Earth" }],
     title: "Logos · Mission Analogs",
     description: "Rehearse the Moon and Mars on Earth: mission-based Earth analogs, where the comparison breaks, and access complexity.",
     type: "website",

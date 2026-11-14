@@ -299,8 +299,8 @@ export default function Orrery({ mode, markers, arcs, selectedId, highlightId = 
             key={m.id}
             ref={(n) => { if (n) buttons.current.set(m.id, n); else buttons.current.delete(m.id); }}
             type="button"
-            className={`mk ${m.kind === "target" ? "target" : ""} ${m.id === selectedId || m.id === highlightId ? "sel" : ""} pointer-events-auto`}
-            style={{ left: 0, top: 0, visibility: "hidden", ["--c" as string]: `#${COLOR[m.body].toString(16).padStart(6, "0")}` }}
+            className={`mk ${m.kind === "target" ? "target" : "cand"} ${m.id === selectedId || m.id === highlightId ? "sel" : ""} pointer-events-auto`}
+            style={{ left: 0, top: 0, visibility: "hidden", ["--land" as string]: `${900 + ((m.rank ?? 1) - 1) * 120}ms`, ["--c" as string]: `#${COLOR[m.body].toString(16).padStart(6, "0")}` }}
             aria-label={`${m.label}${m.rank ? `, rank ${m.rank}` : ""}`}
             aria-pressed={m.id === selectedId}
             onClick={() => onSelect?.(m.id)}

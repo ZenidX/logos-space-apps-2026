@@ -33,7 +33,7 @@ function buildMesh(h: Float32Array, body: Item["body"]): THREE.Mesh {
   return new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: TINT[body], roughness: 1, metalness: 0 }));
 }
 
-export default function TerrainCompare({ siteId, targetId, targetSunDeg }: { siteId: string; targetId: string; targetSunDeg: number | null }) {
+export default function TerrainCompare({ siteId, targetId, targetSunDeg, compact = false }: { siteId: string; targetId: string; targetSunDeg: number | null; compact?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
   const sunRef = useRef(targetSunDeg ?? 30);
   const api = useRef<{ setSun: (deg: number) => void } | null>(null);
@@ -107,15 +107,9 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg }: { sit
   }, [siteId, targetId, site, target]);
 
   if (!site || !target) return <p className="text-[13px] text-[var(--dim)]">No terrain data for this site.</p>;
-  const rows: [string, (i: Item) => string][] = [
-    ["Relief", (i) => `${Math.round(i.stats.reliefM)} m`],
-    ["Mean slope", (i) => `${i.stats.slopeMeanDeg.toFixed(1)}°`],
-    ["Steepest 10 %", (i) => `> ${i.stats.slopeP90Deg.toFixed(1)}°`],
-    ["Roughness", (i) => `${Math.round(i.stats.roughnessStdM)} m`],
-  ];
   return (
     <div>
-      <div ref={host} className="relative h-[280px] w-full cursor-grab overflow-hidden rounded-xl border border-[var(--line)] bg-[rgba(4,6,12,.6)] active:cursor-grabbing md:h-[360px]" role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
+      <div ref={host} className={`relative w-full cursor-grab overflow-hidden rounded-xl border border-[var(--line)] bg-[rgba(4,6,12,.45)] active:cursor-grabbing ${compact ? "h-[150px] md:h-[clamp(170px,30vh,300px)]" : "h-[280px] md:h-[360px]"}`} role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
         {state === "loading" && <div className="skel absolute inset-4 rounded-lg" role="status" aria-label="Loading terrain" />}
         {state === "error" && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-[13px] text-[var(--dim)]">3D terrain could not be shown here. The numbers below are the same comparison.</p>}
         <span className="label pointer-events-none absolute left-3 top-3" style={{ color: "var(--earth)" }}>Earth · this site</span>
@@ -128,6 +122,22 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg }: { sit
         <span className="mono w-9 text-right">{sun}°</span>
         {targetSunDeg !== null && <button className="chip" onClick={() => setSun(Math.round(targetSunDeg))}>Target Sun {targetSunDeg.toFixed(0)}°</button>}
       </div>
+      {!compact && <TerrainStats siteId={siteId} targetId={targetId} />}
+    </div>
+  );
+}
+
+export function TerrainStats({ siteId, targetId }: { siteId: string; targetId: string }) {
+  const site = terrainOf(siteId), target = terrainOf(targetId);
+  if (!site || !target) return <p className="text-[13px] text-[var(--dim)]">No terrain data for this site.</p>;
+  const rows: [string, (i: Item) => string][] = [
+    ["Relief", (i) => `${Math.round(i.stats.reliefM)} m`],
+    ["Mean slope", (i) => `${i.stats.slopeMeanDeg.toFixed(1)}°`],
+    ["Steepest 10 %", (i) => `> ${i.stats.slopeP90Deg.toFixed(1)}°`],
+    ["Roughness", (i) => `${Math.round(i.stats.roughnessStdM)} m`],
+  ];
+  return (
+    <div>
       <table className="mono mt-3 w-full text-[12.5px]">
         <thead><tr className="text-left text-[var(--dim)]"><th className="py-1 font-normal">11 × 11 km, 115 m grid</th><th className="font-normal">This site</th><th className="font-normal">Target</th></tr></thead>
         <tbody>{rows.map(([k, f]) => <tr key={k} className="border-t border-[var(--line)]"><td className="py-1 text-[var(--mut)]">{k}</td><td>{f(site)}</td><td>{f(target)}</td></tr>)}</tbody>

@@ -1,7 +1,10 @@
+"use client";
 // AI-assisted (Claude), reviewed by team Logos
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import Count from "@/components/Count";
 import { fmt, idx, type Mission, type Site } from "@/lib/missions";
+import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
 import detailsRaw from "@/data/site-details.json";
 
@@ -88,41 +91,60 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
 }
 
 export default function SitePanel({ site, mission, onBack }: { site: Site; mission: Mission; onBack: () => void }) {
+  const [tab, setTab] = useState<"why" | "when" | "how" | "limits" | "shape" | null>(null);
   const t = mission.target;
   const matchVars = site.vars.filter((v) => v.inMatch);
   const tSun = t.values.sun_max_deg?.value ?? null;
   const targetShort = t.name.split(" (")[0];
   const det = DETAILS[site.id], how = det?.how;
-  const H = ({ children }: { children: React.ReactNode }) => <h4 className="display text-[26px] leading-none">{children}</h4>;
+  const scored = matchVars.filter((v) => v.similarity !== null), met = scored.filter((v) => (v.similarity ?? 0) >= 0.5).length;
+  const ts = terrainOf(site.id), tt = terrainOf(`target-${mission.id}`);
+  const TABS = [["why", "Why"], ["shape", "Shape"], ["when", "When"], ["how", "How"], ["limits", "Limits & sources"]] as const;
+  const Fig = ({ k, v, sub, color }: { k: string; v: React.ReactNode; sub?: React.ReactNode; color?: string }) => (
+    <div className="glass-inset rounded-xl px-3 py-2"><p className="label">{k}</p><p className="mono mt-1 text-[22px] leading-none tracking-[-.03em]" style={color ? { color } : undefined}>{v}</p>{sub && <p className="mt-1 text-[11.5px] leading-tight text-[var(--mut)]">{sub}</p>}</div>
+  );
   return (
-    <div className="stagger">
-      <button onClick={onBack} className="back-btn label -ml-1 px-1 py-2 hover:text-[var(--ink)]">← All sites</button>
-      <header className="mt-1 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
-        <div>
-          <div className="flex flex-wrap items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="text-[12.5px] text-[var(--mut)]">Used by: {site.campaign}</span>}</div>
-          <h3 className="place mt-2 text-[36px] leading-[1.02]">{site.name}</h3>
-          <p className="text-[13.5px] text-[var(--mut)]">{site.country} <span className="mono text-[12px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}°</span></p>
-          <p className="mt-0.5 text-[12px] text-[var(--dim)]">{site.kind === "new" ? `A region of ${site.areaKm2 ? `about ${Math.round(site.areaKm2).toLocaleString("en")} km²` : "several cells"} to investigate, not a surveyed site.` : "Values describe the 0.1° cell (~11 km) around the site."}</p>
+    <div>
+      {/* ---- At a glance: everything essential on one screen ---- */}
+      <div className="stagger">
+        <div className="flex items-center justify-between gap-2">
+          <button onClick={onBack} className="back-btn label -ml-1 px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
+          <span className="flex items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">Used by {site.campaign}</span>}</span>
         </div>
-        <div className="rounded-xl border border-[var(--line2)] px-4 py-2 md:text-right">
-          <p className="label">Analog index · 0 to 1</p>
-          <p className="mono text-[44px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} /></p>
-          {site.percentile !== null && <p className="text-[12px] text-[var(--mut)]">higher than {site.percentile.toFixed(1)} % of land cells</p>}
-          <p className="text-[11px] text-[var(--dim)]">a ranking index, not a probability</p>
+        <header className="mt-1 grid items-end gap-x-3 gap-y-1 sm:grid-cols-[1fr_auto]">
+          <div className="min-w-0">
+            <h3 className="place text-[clamp(24px,3.4vh,38px)] leading-[1.02]">{site.name}</h3>
+            <p className="truncate text-[13px] text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "region to investigate, not a surveyed site" : "0.1° cell around the site"}</span></p>
+          </div>
+          <div className="flex items-baseline gap-3 sm:block sm:text-right">
+            <p className="label">Analog index</p>
+            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} /></p>
+            <p className="text-[11px] text-[var(--dim)]">0–1 ranking index,<br className="sm:hidden" /> not a probability</p>
+          </div>
+        </header>
+
+        <div className="mt-2"><TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact /></div>
+
+        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
+          <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {scored.length}</span></>} sub="in the range the mission needs" color={met === scored.length ? "var(--earth)" : "var(--amber)"} />
+          <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
+          <Fig k="Mean slope" v={ts ? <>{ts.stats.slopeMeanDeg.toFixed(1)}°</> : "–"} sub={tt ? <>target {tt.stats.slopeMeanDeg.toFixed(1)}°</> : undefined} />
+          <Fig k="Access" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={site.access.score !== null ? <>complexity {site.access.score.toFixed(2)} of 1</> : site.access.permit ?? "not scored"} color="var(--sand)" />
         </div>
-      </header>
 
-      <p className="mt-3 rounded-lg border p-2 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>▲ {mission.keyLimit}</p>
+        <p className="mt-2 flex gap-2 rounded-xl border px-3 py-2 text-[12.5px] leading-snug" style={{ borderColor: "color-mix(in srgb, var(--amber) 60%, transparent)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
 
-      <div className="mt-5 grid gap-x-6 gap-y-6 md:grid-cols-2">
-        <section className="md:col-span-2">
-          <H>Shape</H>
-          <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">The ground here next to <i className="place text-[15px]">{targetShort}</i>, at the same scale.</p>
-          <TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} />
-        </section>
+        <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Details">
+          {TABS.map(([id, label]) => (
+            <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => setTab(tab === id ? null : id)} className="glass-tab chip">{label}</button>
+          ))}
+        </div>
+      </div>
 
-        <section>
-          <H>Why</H>
+      {/* ---- Detail on demand ---- */}
+      {tab && (
+        <section id="site-detail" role="tabpanel" className="fade-in mt-4 border-t border-[var(--line)] pt-4" key={tab}>
+          {tab === "why" && <>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
           <ul className="grid gap-1.5">
             {matchVars.map((v) => {
@@ -146,18 +168,15 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             })}
             {mission.notScored.map((n) => <li key={n} className="flex gap-2 px-2 text-[12.5px] text-[var(--dim)]"><span aria-hidden>◌</span>Not scored: {n}</li>)}
           </ul>
-        </section>
-
-        <section>
-          <H>When</H>
+        </>}
+          {tab === "shape" && <><p className="mb-2 text-[13px] text-[var(--mut)]">Numbers behind the 3D view above: the ground here next to <i className="place text-[15px]">{targetShort}</i>: 11 × 11 km each, same horizontal and vertical scale.</p><TerrainStats siteId={site.id} targetId={`target-${mission.id}`} /></>}
+          {tab === "when" && <>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Noon Sun height through the year, computed from latitude only (terrain ignored).</p>
           <SunChart lat={site.lat} targetMax={t.body === "moon" ? tSun : null} targetName={targetShort} />
           {det?.when?.surfaceTempC && <TempChart t={det.when.surfaceTempC} targetC={t.values.lst_mean?.value ?? null} targetName={targetShort} />}
           {t.body === "moon" && <p className="mt-1 text-[12px] text-[var(--dim)]">NASA&apos;s JETT3 test rehearsed the low polar Sun with night moonwalks and a lighting cart; JETT5 used a portable spotlight acting as the Sun (USGS).</p>}
-        </section>
-
-        <section>
-          <H>How</H>
+        </>}
+          {tab === "how" && <>
           {how?.campaign ? (
             <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">{how.campaign.text} {how.campaign.urls.map((u, k) => <a key={u} href={u} target="_blank" rel="noopener noreferrer" className="underline">[{k + 1}]</a>)}</p>
           ) : (
@@ -184,18 +203,17 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.note}</p>
             <p className="mt-2 text-[11.5px] text-[var(--dim)]">How much coordination an external field team may need. Not travel advice and not a judgement of any country.</p>
           </div>
-        </section>
-
-        <section>
-          <H>Where it breaks</H>
+        </>}
+          {tab === "limits" && <><h4 className="label">Where the analogy breaks</h4>
           <ul className="mt-2 grid gap-1.5 text-[13px] text-[var(--mut)]">
             {site.breaks.map((b) => <li key={b} className="flex gap-2"><span className="text-[var(--amber)]" aria-hidden>≠</span>{b}</li>)}
             {mission.always.map((b) => (
               <li key={b.text} className="flex gap-2"><span className="text-[var(--amber)]" aria-hidden>≠</span><span>{b.text} <span className="text-[11px] text-[var(--dim)]">— {b.url ? <a className="underline" href={b.url} target="_blank" rel="noopener noreferrer">{b.source}</a> : b.source}</span></span></li>
             ))}
           </ul>
+        <p className="mt-3 text-[12px] text-[var(--dim)]">Every dataset and its licence is listed in “Method &amp; sources” (top right) and in docs/sources.md.</p></>}
         </section>
-      </div>
+      )}
     </div>
   );
 }

@@ -48,7 +48,6 @@ b, strong { font-weight: 600; }
 .mk.target .mk-l { left: 50%; right: auto; top: auto; bottom: calc(50% + 18px); margin: 0; transform: translateX(-50%); }
 @media (pointer: coarse) { .chip, .back-btn { min-height: 44px; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.glass { background: rgba(9, 13, 24, .84); border: 1px solid var(--line2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .label { font: 400 11.5px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
 .chip { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line2); border-radius: 999px; font: 500 13.5px/1.2 var(--sans); letter-spacing: 0; }
 /* Voice: ideas → serif · places → serif italic · explanation → sans · measurements → mono */
@@ -87,4 +86,83 @@ b, strong { font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .stagger > *, .slide-in, .bar-fill, .bar-up { animation: none; } .line-draw { animation: none; stroke-dashoffset: 0; } .dot-slide { animation: none; }
   .card, .row, .chip { transition: none; } .card:hover, .row:hover { transform: none; }
+}
+
+/* Inset figure tiles and detail tabs */
+.glass-inset { background: rgba(150, 175, 230, .06); border: 1px solid var(--line); }
+
+/* A site marker pulses once when its arc lands */
+.mk.cand i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1.5px solid var(--earth); opacity: 0; animation: land 900ms var(--ease) var(--land, 900ms) 1 both; }
+@keyframes land { 0% { transform: scale(.4); opacity: 0; } 30% { opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mk.cand i::after { animation: none; } }
+
+/* ===== Liquid-glass HUD (art direction v3) ===== */
+/* In the components layer so Tailwind utilities (position, radius) can override it. */
+@layer components {
+/* ===== «Liquid glass» para HUD sobre la escena 3D a pantalla completa · Logos v3 =====
+   2 capas de panel + chip + pestaña. Contraste AA calculado en el PEOR caso (panel sobre blanco puro / Luna clara / nieve):
+     .glass-chip   α .62 → SOLO texto --ink (≥ 4.9:1)
+     .glass        α .78 → --ink (8.9:1) y --mut (4.6:1). NUNCA --dim
+     .glass-strong α .90 → --ink, --mut y --dim (4.9:1)
+   Regla de oro: el texto pequeño y los datos van en .glass-strong; los chips y pestañas solo llevan texto --ink. */
+:root {
+  --glass-tint: 9 13 24;                 /* rgb del fondo (--bg2) */
+  --glass-blur: 18px; --glass-sat: 160%;
+  --glass-edge: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.07) 36%, rgba(93,180,255,.12) 64%, rgba(255,255,255,.30));
+  --glass-solid: #0b1020;                /* reserva sin transparencia (≥ 15:1 con --ink) */
+}
+.glass, .glass-strong, .glass-chip, .glass-tab {
+  position: relative; isolation: isolate; color: var(--ink);
+  background: rgb(var(--glass-tint) / var(--a));
+  -webkit-backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)); backdrop-filter: blur(var(--b)) saturate(var(--glass-sat));
+}
+/* borde luminoso fino (gradiente de 1 px) y reflejo superior; van DETRÁS del contenido (z-index -1 dentro del contexto aislado) */
+.glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: var(--glass-edge);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.glass::after, .glass-strong::after { /* reflejo especular: luz suave desde arriba */
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 70% at 50% -12%, rgba(255,255,255,.13), rgba(255,255,255,0) 62%);
+}
+
+/* Capa 1: panel principal (texto corrido, listas, tarjetas) */
+.glass { --a: .78; --b: var(--glass-blur); border-radius: 20px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(0,0,0,.35) inset, 0 2px 6px rgba(0,0,0,.35), 0 14px 34px -10px rgba(0,0,0,.6); }
+/* Capa 2: encima de un .glass o sobre zonas muy claras (dossier, datos pequeños, avisos) */
+.glass-strong { --a: .90; --b: 26px; border-radius: 18px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 -1px 0 rgba(0,0,0,.45) inset, 0 4px 10px rgba(0,0,0,.4), 0 24px 56px -14px rgba(0,0,0,.7); }
+/* Chip: botones pequeños flotantes (solo texto --ink) */
+.glass-chip { --a: .62; --b: 14px; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; font: 500 14px/1 var(--sans);
+  box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 6px 16px -6px rgba(0,0,0,.6); transition: background-color .12s ease, transform .08s ease; }
+.glass-chip:hover { --a: .72; } .glass-chip:active { transform: scale(.97); }
+/* Pestaña: .glass-tab normal, y seleccionada = píldora clara con texto oscuro (18:1) */
+.glass-tab { --a: .62; --b: 14px; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; font: 500 14px/1 var(--sans); cursor: pointer;
+  transition: background-color .24s var(--ease), color .24s var(--ease); }
+.glass-tab:hover { --a: .74; }
+.glass-tab[aria-selected="true"], .glass-tab[aria-pressed="true"] { background: rgb(238 242 249 / .94); color: #04060c; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 1px 0 #fff inset, 0 8px 20px -8px rgba(0,0,0,.7); }
+.glass-tab[aria-selected="true"]::before, .glass-tab[aria-pressed="true"]::before { display: none; }
+:is(.glass-chip, .glass-tab):focus-visible { outline: 2px solid var(--focus, #fff); outline-offset: 2px; }
+
+/* móvil / puntero táctil: desenfoque más barato (el canvas se repinta cada fotograma y el navegador re-desenfoca debajo) */
+@media (pointer: coarse), (max-width: 640px) { :root { --glass-blur: 12px; } .glass-strong { --b: 16px; } .glass-chip, .glass-tab { --b: 8px; } }
+
+/* sin backdrop-filter (Firefox antiguo, modos de ahorro): fondo SÓLIDO, mismo contraste o mejor */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass, .glass-strong { background: var(--glass-solid); }
+  .glass-chip, .glass-tab { background: #121a2e; }
+}
+/* preferencia del sistema: menos transparencia (macOS/iOS «Reducir transparencia») */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-solid); }
+  .glass::after, .glass-strong::after { display: none; }
+}
+/* alto contraste: borde visible y fondo sólido */
+@media (prefers-contrast: more) {
+  .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: #050810; border: 1px solid rgba(255,255,255,.6); }
+  .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .glass-chip, .glass-tab { transition: none; } .glass-chip:active { transform: none; } }
+
 }

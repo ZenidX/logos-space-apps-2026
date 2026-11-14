@@ -2,6 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 23:23 · 2.ª ronda de zexu: «vistazo primero», arcos, cristal y logo
+- Sitio de un vistazo (cabe en una pantalla a 1366×768): nombre, índice, los dos terrenos, 4 cifras (condiciones en rango, relieve, pendiente, acceso) y la frase de dónde se rompe; el detalle (Why, Shape, When, How, Limits & sources) se abre por pestañas. Principio: progressive disclosure (NN/g).
+- Arcos rehechos: una curva por sitio, un color por misión con degradado sutil, se dibujan una vez y quedan quietos, ocultos tras el planeta; el marcador hace un pulso cuando llega su arco. Sin puntos ni tramos.
+- HUD de cristal (Diseño): paneles translúcidos con desenfoque, borde luminoso y reflejo; alternativa sólida sin backdrop-filter, con «reduced transparency» o «more contrast». La escena sigue por detrás de los paneles.
+- Logo propio (SVG original de Diseño: tres mundos unidos por un arco), favicon, icono de Apple y og:image.
+- Prueba nueva: cada sitio y objetivo tiene relieve y detalles con números válidos, y el Sol mensual que calcula la web coincide con el archivo de datos.
+
 ## 2026-11-14 · 23:11 · «Why» con tiras de rango (aviso de Jefe)
 - La fila decía «Precipitation 0.99 · here 283 mm · target 0 mm» y se leía como que 283 mm se parece un 99 % a 0 mm. Ahora cada condición es una tira: banda ideal de la misión, banda aceptada, punto del sitio y marca del objetivo; el texto dice «in range / out of range · fit» y «mission needs …». La similitud se mide contra el rango de la misión, no contra el valor del objetivo.
 - Componente de Diseño (ConditionStrip + rules.ts) con prueba que reproduce las 105 similitudes de `sites.json`. Relieve 3D más grande. Corregido: las fuentes nuevas no se aplicaban (choque de variables con Tailwind).
