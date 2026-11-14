@@ -347,3 +347,13 @@ h1, h2, h3 {
 }
 /* La Tierra del orbe en la escena de contraste: atmósfera azul */
 .orb.earth.on { box-shadow: inset -24px -12px 48px rgba(0, 0, 0, 0.85), inset 6px 4px 14px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(90, 170, 255, 0.5), 0 0 60px rgba(90, 170, 255, 0.35); }
+/* Planeta 3D (Planet3D.tsx): anillo fino cuando está seleccionado */
+.planet3d.on::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--acc);
+  opacity: 0.55;
+  pointer-events: none;
+}

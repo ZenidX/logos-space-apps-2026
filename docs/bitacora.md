@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 5)
+
+### Planetas 3D reales y arreglo del scroll bloqueado
+- **Scroll bloqueado en la portada:** el globo ocupaba la pantalla y `OrbitControls` capturaba la rueda del ratón para hacer zoom. Nueva prop `zoom` en `Globe.tsx`; en la historia va a `false`, así que la rueda baja la página y arrastrar sigue girando el globo.
+- **Planetas 3D reales:** nuevo `src/components/Planet3D.tsx` (three.js), una esfera con textura NASA, luz lateral con terminador día/noche, atmósfera en la Tierra y Marte y giro lento. Solo dibuja cuando está en pantalla (IntersectionObserver), no captura eventos y respeta `prefers-reduced-motion`. Sin WebGL usa la imagen plana. Sustituye a los orbes CSS en la escena del contraste, los destinos y el bloque 3D (9 contextos WebGL en total, sin errores).
+
 ## 2026-11-14 (noche, 4)
 
 ### Portada «historia» al estilo Apple

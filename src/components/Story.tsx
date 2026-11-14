@@ -12,6 +12,7 @@ import type { GlobeMarker } from "@/components/Globe";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
 const Viewer3D = dynamic(() => import("@/components/Viewer3D"), { ssr: false });
+const Planet3D = dynamic(() => import("@/components/Planet3D"), { ssr: false });
 
 interface Cand {
   c: [number, number];
@@ -81,14 +82,8 @@ function Chapter({ n, title, kicker, children, id }: { n: string; title: ReactNo
   );
 }
 
-function Orb({ body, size = 120, active }: { body: "moon" | "mars"; size?: number; active?: boolean }) {
-  return (
-    <span
-      className={`orb ${active ? "on" : ""}`}
-      style={{ width: size, height: size, backgroundImage: `url(${GLOBE_TEX[body].lo})` }}
-      aria-hidden
-    />
-  );
+function Orb({ body, size = 120, active }: { body: "moon" | "mars" | "earth"; size?: number | string; active?: boolean }) {
+  return <Planet3D body={body} size={size} active={active} />;
 }
 
 function ScoreRing({ v, size = 64 }: { v: number; size?: number }) {
@@ -180,7 +175,7 @@ function ContrastScene() {
           <Orb body="moon" size={420} active />
         </motion.div>
         <motion.div style={{ scale: earthScale, x: earthX, opacity: earthO }} className="absolute">
-          <span className="orb earth on" style={{ width: 420, height: 420, backgroundImage: `url(${GLOBE_TEX.earth.lo})` }} aria-hidden />
+          <Orb body="earth" size={420} active />
         </motion.div>
         {steps.map((s) => (
           <SceneCaption key={s.k} p={p} r={s.r} k={s.k} big={s.big} t={s.t} />
@@ -265,7 +260,7 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
       <div ref={hero} className="relative min-h-[100svh] overflow-hidden">
         <motion.div style={{ y: globeY }} className="pointer-events-auto absolute inset-0 md:left-[38%]">
           <div className="absolute inset-0 [mask-image:radial-gradient(closest-side,#000_72%,transparent)]">
-            <Globe body="earth" markers={markers} selectedId={sel} onSelect={setSel} />
+            <Globe body="earth" markers={markers} selectedId={sel} onSelect={setSel} zoom={false} />
           </div>
         </motion.div>
         <motion.div style={{ y: titleY, opacity: fade }} className="pointer-events-none relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-5 pb-20 md:justify-center md:pb-0">
@@ -372,7 +367,7 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
         <div className="mt-10 grid items-start gap-8 md:grid-cols-[1.1fr_1fr]">
           <div className="visor h-[min(70vw,460px)]">
             <div className="absolute inset-0">
-              <Globe body="earth" markers={markers} selectedId={sel ?? (best ? best.id : null)} onSelect={setSel} />
+              <Globe body="earth" markers={markers} selectedId={sel ?? (best ? best.id : null)} onSelect={setSel} zoom={false} />
             </div>
             <div className="marco" />
             <div className="hud tl">
@@ -493,12 +488,12 @@ export default function Story({ onExplore }: { onExplore: () => void }) {
           >
             <div className="relative flex items-center justify-center gap-[6vw] bg-[radial-gradient(60%_80%_at_50%_50%,rgba(61,125,255,.12),transparent)] px-6 py-14 md:py-20">
               <span className="flex flex-col items-center gap-4">
-                <span className="orb earth on" style={{ width: "min(30vw,240px)", height: "min(30vw,240px)", backgroundImage: `url(${GLOBE_TEX.earth.lo})` }} aria-hidden />
+                <Orb body="earth" size="min(30vw,240px)" active />
                 <span className="font-mono text-[11px] uppercase tracking-[.12em]">Earth · {short(best?.c.place)}</span>
               </span>
               <span className="font-mono text-[clamp(22px,3vw,36px)] text-[var(--dim)]">≈</span>
               <span className="flex flex-col items-center gap-4">
-                <Orb body={target.body} size={240} active />
+                <Orb body={target.body} size="min(30vw,240px)" active />
                 <span className="font-mono text-[11px] uppercase tracking-[.12em]">{target.body === "moon" ? "Moon" : "Mars"} · {target.short}</span>
               </span>
             </div>
