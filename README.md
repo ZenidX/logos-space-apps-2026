@@ -75,7 +75,7 @@ npm run dev   # http://localhost:3000
 - **NASA**: MODIS (MOD11A2, MOD13C1, MCD43C3 for the global search; MOD13A2, MCD43A3, MOD10A1 for the reference sites), GPM IMERG, ASTER GED, NASADEM, GIBS, Moon Trek (LRO WAC, LOLA), Mars Trek (MGS MOLA, HRSC+MOLA), Mars 2020 CTX DTM of Jezero (USGS). Moon/Mars target values are approximate literature figures based on LRO Diviner/LOLA, MGS TES/MOLA and Perseverance MEDA (see `src/data/targets.ts`).
 - **ESA**: Copernicus DEM GLO-30.
 - **USGS**: GMTED2010 (global slope).
-- **Globe textures** (`public/tex/`, processed only by resizing/recompressing): Earth, NASA GIBS Blue Marble; Moon, LROC WAC mosaic via NASA SVS CGI Moon Kit (NASA/GSFC/Arizona State University); Mars, Viking MDIM 2.1 colour mosaic via NASA Mars Trek (NASA/USGS). Details in `docs/licencias-texturas.md`. No NASA logos are used.
+- **Globe textures** (`public/tex/`, processed only by resizing/recompressing): Earth, NASA GIBS Blue Marble; Moon, LROC WAC mosaic from the CGI Moon Kit, credit NASA's Scientific Visualization Studio (NASA/GSFC/Arizona State University); Mars, Viking MDIM 2.1 colour mosaic via NASA Mars Trek (NASA/USGS). Details in `docs/licencias-texturas.md`. No NASA logos are used.
 - Earth layers accessed through Google Earth Engine (non-commercial project `terra-analog`).
 
 ## Use of AI
