@@ -44,10 +44,9 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - Hecho: benchmark de retos (`docs/benchmark-retos.md`), web con 4 pestañas, búsqueda global con validación, documentación.
 - Resultado actual: los mejores candidatos están en el **Ártico canadiense (Nunavut)** y la **Alta Asia (Sinkiang / Karakórum / Pamir / Tíbet)**. Validación: 17–20 de 25 análogos conocidos quedan por encima de la mediana terrestre, pero solo 2–8 de 25 entran en el top 10 %.
 - Pendiente:
-  - El mapa de Candidatos sale negro en la primera carga.
   - Dimensiones de Geología (ASTER/Diviner/TES) y de Hielo (todavía sin dato de los objetivos).
   - Valores de los objetivos desde productos PDS reales.
   - La pendiente a 5 km se queda corta (p99 ≈ 4,4°).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos.
-  - Pitch de 3 minutos, vídeo de 30 s y página del proyecto en inglés.
+  - Pitch: borrador en `docs/pitch.md` (guion 3 min, vídeo 30 s, campos de la página). Falta ensayar, grabar el vídeo y rellenar la página del proyecto.

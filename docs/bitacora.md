@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (tarde)
+
+### Explicación por candidato y pitch
+- Cada candidato muestra las 3 variables en las que más se parece al objetivo, las 2 en las que más se aleja y las que **ninguna parte de la Tierra** puede igualar. Estas últimas se calculan contra los extremos reales de la Tierra: así una lluvia de 0 o la pendiente a 5 km ya no salen como inalcanzables por error. También lleva un enlace a NASA Worldview.
+- El mapa negro de Candidatos no se reproduce: era la primera compilación del servidor de desarrollo.
+- Nuevo [pitch.md](pitch.md): guion de 3 minutos en inglés, guion del vídeo de 30 s, borrador de los campos de la página del proyecto y riesgos.
+
 ## 2026-11-14 (sábado, día 1 del hackathon)
 
 ### Paso al repo del equipo
