@@ -2,6 +2,10 @@
 
 Entradas nuevas arriba.
 
+## 2026-11-14 · 22:35 · La entrega se adelanta a las 16:00
+- zexu adelanta la entrega al domingo a las 16:00 (todo listo a las 15:00). Plan rehecho en `plan.md`.
+- Líder elige 3 misiones con la tabla de Datos y zexu las veta; el diseño se aplica en cuanto llega; Vercel se crea ya; la revisión es de madrugada.
+
 ## 2026-11-14 · 22:15 · Créditos y declaración de IA (informe de Logos Legal)
 - Informe: `/home/zexu/OpenBot/Shared/logos/legal/informe-reutilizacion.md`. Todo lo reutilizado se puede usar.
 - README: texto «Use of AI» de Legal, créditos exactos de las texturas y librerías, «This project is not endorsed by NASA». Pie en la web.
