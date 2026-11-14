@@ -1,4 +1,4 @@
-# Misiones elegidas (14-11-2026, 23:40)
+# Misiones elegidas (14-11-2026, 21:33)
 
 Elegidas por Logos Líder con la tabla de Logos Datos (`misiones.md`), por tener el mejor dato disponible. **Pendiente del veto de zexu**; si no responde, se sigue con estas.
 

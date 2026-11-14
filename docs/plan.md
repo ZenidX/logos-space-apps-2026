@@ -1,6 +1,6 @@
 # Plan (14–15 nov 2026). Entrega: **domingo 15-11 a las 16:00**; todo terminado a las **15:00**
 
-Cambio de zexu (14-11, ~22:30): la entrega se adelanta de las 23:59 a las 16:00.
+Cambio de zexu (14-11, ~21:30): la entrega se adelanta de las 23:59 a las 16:00.
 
 | Hora | Quién | Qué |
 |---|---|---|
