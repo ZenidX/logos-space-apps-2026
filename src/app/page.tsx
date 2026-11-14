@@ -3,13 +3,13 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import type { SceneLink, SceneMarker } from "@/components/OrbitScene";
+import type { SceneMarker } from "@/components/SolarScene";
 import SitePanel, { AccessBars, KindChip } from "@/components/SitePanel";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
-import { MISSIONS, TOP_NOTE, type Mission, type MissionId } from "@/lib/missions";
+import { MISSIONS, NEXT_MISSIONS, TOP_NOTE, type Mission, type MissionId } from "@/lib/missions";
 
-const OrbitScene = dynamic(() => import("@/components/OrbitScene"), { ssr: false });
+const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
 const DEMO_MS = 7000;
 // Project in numbers, computed from the data file (nothing typed by hand).
 const STATS: [string, string][] = [
@@ -26,8 +26,7 @@ function sceneFor(m: Mission) {
     { id: tId, body: m.target.body, lat: m.target.lat, lon: m.target.lon, kind: "target", label: m.target.name.split(" (")[0] },
     ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1 })),
   ];
-  const links: SceneLink[] = m.sites.map((s) => ({ id: s.id, from: tId, to: s.id }));
-  return { markers, links };
+  return { markers };
 }
 
 export default function Home() {
@@ -100,14 +99,14 @@ export default function Home() {
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
-          <OrbitScene
+          <SolarScene
             mode={missionId ? { kind: "focus", body: t.body as "moon" | "mars" } : { kind: "overview" }}
             markers={scene.markers}
-            links={scene.links}
             selectedId={sel}
             highlightId={hover}
             onSelect={(id) => { if (!missionId) pick(shown.id); setSel(id.startsWith("t-") ? null : id); }}
             paused={paused}
+            primaryCount={shown.sites.filter((x) => x.kind === "new").length}
             onError={() => setGlFailed(true)}
           />
         )}
@@ -203,11 +202,16 @@ export default function Home() {
           </ol>
           <p className="mt-4 text-[13px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
           <button className="chip mt-5 hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
+          <h2 className="display mt-10 text-[28px]">Next missions</h2>
+          <p className="mt-1 text-[13px] text-[var(--mut)]">Real analog campaigns we have not scored: they are not driven by terrain, or there is no global data to compare. Listed for context.</p>
+          <ul className="mt-3 grid gap-2">
+            {NEXT_MISSIONS.map((n) => <li key={n.name} className="text-[13.5px]"><a href={n.url} target="_blank" rel="noopener noreferrer" className="title-sm underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{n.name}</a> <span className="text-[11.5px] text-[var(--dim)]">· {n.who} · not scored</span><br /><span className="text-[var(--mut)]">{n.what}</span></li>)}
+          </ul>
         </section>
       )}
 
       <footer className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
-        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. Schematic, not to scale: sizes and distances are not real, and Mars does not orbit the Earth. This project is not endorsed by NASA.
+        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA.
       </footer>
 
       {method && <MethodSheet onClose={() => setMethod(false)} />}

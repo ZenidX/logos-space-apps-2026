@@ -7,7 +7,7 @@ Every file below was reviewed by team Logos. AI-assisted source files carry the 
 |---|---|
 | `src/lib/globe-math.ts`, `src/lib/globe-math.test.mjs`, `src/lib/globe-tex.ts` | Code written with AI assistance in the team's earlier prototype, reused here |
 | `src/app/*`, `src/components/SitePanel.tsx`, `src/components/MethodSheet.tsx`, `src/lib/missions.ts` | Pages, panels and mission model |
-| `src/components/OrbitScene.tsx`, `src/lib/orbit-math.ts` (+ test) | 3D «shared orbit» scene (Earth in the centre, Moon and Mars on drawn orbits, straight links), written with AI assistance from the team's chosen concept |
+| `src/components/SolarScene.tsx`, `src/lib/solar-math.ts` (+ test), `src/components/RadialDial.tsx`, `src/lib/radial-data.ts` (+ test) | 3D scene (Sun, Earth and Mars on their orbits; Earth close-up with the target world) and the radial dial, written with AI assistance from the concepts the team chose |
 | `src/components/TerrainCompare.tsx`, `src/components/Count.tsx` | 3D terrain comparison and count-up number |
 | `src/data/terrain-index.json`, `src/data/site-details.json`, `public/heightmaps/*` | Derived from public elevation and climate data with AI-assisted scripts (`scripts/data/06_terrain.py`, `07_details.py`) |
 | `src/data/sites.json` | Data prepared with AI-assisted scripts from public datasets (NASA MODIS, GPM, SoilGrids, GLiM, WGI, UCDP…); has `generatedWith` |

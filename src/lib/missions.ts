@@ -81,15 +81,26 @@ export const REMOVED: Record<string, { name: string; reason: string }> = {
 
 const LEVEL: Record<string, Access["level"]> = { low: "Low", medium: "Medium", high: "High" };
 const PERMIT_NOTE = "Check national park and research permits before fieldwork.";
-function accessOf(a: RawAccess | null): Access {
-  if (!a) return { level: "Not assessed", score: null, basis: "", sources: [], note: PERMIT_NOTE, permit: null };
+/** Declared floor: when an official travel advisory is at its highest level, access is at least "High", whatever the score. */
+export const advisoryAtMax = (basis: string) => /US level 4 of 4/.test(basis) || /UK advice covers whole country/.test(basis);
+/** Permits the score does not capture; checked = false means we found no official source yet. */
+const PERMIT_NOTES: Record<string, string> = {
+  "m2-rover-sand-new7": "Special entry permits may apply to foreign visitors in this region; not checked.",
+  "m3-ground-ice-new1": "Research licences may be required in Nunavut; not checked.",
+  "m3-ground-ice-new8": "Research licences may be required in Nunavut; not checked.",
+  "m3-ground-ice-new2": "Research licences may be required in the Northwest Territories; not checked.",
+  "m3-ground-ice-new7": "Special entry permits may apply in this Arctic border region; not checked.",
+};
+function accessOf(a: RawAccess | null, id = ""): Access {
+  if (!a) return { level: "Not assessed", score: null, basis: "", sources: [], note: PERMIT_NOTE, permit: PERMIT_NOTES[id] ?? null };
+  const floor = advisoryAtMax(a.basis ?? ""), level = a.level ? (floor ? "High" : LEVEL[a.level]) : "Not assessed";
   return {
-    level: a.level ? LEVEL[a.level] : "Not assessed",
+    level,
     score: a.score,
-    basis: a.basis ?? "",
+    basis: (a.basis ?? "") + (floor && a.level !== "high" ? " Raised to High: an official travel advisory is at its highest level." : ""),
     sources: a.sources ?? [],
     note: a.note ?? PERMIT_NOTE,
-    permit: a.permitFlag === "ANTARCTIC_TREATY_AREA" ? "Antarctic Treaty area: no country attributed; a national permit is required" : null,
+    permit: a.permitFlag === "ANTARCTIC_TREATY_AREA" ? "Antarctic Treaty area: no country attributed; a national permit is required" : PERMIT_NOTES[id] ?? null,
   };
 }
 
@@ -112,7 +123,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
     percentile: s.matchPercentile ?? null,
     vars: Object.entries(s.perVariable).map(([id, p]) => ({ id, label: byId.get(id)?.label ?? id, unit: byId.get(id)?.unit ?? "", value: p?.value ?? null, similarity: p?.similarity ?? null, source: p?.source ?? "no data", inMatch: p?.inMatch ?? byId.get(id)?.inMatch ?? true })),
     breaks: s.breaks,
-    access: accessOf(s.accessRisk),
+    access: accessOf(s.accessRisk, s.id),
     campaign: s.campaign ?? null,
   }));
   // New candidates keep the order Logos Datos ranked them in; known analogs by match.
@@ -159,6 +170,16 @@ export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly
   "m3-ground-ice-new7": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done." },
   "m3-ground-ice-new8": { verdict: "Not checked", text: "Added after the ground screening; no independent check was done." },
 };
+
+/** Real analog campaigns we did not score: not driven by terrain, or no global data to compare. Facts and links from docs/missions.md. */
+export const NEXT_MISSIONS: { name: string; who: string; what: string; url: string }[] = [
+  { name: "CAVES", who: "ESA", what: "Astronaut teams working underground in Sardinian caves, a stand-in for lava tubes (2011–2019).", url: "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Going_underground" },
+  { name: "ARCHES", who: "DLR, ESA, KIT", what: "A lander, two rovers and a drone working together on Mount Etna, with a rover driven remotely (2022).", url: "https://www.dlr.de/en/rm/latest/news/2022/robotics-team-practises-lunar-exploration-on-mount-etna" },
+  { name: "PISCES / ACME landing pad", who: "NASA KSC Swamp Works, PISCES", what: "A teleoperated rover laid 100 sintered basalt pavers to build a landing pad in Hawai'i (2015).", url: "https://pacificspacecenter.com/2016/01/05/pisces-completes-lunar-landing-pad-bullseye/" },
+  { name: "NEEMO", who: "NASA", what: "Spacewalk operations and isolation in the Aquarius undersea station, Florida (23 missions, 2001–2019).", url: "https://www.nasa.gov/gallery/neemo/" },
+  { name: "CHAPEA", who: "NASA", what: "Year-long simulated Mars surface stays inside a 3D-printed habitat at Johnson Space Center.", url: "https://www.nasa.gov/humans-in-space/chapea/" },
+  { name: "AMADEE", who: "Austrian Space Forum", what: "Full Mars surface simulations with suits, rovers and a habitat (Oman 2018, Israel 2021, Armenia 2024).", url: "https://oewf.org/en/" },
+];
 
 export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(3));
 export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other, less than the uncertainty of the data: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";

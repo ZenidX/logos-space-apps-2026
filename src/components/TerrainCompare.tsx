@@ -109,7 +109,7 @@ export default function TerrainCompare({ siteId, targetId, targetSunDeg, compact
   if (!site || !target) return <p className="text-[13px] text-[var(--dim)]">No terrain data for this site.</p>;
   return (
     <div>
-      <div ref={host} className={`relative w-full cursor-grab overflow-hidden rounded-2xl bg-[rgba(4,6,12,.28)] active:cursor-grabbing ${compact ? "h-[150px] md:h-[clamp(150px,calc(100dvh-680px),520px)]" : "h-[280px] md:h-[360px]"}`} role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
+      <div ref={host} className={`relative w-full cursor-grab overflow-hidden rounded-2xl bg-[rgba(4,6,12,.28)] active:cursor-grabbing ${compact ? "h-[150px] md:h-[clamp(130px,calc(100dvh-650px),240px)]" : "h-[280px] md:h-[360px]"}`} role="img" aria-label={`3D terrain, 11 by 11 kilometres: ${site.name} next to ${target.name}. The table below has the same comparison as numbers.`}>
         {state === "loading" && <div className="skel absolute inset-4 rounded-lg" role="status" aria-label="Loading terrain" />}
         {state === "error" && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-[13px] text-[var(--dim)]">3D terrain could not be shown here. The numbers below are the same comparison.</p>}
         <span className="label pointer-events-none absolute left-3 top-3" style={{ color: "var(--earth)" }}>Earth · this site</span>

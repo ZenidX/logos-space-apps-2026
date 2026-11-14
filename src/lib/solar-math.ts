@@ -1,0 +1,126 @@
+// AI-assisted (Claude), reviewed by team Logos
+// Pure maths of the scene: a heliocentric overview (Sun, Earth and Mars on their orbits, the Moon around the Earth)
+// and a close-up of the Earth with the mission's target world shown beside it. No DOM: tested in Node (solar-math.test.mjs).
+//
+// IN PROPORTION: orbit radii Earth : Mars = 1 : 1.524; orbital periods 1 : 1.881; the Moon's period (27.32 d) against the
+// Earth's year; the sizes of Earth, Mars and Moon relative to each other (1 : 0.532 : 0.273).
+// NOT IN PROPORTION: the size of the bodies against the orbits (bodies are enlarged), the Sun's size, the Moon's distance
+// (enlarged), orbits drawn as circles in one plane, and the target world placed next to the Earth in the close-up.
+import * as THREE from "three";
+
+export type BodyId = "earth" | "moon" | "mars";
+export type Mode = { kind: "overview" } | { kind: "focus"; body: "moon" | "mars" };
+export const FOV = 32;
+
+/** NASA NSSDC planetary fact sheets: semi-major axes 1.000 and 1.524 au; sidereal periods 365.256, 686.980 and 27.322 days; mean radii 6371.0, 3389.5 and 1737.4 km. */
+export const FACTS = { marsAU: 1.524, earthDays: 365.256, marsDays: 686.98, moonDays: 27.3217, earthKm: 6371.0, marsKm: 3389.5, moonKm: 1737.4 } as const;
+
+export const EARTH_R = 1; // scene unit = one Earth radius
+export const RADIUS: Record<BodyId, number> = { earth: EARTH_R, mars: FACTS.marsKm / FACTS.earthKm, moon: FACTS.moonKm / FACTS.earthKm };
+export const AU = 8.6; // scene units per astronomical unit (bodies are enlarged against the orbits)
+export const ORBIT = { earth: AU, mars: AU * FACTS.marsAU, moon: 1.9 } as const; // the Moon's distance is enlarged
+export const SUN_R = 0.75;
+export const YEAR_S = 60; // one Earth year of the overview lasts this many seconds
+export const PERIOD_S = { earth: YEAR_S, mars: (YEAR_S * FACTS.marsDays) / FACTS.earthDays, moon: (YEAR_S * FACTS.moonDays) / FACTS.earthDays } as const;
+const PHASE = { earth: 0.6, mars: 2.4, moon: 1.0 };
+
+/** Heliocentric positions at scene time t (seconds): circular orbits in the ecliptic plane (y = 0). */
+export function positions(t: number): Record<BodyId, THREE.Vector3> {
+  const at = (r: number, period: number, phase: number) => { const a = phase + (2 * Math.PI * t) / period; return new THREE.Vector3(r * Math.cos(a), 0, -r * Math.sin(a)); };
+  const earth = at(ORBIT.earth, PERIOD_S.earth, PHASE.earth), mars = at(ORBIT.mars, PERIOD_S.mars, PHASE.mars);
+  return { earth, mars, moon: earth.clone().add(at(ORBIT.moon, PERIOD_S.moon, PHASE.moon)) };
+}
+
+export interface Pose { pos: THREE.Vector3; look: THREE.Vector3 }
+const UP = new THREE.Vector3(0, 1, 0);
+
+/** Camera distance along `dir` from `look` at which every point fits inside the frame with a margin. */
+export function fitDistance(look: THREE.Vector3, dir: THREE.Vector3, pts: THREE.Vector3[], aspect: number, margin: number): number {
+  const cam = new THREE.PerspectiveCamera(FOV, aspect, 0.05, 400), d = dir.clone().normalize();
+  const fits = (dist: number) => {
+    cam.position.copy(look).addScaledVector(d, dist); cam.lookAt(look); cam.updateMatrixWorld(true); cam.updateProjectionMatrix();
+    return pts.every((p) => { const q = p.clone().project(cam); return q.z < 1 && Math.abs(q.x) <= margin && Math.abs(q.y) <= margin; });
+  };
+  let lo = 0.5, hi = 400;
+  for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (fits(mid)) hi = mid; else lo = mid; }
+  return hi;
+}
+const ring = (c: THREE.Vector3, r: number, right: THREE.Vector3, up: THREE.Vector3) => [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([x, y]) => c.clone().addScaledVector(right, x * r).addScaledVector(up, y * r));
+
+/** Everything the overview must show: the whole orbit of Mars (with Mars on it), which contains the Earth's orbit, the Moon and the Sun. */
+export function overviewExtent(): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i < 48; i++) { const a = (i / 48) * Math.PI * 2; pts.push(...ring(new THREE.Vector3(ORBIT.mars * Math.cos(a), 0, ORBIT.mars * Math.sin(a)), RADIUS.mars * 1.3, new THREE.Vector3(1, 0, 0), UP)); }
+  return pts;
+}
+export const OVERVIEW_ELEV = 0.86; // radians above the ecliptic
+export function overviewPose(aspect: number): Pose {
+  const dir = new THREE.Vector3(0, Math.sin(OVERVIEW_ELEV), Math.cos(OVERVIEW_ELEV)), look = new THREE.Vector3();
+  return { look, pos: dir.clone().multiplyScalar(fitDistance(look, dir, overviewExtent(), aspect, 0.93)) };
+}
+
+/** Close-up frame around the Earth at E: `dir` points from the Earth to the camera (from the sunlit side, a little above the ecliptic). */
+export function closeFrame(E: THREE.Vector3) {
+  const dir = E.clone().normalize().multiplyScalar(-0.95).add(new THREE.Vector3(0, 0.31, 0)).normalize();
+  const right = new THREE.Vector3().crossVectors(UP, dir).normalize(), up = new THREE.Vector3().crossVectors(dir, right).normalize();
+  return { dir, right, up };
+}
+/** Where the target world is shown in the close-up: beside the Earth (not at its real distance), a little above and towards the camera. */
+export function companionPos(E: THREE.Vector3, body: "moon" | "mars"): THREE.Vector3 {
+  const f = closeFrame(E);
+  return E.clone().addScaledVector(f.right, EARTH_R + RADIUS[body] + 0.55).addScaledVector(f.up, 0.4).addScaledVector(f.dir, 0.25);
+}
+export function closePose(E: THREE.Vector3, body: "moon" | "mars", aspect: number): Pose {
+  const f = closeFrame(E), C = companionPos(E, body), look = E.clone().lerp(C, 0.42);
+  const pts = [...ring(E, EARTH_R * 1.1, f.right, f.up), ...ring(C, RADIUS[body] * 1.35 + 0.12, f.right, f.up)];
+  return { look, pos: look.clone().addScaledVector(f.dir, fitDistance(look, f.dir, pts, aspect, 0.86)) };
+}
+/** Stop-over of the camera journey: close to the target world at its real place on its orbit. */
+export function targetPose(P: THREE.Vector3, body: "moon" | "mars"): Pose {
+  const dir = P.clone().normalize().multiplyScalar(-0.9).add(new THREE.Vector3(0, 0.45, 0)).normalize();
+  return { look: P.clone(), pos: P.clone().addScaledVector(dir, RADIUS[body] * 9) };
+}
+export const lerpPose = (a: Pose, b: Pose, k: number): Pose => ({ pos: a.pos.clone().lerp(b.pos, k), look: a.look.clone().lerp(b.look, k) });
+export const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+
+/** Direction (from the Earth's centre) an opened site should face: between the camera and the target world. */
+export function siteFacing(E: THREE.Vector3, body: "moon" | "mars"): THREE.Vector3 {
+  const f = closeFrame(E);
+  return f.dir.clone().multiplyScalar(0.62).addScaledVector(companionPos(E, body).sub(E).normalize(), 0.38).normalize();
+}
+
+/** Orientation that turns local point `v` to face direction `dir`, keeping north up (no odd roll). */
+export function orientToFace(v: THREE.Vector3, dir: THREE.Vector3, up = UP): THREE.Quaternion {
+  const d = dir.clone().normalize(), qA = new THREE.Quaternion().setFromUnitVectors(v.clone().normalize(), d);
+  const proj = (w: THREE.Vector3) => w.clone().addScaledVector(d, -w.dot(d));
+  const n = proj(new THREE.Vector3(0, 1, 0).applyQuaternion(qA)), u = proj(up);
+  if (n.lengthSq() < 1e-8 || u.lengthSq() < 1e-8) return qA;
+  n.normalize(); u.normalize();
+  const ang = Math.atan2(new THREE.Vector3().crossVectors(n, u).dot(d), n.dot(u));
+  return new THREE.Quaternion().setFromAxisAngle(d, ang).multiply(qA);
+}
+
+/** True if the segment p→q passes through the sphere (its end points may lie on the surface). */
+export function segmentHitsSphere(p: THREE.Vector3, q: THREE.Vector3, c: THREE.Vector3, r: number): boolean {
+  const d = q.clone().sub(p), len2 = d.lengthSq();
+  if (len2 < 1e-12) return false;
+  const t = Math.min(0.985, Math.max(0.015, c.clone().sub(p).dot(d) / len2));
+  return p.clone().addScaledVector(d, t).distanceTo(c) < r * 0.999;
+}
+
+export const LINK_NEAR = 1.0, LINK_FAR = 2.0;
+const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
+/**
+ * Opacity (0–1) of the straight line of light between an Earth site S (outward normal nS) and the target point M on the
+ * companion world (centre bodyC, radius bodyR), with the Earth centred at earthC. It is 0, i.e. not drawn, when the line
+ * would pass through the Earth or the companion, when the target is below the site's horizon, or when the site is on the
+ * far side from the camera. Otherwise it fades with distance, unless the site is the opened one (`pinned`).
+ */
+export function linkAlpha(S: THREE.Vector3, nS: THREE.Vector3, M: THREE.Vector3, earthC: THREE.Vector3, bodyC: THREE.Vector3, bodyR: number, camPos: THREE.Vector3, pinned = false): number {
+  const dir = M.clone().sub(S), dist = dir.length();
+  if (dist < 1e-6) return 0;
+  if (dir.dot(nS) / dist <= 0.02) return 0;
+  if (segmentHitsSphere(S, M, earthC, EARTH_R) || segmentHitsSphere(S, M, bodyC, bodyR)) return 0;
+  if (camPos.clone().sub(S).normalize().dot(nS) <= 0.05) return 0;
+  return pinned ? 1 : 1 - smooth((dist - LINK_NEAR) / (LINK_FAR - LINK_NEAR));
+}

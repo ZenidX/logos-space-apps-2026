@@ -45,5 +45,10 @@ for (const m of d.missions) {
     w.sunNoonDeg.forEach((v, i) => { const day = 15 + Math.round(i * 30.44), decl = 23.44 * Math.sin((2 * Math.PI * (284 + day)) / 365); assert.ok(Math.abs(v - (90 - Math.abs(s.lat - decl))) < 1.2, `${s.id}: Sun month ${i + 1}`); });
   }
 }
+// Declared floor: a site whose basis shows a top-level advisory must be shown as High by the app rule (src/lib/missions.ts, advisoryAtMax).
+const atMax = (b) => /US level 4 of 4/.test(b) || /UK advice covers whole country/.test(b);
+let floored = 0;
+for (const m of d.missions) for (const s of m.sites) if (s.accessRisk?.basis && atMax(s.accessRisk.basis)) floored++;
+assert.ok(floored >= 1 && readFileSync(new URL("../lib/missions.ts", import.meta.url), "utf8").includes('floor ? "High"'), "advisory floor rule missing");
 assert.ok(formula >= 18, `formula checked on only ${formula} sites`);
 console.log(`data ok · ${sites} sites · index formula verified on ${formula}`);

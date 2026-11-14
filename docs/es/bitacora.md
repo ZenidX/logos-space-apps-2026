@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 00:47 · Sistema real con el Sol, interfaz radial y auditoría de Jefe
+- Decisiones de zexu (apuntadas en `docs/idea-origin.md`): fuera la «órbita compartida» (Marte no orbita la Tierra). Escena nueva: vista general heliocéntrica (Sol, Tierra y Marte con radios 1 : 1,52 y periodos 1 : 1,88 en proporción; Luna alrededor de la Tierra, ampliada) y primer plano de la Tierra con sus sitios y el mundo objetivo al lado, a tamaño proporcional. Al elegir misión la cámara viaja de la vista general al objetivo y luego a la Tierra. Nombres de los sitios con líneas discontinuas semitransparentes y una sola línea discontinua, con los trazos avanzando, del sitio abierto a su objetivo; ninguna cruza un globo. Pie con lo que va a escala y lo que no.
+- Interfaz «radial» (componente de Diseño): índice en el centro y un anillo por condición (cian), forma frente al objetivo (gris: cociente menor/mayor) y permisos y política (ámbar). Prueba «anillo = dato» sobre 182 anillos.
+- Auditoría independiente de Jefe (le cuadran similitudes, índice, distancias, Sol y access complexity): se aclara que F y D no usan pesos; suelo declarado: aviso de viaje en su nivel máximo → acceso al menos «High» (Nuevas Siberia pasa de Medium a High); notas de permisos especiales sin comprobar (Xizang, Ártico); aviso en análogos conocidos con pendiente > 10° (McMurdo).
+- Sección «Next missions» (solo texto y enlaces, sin puntuar). La 4.ª misión («Low-Sun operations and solar power») la prepara Logos Datos.
+
 ## 2026-11-15 · 00:32 · Datos v6: regiones cribadas, sustitutas y comprobación independiente
 - Logos Datos cribó el suelo de las 18 regiones (ventana de 11 km): 12 se quedan y 6 se retiran (3 por pendiente, 3 por agua o hielo). Sustitutas verificadas: Gran Karoo (Sudáfrica), Shuanghu (meseta tibetana, ~5 000 m), islas de Nueva Siberia y el interior de Baffin. Queda fuera la de los montes Qilian por ser la más débil. Total: 6 + 6 + 4 regiones nuevas. El cribado es un paso del pipeline (`02b_screen.py`) y está en `docs/region-screening.md`.
 - Comprobación independiente (`docs/independent-check.md`): ninguna fuente cita estos puntos como análogo establecido. Respaldo cercano de la propiedad en 3 (Harrat al Birk, Ellesmere, Banks); parcial en 5; nada en 3; 5 sin comprobar. Cada región lo dice en su pestaña How, con enlace a la fuente y, en 3 casos, a una imagen con licencia libre.

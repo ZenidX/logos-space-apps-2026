@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "npx serve out",
     "lint": "eslint",
-    "test": "node --experimental-strip-types src/lib/globe-math.test.mjs && node --experimental-strip-types src/lib/orbit-math.test.mjs && node src/data/sites.test.mjs && node --experimental-strip-types src/lib/rules.test.mjs",
+    "test": "node --experimental-strip-types src/lib/globe-math.test.mjs && node --experimental-strip-types src/lib/solar-math.test.mjs && node src/data/sites.test.mjs && node --experimental-strip-types src/lib/rules.test.mjs && node --experimental-strip-types src/lib/radial-data.test.mjs",
     "data": "bash scripts/data/run.sh",
     "test:data": "LOGOS_SITES=src/data/sites.json python3 -I scripts/data/test_index.py"
   },

@@ -6,6 +6,8 @@ import Count from "@/components/Count";
 import { INDEPENDENT, TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import LocatorMap from "@/components/LocatorMap";
+import RadialDial, { RadialLegend, RadialMini } from "@/components/RadialDial";
+import { buildRings } from "@/lib/radial-data";
 import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
 import { conditionStatus } from "@/lib/rules";
 import detailsRaw from "@/data/site-details.json";
@@ -101,12 +103,11 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const tSun = t.values.sun_max_deg?.value ?? null;
   const targetShort = t.name.split(" (")[0];
   const det = DETAILS[site.id], how = det?.how;
-  const scored = matchVars.filter((v) => v.similarity !== null), met = scored.filter((v) => (v.similarity ?? 0) >= 0.5).length;
   const ts = terrainOf(site.id), tt = terrainOf(`target-${mission.id}`);
+  const rings = buildRings(
+    mission.variables.filter((v) => v.inMatch).map((v) => { const p = site.vars.find((x) => x.id === v.id); return { id: v.id, label: v.label, unit: v.unit, ideal: v.ideal, tolerance: v.tolerance, value: p?.value ?? null, similarity: p?.similarity ?? null }; }),
+    ts?.stats ?? null, tt?.stats ?? null, { score: site.access.score, level: site.access.level });
   const TABS = [["why", "Why"], ["shape", "Shape"], ["when", "When"], ["how", "How"], ["limits", "Limits & sources"]] as const;
-  const Fig = ({ k, v, sub, color }: { k: string; v: React.ReactNode; sub?: React.ReactNode; color?: string }) => (
-    <div className="glass-inset py-1"><p className="label">{k}</p><p className="mono mt-1.5 text-[30px] leading-none tracking-[-.04em]" style={color ? { color } : undefined}>{v}</p>{sub && <p className="mt-1 text-[11.5px] leading-tight text-[var(--mut)]">{sub}</p>}</div>
-  );
   return (
     <div>
       {/* ---- At a glance: everything essential on one screen ---- */}
@@ -115,32 +116,34 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           <button onClick={onBack} className="back-btn label -ml-1 px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
           <span className="flex items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">Used by {site.campaign}</span>}</span>
         </div>
-        <header className="mt-1 grid items-end gap-x-3 gap-y-1 sm:grid-cols-[1fr_auto]">
-          <div className="min-w-0">
-            <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
-            <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "region to investigate, not a surveyed site" : "0.1° cell around the site"}</span></p>
-          </div>
-          <div className="flex items-baseline gap-3 sm:block sm:text-right">
-            <p className="label">Analog index</p>
-            <p className="mono text-[clamp(34px,5.4vh,48px)] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></p>
-            <p className="text-[11px] text-[var(--dim)]" title={TOP_NOTE}>{site.rank ? `#${site.rank} of ${site.of} new regions · ` : ""}0–1 index,<br className="sm:hidden" /> not suitability</p>
-          </div>
+        <header className="mt-1">
+          <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
+          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `#${site.rank} of ${site.of} new regions to investigate, not a surveyed site` : "0.1° cell around the site"}</span></p>
         </header>
 
-        <div className="mt-2"><TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact /></div>
-
-        <div className="mt-4 grid grid-cols-2 items-start gap-x-5 gap-y-3 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))_auto]">
-          {ts && <div className="hidden lg:block"><LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} /></div>}
-          <Fig k="Conditions" v={<>{met}<span className="text-[14px] text-[var(--mut)]"> of {matchVars.length}</span></>} sub={scored.length < matchVars.length ? `accepted by the mission rule; ${matchVars.length - scored.length} with no data` : "accepted by the mission rule"} color={met === matchVars.length ? "var(--earth)" : "var(--amber)"} />
-          <Fig k="Relief" v={ts ? <>{Math.round(ts.stats.reliefM)}<span className="text-[13px] text-[var(--mut)]"> m</span></> : "–"} sub={tt ? <>target {Math.round(tt.stats.reliefM)} m, over 11 km</> : undefined} />
-          <Fig k="Mean slope" v={ts ? <>{ts.stats.slopeMeanDeg.toFixed(1)}°</> : "–"} sub={tt ? <>target {tt.stats.slopeMeanDeg.toFixed(1)}°</> : undefined} />
-          <Fig k="Permits & politics" v={site.access.level === "Not assessed" ? "n/a" : site.access.level} sub={<>{site.access.score !== null ? `access complexity ${site.access.score.toFixed(2)} of 1` : "not scored"}{how?.travelTimeToCityHours != null && <><br /><b className="text-[var(--ink)]">Remoteness:</b> about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city</>}</>} color="var(--sand)" />
-          {tt && <div className="hidden lg:block"><LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} /></div>}
+        {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
+        <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
+          <RadialDial index={idx(site.match)} rings={rings} className="h-[clamp(150px,24vh,232px)] w-[clamp(150px,24vh,232px)]" />
+          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={TOP_NOTE}>Analog index 0–1: a ranking index, not suitability. Grey rings: 1 = same as the target. Amber: fuller = more complex access.</p></div>
+        </div>
+        <div className="mt-2 sm:hidden">
+          <p className="flex items-baseline gap-3"><span className="label">Analog index</span><span className="mono text-[40px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></span><span className="text-[11px] text-[var(--dim)]">0–1, not suitability</span></p>
+          <RadialMini rings={rings} />
         </div>
 
-        <p className="mt-4 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
+        <div className="mt-3 grid items-end gap-3 lg:grid-cols-[1fr_auto]">
+          <TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact />
+          <div className="hidden gap-2 lg:grid [@media(max-height:840px)]:lg:hidden">
+            {ts && <LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} />}
+            {tt && <LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} />}
+          </div>
+        </div>
+        {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept only to validate the index; a new region this steep would have been screened out.</p>}
+        {how?.travelTimeToCityHours != null && <p className="mt-2 text-[12px] text-[var(--mut)]"><b className="text-[var(--ink)]">Remoteness:</b> about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city (not part of the access ring).</p>}
 
-        <div className="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Details">
+        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
+
+        <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (
             <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => { setTab(tab === id ? null : id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
           ))}

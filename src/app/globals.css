@@ -25,7 +25,7 @@ body { background: var(--bg); color: var(--ink); font: 400 15.5px/1.55 var(--san
 b, strong { font-weight: 600; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-/* Markers (placed by OrbitScene.tsx with an inline transform; --c = colour of the body) */
+/* Markers (placed by SolarScene.tsx with an inline transform; --c = colour of the body) */
 .mk { position: absolute; width: var(--tap); height: var(--tap); background: none; border: 0; padding: 0; cursor: pointer; z-index: 4; }
 .mk i { position: absolute; left: 50%; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; background: var(--earth); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px #fff; transition: transform 240ms var(--ease); }
 .mk.sel i { transform: scale(1.4); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #fff, 0 0 18px 7px rgba(93, 180, 255, .5); }
@@ -184,3 +184,35 @@ b, strong { font-weight: 600; }
 .mk.target.edge-l .mk-l { left: 50%; right: auto; transform: none; }
 /* Phones: the opened site's name is in the panel just below, so only the target keeps its label in the small scene */
 @media (max-width: 700px) { .mk.cand .mk-l { display: none; } }
+
+/* Scene: names of the bodies in the overview, and site names at the end of their dashed leader lines */
+.body-name { font: 400 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mut); white-space: nowrap; }
+.mk.cand.lead .mk-l { left: 50%; top: 50%; right: auto; margin: 0; padding: 3px 6px; font: 600 12px/1.2 var(--sans); letter-spacing: 0; color: var(--ink); background: rgba(4, 6, 12, .55); border: 0; border-radius: 6px; pointer-events: none; }
+.mk.cand.lead.sel .mk-l { background: rgba(4, 6, 12, .9); outline: 1px solid var(--line2); }
+
+/* ===== Radial dial (art direction v4) ===== */
+/* RadialDial · pegar en globals.css. Colores: cian #5ee6ff (12,8:1 sobre #0b1020), gris #b9c2d3 (10,6:1), ámbar #ffb454 (11,5:1 sobre --bg). */
+.dial { display: block; width: 100%; height: auto; }
+.dial-arc { stroke-dashoffset: 0; animation: dial-draw 900ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes dial-draw { from { stroke-dashoffset: var(--len); } }
+.dial-cap { animation: dial-pop 240ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes dial-pop { from { opacity: 0; } }
+.dial-index { font-family: var(--mono); fill: var(--ink); letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.dial-caption { font: 400 8px var(--mono); letter-spacing: .1em; text-transform: uppercase; fill: var(--mut); }
+.dial-legend { display: grid; gap: 8px; align-content: center; min-width: 0; }
+.dial-legend h4 { margin: 0 0 2px; font: 400 10.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.dial-legend ul { margin: 0; padding: 0; list-style: none; }
+.dial-legend li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 24px; font-size: 13.5px; color: var(--ink); }
+.dial-legend li svg { width: 12px; height: 12px; }
+.dial-legend .l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dial-legend .v { font: 400 12px var(--mono); color: var(--mut); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dial-mini { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 6px; }
+.dial-mini li { display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
+.dial-mini svg { width: 48px; height: 48px; }
+.dial-mini .l { font-size: 11px; line-height: 1.2; color: var(--ink); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dial-mini .v { font: 400 10.5px var(--mono); color: var(--mut); white-space: nowrap; }
+.dial-mini-n { font: 400 13px var(--mono); fill: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .dial-arc, .dial-cap { animation: none; } }
+
+.dial-mini .v { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+@media (max-height: 840px) and (min-width: 768px) { .dial-legend { gap: 3px; } .dial-legend li { min-height: 19px; font-size: 12.5px; } .dial-legend h4 { margin: 0; } }
