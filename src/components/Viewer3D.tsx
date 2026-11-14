@@ -27,6 +27,7 @@ const coord = (lat: number, lon: number) =>
 export default function Viewer3D({ site, target, onClose }: { site: ViewerSite; target: ViewerTarget; onClose: () => void }) {
   const [sun, setSun] = useState(25);
   const [ex, setEx] = useState(1);
+  const [look, setLook] = useState<"relief" | "imagery">("relief");
   const loadEarth = useCallback(() => loadEarthTerrain(site.lat, site.lon), [site.lat, site.lon]);
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -64,6 +65,7 @@ export default function Viewer3D({ site, target, onClose }: { site: ViewerSite; 
           subtitle="Earth · candidate"
           sunElevationDeg={sun}
           exaggeration={ex}
+          look={look}
         />
         {target.load ? (
           <Terrain3D
@@ -103,6 +105,14 @@ export default function Viewer3D({ site, target, onClose }: { site: ViewerSite; 
             Vertical exaggeration: <b className="text-[var(--acc)]">×{ex}</b>
           </span>
           <input type="range" min={1} max={5} step={0.5} value={ex} onChange={(e) => setEx(+e.target.value)} className="accent-[var(--acc)]" />
+          <span className="flex gap-2">
+            <button onClick={() => setLook("relief")} className={look === "relief" ? "text-[var(--acc)] underline" : "underline"}>
+              Same material (compare shapes)
+            </button>
+            <button onClick={() => setLook("imagery")} className={look === "imagery" ? "text-[var(--acc)] underline" : "underline"}>
+              Earth satellite photo
+            </button>
+          </span>
           <span className="normal-case tracking-normal text-[var(--dim)]">Drag to rotate · pinch to zoom</span>
         </label>
       </footer>

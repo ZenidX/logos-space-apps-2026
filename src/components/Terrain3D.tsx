@@ -12,6 +12,8 @@ interface Props {
   subtitle?: string;
   sunElevationDeg: number; // altura del Sol (°): 1,5° ≈ polo sur lunar
   exaggeration: number;
+  // "relief": material neutro igual para los dos terrenos (comparar formas); "imagery": foto de satélite si la hay.
+  look?: "relief" | "imagery";
   className?: string;
 }
 
@@ -41,11 +43,15 @@ function slopeStats(d: TerrainData): TerrainStats {
   return { reliefM: d.maxH - d.minH, meanSlopeDeg: sum / c, maxSlopeDeg: max };
 }
 
-export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exaggeration, className = "" }: Props) {
+export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exaggeration, look = "relief", className = "" }: Props) {
   const mount = useRef<HTMLDivElement>(null);
   const sunRef = useRef<THREE.DirectionalLight | null>(null);
   const meshRef = useRef<THREE.Mesh | null>(null);
   const dataRef = useRef<TerrainData | null>(null);
+  const exRef = useRef(exaggeration);
+  exRef.current = exaggeration;
+  const lookRef = useRef(look);
+  lookRef.current = look;
   const [state, setState] = useState<"cargando" | "ok" | "error">("cargando");
   const [err, setErr] = useState("");
   const [stats, setStats] = useState<TerrainStats | null>(null);
@@ -61,6 +67,9 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.setClearColor(0x04080f);
+    // Sombras proyectadas: con el Sol bajo (polo sur lunar, 1,5°) el relieve se lee por sus sombras largas.
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     el.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -76,8 +85,17 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
     controls.autoRotateSpeed = 0.6;
     controls.addEventListener("start", () => (controls.autoRotate = false));
 
-    scene.add(new THREE.AmbientLight(0x6f88a8, 0.25));
-    const sun = new THREE.DirectionalLight(0xffffff, 2.4);
+    scene.add(new THREE.AmbientLight(0x6f88a8, 0.18));
+    const sun = new THREE.DirectionalLight(0xffffff, 2.6);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    const sc = sun.shadow.camera;
+    sc.left = sc.bottom = -0.9;
+    sc.right = sc.top = 0.9;
+    sc.near = 0.1;
+    sc.far = 12;
+    sun.shadow.bias = -0.0005;
+    sun.shadow.normalBias = 0.003;
     scene.add(sun);
     sunRef.current = sun;
 
@@ -116,13 +134,16 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
         const pos = geo.attributes.position as THREE.BufferAttribute;
         geo.userData.base = new Float32Array(n * n);
         for (let i = 0; i < n * n; i++) geo.userData.base[i] = (heights[i] - d.minH) * s;
-        for (let i = 0; i < n * n; i++) pos.setY(i, geo.userData.base[i] * exaggeration);
+        for (let i = 0; i < n * n; i++) pos.setY(i, geo.userData.base[i] * exRef.current);
         geo.computeVertexNormals();
-        const tex = new THREE.CanvasTexture(d.texture);
+        const canvas = lookRef.current === "imagery" && d.imagery ? d.imagery : d.texture;
+        const tex = new THREE.CanvasTexture(canvas);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 8;
         const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.95, metalness: 0 });
         const mesh = new THREE.Mesh(geo, mat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
         scene.add(mesh);
         meshRef.current = mesh;
         // Contorno cian de la celda
@@ -162,6 +183,22 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
     const az = (135 * Math.PI) / 180;
     sun.position.set(Math.cos(el) * Math.sin(az) * 5, Math.sin(el) * 5, Math.cos(el) * Math.cos(az) * 5);
   }, [sunElevationDeg, state]);
+
+  // Cambiar entre relieve neutro y foto de satélite sin recargar
+  useEffect(() => {
+    const mesh = meshRef.current;
+    const d = dataRef.current;
+    if (!mesh || !d) return;
+    const mat = mesh.material as THREE.MeshStandardMaterial;
+    const canvas = look === "imagery" && d.imagery ? d.imagery : d.texture;
+    if (mat.map?.image === canvas) return;
+    mat.map?.dispose();
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    mat.map = tex;
+    mat.needsUpdate = true;
+  }, [look, state]);
 
   // Exageración vertical sin recargar
   useEffect(() => {

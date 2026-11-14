@@ -6,7 +6,8 @@ export interface TerrainData {
   n: number;
   widthM: number; // extensión este-oeste en metros
   heightM: number; // extensión norte-sur en metros
-  texture: HTMLCanvasElement;
+  texture: HTMLCanvasElement; // relieve neutro: misma apariencia en Tierra, Luna y Marte
+  imagery?: HTMLCanvasElement | null; // solo Tierra: foto de satélite (opcional)
   minH: number;
   maxH: number;
   source: string; // atribución
@@ -27,14 +28,32 @@ export const cellBBox = (lat: number, lon: number, sizeDeg = 0.1): BBox => ({
   north: lat + sizeDeg / 2,
 });
 
-const loadImage = (url: string) =>
+// Con tiempo máximo: una tesela que no responde no puede dejar el visor «cargando» para siempre.
+const loadImage = (url: string, timeoutMs = 15000) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();
+    const timer = setTimeout(() => {
+      img.src = "";
+      reject(new Error(`Timeout loading ${url}`));
+    }, timeoutMs);
     img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Could not load ${url}`));
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(img);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      reject(new Error(`Could not load ${url}`));
+    };
     img.src = url;
   });
+
+// Zoom de teselas Web Mercator que da ≈ `mPerPx` metros por píxel a esta latitud.
+// Cerca de los polos las teselas encogen (cos lat): con un zoom fijo, 11 km a 82°N eran ~1.300 teselas.
+const zoomFor = (lat: number, mPerPx: number, min: number, max: number) => {
+  const circ = 40075016 * Math.cos((lat * Math.PI) / 180);
+  return Math.max(min, Math.min(max, Math.ceil(Math.log2(circ / (256 * mPerPx)))));
+};
 
 // ---------- Web Mercator (Tierra) ----------
 const lon2x = (lon: number, z: number) => ((lon + 180) / 360) * 2 ** z;
@@ -76,7 +95,7 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
   const dLat = sizeM / 110540;
   const dLon = sizeM / (111320 * Math.cos((lat * Math.PI) / 180));
   const bbox: BBox = { west: lon - dLon / 2, east: lon + dLon / 2, south: lat - dLat / 2, north: lat + dLat / 2 };
-  const z = 12; // ~38 m/px en el ecuador; 11 km ≈ 1 tesela
+  const z = zoomFor(lat, sizeM / n, 6, 14); // teselas con la resolución de la malla, no más
   const demCanvas = await mercatorMosaic(
     "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
     bbox,
@@ -93,21 +112,14 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     if (h < minH) minH = h;
     if (h > maxH) maxH = h;
   }
-  // Imagen Sentinel-2: si no hay teselas a zoom 14 (latitudes muy altas), se prueba zoom 11;
-  // si tampoco, textura de sombreado del relieve. La imagen nunca impide ver el relieve.
-  let texture: HTMLCanvasElement | null = null;
-  let imagery = "Imagery: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)";
-  for (const tz of [14, 11]) {
-    try {
-      texture = await mercatorMosaic("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", bbox, tz, 1024);
-      break;
-    } catch {
-      /* siguiente zoom */
-    }
-  }
-  if (!texture) {
-    texture = hillshadeTexture(heights, n, sizeM, sizeM, minH, maxH);
-    imagery = "Texture: hillshade (no Sentinel-2 imagery available here)";
+  // Foto Sentinel-2 opcional (≈11 m/px, unas 25 teselas como máximo). Si falla, el relieve se ve igual.
+  let imagery: HTMLCanvasElement | null = null;
+  let imgNote = "Satellite photo: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)";
+  try {
+    const tz = zoomFor(lat, sizeM / 1024, 6, 14);
+    imagery = await mercatorMosaic("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg", bbox, tz, 1024);
+  } catch {
+    imgNote = "No Sentinel-2 photo available here";
   }
   const latR = (lat * Math.PI) / 180;
   return {
@@ -115,47 +127,33 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     n,
     widthM: sizeM,
     heightM: sizeM,
-    texture,
+    texture: reliefTexture(heights, n, minH, maxH),
+    imagery,
     minH,
     maxH,
-    resolutionM: (40075016 * Math.cos(latR)) / 2 ** z / 256,
-    source: `Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · ${imagery}`,
+    resolutionM: Math.max(sizeM / n, (40075016 * Math.cos(latR)) / 2 ** z / 256),
+    source: `Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · ${imgNote}`,
   };
 }
 
 // ---------- Luna y Marte (NASA Solar System Treks · ArcGIS ImageServer) ----------
 // exportImage con format=bsq + pixelType=F32 devuelve alturas float32 little-endian (m), fila 0 = norte.
 
-// Textura sintética: sombreado del relieve (luz del noroeste) teñido con la paleta del visor.
-function hillshadeTexture(h: Float32Array, n: number, widthM: number, heightM: number, minH: number, maxH: number) {
+// Textura neutra para comparar formas: gris uniforme con un leve tinte por altura y SIN sombras pintadas.
+// Las sombras las pone la luz del visor (el mismo Sol para los dos terrenos), así la Tierra, la Luna y
+// Marte se ven con exactamente el mismo material y solo cambia la forma del relieve.
+export function reliefTexture(h: Float32Array, n: number, minH: number, maxH: number) {
   const c = document.createElement("canvas");
   c.width = c.height = n;
   const ctx = c.getContext("2d")!;
   const img = ctx.createImageData(n, n);
-  const dx = widthM / (n - 1);
-  const dy = heightM / (n - 1);
-  const az = (315 * Math.PI) / 180;
-  const alt = (40 * Math.PI) / 180;
-  for (let r = 0; r < n; r++) {
-    for (let col = 0; col < n; col++) {
-      const i = r * n + col;
-      const l = h[r * n + Math.max(0, col - 1)];
-      const rr = h[r * n + Math.min(n - 1, col + 1)];
-      const u = h[Math.max(0, r - 1) * n + col];
-      const d = h[Math.min(n - 1, r + 1) * n + col];
-      const gx = (rr - l) / (2 * dx);
-      const gy = (d - u) / (2 * dy);
-      const slope = Math.atan(Math.hypot(gx, gy));
-      const aspect = Math.atan2(gy, -gx);
-      let shade = Math.sin(alt) * Math.cos(slope) + Math.cos(alt) * Math.sin(slope) * Math.cos(az - aspect);
-      shade = Math.max(0, Math.min(1, shade));
-      const t = maxH > minH ? (h[i] - minH) / (maxH - minH) : 0.5;
-      const v = 40 + shade * 190;
-      img.data[i * 4] = v * (0.78 + 0.1 * t);
-      img.data[i * 4 + 1] = v * (0.86 + 0.08 * t);
-      img.data[i * 4 + 2] = v * 0.98;
-      img.data[i * 4 + 3] = 255;
-    }
+  for (let i = 0; i < n * n; i++) {
+    const t = maxH > minH ? (h[i] - minH) / (maxH - minH) : 0.5;
+    const v = 150 + 50 * t;
+    img.data[i * 4] = v * 0.96;
+    img.data[i * 4 + 1] = v * 0.98;
+    img.data[i * 4 + 2] = v;
+    img.data[i * 4 + 3] = 255;
   }
   ctx.putImageData(img, 0, 0);
   return c;
@@ -181,14 +179,15 @@ function finish(heights: Float32Array, n: number, widthM: number, heightM: numbe
     heightM,
     minH,
     maxH,
-    resolutionM,
+    resolutionM: Math.max(resolutionM, widthM / n), // resolución de la malla dibujada, comparable con la Tierra
     source,
-    texture: hillshadeTexture(heights, n, widthM, heightM, minH, maxH),
+    texture: reliefTexture(heights, n, minH, maxH),
   };
 }
 
 async function trekExport(base: string, bbox: string, n: number, extra = "") {
-  const url = `${base}/exportImage?bbox=${bbox}${extra}&size=${n},${n}&pixelType=F32&format=bsq&f=image`;
+  // Interpolación bilineal: el vecino más cercano sobre un DEM de 5 m deja rayas (aliasing) a ~57 m/px.
+  const url = `${base}/exportImage?bbox=${bbox}${extra}&size=${n},${n}&pixelType=F32&format=bsq&interpolation=RSP_BilinearInterpolation&f=image`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Trek ${res.status}`);
   const buf = await res.arrayBuffer();
@@ -207,8 +206,15 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
   const x = rho * Math.sin((lon * Math.PI) / 180);
   const y = rho * Math.cos((lon * Math.PI) / 180);
   const hs = sizeM / 2;
-  const h = await trekExport(MOON_SP, `${x - hs},${y - hs},${x + hs},${y + hs}`, n);
-  return finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px (Moon Trek ImageServer) · Texture: hillshade");
+  // Se pide al doble de resolución y se promedia 2×2: menos rayas de las pasadas del láser LOLA.
+  const h2 = await trekExport(MOON_SP, `${x - hs},${y - hs},${x + hs},${y + hs}`, 2 * n);
+  const h = new Float32Array(n * n);
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) {
+      const i = 2 * r * 2 * n + 2 * c;
+      h[r * n + c] = (h2[i] + h2[i + 1] + h2[i + 2 * n] + h2[i + 2 * n + 1]) / 4;
+    }
+  return finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px (Moon Trek ImageServer) · Same neutral material as Earth");
 }
 
 // Marte: mezcla HRSC + MOLA (~200 m/px), coordenadas lat/lon.
@@ -217,7 +223,7 @@ export async function loadMarsBlend(lat: number, lon: number, sizeM = 11000, n =
   const dLon = dLat / Math.cos((lat * Math.PI) / 180);
   const bbox = `${lon - dLon / 2},${lat - dLat / 2},${lon + dLon / 2},${lat + dLat / 2}`;
   const h = await trekExport(MARS_BLEND, bbox, n);
-  return finish(h, n, sizeM, sizeM, 200, "Elevation: MOLA + Mars Express HRSC blend ~200 m/px (Mars Trek ImageServer) · Texture: hillshade");
+  return finish(h, n, sizeM, sizeM, 200, "Elevation: MOLA + Mars Express HRSC blend ~200 m/px (Mars Trek ImageServer) · Same neutral material as Earth");
 }
 
 // Marte, Jezero: CTX DTM de 20 m (USGS Astrogeology, Mars 2020). GeoTIFF Float32 sin comprimir,
@@ -250,5 +256,5 @@ export async function loadJezeroCTX(lat: number, lon: number, sizeM = 11000, n =
       out[r * n + col] = view.getFloat32((sr * W + sc) * 4, true);
     }
   }
-  return finish(out, n, side * PX, side * PX, 20, "Elevation: CTX DTM 20 m Jezero (USGS Astrogeology / Mars 2020 TRN) · Texture: hillshade");
+  return finish(out, n, side * PX, side * PX, 20, "Elevation: CTX DTM 20 m Jezero (USGS Astrogeology / Mars 2020 TRN) · Same neutral material as Earth");
 }

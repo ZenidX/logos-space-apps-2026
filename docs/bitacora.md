@@ -2,6 +2,17 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 2) · Visor 3D comparable (Jefe, rama `fix/visor-3d-comparable`)
+
+zexu: «los modelos 3D de la Tierra no se parecen a los de la Luna o Marte». Causa: tres fallos de pintado, no del método.
+1. **La Tierra no cargaba en el Ártico.** Con zoom fijo (DEM z12, foto z14), cerca del polo las teselas Mercator encogen: a 82,5°N la foto pedía ~1.300 teselas y el visor se quedaba en «Loading elevation…». Ahora el zoom se calcula por latitud (`zoomFor`): DEM a la resolución de la malla y foto a ~11 m/px (≤ ~25 teselas). Cada tesela tiene 15 s de tiempo máximo.
+2. **Materiales distintos.** Tierra con foto en color y Luna/Marte con sombreado pintado desde el NO, que contradecía al Sol del visor (SE). Ahora los dos usan el mismo material neutro (`reliefTexture`, sin sombras pintadas) y la luz del visor proyecta sombras reales (shadow map). La foto de satélite de la Tierra queda como opción: «Earth satellite photo».
+3. **Rayas en la Luna.** Trek se pide con interpolación bilineal y al doble de resolución, promediando 2×2. Quedan algunas trazas diagonales del propio DEM de LOLA.
+4. La etiqueta «Mesh ≈ m/px» muestra la resolución de la malla dibujada en los dos lados (57 m/px), no la del dato original.
+
+Lo que NO cambia, y es una decisión de método: la puntuación compara clima, superficie y pendiente media a 5 km, no la forma exacta. Un candidato puede parecerse en esos números y tener otra forma (meseta con valles frente a la pared de un cráter).
+Comprobado con capturas en Chromium headless (Sol a 25° y a 1,5°), lint y build sin errores.
+
 ## 2026-11-14 (noche) · Cambios de la revisión de Crítico (Space Apps, rama `fix/auditoria-jefe`, sin push)
 
 1. «Differs in» solo muestra variables con similitud < 70 %; si no hay ninguna, no sale la línea.
