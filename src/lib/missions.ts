@@ -1,7 +1,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 // Mission model. Data: src/data/sites.json (Logos Datos, v2; method in docs/method.md).
 // Each mission comes from real analog field campaigns; each Earth site has a 0–1 match built from
-// per-variable similarities (weighted geometric mean), plus where the analogy breaks and access complexity.
+// per-condition similarities combined into an analog index (0.5 · conditions met + 0.5 · closeness to known analogs, method v3), plus where the analogy breaks and access complexity.
 import raw from "@/data/sites.json";
 import type { GlobeBody } from "@/lib/globe-tex";
 
@@ -28,27 +28,30 @@ export interface Target { name: string; body: GlobeBody; lat: number; lon: numbe
 export interface Mission {
   id: MissionId; short: string; title: string; blurb: string; target: Target;
   campaigns: { name: string; url: string }[]; variables: Variable[]; sites: Site[];
-  validation: { method: string; result: string; controlPercentile: number | null }; notScored: string[];
+  validation: { method: string; result: string; controlPercentile: number | null }; notScored: string[]; keyLimit: string;
   always: { text: string; source: string; url: string | null }[];
 }
 
 // Team copy for each mission (short name, one-line pitch, what Earth can never reproduce).
-const COPY: Record<MissionId, { short: string; blurb: string; notScored: string[]; always: string[] }> = {
+const COPY: Record<MissionId, { short: string; blurb: string; keyLimit: string; notScored: string[]; always: string[] }> = {
   "m1-eva-basalt": {
     short: "Moonwalk on basalt",
     blurb: "Bare, dark volcanic ground to rehearse spacesuit traverses and field geology.",
+    keyLimit: "Volcanic rock is mapped within ~80 km (0.5° geological map); basalt at the site itself is not confirmed.",
     notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Walkable slope — needs a 30 m elevation model"],
     always: ["Gravity: 1.62 m/s² on the Moon vs 9.81 on Earth.", "Hard vacuum: no air drag on dust, no convective cooling."],
   },
   "m2-rover-sand": {
     short: "Rover on sand",
     blurb: "Loose, sandy, bare ground where rovers can get stuck — and learn not to.",
+    keyLimit: "Sand fraction is a soil-model value; dunes are not confirmed on imagery.",
     notScored: ["Dune slopes — needs a 30 m elevation model", "Jezero sand fraction — no comparable value yet"],
     always: ["Gravity: 3.72 m/s² on Mars vs 9.81 on Earth.", "Thin CO₂ air, about 0.6 % of Earth's surface pressure."],
   },
   "m3-ground-ice": {
     short: "Water from ground ice",
     blurb: "Cold, dry polar desert where ice survives just below the surface.",
+    keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
     notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — server down when we checked"],
     always: ["Mars air pressure is too low for liquid water: ice sublimates.", "No global magnetic field or thick air: radiation reaches the ground."],
   },
@@ -76,7 +79,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
   const sites: Site[] = m.sites.map((s) => ({
     id: s.id,
     areaKm2: s.region?.areaKm2 ?? null,
-    name: s.name.replace(/^Candidate cell near /, "").split(" · ").slice(0, 2).join(" · "),
+    name: s.name.replace(/^Candidate cell near /, "").split(" · ").filter((x, i) => !(i === 0 && /^(Asia|Africa|Europe|North America|South America|Oceania)$/.test(x))).slice(0, 2).join(" · "),
     country: s.country,
     lat: s.lat,
     lon: lon180(s.lon),
@@ -112,6 +115,9 @@ export function arcDims(m: Mission, s: Site): [number | null, number | null, num
   const sim = (id?: string) => (id ? s.vars.find((v) => v.id === id)?.similarity ?? null : null);
   return [sim(ids[0]), sim(ids[1]), sim(ids[2])];
 }
+
+/** Analog index (0–1): a ranking index built from team choices and Earth percentiles, not a probability. */
+export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(2));
 
 export const fmt = (x: number | null, unit = "") => {
   if (x === null || Number.isNaN(x)) return "–";

@@ -12,17 +12,19 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <h3 className="label mt-6">1 · Start from real missions</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">We did not ask “which place looks like the Moon?”. We listed real analog field campaigns run by NASA and ESA, read which task each one rehearsed, and turned each task into a few surface conditions that open global data can measure.</p>
 
-        <h3 className="label mt-6">2 · Match, condition by condition</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">Each condition has an ideal range in physical units. Inside the range the similarity is 1; outside it falls off smoothly (Gaussian, with a tolerance). The match is a weighted <b>geometric</b> mean, so one failed condition cannot be hidden by the others. Every 0.1° land cell on Earth is scored.</p>
+        <h3 className="label mt-6">2 · Analog index (0–1), condition by condition</h3>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">Each condition has an ideal range in physical units. A condition&apos;s similarity is 1 inside the range and falls off smoothly outside it (Gaussian with a tolerance); it counts as <b>met</b> when the similarity is at least 0.5. Then, for every 0.1° land cell on Earth:</p>
+        <pre className="mono mt-2 overflow-x-auto rounded-lg border border-[var(--line)] p-2 text-[12px]">F = conditions met / conditions available{"\n"}D = mean |percentile here − median percentile of known analogs| / 100{"\n"}index = 0.5 · F + 0.5 · (1 − D)</pre>
+        <p className="mt-2 text-[13px] text-[var(--mut)]">F says <i>whether</i> a place meets the mission&apos;s conditions; D says how close it sits, in Earth&apos;s own distribution, to where agencies actually ran the mission. It is a ranking index built from our team&apos;s choices (ranges, 0.5 threshold, 50/50 mix), not a probability. D favours places similar to the known analogs, and percentiles are relative to Earth, so D says nothing absolute about the Moon or Mars — the target-based ranges in F do that.</p>
 
         <h3 className="label mt-6">3 · Validation: does it find where agencies really went?</h3>
         <ul className="mt-2 grid gap-2 text-[13px]">
           {MISSIONS.map((m) => <li key={m.id} className="rounded-lg border border-[var(--line)] p-2"><b>{m.short}</b><span className="text-[var(--mut)]"> — {m.validation.result}</span></li>)}
         </ul>
-        <p className="mt-2 text-[12.5px] text-[var(--dim)]">Negative control (central Amazonia), percentile among land cells: {MISSIONS.map((m) => `${m.short} ${m.validation.controlPercentile ?? "–"}`).join(" · ")}. Limits: ranges and weights are team choices made knowing where the known sites are, so the test is not fully independent; few known sites per mission.</p>
+        <p className="mt-2 text-[12.5px] text-[var(--dim)]">Negative control (central Amazonia), percentile among land cells: {MISSIONS.map((m) => `${m.short} ${m.validation.controlPercentile ?? "–"}`).join(" · ")}. Partly circular: the known analogs also set the median used in D, so their high rank is partly by construction; the independent checks are the condition fraction F and the control. Few known sites per mission (two for ground ice).</p>
 
-        <h3 className="label mt-6">4 · New candidates</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Ranked by 0.5 × fraction of conditions met + 0.5 × closeness to the known analogs (percentile distance to their median). They are regions to investigate, not surveyed sites.</p>
+        <h3 className="label mt-6">4 · New regions to investigate</h3>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Only cells that meet every condition; regions under 4 cells dropped; each represented by its best cell and picked at least 800 km apart. They are regions to investigate, not surveyed sites. Key limits: moonwalk — volcanic rock within ~80 km, not confirmed basalt; ground ice — inferred from temperature, not detected.</p>
 
         <h3 className="label mt-6">5 · Where the analogy breaks</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each site lists what was not scored and what Earth cannot reproduce (gravity, vacuum, radiation, cold). On the globes, arc segments show the top conditions: solid = met, amber dashes = the analogy breaks, faint dots = not scored.</p>
@@ -39,9 +41,12 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           {MISSIONS.map((m) => <li key={m.id}>• {m.target.name}: {m.target.coordSource}. Target surface values are approximate literature values, not yet extracted from NASA PDS products.</li>)}
         </ul>
         <h3 className="label mt-6">Earth data</h3>
-        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{varSources.map((v) => <li key={v}>• {v}</li>)}<li>• Sand fraction: ISRIC SoilGrids 2.0 (CC BY 4.0), model prediction. Volcanic rock: GLiM, Hartmann &amp; Moosdorf 2012 (CC BY 3.0). Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL).</li></ul>
+        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{varSources.map((v) => <li key={v}>• {v}</li>)}<li>• Sand fraction: ISRIC SoilGrids 2.0 (CC BY 4.0), model prediction.</li>
+          <li>• Volcanic rock: GLiM, Hartmann &amp; Moosdorf (2012), G³ 13, Q12004, doi:10.1029/2012GC004370; data doi:10.1594/PANGAEA.788537, <a className="underline" href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a>; modified: basic-volcanic class aggregated in a 3×3 window of 0.5° cells.</li>
+          <li>• Place names: Natural Earth (public domain) and © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL).</li>
+          <li>• Target constants (gravity, pressure, temperature): NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC).</li></ul>
         <h3 className="label mt-6">Access data</h3>
-        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{accessSources.map((v) => <li key={v}>• {v}</li>)}</ul>
+        <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{accessSources.map((v) => <li key={v}>• {v.includes("protectedplanet") ? <>{v.replace("www.protectedplanet.net", "")}<a className="underline" href="https://www.protectedplanet.net" target="_blank" rel="noopener noreferrer">www.protectedplanet.net</a></> : v}</li>)}</ul>
         <h3 className="label mt-6">Imagery and code</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>

@@ -99,7 +99,7 @@ export default function Home() {
           <div className="fade-in pt-4 md:pt-0">
             <p className="label">NASA Space Apps 2026 · Earth analogs for the Moon and Mars</p>
             <h1 className="display mt-3 text-[length:var(--t-hero)] font-semibold leading-[1.02]">Rehearse the Moon and Mars on Earth.</h1>
-            <p className="mt-4 max-w-[460px] text-[16px] text-[var(--mut)]">Pick a mission. We show where on Earth it can be rehearsed, how well each place matches, where the comparison breaks — and how complex it is to get there.</p>
+            <p className="mt-4 max-w-[460px] text-[16px] text-[var(--mut)]">Pick a mission. We show regions on Earth worth investigating to rehearse it, how they compare with the target, where the comparison breaks — and how complex it is to get there.</p>
           </div>
         )}
         <div className={missionId ? "flex flex-wrap gap-2" : "mt-6 grid gap-2"} role="group" aria-label="Choose a mission">
@@ -136,13 +136,14 @@ export default function Home() {
               <p className="label" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body} · {t.name}</p>
               <h2 className="display mt-1 text-[24px] font-semibold leading-tight">{shown.short}</h2>
               <p className="mt-1 text-[13.5px] text-[var(--mut)]">{shown.blurb}</p>
+              <p className="mt-2 rounded-lg border p-2 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>▲ {shown.keyLimit}</p>
 
               <h3 className="label mt-4">Rehearsed for real by</h3>
               <ul className="mt-2 grid gap-1 text-[13px]">
                 {shown.campaigns.map((c) => <li key={c.name}><a href={c.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{c.name}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></li>)}
               </ul>
 
-              <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New candidates</h3><span className="mono text-[11px] text-[var(--dim)]">match · access</span></div>
+              <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono text-[11px] text-[var(--dim)]">index · access</span></div>
               <ul className="mt-1 grid gap-0.5">{fresh.map((s, i) => <Row key={s.id} s={s} n={i + 1} />)}</ul>
 
               <h3 className="label mt-4">Known analogs · used to validate</h3>

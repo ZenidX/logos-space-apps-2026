@@ -1,9 +1,9 @@
 // AI-assisted (Claude), reviewed by team Logos
-import { fmt, type Mission, type Site } from "@/lib/missions";
+import { fmt, idx, type Mission, type Site } from "@/lib/missions";
 
 export function KindChip({ kind }: { kind: Site["kind"] }) {
   const c = kind === "new" ? "var(--earth)" : "var(--moon)";
-  return <span className="chip" style={{ color: c, borderColor: c }}>{kind === "new" ? "New candidate" : "Known analog"}</span>;
+  return <span className="chip" style={{ color: c, borderColor: c }}>{kind === "new" ? "New region to investigate" : "Known analog"}</span>;
 }
 
 export function AccessBars({ site }: { site: Site }) {
@@ -15,7 +15,7 @@ export function AccessBars({ site }: { site: Site }) {
   );
 }
 
-export const pct = (x: number | null) => (x === null ? "–" : `${Math.round(x * 100)} %`);
+export const pct = idx;
 
 function Bar({ v }: { v: number | null }) {
   const c = v === null ? "var(--dim)" : v >= 0.95 ? "var(--earth)" : v >= 0.9 ? "var(--earth)" : "var(--amber)";
@@ -40,18 +40,22 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
       <p className="mono text-[12px] text-[var(--dim)]">{site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · 0.1° cell (~11 km){site.kind === "new" && ` · region of ${site.areaKm2 ? `~${Math.round(site.areaKm2).toLocaleString("en")} km²` : "several cells"} to investigate, not a surveyed site`}</p>
 
       <section className="mt-4 flex items-end justify-between rounded-xl border border-[var(--line2)] p-3">
-        <div><h4 className="label">Match for this mission</h4><p className="display text-[34px] font-semibold leading-none tabular-nums">{pct(site.match)}</p></div>
-        {site.percentile !== null && <p className="text-right text-[12.5px] text-[var(--mut)]">Better than<br /><b className="text-[var(--ink)]">{site.percentile.toFixed(1)} %</b> of land</p>}
+        <div><h4 className="label">Analog index · 0 to 1</h4><p className="display text-[34px] font-semibold leading-none tabular-nums">{idx(site.match)}</p></div>
+        {site.percentile !== null && <p className="text-right text-[12.5px] text-[var(--mut)]">Higher than<br /><b className="text-[var(--ink)]">{site.percentile.toFixed(1)} %</b> of land cells</p>}
+      </section>
+      <p className="mt-1 text-[11.5px] text-[var(--dim)]">A ranking index from our mission conditions, not a probability. See “Method & sources”.</p>
+      <section className="mt-3 rounded-lg border p-2 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>
+        ▲ {mission.keyLimit}
       </section>
 
       <section className="mt-4">
-        <h4 className="label">Condition by condition · vs {t.name}</h4>
+        <h4 className="label">Condition by condition (similarity 0–1) · vs {t.name}</h4>
         <ul className="mt-2 grid gap-1.5">
           {matchVars.map((v) => {
             const tv = t.values[v.id]?.value ?? null;
             return (
               <li key={v.id} className="rounded-lg border border-[var(--line)] p-2 text-[13px]">
-                <div className="flex items-center justify-between gap-2"><span>{v.label}</span><span className="flex items-center gap-2"><Bar v={v.similarity} /><span className="mono w-10 text-right text-[12px]">{pct(v.similarity)}</span></span></div>
+                <div className="flex items-center justify-between gap-2"><span>{v.label}</span><span className="flex items-center gap-2"><Bar v={v.similarity} /><span className="mono w-10 text-right text-[12px]">{idx(v.similarity)}</span></span></div>
                 <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · target {tv === null ? "n/a" : fmt(tv, v.unit)}</div>
               </li>
             );

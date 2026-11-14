@@ -2,6 +2,11 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:20 · Revisión de Crítico y de Logos Legal aplicadas
+- Crítico («sí con cambios»): la hoja de método describía la fórmula v2 → reescrita con la v3 (índice = 0,5·F + 0,5·(1−D)) y su circularidad. La nota se muestra como «analog index» 0–1, no como %, con aviso de que no es una probabilidad. «New candidates» → «New regions to investigate». Límite clave de cada misión en ámbar junto al nombre (basalto no confirmado, dunas no confirmadas, hielo inferido).
+- Logos Legal: `vercel.json` con CSP y cabeceras de seguridad; cita completa de WDPCA con enlace; avisos de viaje de EE. UU. y del Reino Unido separados; enlaces a OSM y a la licencia de GLiM («modified»); `LICENSE` MIT que excluye datos de terceros y la marca de WDPCA; README con OSM, NSSDC y GLiM.
+- Quitado el prefijo de continente de los nombres de región. Datos de acceso: citas corregidas en la copia del repo (avisado a Logos Datos).
+
 ## 2026-11-14 · 22:05 · Front «Orbit» con datos v3
 - Escena única con la Tierra, la Luna y Marte (Orrery de Diseño) y arcos del objetivo a cada lugar. Tramos del arco: «no puntuado» junto al objetivo, luego las 3 condiciones principales (la más importante llega al lugar); ámbar = la analogía se rompe.
 - 3 misiones con datos v3 de Logos Datos: 6 regiones nuevas por misión + análogos conocidos para validar; ficha por lugar (nota, condición por condición frente al objetivo, ángulo del Sol en la misión lunar, dónde se rompe con fuentes NSSDC, «access complexity» neutral). Hoja «Method & sources».

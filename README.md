@@ -35,6 +35,10 @@ The team reviewed, tested and approved every AI-assisted output. AI-assisted cod
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
 - Missions: real analog field campaigns by NASA and ESA (links in the app and in `docs/misiones.md`).
 - Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth, WDPCA (flag only). Full list and licences in the app («Method & sources») and `docs/method.md`, `docs/licencias-geopolitica.md`.
+- Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
 - Front design proposal «Orbit» by the team's design agent; fonts Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).
+
+## Licence
+Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences; protected-area flags derived from WDPCA are not covered by the code licence.
 
 This project is not endorsed by NASA.
