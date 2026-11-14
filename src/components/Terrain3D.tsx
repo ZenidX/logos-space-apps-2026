@@ -63,7 +63,17 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
     const el = mount.current;
     if (!el) return;
     let disposed = false;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    } catch {
+      // Sin WebGL: aviso visible en vez de un cuadro negro.
+      queueMicrotask(() => {
+        setErr("WebGL is not available in this browser or device. Try another browser or enable hardware acceleration.");
+        setState("error");
+      });
+      return;
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.setClearColor(0x04080f);
@@ -276,6 +286,11 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
         }
       >
         <div ref={mount} className="h-full w-full" />
+        {state === "error" && (
+          <div role="alert" className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm" style={{ color: "var(--warn)" }}>
+            {err}
+          </div>
+        )}
       </Visor>
       {src && <p className="font-mono text-[9px] leading-tight text-[var(--dim)]">{src}</p>}
     </div>
