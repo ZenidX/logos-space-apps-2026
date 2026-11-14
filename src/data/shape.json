@@ -1,0 +1,245 @@
+{
+ "source": "Shape v3 (Space Apps Datos, 2026-11-14T15:34:14.593Z): pct_earth = percentile of the shape match against 83 random Earth land patches. Jezero omitted (no signal).",
+ "pct": {
+  "33.95,51.35": {
+   "shackleton": 80,
+   "arcadia": 99
+  },
+  "-17.85,-70.05": {
+   "shackleton": 80,
+   "arcadia": 40
+  },
+  "23.05,57.55": {
+   "shackleton": 69,
+   "arcadia": 33
+  },
+  "38.15,34.05": {
+   "shackleton": 94,
+   "arcadia": 61
+  },
+  "33.95,36.15": {
+   "shackleton": 100,
+   "arcadia": 34
+  },
+  "30.25,57.25": {
+   "shackleton": 94,
+   "arcadia": 99
+  },
+  "-23.75,-65.65": {
+   "shackleton": 80,
+   "arcadia": 49
+  },
+  "61.25,-149.65": {
+   "shackleton": 69,
+   "arcadia": 95
+  },
+  "19.55,41.95": {
+   "shackleton": 96,
+   "arcadia": 43
+  },
+  "38.85,105.75": {
+   "shackleton": 100,
+   "arcadia": 83
+  },
+  "35.55,51.75": {
+   "shackleton": 86,
+   "arcadia": 86
+  },
+  "36.45,69.35": {
+   "shackleton": 99,
+   "arcadia": 83
+  },
+  "33.65,36.35": {
+   "shackleton": 6,
+   "arcadia": 16
+  },
+  "-12.15,-76.75": {
+   "shackleton": 25,
+   "arcadia": 61
+  },
+  "40.05,70.55": {
+   "shackleton": 69,
+   "arcadia": 72
+  },
+  "32.35,-106.65": {
+   "shackleton": 95,
+   "arcadia": 42
+  },
+  "29.55,-9.45": {
+   "shackleton": 95,
+   "arcadia": 94
+  },
+  "23.35,58.65": {
+   "shackleton": 22,
+   "arcadia": 29
+  },
+  "38.55,45.75": {
+   "shackleton": 80,
+   "arcadia": 43
+  },
+  "33.45,69.15": {
+   "shackleton": 98,
+   "arcadia": 94
+  },
+  "35.45,51.75": {
+   "shackleton": 99,
+   "arcadia": 61
+  },
+  "32.55,51.35": {
+   "shackleton": 93,
+   "arcadia": 71
+  },
+  "21.75,39.25": {
+   "shackleton": 51,
+   "arcadia": 83
+  },
+  "-16.35,-71.65": {
+   "shackleton": 86,
+   "arcadia": 29
+  },
+  "25.85,56.05": {
+   "shackleton": 12,
+   "arcadia": 42
+  },
+  "35.15,-3.05": {
+   "shackleton": 93,
+   "arcadia": 83
+  },
+  "36.25,57.55": {
+   "shackleton": 99,
+   "arcadia": 84
+  },
+  "38.35,-0.65": {
+   "shackleton": 73,
+   "arcadia": 87
+  },
+  "30.95,-7.05": {
+   "shackleton": 95,
+   "arcadia": 16
+  },
+  "35.95,2.85": {
+   "shackleton": 36,
+   "arcadia": 99
+  },
+  "35.15,69.25": {
+   "shackleton": 12,
+   "arcadia": 80
+  },
+  "28.25,-16.55": {
+   "shackleton": 70,
+   "arcadia": 88
+  },
+  "-31.35,-68.15": {
+   "shackleton": 95,
+   "arcadia": 34
+  },
+  "36.55,50.15": {
+   "shackleton": 90,
+   "arcadia": 45
+  },
+  "31.65,54.15": {
+   "shackleton": 20,
+   "arcadia": 59
+  },
+  "29.35,51.25": {
+   "shackleton": 95,
+   "arcadia": 80
+  },
+  "-13.25,-75.95": {
+   "shackleton": 80,
+   "arcadia": 48
+  },
+  "-7.75,-78.95": {
+   "shackleton": 90,
+   "arcadia": 72
+  },
+  "36.65,45.15": {
+   "shackleton": 95,
+   "arcadia": 78
+  },
+  "41.35,72.25": {
+   "shackleton": 52,
+   "arcadia": 72
+  },
+  "36.75,48.45": {
+   "shackleton": 69,
+   "arcadia": 25
+  },
+  "30.25,67.15": {
+   "shackleton": 92,
+   "arcadia": 48
+  },
+  "30.05,57.05": {
+   "shackleton": 95,
+   "arcadia": 95
+  },
+  "39.65,-119.65": {
+   "shackleton": 70,
+   "arcadia": 31
+  },
+  "37.95,58.15": {
+   "shackleton": 80,
+   "arcadia": 58
+  },
+  "34.85,-1.55": {
+   "shackleton": 100,
+   "arcadia": 34
+  },
+  "38.45,-0.55": {
+   "shackleton": 99,
+   "arcadia": 78
+  },
+  "29.35,89.25": {
+   "shackleton": 82,
+   "arcadia": 94
+  },
+  "-16.45,-71.75": {
+   "shackleton": 99,
+   "arcadia": 51
+  },
+  "61.15,-149.75": {
+   "shackleton": 94,
+   "arcadia": 81
+  },
+  "34.55,69.35": {
+   "shackleton": 63,
+   "arcadia": 95
+  },
+  "23.55,57.95": {
+   "shackleton": 37,
+   "arcadia": 86
+  },
+  "29.55,55.75": {
+   "shackleton": 93,
+   "arcadia": 22
+  },
+  "43.75,87.45": {
+   "shackleton": 2,
+   "arcadia": 42
+  },
+  "-27.15,-70.85": {
+   "shackleton": 100,
+   "arcadia": 58
+  },
+  "31.65,65.75": {
+   "shackleton": 80,
+   "arcadia": 94
+  },
+  "27.65,41.65": {
+   "shackleton": 82,
+   "arcadia": 77
+  },
+  "42.95,93.55": {
+   "shackleton": 96,
+   "arcadia": 80
+  },
+  "34.95,63.05": {
+   "shackleton": 42,
+   "arcadia": 96
+  },
+  "-11.25,-77.55": {
+   "shackleton": 96,
+   "arcadia": 90
+  }
+ }
+}

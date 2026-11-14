@@ -9,6 +9,7 @@ import Viewer3D, { type ViewerTarget } from "@/components/Viewer3D";
 import { TARGET_TERRAIN } from "@/lib/targetTerrain";
 import eeGlobal from "@/data/ee-global.json";
 import eeSamples from "@/data/ee-samples.json";
+import shapeData from "@/data/shape.json";
 
 
 interface Candidate {
@@ -106,6 +107,13 @@ function DimBar({ label, v }: { label: string; v: number | null }) {
       <span className="w-6 text-right font-mono">{pct(v)}</span>
     </div>
   );
+}
+
+
+// «Parecido de forma» (informativo, fuera de la nota): percentil frente a 83 trozos de tierra firme al azar.
+const SHAPE = shapeData.pct as Record<string, Record<string, number>>;
+function shapePct(c: { c: number[] }, targetId: string): number | null {
+  return SHAPE[`${c.c[1].toFixed(2)},${c.c[0].toFixed(2)}`]?.[targetId] ?? null;
 }
 
 export default function CandidatesTab() {
@@ -275,6 +283,19 @@ export default function CandidatesTab() {
                   const e = explain(c, target.values);
                   return (
                     <div className="mt-2 space-y-0.5 text-[11px]">
+                      {(() => {
+                        const sp = shapePct(c, targetId);
+                        if (sp == null) return null;
+                        return (
+                          <p title="Relief shape over 11 km, rotated and shifted, compared with 83 random patches of Earth's land. Informative only: not part of the score. Does not measure climate, rock, ice or features under 200 m.">
+                            <span className={sp >= 95 ? "text-emerald-400" : "text-[var(--mut)]"}>
+                              {sp >= 95 ? "▲ Shape match:" : "Shape:"}
+                            </span>{" "}
+                            more similar in relief shape than {sp}% of Earth&apos;s land
+                            <span style={{ color: C.muted }}> (informative, not scored)</span>
+                          </p>
+                        );
+                      })()}
                       <p>
                         <span className="text-emerald-400">✔ Similar in:</span>{" "}
                         {e.strong.map((r) => `${VAR_LABEL[r.k]} (${pct(r.sim)})`).join(" · ")}
