@@ -3,7 +3,7 @@
 # Uso: bash scripts/deploy-pages.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
-MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026 npx next build
+MSYS_NO_PATHCONV=1 NEXT_DIST_DIR=.next-pages NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026 npx next build
 touch out/.nojekyll
 REMOTE=$(git remote get-url origin)
 TMP=$(mktemp -d)
