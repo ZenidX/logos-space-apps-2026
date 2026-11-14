@@ -7,7 +7,7 @@ export interface TerrainData {
   widthM: number; // extensión este-oeste en metros
   heightM: number; // extensión norte-sur en metros
   texture: HTMLCanvasElement; // relieve neutro: misma apariencia en Tierra, Luna y Marte
-  // Solo Tierra: foto de satélite, que se descarga únicamente si el usuario la pide (no retrasa el relieve).
+  // Imagen real (Tierra: Sentinel-2; Luna: LRO WAC; Marte: Viking). Se descarga aparte, sin retrasar el relieve.
   loadImagery?: () => Promise<HTMLCanvasElement | null>;
   minH: number;
   maxH: number;
@@ -178,7 +178,7 @@ export async function loadEarthTerrain(lat: number, lon: number, n = 192, sizeM 
     minH,
     maxH,
     resolutionM: Math.max(sizeM / n, (40075016 * Math.cos(latR)) / 2 ** z / 256),
-    source: "Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · Satellite photo on request: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)",
+    source: "Elevation: AWS Terrain Tiles (SRTM/NASADEM, ArcticDEM…) · Imagery: Sentinel-2 cloudless 2016 by EOX (ESA Copernicus, CC BY 4.0)",
   };
 }
 
@@ -243,7 +243,30 @@ async function trekExport(base: string, bbox: string, n: number, extra = "") {
 
 const MOON_SP = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_SPole875_5mp_v04/ImageServer";
 const MARS_BLEND = "https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_MOLA_blend200ppx_HRSC_DEM_clon0dd_200mpp_lzw/ImageServer";
+// Imágenes reales: misma proyección que los DEM de cada cuerpo (comprobado en el ?f=json de cada servicio).
+const MOON_WAC_SP = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_WAC_Mosaic_SPole60_100m_v02/ImageServer";
+const MARS_VIKING = "https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_Viking_MDIM21_ClrMosaic_global_232m/ImageServer";
 const MOON_R = 1737400;
+
+// Imagen de Trek (exportImage en PNG) pintada en un canvas. Si falla, null: el visor se queda con el gris.
+async function trekImage(base: string, bbox: string, size: number): Promise<HTMLCanvasElement | null> {
+  try {
+    const res = await fetch(`${base}/exportImage?bbox=${bbox}&size=${size},${size}&format=png&f=image`);
+    if (!res.ok) return null;
+    const bmp = await createImageBitmap(await res.blob());
+    const c = document.createElement("canvas");
+    c.width = c.height = size;
+    c.getContext("2d")!.drawImage(bmp, 0, 0, size, size);
+    return c;
+  } catch {
+    return null;
+  }
+}
+const marsLatLonBox = (lat: number, lon: number, sizeM: number) => {
+  const dLat = (sizeM / MARS_R) * (180 / Math.PI);
+  const dLon = dLat / Math.cos((lat * Math.PI) / 180);
+  return `${lon - dLon / 2},${lat - dLat / 2},${lon + dLon / 2},${lat + dLat / 2}`;
+};
 const MARS_R = 3396190;
 
 // Luna, polo sur: proyección estereográfica polar (m). Caja cuadrada de `sizeM` centrada en lat/lon.
@@ -260,7 +283,11 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
       const i = 2 * r * 2 * n + 2 * c;
       h[r * n + c] = (h2[i] + h2[i + 1] + h2[i + 2 * n] + h2[i + 2 * n + 1]) / 4;
     }
-  return finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px (Moon Trek ImageServer) · Same neutral material as Earth");
+  const box = `${x - hs},${y - hs},${x + hs},${y + hs}`;
+  return {
+    ...finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px · Imagery: LRO WAC south pole mosaic 100 m/px (Moon Trek)"),
+    loadImagery: () => trekImage(MOON_WAC_SP, box, 512),
+  };
 }
 
 // Marte: mezcla HRSC + MOLA (~200 m/px), coordenadas lat/lon.
@@ -269,7 +296,10 @@ export async function loadMarsBlend(lat: number, lon: number, sizeM = 11000, n =
   const dLon = dLat / Math.cos((lat * Math.PI) / 180);
   const bbox = `${lon - dLon / 2},${lat - dLat / 2},${lon + dLon / 2},${lat + dLat / 2}`;
   const h = await trekExport(MARS_BLEND, bbox, n);
-  return finish(h, n, sizeM, sizeM, 200, "Elevation: MOLA + Mars Express HRSC blend ~200 m/px (Mars Trek ImageServer) · Same neutral material as Earth");
+  return {
+    ...finish(h, n, sizeM, sizeM, 200, "Elevation: MOLA + HRSC blend ~200 m/px · Imagery: Viking MDIM2.1 colour mosaic 232 m/px (Mars Trek)"),
+    loadImagery: () => trekImage(MARS_VIKING, marsLatLonBox(lat, lon, sizeM), 256),
+  };
 }
 
 // Marte, Jezero: CTX DTM de 20 m (USGS Astrogeology, Mars 2020). GeoTIFF Float32 sin comprimir,
@@ -302,5 +332,8 @@ export async function loadJezeroCTX(lat: number, lon: number, sizeM = 11000, n =
       out[r * n + col] = view.getFloat32((sr * W + sc) * 4, true);
     }
   }
-  return finish(out, n, side * PX, side * PX, 20, "Elevation: CTX DTM 20 m Jezero (USGS Astrogeology / Mars 2020 TRN) · Same neutral material as Earth");
+  return {
+    ...finish(out, n, side * PX, side * PX, 20, "Elevation: CTX DTM 20 m Jezero (USGS / Mars 2020 TRN) · Imagery: Viking MDIM2.1 colour mosaic 232 m/px (Mars Trek)"),
+    loadImagery: () => trekImage(MARS_VIKING, marsLatLonBox(lat, lon, side * PX), 256),
+  };
 }

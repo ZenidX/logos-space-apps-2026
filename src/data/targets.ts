@@ -59,7 +59,7 @@ export const TARGETS: Target[] = [
   },
   {
     id: "arcadia",
-    name: "Arcadia Planitia · Marte",
+    name: "Arcadia Planitia · Mars",
     short: "Arcadia",
     body: "mars",
     description: "Mid-latitude plain with shallow buried ice, a candidate region for human missions (SWIM project).",

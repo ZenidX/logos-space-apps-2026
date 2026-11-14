@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 5) · Visor 3D: imagen real por defecto en los tres cuerpos (Jefe)
+
+zexu: «¿por qué no se ven los biomas?». El gris neutro era el modo por defecto (decisión del 14/11, noche 2). Ahora, a petición suya, el modo por defecto es «Real imagery» y el gris queda como opción («Same grey (compare shapes)»).
+- Tierra: Sentinel-2 cloudless (EOX).
+- Luna: LRO WAC south pole mosaic 100 m/px (`LRO_WAC_Mosaic_SPole60_100m_v02`), con la misma proyección estereográfica polar que el DEM de LOLA (comprobado en su `?f=json`). Sale oscura: el Sol en el polo sur es casi rasante.
+- Marte: Viking MDIM2.1 colour mosaic 232 m/px (Jezero y Arcadia), mismo sistema de coordenadas que el DEM. Más borroso que la Tierra.
+Cada imagen se descarga aparte y no retrasa el relieve. Arreglado también «Arcadia Planitia · Marte» → «Mars» (la entrega va en inglés).
+Comprobado con capturas en local de los tres objetivos.
+
 ## 2026-11-14 (noche)
 
 ### Copia de Earth Engine en el repo y acceso público

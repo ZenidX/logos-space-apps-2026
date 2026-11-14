@@ -269,8 +269,8 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
           ) : (
             <span className="k">
               Mesh ≈ {res ? Math.round(res) : "?"} m/px · ×{exaggeration} vertical
-              {photoState === "cargando" && " · loading photo…"}
-              {photoState === "sin foto" && " · no photo here"}
+              {photoState === "cargando" && " · loading imagery…"}
+              {photoState === "sin foto" && " · no imagery here"}
             </span>
           )
         }
