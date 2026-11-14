@@ -2,6 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:37 · Segunda pasada de Crítico (como jurado)
+- Misión 1 renombrada a «Suited EVA on volcanic terrain»: el polo sur lunar es terreno de tierras altas, no basalto; es un análogo operativo, no de composición. Mons Mouton descrito como región que NASA listó entre las candidatas de Artemis III en 2024.
+- Misión 3: «regions to screen for possible near-surface ice; the score does not detect ice».
+- Portada: frase de usuario y uso («first-pass shortlist … not a site recommendation»). Método: «every available condition (≥ 66 % of weight)» y «screening hypothesis». README: «access-complexity index … not a feasibility or safety assessment».
+- Portada ajustada a pantallas de 768 px de alto (ya no se montan las tarjetas y el pie).
+- Pendiente de Logos Datos: `method.md` y `sources.md` sincronizados con v4.
+
 ## 2026-11-14 · 22:28 · Auditoría total: segunda tanda (fuentes y verdad)
 - Datos v4 (Logos Datos): WDPCA eliminado (no comercial; Legal retiró su OK); en su lugar, aviso «Check national park and research permits before fieldwork». Arreglado un fallo: las frases de «dónde se rompe» citaban rangos de otra misión.
 - Auditoría de fuentes en `docs/sources.md`: cada afirmación con fuente, URL, estado HTTP, fecha, licencia y veredicto. Corregido: enlace de IceBite (el anterior era de IceBreaker), fechas de JETT3 (4–9 oct 2022), «sun cart» de JETT5 → «portable spotlight» (USGS), coordenadas de Jezero con el Gazetteer de USGS, gravedad 9,80 / 3,73 (NSSDC), frase sobre la corteza del polo sur con fuente de NASA JSC, enlace de MDRS, README sin misiones que la web no tiene.

@@ -35,8 +35,8 @@ export interface Mission {
 // Team copy for each mission (short name, one-line pitch, what Earth can never reproduce).
 const COPY: Record<MissionId, { short: string; blurb: string; keyLimit: string; notScored: string[]; always: string[] }> = {
   "m1-eva-basalt": {
-    short: "Moonwalk on basalt",
-    blurb: "Bare, dark volcanic ground to rehearse spacesuit traverses and field geology.",
+    short: "Suited EVA on volcanic terrain",
+    blurb: "An operational analogue for suited traverses and field geology — not a match to Mons Mouton's highland rock.",
     keyLimit: "Volcanic rock is mapped within ~80 km (0.5° geological map); basalt at the site itself is not confirmed.",
     notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Walkable slope — needs a 30 m elevation model"],
     always: ["Gravity: 1.62 m/s² on the Moon vs 9.80 on Earth."],
@@ -50,7 +50,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; keyLimit: string; 
   },
   "m3-ground-ice": {
     short: "Water from ground ice",
-    blurb: "Cold, dry polar desert where ice survives just below the surface.",
+    blurb: "Cold, dry regions to screen for possible near-surface ice; the score does not detect ice.",
     keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
     notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — server down when we checked"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],

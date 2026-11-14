@@ -101,12 +101,13 @@ export default function Home() {
       </header>
 
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
-      <section className={`relative z-10 px-4 pb-6 md:absolute md:left-0 md:top-0 md:px-8 ${missionId ? "md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pt-24"}`}>
+      <section className={`relative z-10 px-4 pb-6 md:px-8 ${missionId ? "md:absolute md:left-0 md:top-0 md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
         {!missionId && (
           <div className="fade-in pt-4 md:pt-0">
-            <p className="label">NASA Space Apps 2026 · Earth analogs for the Moon and Mars</p>
+            <p className="label">NASA Space Apps Challenge 2026</p>
             <h1 className="display mt-3 text-[length:var(--t-hero)] font-semibold leading-[1.02]">Rehearse the Moon and Mars on Earth.</h1>
             <p className="mt-4 max-w-[460px] text-[16px] text-[var(--mut)]">Pick a mission. We show regions on Earth worth investigating to rehearse it, how they compare with the target, where the comparison breaks — and how complex it is to get there.</p>
+            <p className="mt-3 max-w-[460px] text-[13.5px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
           </div>
         )}
         <div className={missionId ? "flex flex-wrap gap-2" : "mt-6 grid gap-2"} role="group" aria-label="Choose a mission">
@@ -121,15 +122,13 @@ export default function Home() {
                   <b className="display text-[17px]">{m.short}</b>
                   <span className="label" style={{ color: c }}>{m.target.body} · {m.target.name.split(" (")[0]}</span>
                 </span>
-                <small className="mt-0.5 block text-[13px] text-[var(--mut)]">{m.blurb}</small>
+                <small className="mt-0.5 block text-[13px] text-[var(--mut)] md:[@media(max-height:840px)]:hidden">{m.blurb}</small>
               </button>
             );
           })}
         </div>
         {!missionId && (
-          <div className="mt-3 flex items-center gap-3">
-            <span className="text-[12px] text-[var(--dim)]">Showing: {shown.short} → {t.name.split(" (")[0]}</span>
-          </div>
+          <p className="mt-3 text-[12px] text-[var(--dim)]" aria-live="polite">Showing: {shown.short} → {t.name.split(" (")[0]}</p>
         )}
       </section>
 
@@ -164,7 +163,7 @@ export default function Home() {
         </aside>
       )}
 
-      <footer className="relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:fixed md:bottom-3 md:left-8 md:max-w-[34%] md:px-0 md:pb-0">
+      <footer className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
         Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. Globes not to scale. This project is not endorsed by NASA.
       </footer>
 

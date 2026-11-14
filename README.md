@@ -7,7 +7,7 @@
 ## Idea
 Instead of asking "which place on Earth looks like the Moon?", we ask **"where on Earth can we rehearse this specific mission?"** — and we add a neutral **access complexity** layer (how much coordination would a field team need to work there?).
 
-The prototype covers three missions, each taken from real analog field campaigns: a suited moonwalk on bare volcanic ground (target: Mons Mouton, an Artemis III candidate region), rover driving on loose sand (target: Jezero crater) and drilling shallow ground ice for water (target: Arcadia Planitia). For each one it proposes new regions on Earth to investigate, shows how they compare with the target condition by condition, and states where the analogy breaks. The Sun angle is shown for the lunar mission because low-Sun lighting drives south-pole operations.
+The prototype covers three missions, each taken from real analog field campaigns: a suited EVA on bare volcanic terrain (target: Mons Mouton, a lunar south-pole region NASA listed among its Artemis III landing candidates in 2024), rover driving on loose sand (target: Jezero crater) and drilling shallow ground ice for water (target: Arcadia Planitia). For each one it proposes new regions on Earth to investigate, shows how they compare with the target condition by condition, and states where the analogy breaks. The Sun angle is shown for the lunar mission because low-Sun lighting drives south-pole operations.
 
 The idea is our team's own. See [Use of SI / AI](#use-of-super-intelligence-si--ai).
 
@@ -27,11 +27,11 @@ LOGOS_IN=/path/to/inputs npm run data   # rebuild src/data/sites.json from the p
 - Deep links: `?m=m1-eva-basalt`, `?m=m2-rover-sand`, `?m=m3-ground-ice`. Add `capture=1` for screen recording.
 
 ## Use of Super Intelligence (SI) / AI
-The idea and the approach of this project are entirely our team's own: finding Earth analog sites **per mission** and weighing each one by its **geopolitical access risk**. No AI tool was used to come up with the idea, the problem framing or the solution design.
+The idea and the approach of this project are entirely our team's own: finding Earth analog sites **per mission** and adding an **access-complexity index**, a team-defined coordination proxy — not a feasibility or safety assessment. No AI tool was used to come up with the idea, the problem framing or the solution design.
 
 We used AI (Claude agents by Anthropic, via Claude Code) only as a tool, for three tasks:
 - **Code:** writing and debugging parts of the web app and the data-processing scripts.
-- **Data search:** finding and summarising public datasets and their licenses. Every dataset we kept was checked by the team at its original source.
+- **Data search:** finding and summarising public datasets and their licenses. Source and licence checks, including unresolved items, are tracked in `docs/sources.md`.
 - **Writing:** drafting and editing documentation and texts in English.
 
 The team reviewed, tested and approved every AI-assisted output. AI-assisted code and data files are listed in [`AI_USAGE.md`](AI_USAGE.md) and marked in their headers and metadata. We did not use AI to generate images or video. No AI-generated content contains NASA logos, insignia or other NASA marks.
@@ -43,7 +43,7 @@ The team reviewed, tested and approved every AI-assisted output. AI-assisted cod
 - Software: three.js (MIT), Next.js (MIT, © Vercel, Inc.), React (MIT, © Meta Platforms, Inc.), Tailwind CSS (MIT).
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
 - Missions: real analog field campaigns by NASA, ESA and the Mars Society (links in the app and in `docs/missions.md`).
-- Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth, Full list and licences in the app («Method & sources») and `docs/method.md` and `docs/sources.md`.
+- Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth. Full list and licences in the app («Method & sources») and `docs/method.md` and `docs/sources.md`.
 - Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
 - Front design proposal «Orbit» by the team's design agent; fonts Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).
 
