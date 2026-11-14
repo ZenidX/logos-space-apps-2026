@@ -7,6 +7,9 @@ import { TASKS, desirability } from "./tasks.mjs";
 
 const GEOCODE = !process.argv.includes("--no-geocode");
 const N_BEST = 5, N_ACCESS = 3, MIN_KM = 300, ACCESS_MAX_H = 6;
+// El reto pide análogos NUEVOS: como en la búsqueda global, ninguna celda a ≤ 300 km de un análogo
+// catalogado puede protagonizar una tarea. El mejor análogo conocido se da aparte, como referencia.
+const KNOWN_EXCLUDE_KM = 300;
 
 // ── Capas ────────────────────────────────────────────────────────────────────
 const F = "data/ee/terra_features_01deg/";
@@ -114,6 +117,7 @@ function pick(order, S, n, filter = () => true) {
     if (!filter(v)) continue;
     const p = { lat: latOf(Math.floor(i / W)), lon: lonOf(i % W) };
     if (out.some((q) => km(q, p) < MIN_KM)) continue;
+    if (KNOWN.some((k) => km(k, p) <= KNOWN_EXCLUDE_KM)) continue;
     out.push({ ...p, i, score: S[i] });
   }
   return out;
@@ -147,10 +151,8 @@ for (const task of TASKS) {
   const acc = (i) => (ok(V[i].access_h) && V[i].access_h >= 0 ? V[i].access_h : 1e9);
   order.sort((a, b) => Math.round(S[b] * 100) - Math.round(S[a] * 100) || acc(a) - acc(b)); // empate → más accesible
   const fmt = (p) => {
-    const near = KNOWN.map((k) => ({ k, d: km(k, p) })).sort((a, b) => a.d - b.d)[0];
     return {
       lat: round(p.lat), lon: round(p.lon), score: round(p.score),
-      nearKnown: near.d < 200 ? near.k.name : null,
       values: siteValues(task, V[p.i]),
     };
   };
@@ -160,8 +162,9 @@ for (const task of TASKS) {
     const i = idx(k.lat, k.lon);
     return { name: k.name, score: i >= 0 && V[i] ? round(S[i]) : null };
   }).sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+  const reference = known[0]?.score > 0 ? known[0] : null; // mejor análogo ya catalogado para esta tarea
   const usedOptional = task.criteria.filter((c) => c.optional).map((c) => ({ var: c.var, available: !!ATMO[c.var] }));
-  results.push({ ...task, criteria: task.criteria.map(({ rule, ...c }) => ({ ...c, rule: `${rule.fn}(${rule.p.join(", ")})` })), optionalLayers: usedOptional, best, accessible, known });
+  results.push({ ...task, criteria: task.criteria.map(({ rule, ...c }) => ({ ...c, rule: `${rule.fn}(${rule.p.join(", ")})` })), optionalLayers: usedOptional, best, accessible, reference, known });
   console.log(`${task.id.padEnd(17)} mejor ${best[0]?.score} · ${best.map((b) => `${b.lat},${b.lon}`).join(" | ")}`);
 }
 
@@ -193,7 +196,11 @@ async function place(lat, lon) {
   }
   return cache[key];
 }
-for (const r of results) for (const s of [...r.best, ...r.accessible]) s.place = (await place(s.lat, s.lon)) ?? (s.lat < -60 ? "Antarctica" : null);
+// Solo la parte en alfabeto latino (Nominatim a veces añade el nombre local en otra escritura).
+const latin = (p) => p && p.split(", ").map((x) => x.replace(/[^\p{Script=Latin}\p{N}\s'’.()-]+/gu, "").replace(/\s+/g, " ").trim()).filter(Boolean).join(", ");
+// Territorio en disputa: al sur de 27,67°N se usa el nombre geográfico de la ONU, no el de un país.
+const neutral = (p, lat) => (p && lat < 27.67 && /(^|, )Morocco$/.test(p) ? p.replace(/(^|, )Morocco$/, (m, sep) => `${sep}Western Sahara`) : p);
+for (const r of results) for (const s of [...r.best, ...r.accessible]) s.place = neutral(latin(await place(s.lat, s.lon)), s.lat) || (s.lat < -60 ? "Antarctica" : null);
 writeFileSync(CACHE, JSON.stringify(cache, null, 1));
 
 writeFileSync(
@@ -208,7 +215,7 @@ writeFileSync(
         ATMO.dust_aod ? null : "dust_aod and wind_ms (MERRA-2) not available yet: dust criteria are skipped",
         NDVI_FIX !== 1 ? "ndvi corrected ×10 000 (asset exported with the scale factor applied twice)" : null,
       ].filter(Boolean),
-      selection: { best: N_BEST, accessible: N_ACCESS, accessibleMaxHours: ACCESS_MAX_H, minSeparationKm: MIN_KM },
+      selection: { best: N_BEST, accessible: N_ACCESS, accessibleMaxHours: ACCESS_MAX_H, minSeparationKm: MIN_KM, excludedKmFromKnownAnalogs: KNOWN_EXCLUDE_KM },
       tasks: results,
       candidates,
     },
@@ -225,13 +232,13 @@ if (existsSync(DOC)) {
   const site = (s) => `${s.place ?? `${s.lat}, ${s.lon}`} (${s.score.toFixed(2)}${ok(s.values.access_h) && s.values.access_h >= 0 ? `, ${s.values.access_h < 10 ? s.values.access_h.toFixed(1) : Math.round(s.values.access_h)} h` : ""})`;
   const rows = results.map((r) => {
     const cond = r.criteria.map((c) => `\`${c.var}\` ${c.rule}${c.optional && !r.optionalLayers.find((o) => o.var === c.var)?.available ? " *(sin dato aún)*" : ""}`).join("<br>");
-    const known = r.known.filter((k) => k.score >= 0.9).map((k) => k.name).join(", ") || "—";
+    const known = r.reference ? `${r.reference.name} (${r.reference.score.toFixed(2)})` : "—";
     return `| **${r.name}**<br>\`${r.id}\` | ${r.targets.map((t) => T[t]).join(", ")} | ${cond} | ${r.best.slice(0, 3).map(site).join("<br>")} | ${r.accessible.slice(0, 2).map(site).join("<br>") || "—"} | ${known} |`;
   });
   const table = [
-    `_Generado el ${new Date().toISOString().slice(0, 10)} con \`node scripts/ops/score-ops.mjs\` · rejilla ${gridName} · ${operationsProxies().join(" · ")}. Entre paréntesis: nota de la tarea (0–1) y horas hasta la ciudad más cercana._`,
+    `_Generado el ${new Date().toISOString().slice(0, 10)} con \`node scripts/ops/score-ops.mjs\` · rejilla ${gridName} · ${operationsProxies().join(" · ")}. Entre paréntesis: nota de la tarea (0–1) y horas hasta la ciudad más cercana. «Nuevos» = a más de ${KNOWN_EXCLUDE_KM} km de los 25 análogos catalogados._`,
     "",
-    "| Tarea | Objetivos | Condiciones (variable y regla) | Mejores sitios de la Tierra | Accesibles (≤ 6 h) | Análogos conocidos ≥ 0,9 |",
+    "| Tarea | Objetivos | Condiciones (variable y regla) | Mejores sitios nuevos | Nuevos accesibles (≤ 6 h) | Referencia: mejor análogo ya catalogado |",
     "|---|---|---|---|---|---|",
     ...rows,
   ].join("\n");

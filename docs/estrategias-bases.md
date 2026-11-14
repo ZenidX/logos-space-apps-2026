@@ -25,7 +25,8 @@ Por eso, para cada tarea:
 2. convertimos cada condición en una **función de deseabilidad** de 0 a 1;
 3. combinamos las funciones con una **media geométrica ponderada** (si una condición vale 0, el sitio queda descartado);
 4. lo calculamos en **toda la rejilla** de 0,1° (unos 11 km), sin limitarnos a nuestros 60 candidatos;
-5. elegimos los 5 mejores sitios separados al menos 300 km entre sí, más 3 «accesibles» (a ≤ 6 h de una ciudad). Si dos sitios empatan, gana el más accesible.
+5. elegimos los 5 mejores sitios separados al menos 300 km entre sí, más 3 «accesibles» (a ≤ 6 h de una ciudad). Si dos sitios empatan, gana el más accesible;
+6. **solo sitios nuevos.** El enunciado pide evitar los análogos ya conocidos, así que, como en la búsqueda global, ninguna celda a ≤ 300 km de los 25 análogos catalogados puede protagonizar una tarea. El mejor análogo catalogado de cada tarea aparece aparte, **como referencia**.
 
 Todo es reproducible: los criterios están en [`scripts/ops/tasks.mjs`](../scripts/ops/tasks.mjs) y `node scripts/ops/score-ops.mjs` regenera [`src/data/operations.json`](../src/data/operations.json) y la tabla del §5.
 
@@ -117,49 +118,65 @@ Todo es reproducible: los criterios están en [`scripts/ops/tasks.mjs`](../scrip
 Cada fila es una tarea de misión. Las condiciones se escriben con las variables de nuestras capas. La regla `lo(a, b)` vale 1 por debajo de a y 0 por encima de b; `hi(a, b)` es lo contrario; `band(a, b, c, d)` vale 1 entre b y c. Los sitios salen de recorrer **toda la Tierra** con [`score-ops.mjs`](../scripts/ops/score-ops.mjs).
 
 <!-- ops:start -->
-_Generado el 2026-11-14 con `node scripts/ops/score-ops.mjs` · rejilla 85°N to -85°, 0.100° × 0.100° · presión estimada desde la altitud [proxy] · sin polvo ni viento MERRA-2 todavía. Entre paréntesis: nota de la tarea (0–1) y horas hasta la ciudad más cercana._
+_Generado el 2026-11-14 con `node scripts/ops/score-ops.mjs` · rejilla 85°N to -85°, 0.100° × 0.100° · presión MERRA-2 · polvo y viento MERRA-2. Entre paréntesis: nota de la tarea (0–1) y horas hasta la ciudad más cercana. «Nuevos» = a más de 300 km de los 25 análogos catalogados._
 
-| Tarea | Objetivos | Condiciones (variable y regla) | Mejores sitios de la Tierra | Accesibles (≤ 6 h) | Análogos conocidos ≥ 0,9 |
+| Tarea | Objetivos | Condiciones (variable y regla) | Mejores sitios nuevos | Nuevos accesibles (≤ 6 h) | Referencia: mejor análogo ya catalogado |
 |---|---|---|---|---|---|
-| **Spacesuit EVA on cold, rough, thin-air terrain**<br>`eva_cold_rough` | Shackleton, Jezero, Arcadia | `lst_min` lo(-40, 0)<br>`slope` band(1, 2.5, 6, 10)<br>`ps_hpa` lo(600, 900)<br>`ndvi` lo(0.05, 0.2) | Almaty Region, Kazakhstan (1.00, 26 h)<br>Gorno-Badakhshan Autonomous Region, Tajikistan (1.00, 29 h)<br>Gilgit-Baltistan, Pakistan (1.00, 30 h) | Osh Region, Kyrgyzstan (0.95, 5.4 h)<br>Mendoza, Argentina (0.95, 5.4 h) | — |
-| **Navigation and operations under low-angle sun and long shadows**<br>`grazing_sun` | Shackleton | `abs_lat` hi(66.5, 78)<br>`slope` band(1, 3, 8, 15)<br>`albedo` lo(0.35, 0.6)<br>`ndvi` lo(0.05, 0.2) | Svalbard, Norway (1.00, 56 h)<br>Arkhangelsk Oblast, Russia (1.00, 84 h)<br>Nunavut, Canada (1.00, 124 h) | Finnmark, Norway (0.60, 6.0 h)<br>Krasnoyarsk Krai, Russia (0.49, 4.9 h) | Svalbard (AMASE) |
-| **Hardware and EVA in extreme cold (permanently shadowed craters)**<br>`cold_trap` | Shackleton | `lst_min` lo(-75, -30)<br>`lst_max` lo(-10, 10)<br>`precip` lo(100, 300) | Antarctica (1.00)<br>Antarctica (1.00)<br>Antarctica (1.00) | — | Concordia (Dome C) |
-| **Drilling and extracting shallow ground ice**<br>`permafrost_drill` | Arcadia, Shackleton | `lst_mean` lo(-10, -2)<br>`precip` lo(150, 400)<br>`slope` lo(2, 6)<br>`ndvi` lo(0.05, 0.2) | Badakhshan Province, Afghanistan (1.00, 9.5 h)<br>Ladakh, India (1.00, 13 h)<br>Xinjiang, China (1.00, 41 h) | Sakha Republic, Russia (0.78, 3.1 h)<br>Xinjiang, China (0.73, 5.4 h) | Haughton / Devon, Bunge Land |
-| **Operations with dust: abrasion, seals and panel cleaning**<br>`dust_ops` | Jezero, Arcadia | `dust_aod` hi(0.2, 0.5) *(sin dato aún)*<br>`wind_ms` hi(3, 6) *(sin dato aún)*<br>`precip` lo(50, 200)<br>`ndvi` lo(0.05, 0.15)<br>`albedo` band(0.18, 0.25, 0.35, 0.45)<br>`lst_max` hi(15, 35) | Antofagasta Region, Chile (1.00, 0.6 h)<br>Arequipa, Peru (1.00, 1.9 h)<br>Xinjiang, China (1.00, 4.2 h) | Antofagasta Region, Chile (1.00, 0.6 h)<br>Arequipa, Peru (1.00, 1.9 h) | — |
-| **Landing and launch: pad, plume and ejected debris**<br>`landing_pad` | Arcadia, Jezero, Shackleton | `slope` lo(0.5, 2)<br>`ndvi` lo(0.05, 0.15)<br>`precip` lo(100, 400)<br>`albedo` band(0.12, 0.18, 0.35, 0.5) | Antofagasta Region, Chile (1.00, 0.6 h)<br>Xinjiang, China (1.00, 1.3 h)<br>Sistan and Baluchestan Province, Iran (1.00, 1.5 h) | Antofagasta Region, Chile (1.00, 0.6 h)<br>Xinjiang, China (1.00, 1.3 h) | Qaidam, Death Valley / Mojave |
-| **Deploying power in cold, dusty, thin air (solar + fission)**<br>`power_mars` | Jezero, Arcadia | `precip` lo(50, 250)<br>`ndvi` lo(0.05, 0.15)<br>`lst_min` lo(-30, 0)<br>`ps_hpa` lo(650, 950)<br>`dust_aod` hi(0.1, 0.4) *(sin dato aún)* | Xinjiang, China (1.00, 20 h)<br>Xizang, China (1.00, 68 h)<br>Xinjiang, China (0.97, 11 h) | Xinjiang, China (0.95, 5.4 h)<br>Qinghai, China (0.89, 5.5 h) | — |
-| **Building with regolith (sintering, 3D printing, berms)**<br>`regolith_build` | Shackleton, Jezero, Arcadia | `albedo` band(0.08, 0.1, 0.18, 0.25)<br>`ndvi` lo(0.05, 0.15)<br>`slope` lo(1, 3)<br>`precip` lo(100, 300) | Peru (1.00, 0.7 h)<br>Erongo Region, Namibia (1.00, 0.9 h)<br>Ica, Peru (1.00, 2.0 h) | Peru (1.00, 0.7 h)<br>Erongo Region, Namibia (1.00, 0.9 h) | — |
-| **Long-distance rover traverses**<br>`rover_traverse` | Jezero, Arcadia | `slope` band(0.3, 0.8, 3, 6)<br>`ndvi` lo(0.05, 0.15)<br>`precip` lo(100, 300) | Xinjiang, China (0.99, 19 h)<br>Nunavut, Canada (0.99, 172 h)<br>Catamarca, Argentina (0.98, 12 h) | Antofagasta Region, Chile (0.96, 2.8 h)<br>Salta, Argentina (0.95, 6.0 h) | — |
-| **Crew isolation and delayed communications**<br>`isolation` | Shackleton, Jezero, Arcadia | `access_h` hi(24, 72)<br>`ndvi` lo(0.1, 0.3)<br>`lst_min` lo(-30, 0) | Nunavut, Canada (1.00, 72 h)<br>Northwest Territories, Canada (1.00, 72 h)<br>Greenland (1.00, 72 h) | — | Haughton / Devon, Svalbard (AMASE), Axel Heiberg, Bunge Land |
-| **Astrobiology sampling in hyper-arid sediments**<br>`astrobio` | Jezero | `precip` lo(25, 100)<br>`ndvi` lo(0.03, 0.1)<br>`albedo` band(0.15, 0.2, 0.35, 0.45)<br>`slope` lo(1, 3) | Antofagasta Region, Chile (1.00, 5.3 h)<br>Xinjiang, China (1.00, 11 h)<br>Greenland (1.00, 118 h) | Antofagasta Region, Chile (1.00, 5.3 h)<br>Aswan, Egypt (0.98, 4.5 h) | — |
+| **Spacesuit EVA on cold, rough, thin-air terrain**<br>`eva_cold_rough` | Shackleton, Jezero, Arcadia | `lst_min` lo(-40, 0)<br>`slope` band(1, 2.5, 6, 10)<br>`ps_hpa` lo(600, 900)<br>`ndvi` lo(0.12, 0.25) | Gorno-Badakhshan Autonomous Region, Tajikistan (1.00, 23 h)<br>Gilgit-Baltistan, Pakistan (1.00, 30 h)<br>Xinjiang, China (1.00, 49 h) | Xizang, China (0.98, 5.8 h)<br>Ladakh, India (0.93, 5.6 h) | — |
+| **Navigation and operations under low-angle sun and long shadows**<br>`grazing_sun` | Shackleton | `abs_lat` hi(66.5, 78)<br>`slope` band(1, 3, 8, 15)<br>`albedo` lo(0.35, 0.6)<br>`ndvi` lo(0.12, 0.25) | Arkhangelsk Oblast, Russia (1.00, 84 h)<br>Nunavut, Canada (1.00, 137 h)<br>Nunavut, Canada (1.00, 143 h) | Finnmark, Norway (0.67, 6.0 h)<br>Krasnoyarsk Krai, Russia (0.54, 2.0 h) | Svalbard (AMASE) (0.95) |
+| **Hardware and EVA in extreme cold (permanently shadowed craters)**<br>`cold_trap` | Shackleton | `lst_min` lo(-75, -30)<br>`lst_max` lo(-10, 10)<br>`precip` lo(100, 300) | Antarctica (1.00)<br>Antarctica (1.00)<br>Antarctica (1.00) | — | Concordia (Dome C) (1.00) |
+| **Drilling and extracting shallow ground ice**<br>`permafrost_drill` | Arcadia, Shackleton | `lst_mean` lo(-10, -2)<br>`precip` lo(150, 400)<br>`slope` lo(2, 6)<br>`ndvi` lo(0.12, 0.25) | Badakhshan Province, Afghanistan (1.00, 9.5 h)<br>Ladakh, India (1.00, 13 h)<br>Xinjiang, China (1.00, 41 h) | Sakha Republic, Russia (0.88, 3.1 h)<br>Xinjiang, China (0.73, 5.4 h) | Haughton / Devon (0.96) |
+| **Operations with dust: abrasion, seals and panel cleaning**<br>`dust_ops` | Jezero, Arcadia | `dust_aod` hi(0.03, 0.2)<br>`wind_ms` hi(4, 7)<br>`precip` lo(50, 200)<br>`ndvi` lo(0.12, 0.2)<br>`albedo` band(0.18, 0.25, 0.35, 0.45)<br>`lst_max` hi(15, 35) | Dakhlet Nouadhibou, Mauritania (0.97, 1.5 h)<br>Cercle d'El Argoub, Western Sahara (0.97, 2.5 h)<br>Cercle d'Es-Semara, Western Sahara (0.95, 6.1 h) | Dakhlet Nouadhibou, Mauritania (0.97, 1.5 h)<br>Cercle d'El Argoub, Western Sahara (0.97, 2.5 h) | Qaidam (0.45) |
+| **Landing and launch: pad, plume and ejected debris**<br>`landing_pad` | Arcadia, Jezero, Shackleton | `slope` lo(0.5, 2)<br>`ndvi` lo(0.12, 0.2)<br>`precip` lo(100, 400)<br>`albedo` band(0.12, 0.18, 0.35, 0.5) | Riyadh Region, Saudi Arabia (1.00, 0.2 h)<br>Cairo, Egypt (1.00, 0.3 h)<br>Makkah Region, Saudi Arabia (1.00, 0.3 h) | Riyadh Region, Saudi Arabia (1.00, 0.2 h)<br>Cairo, Egypt (1.00, 0.3 h) | Qaidam (1.00) |
+| **Deploying power in cold, dusty, thin air (solar + fission)**<br>`power_mars` | Jezero, Arcadia | `precip` lo(50, 250)<br>`ndvi` lo(0.12, 0.2)<br>`lst_min` lo(-30, 0)<br>`ps_hpa` lo(650, 950)<br>`dust_aod` hi(0.013, 0.12) | Xinjiang, China (1.00, 20 h)<br>Xinjiang, China (0.97, 9.2 h)<br>Xinjiang, China (0.95, 24 h) | Xinjiang, China (0.95, 5.4 h)<br>Gansu, China (0.82, 5.2 h) | Qaidam (0.78) |
+| **Building with regolith (sintering, 3D printing, berms)**<br>`regolith_build` | Shackleton, Jezero, Arcadia | `albedo` band(0.08, 0.1, 0.18, 0.25)<br>`ndvi` lo(0.12, 0.2)<br>`slope` lo(1, 3)<br>`precip` lo(100, 300) | Red Sea State, Sudan (1.00, 0.2 h)<br>Hormozgan Province, Iran (1.00, 0.4 h)<br>Western Sahara (1.00, 0.5 h) | Red Sea State, Sudan (1.00, 0.2 h)<br>Hormozgan Province, Iran (1.00, 0.4 h) | Death Valley / Mojave (0.80) |
+| **Long-distance rover traverses**<br>`rover_traverse` | Jezero, Arcadia | `slope` band(0.3, 0.8, 3, 6)<br>`ndvi` lo(0.12, 0.2)<br>`precip` lo(100, 300) | Tibesti, Chad (1.00, 29 h)<br>Xinjiang, China (1.00, 36 h)<br>Atacama Region, Chile (0.99, 2.3 h) | Atacama Region, Chile (0.99, 2.3 h)<br>Xinjiang, China (0.99, 4.7 h) | Wadi Rum (0.95) |
+| **Crew isolation and delayed communications**<br>`isolation` | Shackleton, Jezero, Arcadia | `access_h` hi(24, 72)<br>`ndvi` lo(0.15, 0.35)<br>`lst_min` lo(-30, 0) | Nunavut, Canada (1.00, 72 h)<br>Northwest Territories, Canada (1.00, 72 h)<br>Greenland (1.00, 72 h) | — | Haughton / Devon (1.00) |
+| **Astrobiology sampling in hyper-arid sediments**<br>`astrobio` | Jezero | `precip` lo(25, 100)<br>`ndvi` lo(0.11, 0.16)<br>`albedo` band(0.15, 0.2, 0.35, 0.45)<br>`slope` lo(1, 3) | Cairo, Egypt (1.00, 0.3 h)<br>Asyut, Egypt (1.00, 0.5 h)<br>Aswan, Egypt (1.00, 0.7 h) | Cairo, Egypt (1.00, 0.3 h)<br>Asyut, Egypt (1.00, 0.5 h) | Wadi Rum (0.99) |
 <!-- ops:end -->
 
-### Plan de ensayos por base (lectura de la matriz del 14-11)
+### Plan de ensayos por base (lectura de la matriz del 14-11, con MERRA-2)
 Esto es una propuesta nuestra **[suposición]** que lee la tabla de arriba. Si cambian los datos, hay que volver a leerla.
 
-| Base | Ensayo | Primera fase, accesible | Campaña completa |
-|---|---|---|---|
-| **Shackleton** | Sol rasante y sombras largas | Finnmark (norte de Noruega), en marzo o septiembre | **Svalbard** (ya catalogado: AMASE), en torno a los equinoccios, cuando el Sol pasa bajo |
-| | Frío extremo (hardware) | Cámara criogénica | Meseta antártica (**Concordia**) |
-| | EVA en terreno frío y rugoso | Andes de Mendoza, Alai (Kirguistán) | Pamir y Karakórum (> 5 000 m, ~500 hPa) |
-| | Aterrizaje y chorro sobre el regolito | Desierto de Atacama (Antofagasta) | Igual, más los ensayos de Mauna Kea de Metzger et al. 2011 |
-| **Jezero** | Muestreo astrobiológico | **Atacama** (Antofagasta) | Atacama, y Taklamakán (Sinkiang) como segundo sitio |
-| | Polvo | Atacama y Arequipa | Cuenca del Tarim (Sinkiang). **Pendiente de los datos de polvo de MERRA-2** |
-| | Travesías con rover | Atacama y Puna de Salta | Catamarca y Sinkiang (llanuras continuas de unos 75 km) |
-| | Energía con frío, polvo y aire fino | Qinghai y Sinkiang | Meseta del Tíbet |
-| **Arcadia** | Perforación de hielo y permafrost | Yakutia (Sajá) | Ladakh y Badajshán (permafrost de altura); Devon/Haughton (ya catalogado) |
-| | Plataforma de aterrizaje en llanura | Atacama, Sinkiang, Sistán | Igual |
-| **Las tres** | Aislamiento | — (por definición, no hay sitio accesible) | Nunavut y Groenlandia (> 72 h de una ciudad); Devon, Svalbard y Axel Heiberg (ya catalogados) |
-| | Construcción con regolito | Costa desértica de Perú y Namibia (suelo oscuro; la celda de Perú tiene albedo 0,10, justo encima del filtro de agua: comprobar en imagen que no sea costa) | Falta confirmar que el suelo es basáltico (ASTER). En Shackleton es **anortosita**, no basalto |
+Todos los sitios propuestos son **nuevos** (a más de 300 km de los análogos catalogados). El catalogado va en la última columna, solo como referencia.
+
+| Base | Ensayo | Primera fase, accesible (nuevo) | Campaña completa (nuevo) | Referencia ya catalogada |
+|---|---|---|---|---|
+| **Shackleton** | Sol rasante y sombras largas | Finnmark (norte de Noruega), en marzo o septiembre | Tierra de Francisco José (Arjánguelsk), Severnaya Zemlyá (Krasnoyarsk) y el Ártico de Nunavut, en torno a los equinoccios, cuando el Sol pasa bajo | Svalbard (AMASE) |
+| | Frío extremo (hardware) | Cámara criogénica | Meseta antártica oriental, a más de 300 km de Concordia | Concordia (Dome C) |
+| | EVA en terreno frío y rugoso | Tíbet (Xizang), Ladakh y Panjshir, a ≤ 6 h de una ciudad | Pamir (Gorno-Badajshán), Karakórum (Gilgit-Baltistán) y Kunlun (Sinkiang): 4 000–6 000 m, unos 520–600 hPa | — (ningún catalogado llega) |
+| | Aterrizaje y chorro sobre el regolito | Llanuras desérticas junto a Riad, El Cairo y La Meca (a < 0,5 h) | Igual | Qaidam |
+| **Jezero** | Muestreo astrobiológico | Desierto Oriental de Egipto (El Cairo, Asiut, Asuán) | Pampa de Tarapacá (Chile, al norte del análogo de Atacama) y Sáhara atlántico | Wadi Rum; Atacama, 0,92 |
+| | Polvo | Costa del Sáhara atlántico: Nuadibú (Mauritania), El Argub y Es-Semara (polvo 0,2–0,34, viento ≈ 6 m/s) | Tibesti (Chad) | Qaidam (solo 0,45: poco polvo en el aire) |
+| | Travesías con rover | Región de Atacama (al sur del análogo catalogado), Arica y Sinkiang | Tibesti (Chad), Sinkiang y el Tíbet occidental (llanuras continuas de unos 75 km) | Wadi Rum; Atacama, 0,93 |
+| | Energía con frío, polvo y aire fino | Sinkiang (Kunlun) y Gansu | Vertiente norte del Kunlun (Sinkiang): frío, 600–700 hPa y polvo del Taklamakán | Qaidam |
+| **Arcadia** | Perforación de hielo y permafrost | Yakutia (Sajá, a 3 h de Yakutsk) | Badajshán y Ladakh (permafrost de altura), Kolymá (Sajá) | Haughton / Devon |
+| | Plataforma de aterrizaje en llanura | Igual que en Shackleton (Riad, El Cairo, La Meca) | Igual | Qaidam |
+| **Las tres** | Aislamiento | — (por definición, no hay sitio accesible) | Nunavut, Territorios del Noroeste y Groenlandia (> 72 h de una ciudad) | Haughton / Devon |
+| | Construcción con regolito | Costa del mar Rojo (Sudán), Hormozgán (Irán) y Sáhara atlántico, con suelo oscuro | Falta confirmar que el suelo es basáltico (ASTER). En Shackleton es **anortosita**, no basalto | Death Valley / Mojave |
+
+**Ojo con los empates.** Muchas tareas tienen decenas de celdas con nota 1. El desempate por accesibilidad acerca los sitios a las ciudades (Riad, El Cairo…), lo que es útil para ensayar barato. Aun así, **hay que mirar en imagen cada sitio** antes de proponerlo, porque una celda de 11 km junto a una ciudad puede incluir zonas de cultivo o carreteras.
 
 ### Hallazgo: parecerse en conjunto no es servir para ensayar
-Los 5 mejores candidatos de cada objetivo en `ee-global.json` son Irán, Afganistán, Perú, Canarias, Omán…, elegidos por su parecido de forma más la accesibilidad. **Ninguno llega a 0,8 en ninguna tarea** de la matriz: casi todos se quedan entre 0 y 0,5, y el mejor es Al Batinah (Omán) con 0,71 en construcción con regolito, para Arcadia. Son sitios templados y bajos, así que fallan en frío, en altitud o en aridez extrema.
+Se comprobó qué tareas puede alojar cada uno de los 5 mejores candidatos de cada objetivo (15 en total):
+- **v2** (forma + accesibilidad: Irán, Afganistán, Perú, Canarias, Omán…): **ninguno llega a 0,8 en ninguna tarea**. El mejor es Al Batinah (Omán), con 0,75 en construcción con regolito. Son sitios templados y bajos, así que fallan en frío, en altitud o en aridez extrema.
+- **v3** (forma → clima + atmósfera → accesibilidad; commit `5ae7a4a` de C_0): los candidatos pasan a desiertos fríos y altos (Colorado, Tíbet, Sinkiang, Qinghai, Afganistán, Kirguistán), y **3 de 15** ya llegan a 0,8:
+  - Kapisa (Afganistán): EVA, 0,84;
+  - Sinkiang: travesías con rover, 1,0;
+  - Maidan Wardak (Afganistán): travesías con rover, 0,81.
 
-Esto encaja con la idea del equipo: la búsqueda global dice **dónde la Tierra se parece al objetivo en conjunto**, y la matriz dice **dónde ensayar cada operación**. Son dos preguntas distintas y la web debería enseñar las dos. Las notas por candidato están en `operations.json → candidates`.
+  Los otros 12 siguen por debajo.
+
+La lectura: añadir clima y atmósfera acerca la búsqueda global a lo que sirve para ensayar, pero **parecerse en conjunto y servir para una operación siguen siendo dos preguntas distintas**. La búsqueda global dice dónde la Tierra se parece al objetivo; la matriz dice dónde ensayar cada paso. La web debería enseñar las dos. Las notas por candidato están en `operations.json → candidates`.
+
+### Calibración de los umbrales (14-11, noche)
+- **NDVI.** En las celdas hiperáridas (< 50 mm/año), MODIS da NDVI p10 0,06 · p50 0,10 · p90 0,12, porque el suelo desnudo claro no da 0. Con el umbral inicial (≤ 0,05), el corazón de Atacama (Yungay, NDVI 0,106) puntuaba 0 en astrobiología. Ahora «sin vegetación» es NDVI ≤ 0,11–0,12, y Atacama queda a 0,92.
+- **Polvo y viento (MERRA-2 2024, tierra firme).** Espesor óptico del polvo: p50 0,013 · p75 0,03 · p90 0,12 · p95 0,21 · máx. 0,51. Viento: p50 4,3 m/s · p90 8,1 m/s. La τ ≈ 0,5 de Marte está en el **máximo absoluto** de la Tierra, así que, como en [metodo.md](metodo.md), los umbrales se ponen por **posición dentro del rango terrestre**: el 0 en torno a la mediana y el 1 en el p90–p95.
+- **Atacama es limpia de polvo:** espesor óptico 0,009, en la mediana terrestre. Por eso no protagoniza la tarea de polvo, aunque sea el mejor análogo para muestrear.
 
 ### Cómo leer la matriz
 - **«Mejor sitio»** es el que mejor cumple las condiciones, tenga o no logística. **«Accesible»** es el mejor a ≤ 6 h de una ciudad: el sitio para ensayar a menudo y barato, antes de ir al remoto.
-- **«Análogos conocidos»** son los catalogados (Atacama, Devon, McMurdo, Svalbard…) con nota ≥ 0,9 en esa tarea: así se ve qué hace bien cada uno y qué no.
+- **«Referencia»** es el análogo ya catalogado (Atacama, Devon, McMurdo, Svalbard…) que mejor cumple esa tarea. Sirve para comparar el sitio nuevo con lo que ya se usa. La nota de los 25 catalogados en cada tarea está en `operations.json → tasks[].known`.
 - Muchos ensayos tienen **dos fases** **[suposición]**:
   1. primero, en un sitio accesible que cumple la condición principal;
   2. después, una campaña corta en el sitio remoto que lo cumple todo.
@@ -171,7 +188,7 @@ Esto encaja con la idea del equipo: la búsqueda global dice **dónde la Tierra 
 | Condición | Valor | Dónde se ensaya en su lugar |
 |---|---|---|
 | Gravedad 1/6 g (Luna) y 3/8 g (Marte) | — | Vuelos parabólicos, flotabilidad neutra (NBL de NASA, NEEMO) y grúas de descarga (ARGOS en JSC) **[fuente: NASA]** |
-| Vacío lunar / 7 hPa de CO₂ en Marte | Fuera del rango terrestre | Cámaras de vacío térmico (por ejemplo, la Chamber A de JSC) **[fuente: NASA]**. Lo más cercano en la Tierra son las mesetas de más de 5 km (`ps_hpa` ≈ 500 hPa) |
+| Vacío lunar / 7 hPa de CO₂ en Marte | Fuera del rango terrestre | Cámaras de vacío térmico (por ejemplo, la Chamber A de JSC) **[fuente: NASA]**. Lo más cercano en la Tierra son las mesetas de más de 5 km (`ps_hpa` ≈ 520–560 hPa según MERRA-2) |
 | −233 °C de los cráteres en sombra | La Tierra llega a ~−75 °C (p1 de MODIS) | Cámaras criogénicas. La Antártida (Dome C) sirve para la logística, no para la temperatura |
 | Radiación sin magnetosfera | 0,7–1,4 mSv/día | NSRL (Brookhaven) para biología y materiales **[fuente: NASA]** |
 | Retardo de comunicaciones | 2,6 s / 4–24 min | Se simula en cualquier sitio: HERA, CHAPEA, Mars-500 **[fuente: NASA, IBMP]** |
@@ -182,10 +199,13 @@ node scripts/ops/score-ops.mjs              # lee data/ee/*.tif, escribe src/dat
 node scripts/ops/score-ops.mjs --no-geocode # sin pedir nombres de lugar (usa la caché)
 ```
 - **Cambiar una tarea:** editar sus criterios en `scripts/ops/tasks.mjs`.
-- **Capas MERRA-2:** cuando existan `data/ee/atmo/{ps_hpa,wind_ms,dust_aod}.tif`, entran solas. Hasta entonces:
+- **Capas MERRA-2** (`data/ee/atmo/{ps_hpa,wind_ms,dust_aod}.tif`, en uso desde el 14-11 por la noche). Si faltan:
   - la presión se estima desde la altitud con la atmósfera estándar **[proxy]**;
   - los criterios de viento y polvo se omiten.
-- **Georreferencia:** el script detecta solo si la rejilla de los GeoTIFF es la de las etiquetas (85°N–85°S) o la real de la exportación del 14-11 (90°N–90°S). Para decidirlo compara las altitudes con `ee-global.json`.
+
+  `operations.json → proxies` dice si hay alguna aproximación activa.
+- **Georreferencia:** el script lee la del propio fichero y comprueba que las altitudes cuadran con `ee-global.json`. Avisa si el error medio pasa de 200 m.
+- **Análogos catalogados:** la lista sale de `scripts/ee/10_tres_fases.js` (`KNOWN`), la misma que usa la búsqueda global. Ninguna celda a ≤ 300 km de ellos puede protagonizar una tarea.
 - **Nombres de lugar:** salen de OpenStreetMap Nominatim, a 1 petición por segundo y con caché en `scripts/ops/geocode-cache.json`. Solo se envían coordenadas.
 
 ## 8. Huecos de datos
@@ -194,8 +214,8 @@ node scripts/ops/score-ops.mjs --no-geocode # sin pedir nombres de lugar (usa la
 | Permafrost y hielo en el suelo | `permafrost_drill` | ESA CCI Permafrost (Obu et al. 2019) |
 | Litología (basalto o no) | `regolith_build` | ASTER GED (emisividad, índice de sílice) |
 | Lagos secos, deltas y salares | `astrobio` | Global Lakes and Wetlands Database |
-| Polvo y viento | `dust_ops`, `power_mars` | MERRA-2 (fase 2 de C_0, en curso) |
 | Iluminación real a escala de km | `grazing_sun` | Modelo de sombras sobre DEM (horizonte por celda). Hoy solo se usa la latitud |
+| Polvo a escala fina | `dust_ops`, `power_mars` | MERRA-2 tiene una rejilla de ~0,5° × 0,625°. Para fuentes de polvo concretas: MODIS Deep Blue AOD (10 km) |
 
 ## 9. Fuentes
 - NASA (2022). *NASA Identifies Candidate Regions for Landing Next Americans on Moon.* https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-moon/

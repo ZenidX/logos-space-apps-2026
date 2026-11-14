@@ -2,6 +2,21 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 11) · Matriz de operaciones: solo sitios nuevos, MERRA-2 y calibración (C_2)
+
+- **Solo análogos nuevos.** El enunciado pide evitarlos, así que, como en la búsqueda global, ninguna celda a ≤ 300 km de los 25 catalogados puede protagonizar una tarea. El mejor catalogado de cada tarea aparece aparte como **referencia** (`operations.json → tasks[].reference`).
+- **Atmósfera MERRA-2 en uso** (`data/ee/atmo/`, de C_0): ya no queda ninguna aproximación activa. Los umbrales de polvo y viento se ponen por **posición dentro del rango terrestre**, porque la τ ≈ 0,5 de Marte está en el máximo absoluto de la Tierra (polvo en tierra firme: p50 0,013 · p95 0,21 · máx. 0,51).
+- **NDVI recalibrado.** El suelo desnudo hiperárido da en MODIS NDVI p50 0,10 · p90 0,12. Con el umbral anterior (≤ 0,05), el núcleo de Atacama puntuaba 0 en astrobiología; ahora puntúa 0,92.
+- **Sitios nuevos destacados:**
+  - polvo → costa del Sáhara atlántico (Nuadibú, El Argub, Es-Semara) y Tibesti;
+  - astrobiología → Desierto Oriental de Egipto y Pampa de Tarapacá;
+  - sol rasante → Tierra de Francisco José y Nunavut;
+  - EVA → Pamir, Karakórum y Kunlun;
+  - travesías → Tibesti, Sinkiang y Atacama sur.
+- **Nombres de lugar:** solo en alfabeto latino; al sur de 27,67°N, «Western Sahara» en lugar de un país (territorio en disputa).
+- **Hallazgo revisado con la v3 de C_0** (`5ae7a4a`): 3 de los 15 mejores candidatos ya sirven para alguna tarea (≥ 0,8): Kapisa en EVA, y Sinkiang y Maidan Wardak en travesías. En la v2 no llegaba ninguno.
+- Pendiente: mirar en imagen los sitios con nota 1 que están junto a ciudades.
+
 ## 2026-11-14 (tarde-noche, 7)
 
 ### Análisis v3 en tres fases, en producción

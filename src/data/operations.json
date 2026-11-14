@@ -1,16 +1,14 @@
 {
- "generatedAt": "2026-11-14T16:21:26.795Z",
+ "generatedAt": "2026-11-14T17:45:53.700Z",
  "source": "scripts/ops/score-ops.mjs over data/ee/ GeoTIFFs (0.1° grid); criteria in scripts/ops/tasks.mjs; method in docs/estrategias-bases.md",
  "grid": "85°N to -85°, 0.100° × 0.100°",
- "proxies": [
-  "ps_hpa estimated from elevation (standard atmosphere) until MERRA-2 surface pressure is available",
-  "dust_aod and wind_ms (MERRA-2) not available yet: dust criteria are skipped"
- ],
+ "proxies": [],
  "selection": {
   "best": 5,
   "accessible": 3,
   "accessibleMaxHours": 6,
-  "minSeparationKm": 300
+  "minSeparationKm": 300,
+  "excludedKmFromKnownAnalogs": 300
  },
  "tasks": [
   {
@@ -44,39 +42,23 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground, no vegetation",
-     "rule": "lo(0.05, 0.2)"
+     "why": "Bare ground, no vegetation (MODIS NDVI of bare soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
     }
    ],
    "optionalLayers": [],
    "best": [
     {
-     "lat": 42.25,
-     "lon": 80.25,
+     "lat": 38.65,
+     "lon": 72.05,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "lst_min": -39.4,
-      "ndvi": -0.066,
-      "slope": 3,
-      "elev": 5034,
-      "ps_hpa": 537.7,
-      "access_h": 25.9
-     },
-     "place": "Almaty Region, Kazakhstan"
-    },
-    {
-     "lat": 38.55,
-     "lon": 72.45,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_min": -41.2,
-      "ndvi": -0.043,
-      "slope": 3,
-      "elev": 5505,
-      "ps_hpa": 504.7,
-      "access_h": 28.9
+      "lst_min": -40.5,
+      "ndvi": 0.049,
+      "slope": 5.8,
+      "elev": 3898,
+      "ps_hpa": 584.4,
+      "access_h": 22.5
      },
      "place": "Gorno-Badakhshan Autonomous Region, Tajikistan"
     },
@@ -84,13 +66,12 @@
      "lat": 35.95,
      "lon": 75.55,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -39.4,
       "ndvi": -0.035,
       "slope": 3,
       "elev": 4919,
-      "ps_hpa": 546.1,
+      "ps_hpa": 565.3,
       "access_h": 30.1
      },
      "place": "Gilgit-Baltistan, Pakistan"
@@ -99,80 +80,90 @@
      "lat": 35.35,
      "lon": 81.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -42.4,
       "ndvi": -0.034,
       "slope": 2.9,
       "elev": 6282,
-      "ps_hpa": 453.8,
+      "ps_hpa": 521.6,
       "access_h": 48.9
      },
      "place": "Xinjiang, China"
     },
     {
-     "lat": 36.85,
-     "lon": 84.75,
+     "lat": 29.75,
+     "lon": 96.35,
      "score": 0.99,
-     "nearKnown": null,
      "values": {
-      "lst_min": -38.2,
-      "ndvi": 0.025,
-      "slope": 5,
-      "elev": 5379,
-      "ps_hpa": 513.4,
-      "access_h": 27.3
+      "lst_min": -37.9,
+      "ndvi": 0.069,
+      "slope": 2.9,
+      "elev": 4764,
+      "ps_hpa": 582.3,
+      "access_h": 15
      },
-     "place": "Xinjiang, China"
+     "place": "Xizang, China"
+    },
+    {
+     "lat": 30.75,
+     "lon": 88.65,
+     "score": 0.98,
+     "values": {
+      "lst_min": -36.2,
+      "ndvi": 0.09,
+      "slope": 4,
+      "elev": 5574,
+      "ps_hpa": 555.3,
+      "access_h": 5.8
+     },
+     "place": "Xizang, China"
     }
    ],
    "accessible": [
     {
-     "lat": 39.75,
-     "lon": 72.55,
-     "score": 0.95,
-     "nearKnown": null,
+     "lat": 30.75,
+     "lon": 88.65,
+     "score": 0.98,
      "values": {
-      "lst_min": -32.8,
-      "ndvi": 0.02,
+      "lst_min": -36.2,
+      "ndvi": 0.09,
       "slope": 4,
-      "elev": 4349,
-      "ps_hpa": 588.9,
-      "access_h": 5.4
+      "elev": 5574,
+      "ps_hpa": 555.3,
+      "access_h": 5.8
      },
-     "place": "Osh Region, Kyrgyzstan"
+     "place": "Xizang, China"
     },
     {
-     "lat": -32.75,
-     "lon": -70.05,
-     "score": 0.95,
-     "nearKnown": null,
+     "lat": 34.15,
+     "lon": 77.75,
+     "score": 0.93,
      "values": {
-      "lst_min": -32.2,
-      "ndvi": 0.033,
-      "slope": 4.6,
-      "elev": 4257,
-      "ps_hpa": 596,
-      "access_h": 5.4
+      "lst_min": -30.1,
+      "ndvi": 0.065,
+      "slope": 2.7,
+      "elev": 5217,
+      "ps_hpa": 536.2,
+      "access_h": 5.6
      },
-     "place": "Mendoza, Argentina"
+     "place": "Ladakh, India"
     },
     {
-     "lat": 42.05,
-     "lon": 75.35,
-     "score": 0.91,
-     "nearKnown": null,
+     "lat": 35.75,
+     "lon": 70.15,
+     "score": 0.93,
      "values": {
-      "lst_min": -38.6,
-      "ndvi": 0.079,
-      "slope": 3,
-      "elev": 3731,
-      "ps_hpa": 638.3,
-      "access_h": 3.7
+      "lst_min": -31.1,
+      "ndvi": 0.057,
+      "slope": 4.7,
+      "elev": 3866,
+      "ps_hpa": 611.8,
+      "access_h": 5.9
      },
-     "place": "Naryn Region, Kyrgyzstan"
+     "place": "Panjshir Province, Afghanistan"
     }
    ],
+   "reference": null,
    "known": [
     {
      "name": "Atacama",
@@ -305,32 +296,16 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.2)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
     }
    ],
    "optionalLayers": [],
    "best": [
     {
-     "lat": 78.25,
-     "lon": 16.25,
-     "score": 1,
-     "nearKnown": "Svalbard (AMASE)",
-     "values": {
-      "lat": 78.3,
-      "ndvi": 0.017,
-      "albedo": 0.351,
-      "slope": 4.1,
-      "elev": 580,
-      "access_h": 55.7
-     },
-     "place": "Svalbard, Norway"
-    },
-    {
      "lat": 80.75,
      "lon": 55.95,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lat": 80.8,
       "ndvi": -0.077,
@@ -342,32 +317,16 @@
      "place": "Arkhangelsk Oblast, Russia"
     },
     {
-     "lat": 78.65,
-     "lon": -87.05,
+     "lat": 81.95,
+     "lon": -84.65,
      "score": 1,
-     "nearKnown": "Axel Heiberg",
      "values": {
-      "lat": 78.7,
-      "ndvi": 0.029,
-      "albedo": 0.333,
-      "slope": 6.2,
-      "elev": 50,
-      "access_h": 123.6
-     },
-     "place": "Nunavut, Canada"
-    },
-    {
-     "lat": 81.45,
-     "lon": -88.75,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lat": 81.5,
-      "ndvi": 0.002,
-      "albedo": 0.341,
-      "slope": 6.1,
-      "elev": 266,
-      "access_h": 126.1
+      "lat": 82,
+      "ndvi": -0.027,
+      "albedo": 0.349,
+      "slope": 6.8,
+      "elev": 37,
+      "access_h": 137
      },
      "place": "Nunavut, Canada"
     },
@@ -375,7 +334,6 @@
      "lat": 82.55,
      "lon": -63.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lat": 82.5,
       "ndvi": 0.007,
@@ -385,14 +343,41 @@
       "access_h": 142.6
      },
      "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 80.05,
+     "lon": -71.65,
+     "score": 0.99,
+     "values": {
+      "lat": 80,
+      "ndvi": -0.047,
+      "albedo": 0.365,
+      "slope": 3.8,
+      "elev": 634,
+      "access_h": 167.8
+     },
+     "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 78.95,
+     "lon": 100.85,
+     "score": 0.98,
+     "values": {
+      "lat": 79,
+      "ndvi": -0.085,
+      "albedo": 0.373,
+      "slope": 4.9,
+      "elev": 0,
+      "access_h": 91.2
+     },
+     "place": "Krasnoyarsk Krai, Russia"
     }
    ],
    "accessible": [
     {
      "lat": 70.65,
      "lon": 28.15,
-     "score": 0.6,
-     "nearKnown": null,
+     "score": 0.67,
      "values": {
       "lat": 70.7,
       "ndvi": 0.114,
@@ -405,24 +390,22 @@
     },
     {
      "lat": 69.55,
-     "lon": 88.95,
-     "score": 0.49,
-     "nearKnown": null,
+     "lon": 88.55,
+     "score": 0.54,
      "values": {
       "lat": 69.5,
-      "ndvi": 0.06,
-      "albedo": 0.485,
+      "ndvi": 0.115,
+      "albedo": 0.428,
       "slope": 2.9,
-      "elev": 526,
-      "access_h": 4.9
+      "elev": 375,
+      "access_h": 2
      },
      "place": "Krasnoyarsk Krai, Russia"
     },
     {
      "lat": 67.75,
      "lon": 33.75,
-     "score": 0.35,
-     "nearKnown": null,
+     "score": 0.39,
      "values": {
       "lat": 67.8,
       "ndvi": 0.115,
@@ -434,6 +417,10 @@
      "place": "Murmansk Oblast, Russia"
     }
    ],
+   "reference": {
+    "name": "Svalbard (AMASE)",
+    "score": 0.95
+   },
    "known": [
     {
      "name": "Svalbard (AMASE)",
@@ -570,7 +557,6 @@
      "lat": -72.75,
      "lon": 128.15,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -74.8,
       "lst_max": -28.4,
@@ -584,7 +570,6 @@
      "lat": -73.25,
      "lon": 115.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -74.8,
       "lst_max": -29,
@@ -598,7 +583,6 @@
      "lat": -74.95,
      "lon": 96.05,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -74.8,
       "lst_max": -32.6,
@@ -609,24 +593,9 @@
      "place": "Antarctica"
     },
     {
-     "lat": -75.05,
-     "lon": 122.65,
-     "score": 1,
-     "nearKnown": "Concordia (Dome C)",
-     "values": {
-      "lst_min": -76.7,
-      "lst_max": -28.9,
-      "precip": 0,
-      "elev": null,
-      "access_h": null
-     },
-     "place": "Antarctica"
-    },
-    {
      "lat": -75.45,
      "lon": 23.95,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -74.6,
       "lst_max": -30,
@@ -635,9 +604,26 @@
       "access_h": null
      },
      "place": "Antarctica"
+    },
+    {
+     "lat": -76.25,
+     "lon": 39.05,
+     "score": 1,
+     "values": {
+      "lst_min": -74.8,
+      "lst_max": -32.3,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
     }
    ],
    "accessible": [],
+   "reference": {
+    "name": "Concordia (Dome C)",
+    "score": 1
+   },
    "known": [
     {
      "name": "Concordia (Dome C)",
@@ -771,8 +757,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.2)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
     }
    ],
    "gaps": [
@@ -784,7 +770,6 @@
      "lat": 37.25,
      "lon": 74.65,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_mean": -9.9,
       "precip": 93.4,
@@ -799,7 +784,6 @@
      "lat": 34.45,
      "lon": 77.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_mean": -10.1,
       "precip": 140.2,
@@ -814,7 +798,6 @@
      "lat": 35.45,
      "lon": 81.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_mean": -17.4,
       "precip": 137.2,
@@ -829,7 +812,6 @@
      "lat": 36.85,
      "lon": 85.05,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_mean": -11.1,
       "precip": 145.3,
@@ -844,7 +826,6 @@
      "lat": 69.65,
      "lon": 161.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_mean": -13.2,
       "precip": 85.4,
@@ -860,8 +841,7 @@
     {
      "lat": 62.85,
      "lon": 129.75,
-     "score": 0.78,
-     "nearKnown": null,
+     "score": 0.88,
      "values": {
       "lst_mean": -10.2,
       "precip": 259.9,
@@ -876,7 +856,6 @@
      "lat": 43.45,
      "lon": 84.65,
      "score": 0.73,
-     "nearKnown": null,
      "values": {
       "lst_mean": -6.9,
       "precip": 256.2,
@@ -891,7 +870,6 @@
      "lat": 39.85,
      "lon": 72.85,
      "score": 0.63,
-     "nearKnown": null,
      "values": {
       "lst_mean": -8.2,
       "precip": 358.4,
@@ -903,6 +881,10 @@
      "place": "Osh Region, Kyrgyzstan"
     }
    ],
+   "reference": {
+    "name": "Haughton / Devon",
+    "score": 0.96
+   },
    "known": [
     {
      "name": "Haughton / Devon",
@@ -1018,16 +1000,16 @@
     {
      "var": "dust_aod",
      "w": 2,
-     "why": "High dust optical depth (MERRA-2)",
+     "why": "Dusty air: from Earth's p75 (0.03) to p95 (0.2). Mars (τ≈0.5) sits at Earth's absolute maximum",
      "optional": true,
-     "rule": "hi(0.2, 0.5)"
+     "rule": "hi(0.03, 0.2)"
     },
     {
      "var": "wind_ms",
      "w": 1,
-     "why": "Wind that lifts dust (MERRA-2)",
+     "why": "Wind that lifts dust: from Earth's median (4.3 m/s, close to Mars) up to ~p85",
      "optional": true,
-     "rule": "hi(3, 6)"
+     "rule": "hi(4, 7)"
     },
     {
      "var": "precip",
@@ -1038,8 +1020,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.15)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
     },
     {
      "var": "albedo",
@@ -1058,180 +1040,172 @@
    "optionalLayers": [
     {
      "var": "dust_aod",
-     "available": false
+     "available": true
     },
     {
      "var": "wind_ms",
-     "available": false
+     "available": true
     }
    ],
    "best": [
     {
-     "lat": -22.35,
-     "lon": -68.75,
-     "score": 1,
-     "nearKnown": null,
+     "lat": 21.15,
+     "lon": -16.95,
+     "score": 0.97,
      "values": {
-      "lst_max": 39.4,
-      "precip": 22.6,
-      "ndvi": 0.043,
-      "albedo": 0.285,
-      "elev": 2489,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 0.6
+      "lst_max": 36.2,
+      "precip": 42.3,
+      "ndvi": 0.094,
+      "albedo": 0.29,
+      "elev": 9,
+      "wind_ms": 6.5,
+      "dust_aod": 0.376,
+      "access_h": 1.5
      },
-     "place": "Antofagasta Region, Chile"
-    },
-    {
-     "lat": -16.85,
-     "lon": -71.85,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_max": 50.3,
-      "precip": 48.2,
-      "ndvi": 0.049,
-      "albedo": 0.27,
-      "elev": 1150,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 1.9
-     },
-     "place": "Arequipa, Peru"
-    },
-    {
-     "lat": 36.95,
-     "lon": 82.85,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_max": 45.1,
-      "precip": 46.7,
-      "ndvi": 0.042,
-      "albedo": 0.255,
-      "elev": 1542,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 4.2
-     },
-     "place": "Xinjiang, China"
-    },
-    {
-     "lat": 40.75,
-     "lon": 87.45,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_max": 52.4,
-      "precip": 43.1,
-      "ndvi": 0.051,
-      "albedo": 0.272,
-      "elev": 857,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 4.5
-     },
-     "place": "Xinjiang, China"
+     "place": "Dakhlet Nouadhibou, Mauritania"
     },
     {
      "lat": 23.95,
-     "lon": 34.85,
-     "score": 1,
-     "nearKnown": null,
+     "lon": -15.55,
+     "score": 0.97,
      "values": {
-      "lst_max": 53.8,
-      "precip": 5.8,
-      "ndvi": 0.052,
-      "albedo": 0.294,
-      "elev": 471,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 5
+      "lst_max": 36.5,
+      "precip": 19,
+      "ndvi": 0.094,
+      "albedo": 0.35,
+      "elev": 47,
+      "wind_ms": 6.4,
+      "dust_aod": 0.309,
+      "access_h": 2.5
      },
-     "place": "Red Sea, Egypt"
+     "place": "Cercle d'El Argoub, Western Sahara"
+    },
+    {
+     "lat": 27.15,
+     "lon": -11.35,
+     "score": 0.95,
+     "values": {
+      "lst_max": 39.3,
+      "precip": 22.6,
+      "ndvi": 0.059,
+      "albedo": 0.254,
+      "elev": 166,
+      "wind_ms": 6,
+      "dust_aod": 0.214,
+      "access_h": 6.1
+     },
+     "place": "Cercle d'Es-Semara, Western Sahara"
+    },
+    {
+     "lat": 18.85,
+     "lon": 18.75,
+     "score": 0.95,
+     "values": {
+      "lst_max": 46.9,
+      "precip": 51.8,
+      "ndvi": 0.076,
+      "albedo": 0.337,
+      "elev": 337,
+      "wind_ms": 6.1,
+      "dust_aod": 0.317,
+      "access_h": 16.4
+     },
+     "place": "Tibesti, Chad"
+    },
+    {
+     "lat": 24.65,
+     "lon": -12.65,
+     "score": 0.93,
+     "values": {
+      "lst_max": 45.2,
+      "precip": 24.8,
+      "ndvi": 0.089,
+      "albedo": 0.306,
+      "elev": 259,
+      "wind_ms": 5.8,
+      "dust_aod": 0.32,
+      "access_h": 16.4
+     },
+     "place": "cercle de Jraifia, Western Sahara"
     }
    ],
    "accessible": [
     {
-     "lat": -22.35,
-     "lon": -68.75,
-     "score": 1,
-     "nearKnown": null,
+     "lat": 21.15,
+     "lon": -16.95,
+     "score": 0.97,
      "values": {
-      "lst_max": 39.4,
-      "precip": 22.6,
-      "ndvi": 0.043,
-      "albedo": 0.285,
-      "elev": 2489,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 0.6
+      "lst_max": 36.2,
+      "precip": 42.3,
+      "ndvi": 0.094,
+      "albedo": 0.29,
+      "elev": 9,
+      "wind_ms": 6.5,
+      "dust_aod": 0.376,
+      "access_h": 1.5
      },
-     "place": "Antofagasta Region, Chile"
+     "place": "Dakhlet Nouadhibou, Mauritania"
     },
     {
-     "lat": -16.85,
-     "lon": -71.85,
-     "score": 1,
-     "nearKnown": null,
+     "lat": 23.95,
+     "lon": -15.55,
+     "score": 0.97,
      "values": {
-      "lst_max": 50.3,
-      "precip": 48.2,
-      "ndvi": 0.049,
-      "albedo": 0.27,
-      "elev": 1150,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 1.9
+      "lst_max": 36.5,
+      "precip": 19,
+      "ndvi": 0.094,
+      "albedo": 0.35,
+      "elev": 47,
+      "wind_ms": 6.4,
+      "dust_aod": 0.309,
+      "access_h": 2.5
      },
-     "place": "Arequipa, Peru"
+     "place": "Cercle d'El Argoub, Western Sahara"
     },
     {
-     "lat": 36.95,
-     "lon": 82.85,
-     "score": 1,
-     "nearKnown": null,
+     "lat": 27.05,
+     "lon": -11.15,
+     "score": 0.93,
      "values": {
-      "lst_max": 45.1,
-      "precip": 46.7,
-      "ndvi": 0.042,
-      "albedo": 0.255,
-      "elev": 1542,
-      "wind_ms": null,
-      "dust_aod": null,
-      "access_h": 4.2
+      "lst_max": 44.2,
+      "precip": 25.6,
+      "ndvi": 0.084,
+      "albedo": 0.241,
+      "elev": 202,
+      "wind_ms": 6,
+      "dust_aod": 0.214,
+      "access_h": 5.9
      },
-     "place": "Xinjiang, China"
+     "place": "Cercle d'Es-Semara, Western Sahara"
     }
    ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 0.45
+   },
    "known": [
     {
      "name": "Qaidam",
-     "score": 0.85
-    },
-    {
-     "name": "Atacama",
-     "score": 0.79
-    },
-    {
-     "name": "Wadi Rum",
-     "score": 0.78
-    },
-    {
-     "name": "Mojave Bristol",
-     "score": 0.72
+     "score": 0.45
     },
     {
      "name": "Namib",
-     "score": 0.71
+     "score": 0.27
     },
     {
-     "name": "Death Valley / Mojave",
-     "score": 0.53
+     "name": "Atacama",
+     "score": 0
     },
     {
      "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
      "score": 0
     },
     {
@@ -1287,6 +1261,10 @@
      "score": 0
     },
     {
+     "name": "Concordia (Dome C)",
+     "score": 0
+    },
+    {
      "name": "Lonar",
      "score": 0
     },
@@ -1299,12 +1277,12 @@
      "score": 0
     },
     {
-     "name": "McMurdo Dry Valleys",
-     "score": null
+     "name": "Mojave Bristol",
+     "score": 0
     },
     {
-     "name": "Concordia (Dome C)",
-     "score": null
+     "name": "Wadi Rum",
+     "score": 0
     }
    ]
   },
@@ -1327,8 +1305,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.15)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
     },
     {
      "var": "precip",
@@ -1346,164 +1324,172 @@
    "optionalLayers": [],
    "best": [
     {
-     "lat": -22.35,
-     "lon": -68.75,
+     "lat": 24.95,
+     "lon": 46.65,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 22.6,
-      "ndvi": 0.043,
-      "albedo": 0.285,
-      "slope": 0.5,
-      "elev": 2489,
-      "access_h": 0.6
-     },
-     "place": "Antofagasta Region, Chile"
-    },
-    {
-     "lat": 37.35,
-     "lon": 80.05,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 75.2,
-      "ndvi": 0.048,
-      "albedo": 0.252,
-      "slope": 0.1,
-      "elev": 1301,
-      "access_h": 1.3
-     },
-     "place": "Xinjiang, China"
-    },
-    {
-     "lat": 30.65,
-     "lon": 61.35,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 75.9,
-      "ndvi": 0.05,
-      "albedo": 0.328,
-      "slope": 0.1,
-      "elev": 482,
-      "access_h": 1.5
-     },
-     "place": "Sistan and Baluchestan Province, Iran"
-    },
-    {
-     "lat": -14.15,
-     "lon": -75.95,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 67.9,
-      "ndvi": 0.05,
-      "albedo": 0.239,
-      "slope": 0.1,
-      "elev": 562,
-      "access_h": 2
-     },
-     "place": "Ica, Peru"
-    },
-    {
-     "lat": 26.65,
-     "lon": 55.35,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 101.5,
-      "ndvi": 0.044,
-      "albedo": 0.196,
+      "precip": 98.6,
+      "ndvi": 0.08,
+      "albedo": 0.353,
       "slope": 0.3,
-      "elev": 21,
-      "access_h": 2.3
+      "elev": 655,
+      "access_h": 0.2
+     },
+     "place": "Riyadh Region, Saudi Arabia"
+    },
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 21.85,
+     "lon": 39.05,
+     "score": 1,
+     "values": {
+      "precip": 78.8,
+      "ndvi": 0.075,
+      "albedo": 0.212,
+      "slope": 0.2,
+      "elev": 3,
+      "access_h": 0.3
+     },
+     "place": "Makkah Region, Saudi Arabia"
+    },
+    {
+     "lat": 14.65,
+     "lon": 49.25,
+     "score": 1,
+     "values": {
+      "precip": 48.2,
+      "ndvi": 0.115,
+      "albedo": 0.263,
+      "slope": 0.3,
+      "elev": 33,
+      "access_h": 0.4
+     },
+     "place": "Hadramaut Governorate, Yemen"
+    },
+    {
+     "lat": 27.25,
+     "lon": 56.25,
+     "score": 1,
+     "values": {
+      "precip": 95.6,
+      "ndvi": 0.082,
+      "albedo": 0.242,
+      "slope": 0.3,
+      "elev": 29,
+      "access_h": 0.4
      },
      "place": "Hormozgan Province, Iran"
     }
    ],
    "accessible": [
     {
-     "lat": -22.35,
-     "lon": -68.75,
+     "lat": 24.95,
+     "lon": 46.65,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 22.6,
-      "ndvi": 0.043,
-      "albedo": 0.285,
-      "slope": 0.5,
-      "elev": 2489,
-      "access_h": 0.6
+      "precip": 98.6,
+      "ndvi": 0.08,
+      "albedo": 0.353,
+      "slope": 0.3,
+      "elev": 655,
+      "access_h": 0.2
      },
-     "place": "Antofagasta Region, Chile"
+     "place": "Riyadh Region, Saudi Arabia"
     },
     {
-     "lat": 37.35,
-     "lon": 80.05,
+     "lat": 30.25,
+     "lon": 31.75,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 75.2,
-      "ndvi": 0.048,
-      "albedo": 0.252,
-      "slope": 0.1,
-      "elev": 1301,
-      "access_h": 1.3
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
      },
-     "place": "Xinjiang, China"
+     "place": "Cairo, Egypt"
     },
     {
-     "lat": 30.65,
-     "lon": 61.35,
+     "lat": 21.85,
+     "lon": 39.05,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 75.9,
-      "ndvi": 0.05,
-      "albedo": 0.328,
-      "slope": 0.1,
-      "elev": 482,
-      "access_h": 1.5
+      "precip": 78.8,
+      "ndvi": 0.075,
+      "albedo": 0.212,
+      "slope": 0.2,
+      "elev": 3,
+      "access_h": 0.3
      },
-     "place": "Sistan and Baluchestan Province, Iran"
+     "place": "Makkah Region, Saudi Arabia"
     }
    ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 1
+   },
    "known": [
     {
      "name": "Qaidam",
      "score": 1
     },
     {
+     "name": "Namib",
+     "score": 0.99
+    },
+    {
      "name": "Death Valley / Mojave",
+     "score": 0.96
+    },
+    {
+     "name": "Atacama",
+     "score": 0.92
+    },
+    {
+     "name": "MDRS Utah",
      "score": 0.9
     },
     {
+     "name": "Wadi Rum",
+     "score": 0.88
+    },
+    {
      "name": "Mojave Bristol",
-     "score": 0.83
+     "score": 0.85
     },
     {
      "name": "Bunge Land",
      "score": 0.81
     },
     {
-     "name": "MDRS Utah",
-     "score": 0.79
+     "name": "Meteor / SP Crater",
+     "score": 0.57
     },
     {
-     "name": "Atacama",
-     "score": 0.78
-    },
-    {
-     "name": "Namib",
-     "score": 0.76
-    },
-    {
-     "name": "Wadi Rum",
-     "score": 0.72
+     "name": "Pilbara",
+     "score": 0.44
     },
     {
      "name": "Danakil / Dallol",
-     "score": 0.29
+     "score": 0.3
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.26
     },
     {
      "name": "Haughton / Devon",
@@ -1530,23 +1516,11 @@
      "score": 0
     },
     {
-     "name": "Pilbara",
-     "score": 0
-    },
-    {
-     "name": "Meteor / SP Crater",
-     "score": 0
-    },
-    {
      "name": "Axel Heiberg",
      "score": 0
     },
     {
      "name": "Ries",
-     "score": 0
-    },
-    {
-     "name": "Arkaroola",
      "score": 0
     },
     {
@@ -1589,8 +1563,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.15)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
     },
     {
      "var": "lst_min",
@@ -1607,15 +1581,15 @@
     {
      "var": "dust_aod",
      "w": 1,
-     "why": "Dust that dims and soils panels (MERRA-2)",
+     "why": "Dust that dims and soils panels: from Earth's median (0.013) to p90 (0.12)",
      "optional": true,
-     "rule": "hi(0.1, 0.4)"
+     "rule": "hi(0.013, 0.12)"
     }
    ],
    "optionalLayers": [
     {
      "var": "dust_aod",
-     "available": false
+     "available": true
     }
    ],
    "best": [
@@ -1623,79 +1597,74 @@
      "lat": 36.35,
      "lon": 83.85,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -29.7,
       "precip": 42.3,
       "ndvi": 0.037,
       "elev": 4892,
-      "ps_hpa": 548,
-      "dust_aod": null,
+      "ps_hpa": 601.8,
+      "dust_aod": 0.129,
       "access_h": 20
      },
      "place": "Xinjiang, China"
     },
     {
-     "lat": 36.15,
-     "lon": 87.25,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_min": -29.9,
-      "precip": 50.4,
-      "ndvi": 0.047,
-      "elev": 5040,
-      "ps_hpa": 537.3,
-      "dust_aod": null,
-      "access_h": 67.8
-     },
-     "place": "Xizang, China"
-    },
-    {
-     "lat": 35.95,
+     "lat": 36.05,
      "lon": 78.35,
      "score": 0.97,
-     "nearKnown": null,
      "values": {
-      "lst_min": -30.9,
-      "precip": 74.5,
-      "ndvi": 0.046,
-      "elev": 5254,
-      "ps_hpa": 522.1,
-      "dust_aod": null,
-      "access_h": 10.9
+      "lst_min": -34.7,
+      "precip": 79.6,
+      "ndvi": 0.045,
+      "elev": 5080,
+      "ps_hpa": 611.1,
+      "dust_aod": 0.126,
+      "access_h": 9.2
      },
      "place": "Xinjiang, China"
     },
     {
-     "lat": 36.85,
-     "lon": 74.85,
-     "score": 0.96,
-     "nearKnown": null,
+     "lat": 37.65,
+     "lon": 87.35,
+     "score": 0.95,
      "values": {
-      "lst_min": -30,
-      "precip": 77.4,
-      "ndvi": 0.004,
-      "elev": 4673,
-      "ps_hpa": 564.2,
-      "dust_aod": null,
-      "access_h": 12.4
+      "lst_min": -23.6,
+      "precip": 54,
+      "ndvi": 0.056,
+      "elev": 3646,
+      "ps_hpa": 651.3,
+      "dust_aod": 0.128,
+      "access_h": 24.2
      },
-     "place": "Gilgit-Baltistan, Pakistan"
+     "place": "Xinjiang, China"
     },
     {
-     "lat": 38.85,
+     "lat": 38.75,
      "lon": 90.95,
-     "score": 0.94,
-     "nearKnown": null,
+     "score": 0.93,
      "values": {
-      "lst_min": -26.1,
-      "precip": 54,
-      "ndvi": 0.053,
-      "elev": 3352,
-      "ps_hpa": 670.3,
-      "dust_aod": null,
-      "access_h": 13.4
+      "lst_min": -25.9,
+      "precip": 46.7,
+      "ndvi": 0.048,
+      "elev": 3173,
+      "ps_hpa": 709,
+      "dust_aod": 0.126,
+      "access_h": 11.1
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 38.05,
+     "lon": 75.35,
+     "score": 0.91,
+     "values": {
+      "lst_min": -27.6,
+      "precip": 105.9,
+      "ndvi": 0.119,
+      "elev": 4539,
+      "ps_hpa": 658.6,
+      "dust_aod": 0.116,
+      "access_h": 14.1
      },
      "place": "Xinjiang, China"
     }
@@ -1705,59 +1674,60 @@
      "lat": 36.55,
      "lon": 77.05,
      "score": 0.95,
-     "nearKnown": null,
      "values": {
       "lst_min": -28.3,
       "precip": 79.6,
       "ndvi": 0.026,
       "elev": 5106,
-      "ps_hpa": 532.6,
-      "dust_aod": null,
+      "ps_hpa": 662.2,
+      "dust_aod": 0.15,
       "access_h": 5.4
      },
      "place": "Xinjiang, China"
     },
     {
-     "lat": 38.35,
-     "lon": 94.45,
-     "score": 0.89,
-     "nearKnown": "Qaidam",
+     "lat": 41.45,
+     "lon": 95.25,
+     "score": 0.82,
      "values": {
-      "lst_min": -22.3,
-      "precip": 73.7,
-      "ndvi": 0.052,
-      "elev": 3467,
-      "ps_hpa": 660.4,
-      "dust_aod": null,
-      "access_h": 5.5
+      "lst_min": -24,
+      "precip": 54.8,
+      "ndvi": 0.065,
+      "elev": 1740,
+      "ps_hpa": 806.9,
+      "dust_aod": 0.126,
+      "access_h": 5.2
      },
-     "place": "Qinghai, China"
+     "place": "Gansu, China"
     },
     {
-     "lat": -30.15,
-     "lon": -69.95,
-     "score": 0.84,
-     "nearKnown": null,
+     "lat": 39.45,
+     "lon": 97.75,
+     "score": 0.77,
      "values": {
-      "lst_min": -20.7,
-      "precip": 103.7,
-      "ndvi": 0.036,
-      "elev": 4595,
-      "ps_hpa": 570.1,
-      "dust_aod": null,
-      "access_h": 5.8
+      "lst_min": -25.8,
+      "precip": 153.3,
+      "ndvi": 0.118,
+      "elev": 4229,
+      "ps_hpa": 711.3,
+      "dust_aod": 0.101,
+      "access_h": 4.6
      },
-     "place": "Coquimbo Region, Chile"
+     "place": "Gansu, China"
     }
    ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 0.78
+   },
    "known": [
     {
      "name": "Qaidam",
-     "score": 0.77
+     "score": 0.78
     },
     {
      "name": "MDRS Utah",
-     "score": 0.31
+     "score": 0.23
     },
     {
      "name": "Atacama",
@@ -1872,8 +1842,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.15)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
     },
     {
      "var": "slope",
@@ -1894,140 +1864,144 @@
    "optionalLayers": [],
    "best": [
     {
-     "lat": -11.25,
-     "lon": -77.65,
+     "lat": 19.65,
+     "lon": 37.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 38.7,
-      "ndvi": 0.05,
-      "albedo": 0.101,
-      "slope": 0,
-      "elev": 36,
-      "access_h": 0.7
-     },
-     "place": "Peru"
-    },
-    {
-     "lat": -23.05,
-     "lon": 14.45,
-     "score": 1,
-     "nearKnown": "Namib",
-     "values": {
-      "precip": 23.4,
-      "ndvi": 0.029,
-      "albedo": 0.144,
+      "precip": 73.7,
+      "ndvi": 0.064,
+      "albedo": 0.129,
       "slope": 0.1,
+      "elev": 4,
+      "access_h": 0.2
+     },
+     "place": "Red Sea State, Sudan"
+    },
+    {
+     "lat": 26.95,
+     "lon": 56.25,
+     "score": 1,
+     "values": {
+      "precip": 86.1,
+      "ndvi": 0.109,
+      "albedo": 0.132,
+      "slope": 0,
+      "elev": 26,
+      "access_h": 0.4
+     },
+     "place": "Hormozgan Province, Iran"
+    },
+    {
+     "lat": 23.85,
+     "lon": -15.85,
+     "score": 1,
+     "values": {
+      "precip": 17.5,
+      "ndvi": 0.099,
+      "albedo": 0.108,
+      "slope": 0,
+      "elev": 1,
+      "access_h": 0.5
+     },
+     "place": "Western Sahara"
+    },
+    {
+     "lat": 14.55,
+     "lon": 49.15,
+     "score": 1,
+     "values": {
+      "precip": 46.7,
+      "ndvi": 0.105,
+      "albedo": 0.171,
+      "slope": 0,
+      "elev": 96,
+      "access_h": 0.5
+     },
+     "place": "Hadramaut Governorate, Yemen"
+    },
+    {
+     "lat": 21.95,
+     "lon": 38.95,
+     "score": 1,
+     "values": {
+      "precip": 68.6,
+      "ndvi": 0.073,
+      "albedo": 0.106,
+      "slope": 0,
       "elev": 2,
-      "access_h": 0.9
+      "access_h": 0.6
      },
-     "place": "Erongo Region, Namibia"
-    },
-    {
-     "lat": -14.45,
-     "lon": -75.55,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 64.2,
-      "ndvi": 0.05,
-      "albedo": 0.178,
-      "slope": 0.4,
-      "elev": 411,
-      "access_h": 2
-     },
-     "place": "Ica, Peru"
-    },
-    {
-     "lat": 28.85,
-     "lon": 58.65,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 103.7,
-      "ndvi": 0.048,
-      "albedo": 0.153,
-      "slope": 0.4,
-      "elev": 864,
-      "access_h": 2
-     },
-     "place": "Kerman Province, Iran"
-    },
-    {
-     "lat": 42.45,
-     "lon": 94.25,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 61.3,
-      "ndvi": 0.045,
-      "albedo": 0.178,
-      "slope": 0.5,
-      "elev": 794,
-      "access_h": 2.1
-     },
-     "place": "Xinjiang, China"
+     "place": "Makkah Region, Saudi Arabia"
     }
    ],
    "accessible": [
     {
-     "lat": -11.25,
-     "lon": -77.65,
+     "lat": 19.65,
+     "lon": 37.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 38.7,
-      "ndvi": 0.05,
-      "albedo": 0.101,
-      "slope": 0,
-      "elev": 36,
-      "access_h": 0.7
-     },
-     "place": "Peru"
-    },
-    {
-     "lat": -23.05,
-     "lon": 14.45,
-     "score": 1,
-     "nearKnown": "Namib",
-     "values": {
-      "precip": 23.4,
-      "ndvi": 0.029,
-      "albedo": 0.144,
+      "precip": 73.7,
+      "ndvi": 0.064,
+      "albedo": 0.129,
       "slope": 0.1,
-      "elev": 2,
-      "access_h": 0.9
+      "elev": 4,
+      "access_h": 0.2
      },
-     "place": "Erongo Region, Namibia"
+     "place": "Red Sea State, Sudan"
     },
     {
-     "lat": -14.45,
-     "lon": -75.55,
+     "lat": 26.95,
+     "lon": 56.25,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 64.2,
-      "ndvi": 0.05,
-      "albedo": 0.178,
-      "slope": 0.4,
-      "elev": 411,
-      "access_h": 2
+      "precip": 86.1,
+      "ndvi": 0.109,
+      "albedo": 0.132,
+      "slope": 0,
+      "elev": 26,
+      "access_h": 0.4
      },
-     "place": "Ica, Peru"
+     "place": "Hormozgan Province, Iran"
+    },
+    {
+     "lat": 23.85,
+     "lon": -15.85,
+     "score": 1,
+     "values": {
+      "precip": 17.5,
+      "ndvi": 0.099,
+      "albedo": 0.108,
+      "slope": 0,
+      "elev": 1,
+      "access_h": 0.5
+     },
+     "place": "Western Sahara"
     }
    ],
+   "reference": {
+    "name": "Death Valley / Mojave",
+    "score": 0.8
+   },
    "known": [
     {
      "name": "Death Valley / Mojave",
-     "score": 0.74
+     "score": 0.8
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.64
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0.41
     },
     {
      "name": "Atacama",
-     "score": 0.34
+     "score": 0.4
     },
     {
      "name": "Lanzarote",
-     "score": 0.24
+     "score": 0.26
     },
     {
      "name": "Haughton / Devon",
@@ -2062,10 +2036,6 @@
      "score": 0
     },
     {
-     "name": "Meteor / SP Crater",
-     "score": 0
-    },
-    {
      "name": "Axel Heiberg",
      "score": 0
     },
@@ -2083,10 +2053,6 @@
     },
     {
      "name": "Ries",
-     "score": 0
-    },
-    {
-     "name": "Arkaroola",
      "score": 0
     },
     {
@@ -2137,8 +2103,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "Bare ground",
-     "rule": "lo(0.05, 0.15)"
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
     },
     {
      "var": "precip",
@@ -2152,148 +2118,152 @@
    "optionalLayers": [],
    "best": [
     {
-     "lat": 38.95,
-     "lon": 91.85,
-     "score": 0.99,
-     "nearKnown": null,
+     "lat": 20.95,
+     "lon": 16.95,
+     "score": 1,
      "values": {
-      "precip": 66.4,
-      "ndvi": 0.05,
-      "slope": 2.5,
-      "elev": 3479,
-      "access_h": 18.6
+      "precip": 73.7,
+      "ndvi": 0.113,
+      "slope": 2.3,
+      "elev": 2047,
+      "access_h": 29.3
+     },
+     "place": "Tibesti, Chad"
+    },
+    {
+     "lat": 39.35,
+     "lon": 90.85,
+     "score": 1,
+     "values": {
+      "precip": 33.6,
+      "ndvi": 0.06,
+      "slope": 1.8,
+      "elev": 1831,
+      "access_h": 35.7
      },
      "place": "Xinjiang, China"
     },
     {
-     "lat": 80.95,
-     "lon": -74.65,
+     "lat": -27.95,
+     "lon": -70.35,
      "score": 0.99,
-     "nearKnown": null,
      "values": {
-      "precip": 101.5,
-      "ndvi": -0.045,
-      "slope": 2.3,
-      "elev": 765,
-      "access_h": 171.7
+      "precip": 63.5,
+      "ndvi": 0.081,
+      "slope": 1.8,
+      "elev": 1066,
+      "access_h": 2.3
      },
-     "place": "Nunavut, Canada"
+     "place": "Atacama Region, Chile"
     },
     {
-     "lat": -25.65,
-     "lon": -68.25,
-     "score": 0.98,
-     "nearKnown": null,
+     "lat": 43.35,
+     "lon": 94.95,
+     "score": 0.99,
      "values": {
       "precip": 92,
-      "ndvi": 0.035,
-      "slope": 1.7,
-      "elev": 4879,
+      "ndvi": 0.06,
+      "slope": 1.9,
+      "elev": 1206,
+      "access_h": 4.7
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 33.85,
+     "lon": 80.45,
+     "score": 0.99,
+     "values": {
+      "precip": 94.2,
+      "ndvi": 0.092,
+      "slope": 1,
+      "elev": 4850,
       "access_h": 11.5
      },
-     "place": "Catamarca, Argentina"
-    },
-    {
-     "lat": 44.85,
-     "lon": 94.55,
-     "score": 0.97,
-     "nearKnown": null,
-     "values": {
-      "precip": 67.9,
-      "ndvi": 0.056,
-      "slope": 1.6,
-      "elev": 1345,
-      "access_h": 8.6
-     },
-     "place": "Govi-Altai, Mongolia"
-    },
-    {
-     "lat": 37.25,
-     "lon": 74.85,
-     "score": 0.97,
-     "nearKnown": null,
-     "values": {
-      "precip": 89.8,
-      "ndvi": 0.016,
-      "slope": 1.4,
-      "elev": 4971,
-      "access_h": 11.9
-     },
-     "place": "Badakhshan Province, Afghanistan"
+     "place": "Xizang, China"
     }
    ],
    "accessible": [
     {
-     "lat": -22.05,
-     "lon": -68.75,
-     "score": 0.96,
-     "nearKnown": null,
+     "lat": -27.95,
+     "lon": -70.35,
+     "score": 0.99,
      "values": {
-      "precip": 48.9,
-      "ndvi": 0.051,
-      "slope": 2.8,
-      "elev": 3812,
-      "access_h": 2.8
+      "precip": 63.5,
+      "ndvi": 0.081,
+      "slope": 1.8,
+      "elev": 1066,
+      "access_h": 2.3
      },
-     "place": "Antofagasta Region, Chile"
+     "place": "Atacama Region, Chile"
     },
     {
-     "lat": -24.75,
-     "lon": -68.45,
-     "score": 0.95,
-     "nearKnown": "Atacama",
+     "lat": 43.35,
+     "lon": 94.95,
+     "score": 0.99,
      "values": {
-      "precip": 43.1,
-      "ndvi": 0.045,
-      "slope": 2.7,
-      "elev": 4521,
-      "access_h": 6
-     },
-     "place": "Salta, Argentina"
-    },
-    {
-     "lat": 43.05,
-     "lon": 92.45,
-     "score": 0.94,
-     "nearKnown": null,
-     "values": {
-      "precip": 102.2,
-      "ndvi": 0.049,
-      "slope": 1.3,
-      "elev": 660,
-      "access_h": 4
+      "precip": 92,
+      "ndvi": 0.06,
+      "slope": 1.9,
+      "elev": 1206,
+      "access_h": 4.7
      },
      "place": "Xinjiang, China"
-    }
-   ],
-   "known": [
-    {
-     "name": "Atacama",
-     "score": 0.75
     },
     {
+     "lat": -18.95,
+     "lon": -69.95,
+     "score": 0.98,
+     "values": {
+      "precip": 51.1,
+      "ndvi": 0.067,
+      "slope": 2,
+      "elev": 1385,
+      "access_h": 3.6
+     },
+     "place": "Arica y Parinacota Region, Chile"
+    }
+   ],
+   "reference": {
+    "name": "Wadi Rum",
+    "score": 0.95
+   },
+   "known": [
+    {
      "name": "Wadi Rum",
-     "score": 0.7
+     "score": 0.95
+    },
+    {
+     "name": "Atacama",
+     "score": 0.93
     },
     {
      "name": "Mojave Bristol",
-     "score": 0.69
+     "score": 0.82
     },
     {
      "name": "Axel Heiberg",
      "score": 0.6
     },
     {
+     "name": "MDRS Utah",
+     "score": 0.56
+    },
+    {
+     "name": "Namib",
+     "score": 0.55
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.4
+    },
+    {
      "name": "Haughton / Devon",
      "score": 0.36
     },
     {
-     "name": "MDRS Utah",
-     "score": 0.36
-    },
-    {
-     "name": "Namib",
-     "score": 0.36
+     "name": "Meteor / SP Crater",
+     "score": 0.18
     },
     {
      "name": "Death Valley / Mojave",
@@ -2324,10 +2294,6 @@
      "score": 0
     },
     {
-     "name": "Meteor / SP Crater",
-     "score": 0
-    },
-    {
      "name": "Qaidam",
      "score": 0
     },
@@ -2337,10 +2303,6 @@
     },
     {
      "name": "Ries",
-     "score": 0
-    },
-    {
-     "name": "Arkaroola",
      "score": 0
     },
     {
@@ -2389,7 +2351,7 @@
      "var": "ndvi",
      "w": 1,
      "why": "Barren landscape",
-     "rule": "lo(0.1, 0.3)"
+     "rule": "lo(0.15, 0.35)"
     },
     {
      "var": "lst_min",
@@ -2404,7 +2366,6 @@
      "lat": 65.95,
      "lon": -86.45,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -34.4,
       "ndvi": 0.087,
@@ -2417,7 +2378,6 @@
      "lat": 76.65,
      "lon": -121.05,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -40.4,
       "ndvi": 0.025,
@@ -2430,7 +2390,6 @@
      "lat": 69.45,
      "lon": -28.75,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -42.3,
       "ndvi": -0.051,
@@ -2440,10 +2399,21 @@
      "place": "Greenland"
     },
     {
+     "lat": 68.25,
+     "lon": -122.85,
+     "score": 1,
+     "values": {
+      "lst_min": -34.6,
+      "ndvi": 0.146,
+      "elev": 519,
+      "access_h": 71.5
+     },
+     "place": "Northwest Territories, Canada"
+    },
+    {
      "lat": 69.95,
      "lon": -113.35,
      "score": 1,
-     "nearKnown": null,
      "values": {
       "lst_min": -34.5,
       "ndvi": 0.066,
@@ -2451,22 +2421,13 @@
       "access_h": 71.5
      },
      "place": "Nunavut, Canada"
-    },
-    {
-     "lat": 67.65,
-     "lon": -164.35,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "lst_min": -35.3,
-      "ndvi": 0.065,
-      "elev": 0,
-      "access_h": 71.5
-     },
-     "place": "Alaska, United States"
     }
    ],
    "accessible": [],
+   "reference": {
+    "name": "Haughton / Devon",
+    "score": 1
+   },
    "known": [
     {
      "name": "Haughton / Devon",
@@ -2587,8 +2548,8 @@
     {
      "var": "ndvi",
      "w": 1,
-     "why": "No vegetation",
-     "rule": "lo(0.03, 0.1)"
+     "why": "No vegetation (at or below the hyper-arid median of 0.10)",
+     "rule": "lo(0.11, 0.16)"
     },
     {
      "var": "albedo",
@@ -2609,136 +2570,140 @@
    "optionalLayers": [],
    "best": [
     {
-     "lat": -24.25,
-     "lon": -69.05,
+     "lat": 30.25,
+     "lon": 31.75,
      "score": 1,
-     "nearKnown": "Atacama",
      "values": {
-      "precip": 24.8,
-      "ndvi": 0.018,
-      "albedo": 0.287,
-      "slope": 0.9,
-      "elev": 3129,
-      "access_h": 5.3
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
      },
-     "place": "Antofagasta Region, Chile"
+     "place": "Cairo, Egypt"
     },
     {
-     "lat": 37.95,
-     "lon": 85.35,
+     "lat": 27.45,
+     "lon": 30.95,
      "score": 1,
-     "nearKnown": null,
      "values": {
-      "precip": 24.1,
-      "ndvi": 0.032,
-      "albedo": 0.25,
-      "slope": 0.6,
-      "elev": 1373,
-      "access_h": 11.3
-     },
-     "place": "Xinjiang, China"
-    },
-    {
-     "lat": 83.15,
-     "lon": -28.95,
-     "score": 1,
-     "nearKnown": null,
-     "values": {
-      "precip": 24.1,
-      "ndvi": -0.011,
+      "precip": 7.3,
+      "ndvi": 0.095,
       "albedo": 0.331,
-      "slope": 0,
-      "elev": 0,
-      "access_h": 117.7
+      "slope": 0.4,
+      "elev": 183,
+      "access_h": 0.5
      },
-     "place": "Greenland"
+     "place": "Asyut, Egypt"
     },
     {
-     "lat": 24.85,
-     "lon": 17.85,
-     "score": 0.99,
-     "nearKnown": null,
-     "values": {
-      "precip": 15.3,
-      "ndvi": 0.033,
-      "albedo": 0.232,
-      "slope": 0,
-      "elev": 472,
-      "access_h": 16.7
-     },
-     "place": "Murzuq, Libya"
-    },
-    {
-     "lat": 40.15,
-     "lon": 92.85,
-     "score": 0.99,
-     "nearKnown": null,
-     "values": {
-      "precip": 25.6,
-      "ndvi": 0.033,
-      "albedo": 0.23,
-      "slope": 0.6,
-      "elev": 907,
-      "access_h": 24.8
-     },
-     "place": "Gansu, China"
-    }
-   ],
-   "accessible": [
-    {
-     "lat": -24.25,
-     "lon": -69.05,
+     "lat": 24.05,
+     "lon": 32.85,
      "score": 1,
-     "nearKnown": "Atacama",
      "values": {
-      "precip": 24.8,
-      "ndvi": 0.018,
-      "albedo": 0.287,
-      "slope": 0.9,
-      "elev": 3129,
-      "access_h": 5.3
-     },
-     "place": "Antofagasta Region, Chile"
-    },
-    {
-     "lat": 22.95,
-     "lon": 32.75,
-     "score": 0.98,
-     "nearKnown": null,
-     "values": {
-      "precip": 16.8,
-      "ndvi": 0.037,
-      "albedo": 0.207,
-      "slope": 0.2,
-      "elev": 190,
-      "access_h": 4.5
+      "precip": 8.8,
+      "ndvi": 0.106,
+      "albedo": 0.298,
+      "slope": 0.1,
+      "elev": 169,
+      "access_h": 0.7
      },
      "place": "Aswan, Egypt"
     },
     {
-     "lat": 37.65,
-     "lon": 84.15,
-     "score": 0.94,
-     "nearKnown": null,
+     "lat": -20.35,
+     "lon": -70.05,
+     "score": 1,
      "values": {
-      "precip": 27.7,
-      "ndvi": 0.045,
-      "albedo": 0.238,
+      "precip": 16.1,
+      "ndvi": 0.09,
+      "albedo": 0.217,
       "slope": 0.3,
-      "elev": 1369,
-      "access_h": 4.8
+      "elev": 976,
+      "access_h": 0.7
      },
-     "place": "Xinjiang, China"
+     "place": "Tarapacá Region, Chile"
+    },
+    {
+     "lat": 23.95,
+     "lon": -15.75,
+     "score": 1,
+     "values": {
+      "precip": 16.8,
+      "ndvi": 0.086,
+      "albedo": 0.209,
+      "slope": 0.1,
+      "elev": 2,
+      "access_h": 0.8
+     },
+     "place": "Western Sahara"
     }
    ],
+   "accessible": [
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 27.45,
+     "lon": 30.95,
+     "score": 1,
+     "values": {
+      "precip": 7.3,
+      "ndvi": 0.095,
+      "albedo": 0.331,
+      "slope": 0.4,
+      "elev": 183,
+      "access_h": 0.5
+     },
+     "place": "Asyut, Egypt"
+    },
+    {
+     "lat": 24.05,
+     "lon": 32.85,
+     "score": 1,
+     "values": {
+      "precip": 8.8,
+      "ndvi": 0.106,
+      "albedo": 0.298,
+      "slope": 0.1,
+      "elev": 169,
+      "access_h": 0.7
+     },
+     "place": "Aswan, Egypt"
+    }
+   ],
+   "reference": {
+    "name": "Wadi Rum",
+    "score": 0.99
+   },
    "known": [
     {
-     "name": "Qaidam",
-     "score": 0.62
+     "name": "Wadi Rum",
+     "score": 0.99
+    },
+    {
+     "name": "Namib",
+     "score": 0.93
     },
     {
      "name": "Atacama",
-     "score": 0
+     "score": 0.92
+    },
+    {
+     "name": "Qaidam",
+     "score": 0.62
     },
     {
      "name": "Haughton / Devon",
@@ -2789,10 +2754,6 @@
      "score": 0
     },
     {
-     "name": "Namib",
-     "score": 0
-    },
-    {
      "name": "Ries",
      "score": 0
     },
@@ -2821,10 +2782,6 @@
      "score": 0
     },
     {
-     "name": "Wadi Rum",
-     "score": 0
-    },
-    {
      "name": "McMurdo Dry Valleys",
      "score": null
     },
@@ -2838,29 +2795,47 @@
  "candidates": {
   "shackleton": [
    {
-    "place": "Isfahan Province, Iran",
-    "lat": 33.95,
-    "lon": 51.351,
+    "place": "Colorado, United States",
+    "lat": 39.45,
+    "lon": -106.15,
     "tasks": {
-     "eva_cold_rough": 0.12,
+     "eva_cold_rough": 0.44,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
      "dust_ops": 0,
      "landing_pad": 0,
-     "power_mars": 0.16,
+     "power_mars": 0,
      "regolith_build": 0,
-     "rover_traverse": 0.2,
+     "rover_traverse": 0,
      "isolation": 0,
      "astrobio": 0
     }
    },
    {
-    "place": "Parwan Province, Afghanistan",
+    "place": "Xizang, China",
+    "lat": 29.75,
+    "lon": 91.15,
+    "tasks": {
+     "eva_cold_rough": 0,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Kapisa Province, Afghanistan",
     "lat": 35.15,
-    "lon": 69.251,
+    "lon": 69.55,
     "tasks": {
-     "eva_cold_rough": 0,
+     "eva_cold_rough": 0.84,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
@@ -2874,27 +2849,27 @@
     }
    },
    {
-    "place": "Tacna, Peru",
-    "lat": -17.85,
-    "lon": -70.049,
+    "place": "Xinjiang, China",
+    "lat": 43.15,
+    "lon": 84.75,
     "tasks": {
-     "eva_cold_rough": 0,
+     "eva_cold_rough": 0.71,
      "grazing_sun": 0,
      "cold_trap": 0,
-     "permafrost_drill": 0,
+     "permafrost_drill": 0.34,
      "dust_ops": 0,
      "landing_pad": 0,
-     "power_mars": 0,
+     "power_mars": 0.38,
      "regolith_build": 0,
-     "rover_traverse": 0.35,
+     "rover_traverse": 0.4,
      "isolation": 0,
      "astrobio": 0
     }
    },
    {
-    "place": "Canary Islands, Spain",
-    "lat": 28.25,
-    "lon": -16.549,
+    "place": "Himachal Pradesh, India",
+    "lat": 32.15,
+    "lon": 77.25,
     "tasks": {
      "eva_cold_rough": 0,
      "grazing_sun": 0,
@@ -2905,24 +2880,6 @@
      "power_mars": 0,
      "regolith_build": 0,
      "rover_traverse": 0,
-     "isolation": 0,
-     "astrobio": 0
-    }
-   },
-   {
-    "place": "Ad Dakhiliyah Governorate, Oman",
-    "lat": 23.05,
-    "lon": 57.551,
-    "tasks": {
-     "eva_cold_rough": 0,
-     "grazing_sun": 0,
-     "cold_trap": 0,
-     "permafrost_drill": 0,
-     "dust_ops": 0,
-     "landing_pad": 0,
-     "power_mars": 0,
-     "regolith_build": 0,
-     "rover_traverse": 0.27,
      "isolation": 0,
      "astrobio": 0
     }
@@ -2930,11 +2887,29 @@
   ],
   "jezero": [
    {
-    "place": "Tehran Province, Iran",
-    "lat": 35.55,
-    "lon": 51.751,
+    "place": "Xinjiang, China",
+    "lat": 36.95,
+    "lon": 80.05,
     "tasks": {
-     "eva_cold_rough": 0.28,
+     "eva_cold_rough": 0.43,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0.52,
+     "power_mars": 0.67,
+     "regolith_build": 0,
+     "rover_traverse": 1,
+     "isolation": 0,
+     "astrobio": 0.29
+    }
+   },
+   {
+    "place": "Chuy Region, Kyrgyzstan",
+    "lat": 42.35,
+    "lon": 73.95,
+    "tasks": {
+     "eva_cold_rough": 0.74,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
@@ -2948,29 +2923,11 @@
     }
    },
    {
-    "place": "Zanjan Province, Iran",
-    "lat": 36.75,
-    "lon": 48.451,
+    "place": "Qinghai, China",
+    "lat": 37.75,
+    "lon": 101.35,
     "tasks": {
-     "eva_cold_rough": null,
-     "grazing_sun": null,
-     "cold_trap": null,
-     "permafrost_drill": null,
-     "dust_ops": null,
-     "landing_pad": null,
-     "power_mars": null,
-     "regolith_build": null,
-     "rover_traverse": null,
-     "isolation": null,
-     "astrobio": null
-    }
-   },
-   {
-    "place": "Takhar Province, Afghanistan",
-    "lat": 36.45,
-    "lon": 69.351,
-    "tasks": {
-     "eva_cold_rough": 0.17,
+     "eva_cold_rough": 0.6,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
@@ -2984,29 +2941,11 @@
     }
    },
    {
-    "place": "Balochistan, Pakistan",
-    "lat": 30.25,
-    "lon": 67.151,
+    "place": "Xizang, China",
+    "lat": 30.05,
+    "lon": 90.55,
     "tasks": {
-     "eva_cold_rough": null,
-     "grazing_sun": null,
-     "cold_trap": null,
-     "permafrost_drill": null,
-     "dust_ops": null,
-     "landing_pad": null,
-     "power_mars": null,
-     "regolith_build": null,
-     "rover_traverse": null,
-     "isolation": null,
-     "astrobio": null
-    }
-   },
-   {
-    "place": "Rif Dimashq Governorate, Syria",
-    "lat": 33.65,
-    "lon": 36.351,
-    "tasks": {
-     "eva_cold_rough": 0,
+     "eva_cold_rough": 0.35,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
@@ -3015,6 +2954,24 @@
      "power_mars": 0,
      "regolith_build": 0,
      "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Bamyan Province, Afghanistan",
+    "lat": 34.65,
+    "lon": 67.65,
+    "tasks": {
+     "eva_cold_rough": 0.77,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0.61,
+     "regolith_build": 0,
+     "rover_traverse": 0.79,
      "isolation": 0,
      "astrobio": 0
     }
@@ -3022,16 +2979,16 @@
   ],
   "arcadia": [
    {
-    "place": "Tehran Province, Iran",
-    "lat": 35.45,
-    "lon": 51.751,
+    "place": "Xinjiang, China",
+    "lat": 37.05,
+    "lon": 79.85,
     "tasks": {
-     "eva_cold_rough": 0.05,
+     "eva_cold_rough": 0,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
      "dust_ops": 0,
-     "landing_pad": 0.49,
+     "landing_pad": 0,
      "power_mars": 0,
      "regolith_build": 0,
      "rover_traverse": 0,
@@ -3040,75 +2997,75 @@
     }
    },
    {
-    "place": "Kabul Province, Afghanistan",
-    "lat": 34.55,
-    "lon": 69.351,
-    "tasks": {
-     "eva_cold_rough": 0.17,
-     "grazing_sun": 0,
-     "cold_trap": 0,
-     "permafrost_drill": 0,
-     "dust_ops": 0,
-     "landing_pad": 0.48,
-     "power_mars": 0,
-     "regolith_build": 0.31,
-     "rover_traverse": 0.21,
-     "isolation": 0,
-     "astrobio": 0
-    }
-   },
-   {
-    "place": "Isfahan Province, Iran",
-    "lat": 32.55,
-    "lon": 51.351,
-    "tasks": {
-     "eva_cold_rough": null,
-     "grazing_sun": null,
-     "cold_trap": null,
-     "permafrost_drill": null,
-     "dust_ops": null,
-     "landing_pad": null,
-     "power_mars": null,
-     "regolith_build": null,
-     "rover_traverse": null,
-     "isolation": null,
-     "astrobio": null
-    }
-   },
-   {
-    "place": "Al Batinah South Governorate, Oman",
-    "lat": 23.55,
-    "lon": 57.951,
+    "place": "Xizang, China",
+    "lat": 31.55,
+    "lon": 91.95,
     "tasks": {
      "eva_cold_rough": 0,
      "grazing_sun": 0,
      "cold_trap": 0,
      "permafrost_drill": 0,
      "dust_ops": 0,
-     "landing_pad": 0.69,
+     "landing_pad": 0,
      "power_mars": 0,
-     "regolith_build": 0.71,
-     "rover_traverse": 0.67,
+     "regolith_build": 0,
+     "rover_traverse": 0,
      "isolation": 0,
      "astrobio": 0
     }
    },
    {
-    "place": "Makkah Region, Saudi Arabia",
-    "lat": 21.75,
-    "lon": 39.251,
+    "place": "Qinghai, China",
+    "lat": 37.55,
+    "lon": 100.55,
     "tasks": {
-     "eva_cold_rough": null,
-     "grazing_sun": null,
-     "cold_trap": null,
-     "permafrost_drill": null,
-     "dust_ops": null,
-     "landing_pad": null,
-     "power_mars": null,
-     "regolith_build": null,
-     "rover_traverse": null,
-     "isolation": null,
-     "astrobio": null
+     "eva_cold_rough": 0.4,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Maidan Wardak Province, Afghanistan",
+    "lat": 34.55,
+    "lon": 68.05,
+    "tasks": {
+     "eva_cold_rough": 0.47,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0.73,
+     "power_mars": 0.62,
+     "regolith_build": 0,
+     "rover_traverse": 0.81,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Naryn Region, Kyrgyzstan",
+    "lat": 41.85,
+    "lon": 75.25,
+    "tasks": {
+     "eva_cold_rough": 0.48,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0.24,
+     "dust_ops": 0,
+     "landing_pad": 0.5,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
     }
    }
   ]
