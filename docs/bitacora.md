@@ -2,6 +2,18 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 2)
+
+### Puntuación v2: sin clima y con accesibilidad
+- Decisión del equipo: **quitar el clima** de la puntuación y **valorar si es factible llevar materiales y personas** al sitio.
+- **Accesibilidad:** tiempo de viaje a la ciudad más cercana de ≥50 000 habitantes (Oxford MAP 2015, Weiss et al. 2018). Nota = 1 − ln(1+h)/ln(73). Total = media de Superficie, Relieve y Accesibilidad.
+- Primer resultado: ganaban Lima, el Caspio y el golfo de Patras. Se añadieron dos exclusiones: celdas con más de un 5 % de suelo urbano (MODIS MCD12Q1) y celdas con albedo < 0,08 (costa con agua).
+- **Nuevos candidatos:** terrenos áridos y desnudos a menos de ~1 h de una ciudad, en Irán (Isfahán, Teherán, Qazvín), Afganistán (Parwán, Kabul), el sur de Perú (Tacna, Arequipa), Omán (montes Hajar), Canarias (Tenerife) y Argentina (San Juan). Los candidatos de la v1 en Nunavut quedaban a unos 6 días de una ciudad.
+- Validación: 7–8 de los 25 análogos conocidos quedan en el 10 % mejor (Death Valley, Hawái, Wadi Rum, Lanzarote…).
+- Asset nuevo `terra_access_01deg` (público). En `data/ee/access/` están la accesibilidad, su nota y la fracción urbana; en `data/ee/scores/*_total.tif` los totales v2. Se eliminan los mapas `*_clima.tif`.
+- Problemas en Earth Engine: `reduceResolution` + `reproject` daba «User memory limit» en la descarga directa y «Reprojection output too large» en batch. Se resolvió con `focalMean` de 11 km a resolución nativa, muestreado en el centro de cada celda.
+- ⚠ El guion de `docs/pitch.md` sigue con los candidatos de la v1: hay que reescribirlo.
+
 ## 2026-11-14 (noche, 5) · Visor 3D: imagen real por defecto en los tres cuerpos (Jefe)
 
 zexu: «¿por qué no se ven los biomas?». El gris neutro era el modo por defecto (decisión del 14/11, noche 2). Ahora, a petición suya, el modo por defecto es «Real imagery» y el gris queda como opción («Same grey (compare shapes)»).
