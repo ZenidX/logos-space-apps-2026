@@ -285,7 +285,16 @@ export default function Terrain3D({ load, title, subtitle, sunElevationDeg, exag
           )
         }
       >
-        <div ref={mount} className="h-full w-full" />
+        <div
+          ref={mount}
+          role="img"
+          aria-label={`3D terrain, ${subtitle}: ${title}.${
+            stats
+              ? ` Relief ${Math.round(stats.reliefM)} m, mean slope ${stats.meanSlopeDeg.toFixed(1)}°, max slope ${stats.maxSlopeDeg.toFixed(0)}°.`
+              : ""
+          }`}
+          className="h-full w-full"
+        />
         {state === "error" && (
           <div role="alert" className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm" style={{ color: "var(--warn)" }}>
             {err}

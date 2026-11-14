@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { loadEarthTerrain, type TerrainData } from "@/lib/terrain";
 
@@ -29,31 +29,70 @@ export default function Viewer3D({ site, target, onClose }: { site: ViewerSite; 
   const [ex, setEx] = useState(1);
   const [look, setLook] = useState<"relief" | "imagery">("imagery");
   const loadEarth = useCallback(() => loadEarthTerrain(site.lat, site.lon), [site.lat, site.lon]);
+  const dialog = useRef<HTMLDivElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  }, [onClose]);
   useEffect(() => {
     const prev = document.body.style.overflow;
+    const opener = document.activeElement as HTMLElement | null; // el foco vuelve aquí al cerrar
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    closeBtn.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return closeRef.current();
+      // Atrapa el foco dentro del diálogo (Tab / Mayús+Tab)
+      if (e.key !== "Tab" || !dialog.current) return;
+      const f = dialog.current.querySelectorAll<HTMLElement>("button, input, [href], [tabindex]:not([tabindex='-1'])");
+      if (!f.length) return;
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
+      opener?.focus?.();
     };
-  }, [onClose]);
+  }, []);
 
+  const pill = "min-h-[32px] px-1 underline";
   return createPortal(
-    <div className="fixed inset-0 z-[2000] flex flex-col bg-[rgba(4,8,15,.97)] backdrop-blur" role="dialog" aria-modal="true">
+    <div
+      ref={dialog}
+      className="fixed inset-0 z-[2000] flex flex-col bg-[rgba(4,8,15,.97)] backdrop-blur"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="viewer3d-title"
+      aria-describedby="viewer3d-desc"
+    >
       <header className="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-3">
         <div className="min-w-0">
           <p className="etq" data-n="3D">
             11 × 11 km in 3D · same scale
           </p>
-          <h2 className="mt-1 truncate text-lg">{site.name}</h2>
+          <h2 id="viewer3d-title" className="mt-1 truncate text-lg">
+            {site.name} <span className="sr-only">compared with {target.name}</span>
+          </h2>
+          <p id="viewer3d-desc" className="sr-only">
+            Left, the Earth candidate; right, the {target.short} site. Both show the same area with the same light. Their
+            relief and slope are listed on each view.
+          </p>
         </div>
         <button
+          ref={closeBtn}
           onClick={onClose}
-          className="btn-cut shrink-0 border border-[var(--line2)] px-3 py-2 font-mono text-xs uppercase tracking-[.08em] hover:text-[var(--acc)]"
+          className="btn-cut min-h-[var(--tap)] shrink-0 border border-[var(--line2)] px-3 font-mono text-xs uppercase tracking-[.08em] hover:text-[var(--acc)]"
         >
-          Close ✕
+          Close <span aria-hidden>✕</span>
         </button>
       </header>
 
@@ -87,35 +126,66 @@ export default function Viewer3D({ site, target, onClose }: { site: ViewerSite; 
       </div>
 
       <footer className="grid gap-3 border-t border-[var(--line)] px-4 pt-3 pb-[max(env(safe-area-inset-bottom),12px)] font-mono text-[11px] uppercase tracking-[.06em] text-[var(--mut)] sm:grid-cols-2">
-        <label className="flex flex-col gap-1">
-          <span>
-            Sun elevation: <b className="text-[var(--acc)]">{sun.toFixed(1)}°</b>
-          </span>
-          <input type="range" min={0.5} max={70} step={0.5} value={sun} onChange={(e) => setSun(+e.target.value)} className="accent-[var(--acc)]" />
-          <span className="flex gap-2">
-            <button onClick={() => setSun(target.sunPresetDeg)} className="text-[var(--acc)] underline">
+        {/* Cada <label> envuelve solo su deslizador; los botones van fuera para no entrar en su nombre accesible */}
+        <div className="flex flex-col gap-1">
+          <label className="flex flex-col gap-1">
+            <span>
+              Sun elevation: <b className="text-[var(--acc)]">{sun.toFixed(1)}°</b>
+            </span>
+            <input
+              type="range"
+              min={0.5}
+              max={70}
+              step={0.5}
+              value={sun}
+              aria-valuetext={`${sun.toFixed(1)} degrees`}
+              onChange={(e) => setSun(+e.target.value)}
+              className="accent-[var(--acc)]"
+            />
+          </label>
+          <span className="flex gap-3">
+            <button onClick={() => setSun(target.sunPresetDeg)} className={`${pill} text-[var(--acc)]`}>
               {target.short} sun ({target.sunPresetDeg}°)
             </button>
-            <button onClick={() => setSun(45)} className="underline">
+            <button onClick={() => setSun(45)} className={pill}>
               Midday (45°)
             </button>
           </span>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span>
-            Vertical exaggeration: <b className="text-[var(--acc)]">×{ex}</b>
-          </span>
-          <input type="range" min={1} max={5} step={0.5} value={ex} onChange={(e) => setEx(+e.target.value)} className="accent-[var(--acc)]" />
-          <span className="flex gap-2">
-            <button onClick={() => setLook("imagery")} className={look === "imagery" ? "text-[var(--acc)] underline" : "underline"}>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="flex flex-col gap-1">
+            <span>
+              Vertical exaggeration: <b className="text-[var(--acc)]">×{ex}</b>
+            </span>
+            <input
+              type="range"
+              min={1}
+              max={5}
+              step={0.5}
+              value={ex}
+              aria-valuetext={`times ${ex}`}
+              onChange={(e) => setEx(+e.target.value)}
+              className="accent-[var(--acc)]"
+            />
+          </label>
+          <span className="flex gap-3" role="group" aria-label="Surface look">
+            <button
+              aria-pressed={look === "imagery"}
+              onClick={() => setLook("imagery")}
+              className={`${pill} ${look === "imagery" ? "text-[var(--acc)]" : ""}`}
+            >
               Real imagery
             </button>
-            <button onClick={() => setLook("relief")} className={look === "relief" ? "text-[var(--acc)] underline" : "underline"}>
+            <button
+              aria-pressed={look === "relief"}
+              onClick={() => setLook("relief")}
+              className={`${pill} ${look === "relief" ? "text-[var(--acc)]" : ""}`}
+            >
               Same grey (compare shapes)
             </button>
           </span>
           <span className="normal-case tracking-normal text-[var(--dim)]">Drag to rotate · pinch to zoom</span>
-        </label>
+        </div>
       </footer>
     </div>,
     document.body,

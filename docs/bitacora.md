@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 10) · Visor 3D accesible (C_1)
+
+- **Diálogo:** tiene nombre («{candidato} compared with {objetivo}») y una descripción para lector de pantalla. Al abrirse, el foco va a «Close»; Tab y Mayús+Tab no salen del diálogo, y al cerrar (botón o Esc) el foco vuelve al botón que lo abrió.
+- **Controles:** cada `<label>` envuelve solo su deslizador. Antes el nombre accesible del deslizador incluía el texto de los botones («Midday (45°)»…). Los deslizadores tienen `aria-valuetext` («25.0 degrees», «times 2»), los botones «Real imagery / Same grey» llevan `aria-pressed` y el «✕» de Close ya no se lee.
+- **Terreno:** el lienzo 3D es `role="img"`, con un resumen leíble: «3D terrain, Earth · candidate: 33.95°N 51.35°E. Relief 1171 m, mean slope 6.9°, max slope 61°.»
+- Comprobado en Chrome (/3d, Isfahan frente a Shackleton) con `tsc` y `eslint` sin avisos.
+
 ## 2026-11-14 (noche, 9) · Escena Luna → Tierra por tiempo, no por scroll
 
 Pedido del usuario: el viaje de la Luna a la Tierra de la portada dependía del scroll (3,2 pantallas fijas) y se hacía pesado.
