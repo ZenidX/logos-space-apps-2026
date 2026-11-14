@@ -1,3 +1,4 @@
+// AI-assisted (Claude), reviewed by team Logos
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 

@@ -1,4 +1,5 @@
 "use client";
+// AI-assisted (Claude), reviewed by team Logos
 
 // Globo 3D girable (Tierra, Luna o Marte) con marcadores como BOTONES reales sobre el canvas.
 // Reused from the team's earlier prototype (~/spaceapp, same team).

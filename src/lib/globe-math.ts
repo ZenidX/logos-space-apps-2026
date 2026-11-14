@@ -1,3 +1,4 @@
+// AI-assisted (Claude), reviewed by team Logos
 // Matemática pura del globo (sin DOM): se puede probar en Node. Convención three.js:
 // SphereGeometry pone lon 0 en +X, lon -90 en +Z, lat +90 en +Y (ver test en globe-math.test.mjs).
 import * as THREE from "three";

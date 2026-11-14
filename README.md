@@ -18,11 +18,21 @@ npm run build   # static export to out/
 ```
 
 ## Use of AI
-AI assistants (Claude agents) were used only as tools: to search and summarise sources and datasets, to write and review code, and to draft texts that the team reviewed. AI was not used to come up with the idea or the approach. Nothing generated with AI carries NASA logos or insignia.
+The idea and the approach of this project are entirely our team's own: finding Earth analog sites **per mission** and weighing each one by its **geopolitical access risk**. No AI tool was used to come up with the idea, the problem framing or the solution design.
+
+We used AI (Claude agents by Anthropic, via Claude Code) only as a tool, for three tasks:
+- **Code:** writing and debugging parts of the web app and the data-processing scripts.
+- **Data search:** finding and summarising public datasets and their licenses. Every dataset we kept was checked by the team at its original source.
+- **Writing:** drafting and editing documentation and texts in English.
+
+The team reviewed, tested and approved every AI-assisted output. AI-assisted code and data files are listed in [`AI_USAGE.md`](AI_USAGE.md) and marked in their headers and metadata. We did not use AI to generate images or video. No AI-generated content contains NASA logos, insignia or other NASA marks.
 
 ## Data and credits
-- Globe textures: NASA GIBS Blue Marble; LROC WAC mosaic via NASA's Scientific Visualization Studio; Viking MDIM 2.1 (NASA/USGS). Details in `docs/licencias-texturas.md`.
+- Earth: NASA Blue Marble via NASA GIBS.
+- Moon: LROC WAC mosaic, CGI Moon Kit, NASA's Scientific Visualization Studio (NASA/GSFC/Arizona State University).
+- Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.
+- Software: three.js (MIT), Next.js (MIT, © Vercel, Inc.), React (MIT, © Meta Platforms, Inc.), Tailwind CSS (MIT).
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
 - Mission and dataset sources: to be added.
 
-NASA does not endorse this project.
+This project is not endorsed by NASA.

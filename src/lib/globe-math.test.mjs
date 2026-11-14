@@ -1,3 +1,4 @@
+// AI-assisted (Claude), reviewed by team Logos
 // Ejecutar: copiar junto a globe-math.ts en una carpeta con node_modules (three) y `node globe-math.test.mjs`
 import assert from "node:assert/strict";
 import * as THREE from "three";

@@ -1,4 +1,5 @@
 "use client";
+// AI-assisted (Claude), reviewed by team Logos
 
 import dynamic from "next/dynamic";
 import { GLOBE_TEX, type GlobeBody } from "@/lib/globe-tex";
@@ -35,6 +36,9 @@ export default function Home() {
           </figure>
         ))}
       </section>
+      <footer className="mt-10 text-xs text-[var(--mut)]">
+        NASA Space Apps Challenge 2026 · team Logos. Imagery: NASA GIBS, NASA SVS / LROC WAC, NASA/USGS Viking MDIM 2.1. This project is not endorsed by NASA.
+      </footer>
     </main>
   );
 }

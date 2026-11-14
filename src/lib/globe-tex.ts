@@ -1,3 +1,4 @@
+// AI-assisted (Claude), reviewed by team Logos
 export type GlobeBody = "earth" | "moon" | "mars";
 
 // Equirectangular textures (credits and licences: docs/licencias-texturas.md).
