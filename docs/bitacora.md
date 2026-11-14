@@ -5,7 +5,8 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 ## 2026-11-14 (noche, 6) · Guion del vídeo de 30 s
 
 Valorados los tres guiones del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`) y fundidos en una estructura v0 en [docs/guion-video.md](guion-video.md): contexto de Leo, pregunta de Víctor, producto en una frase y lema de Leo. Propuestas 3 intros y 3 cierres dramáticos, con tres parejas (recomendada: «un pequeño paso» + «el salto empieza aquí»). Quedan para después las cifras del presupuesto (fuente oficial) y el nombre «Open Spaces».
-Elegida la pareja A + 1. Escrita la v1 cronometrada (57 palabras de voz más ~4 s de audio de Armstrong), con la lista de piezas y cómo grabar el plano de la bota.
+Elegida la pareja A + 1. Escrita la v1 cronometrada (57 palabras de voz más ~4 s de audio de Armstrong), con la lista de piezas.
+Corrección: el equipo no grabará metraje propio. Todas las imágenes salen de archivo de la NASA, de la web y del visor 3D, o de gráficos generados; el cierre usa archivo de pruebas análogas de la NASA en la Tierra.
 
 ## 2026-11-14 (noche, 5) · Visor 3D: imagen real por defecto en los tres cuerpos (Jefe)
 

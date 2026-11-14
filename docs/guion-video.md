@@ -17,7 +17,7 @@
 | 0:09–0:13 | La Tierra de noche que gira hacia el Ártico | *"What if we rehearsed the Moon and Mars here on Earth?"* | 11 |
 | 0:13–0:20 | Mapa global → candidato → visor 3D Tierra frente a Luna → *"where it breaks"* | *"Terra Analog scans Earth with NASA data for new analogs — and shows where each one breaks."* | 16 |
 | 0:20–0:24 | Paisajes extremos y gente: estudiantes, ingenieros | *"Open Spaces then opens them to students and explorers."* | 9 |
-| 0:24–0:27 | Bota moderna (grabada por el equipo) pisa grava gris, encuadre calcado al del Apolo | *"The next giant leap…"* | 4 |
+| 0:24–0:27 | Archivo NASA de una prueba análoga en la Tierra: alguien con traje camina por terreno gris (p. ej. Desert RATS en Arizona o Haughton-Mars en Devon Island, Nunavut) | *"The next giant leap…"* | 4 |
 | 0:27–0:30 | La huella en la Tierra → título «Terra Analog · Team Logos» | *"…starts with a small step here."* | 6 |
 
 **Total:** 57 palabras de voz, más ~4 s de Armstrong. El centro (0:09–0:24) va a ~2,4 palabras/s: es lo que más hay que vigilar al generar la voz.
@@ -29,12 +29,14 @@
 | Cifras del presupuesto para la gráfica (fuente oficial) | por decidir | pendiente (se concretan después) |
 | La Tierra de noche (NASA Black Marble) | Claude | pendiente |
 | Grabación de la web: mapa, candidato, visor 3D, *where it breaks* | Claude | pendiente |
-| Paisajes extremos y gente para «Open Spaces» | por decidir: archivo libre o grabación propia | pendiente |
-| **Plano de la bota** | **Equipo** | pendiente |
+| Paisajes extremos y gente para «Open Spaces» (archivo NASA de campañas análogas y paisajes del visor 3D) | Claude | pendiente |
+| Plano del cierre: prueba análoga de la NASA en la Tierra | Claude | pendiente |
 | Voz en ElevenLabs (cuando el texto esté cerrado) | Equipo | pendiente |
 | Nombre definitivo «Open Spaces» | Equipo | pendiente |
 
-**Cómo grabar la bota:** el móvil a ras de suelo y fijo (apoyado, no en la mano), en horizontal, a cámara lenta (120 o 240 fps) si se puede. Vale cualquier grava o tierra gris y suelta, con luz dura y de lado (sol bajo o una linterna) para que la huella haga sombra como en la Luna. Un paso que entra en el cuadro y la huella que queda, unos 3–5 s. Mejor 3 o 4 tomas.
+**Sin metraje propio:** todas las imágenes salen de archivo de la NASA (dominio público, citado), de grabaciones de nuestra web y del visor 3D, o de gráficos generados por Claude (gráfica, títulos). El equipo pone la voz y las decisiones.
+
+**Plan B para el cierre**, si no aparece un buen plano de archivo: vuelo del visor 3D a ras del candidato de Nunavut, con la huella del Apolo superpuesta en un fundido.
 
 > Ojo con el texto: la foto famosa de la huella (AS11-40-5878) es de **Aldrin**, no de Armstrong. Para que case con su voz, usar la imagen de TV del primer paso de Armstrong o no decir de quién es la huella.
 
@@ -98,11 +100,11 @@ Cuanto más larga sea la intro, menos le queda al centro. Con una intro de 9 s y
 ### Cierre 1 · «El salto empieza aquí» (espejo de la intro A)
 | Tiempo | Imagen | Sonido |
 |---|---|---|
-| 0:24–0:27 | Una bota moderna (la de alguien del equipo, grabada por nosotros) pisa grava gris en la Tierra; encuadre calcado de la huella del Apolo | VO: *"The next giant leap…"* |
+| 0:24–0:27 | Archivo NASA de una prueba análoga: traje en terreno gris de la Tierra, encuadrado como la huella del Apolo | VO: *"The next giant leap…"* |
 | 0:27–0:30 | La huella en la Tierra → título «Terra Analog» | VO: *"…starts with a small step here."* |
 
 - Cierra el *"small step"* de la intro A con el *"giant leap"* que se había cortado. Es el cierre más redondo.
-- Necesitamos grabar la bota: con el móvil, a ras de suelo, a cámara lenta si se puede.
+- Todo de archivo: Desert RATS (Arizona) o Haughton-Mars (Devon Island, en la misma región que nuestros candidatos).
 
 ### Cierre 2 · «Mirar más cerca»
 | Tiempo | Imagen | Sonido |
