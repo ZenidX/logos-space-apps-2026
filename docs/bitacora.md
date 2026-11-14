@@ -2,6 +2,33 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-14 (noche, 8) · Estrategias de base y matriz de operaciones análogas
+
+Encargo del usuario (vía C_0), hecho en la sesión C_2.
+- Nuevo [estrategias-bases.md](estrategias-bases.md): una base para cada objetivo, con ubicación, energía, recursos, comunicaciones, terreno y riesgos, con fuentes NASA y científicas, y las suposiciones marcadas.
+  - **Shackleton:** cresta de conexión con de Gerlache; solar en mástiles y fisión.
+  - **Jezero:** frente del delta; fisión y solar. Sin hielo somero: es su punto débil como base.
+  - **Arcadia:** llanura a ~40–45°N con hielo a < 1 m (SWIM); fisión.
+- **Matriz reproducible «tarea × condiciones × sitios».** 11 tareas (EVA, sol rasante, frío extremo, perforación de hielo, polvo, aterrizaje, energía, construcción con regolito, rover, aislamiento y astrobiología).
+  - Cada condición es una función de deseabilidad sobre nuestras variables.
+  - Se calcula en **toda la rejilla** de `data/ee/`, sin limitarse a los candidatos.
+  - Cada tarea da los 5 mejores sitios separados ≥ 300 km, 3 accesibles (≤ 6 h) y la nota de los 25 análogos conocidos. Si hay empate, gana el sitio más accesible.
+  - Ficheros: `scripts/ops/tasks.mjs` (criterios), `scripts/ops/score-ops.mjs` (cálculo; también rellena la tabla del documento) y `scripts/ops/geotiff.mjs` (lector de GeoTIFF sin dependencias).
+  - Resultado en `src/data/operations.json`.
+- **Resultados principales:**
+  - Sol rasante → Svalbard.
+  - Frío extremo → meseta antártica (Concordia).
+  - Astrobiología, polvo y aterrizaje → Atacama.
+  - Permafrost → Ladakh, Badajshán y Devon.
+  - EVA con aire fino → Pamir y Karakórum.
+  - Aislamiento → Nunavut y Groenlandia.
+- **Hallazgo:** los 5 mejores candidatos de cada objetivo (Irán, Afganistán, Canarias…) no llegan a 0,8 en ninguna tarea. Parecerse en conjunto no equivale a servir para ensayar una operación.
+- **Fallo encontrado en `data/ee/*.tif`:** la rejilla estaba estirada a ±90°. Se avisó a C_0, que lo corrigió (`484e9b5`). El script lee la georreferencia de cada fichero y comprueba las altitudes contra `ee-global.json`.
+- **Pendiente:**
+  - Presión, viento y polvo de MERRA-2 (`data/ee/atmo/`, de C_0). Mientras tanto, la presión se estima desde la altitud y los criterios de polvo se omiten.
+  - Capas de permafrost (ESA CCI), litología (ASTER) y lagos secos.
+  - Una vista en la web (propuesta a C_0 y C_1; no se ha tocado ningún componente).
+
 ## 2026-11-14 (noche, 7) · Accesibilidad y una web que se explica sola
 
 Prioridad del usuario: que se pueda usar y entender sin nadie que la presente.
