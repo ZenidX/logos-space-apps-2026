@@ -22,6 +22,5 @@ SOFTWARE.
 
 ---
 This licence covers the source code only. Third-party data and imagery keep
-their own licences (see "Method & sources" in the app and README.md).
-Protected-area flags derived from WDPCA are not covered by this licence; see
-protectedplanet.net terms.
+their own licences (see "Method & sources" in the app, README.md and
+docs/sources.md).

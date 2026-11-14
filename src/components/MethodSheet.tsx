@@ -54,7 +54,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.</li>
           <li>• three.js, Next.js, React (MIT). Fonts: Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).</li>
         </ul>
-        <h3 className="label mt-6">Use of AI</h3>
+        <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>
         <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and approach are our team&apos;s own. AI assistants (Claude) were used only as tools for code, data search and drafting texts; the team reviewed everything. No AI-generated images or video.</p>
         <p className="mt-6 text-[12px] text-[var(--dim)]">Data prepared {DATA_DATE}. NASA Space Apps Challenge 2026 · team Logos. Globes not to scale. This project is not endorsed by NASA.</p>
       </div>

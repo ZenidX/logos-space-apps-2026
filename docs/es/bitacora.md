@@ -2,6 +2,12 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-14 · 22:24 · Auditoría total (orden de zexu): primera tanda
+- Legal: documentos en español movidos a `docs/es/` (la guía exige inglés en todo lo enlazado); `docs/idea-origin.md` y `docs/missions.md` en inglés; término «Super Intelligence (SI) / AI»; WDPCA fuera de README y LICENSE (los datos los regenera Logos Datos sin WDPCA).
+- Móvil 390 px: cabecera compacta sin pisar los globos, escena al 46 % del alto. Enlace directo `?m=<misión>`.
+- Rendimiento: arranque de la escena por pasos y sin antialias en pantallas < 700 px. Lighthouse en vivo antes: escritorio 95, móvil 76 (accesibilidad, buenas prácticas y SEO 100). En local tras el cambio: móvil 81–83.
+- Prueba nueva `src/data/sites.test.mjs`: el índice publicado = 0,5·F + 0,5·(1−D) en los 27 sitios, coordenadas y fuentes.
+
 ## 2026-11-14 · 22:08 · Arreglos de Diseño (revisión en vivo)
 - Móvil: `overflow-x-clip` (el globo se queda fijo al bajar), disposición vertical con aspecto < 1,2 (globos más grandes), separación de marcadores 40 px en táctil, botones de 44 px en táctil.
 - Etiqueta del objetivo encima del marcador (no tapa los arcos); tramo «no puntuado» más claro; halo de la Tierra más suave.

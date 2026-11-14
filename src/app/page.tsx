@@ -35,6 +35,12 @@ export default function Home() {
   const site = sel ? shown.sites.find((s) => s.id === sel) ?? null : null;
   const t = shown.target;
 
+  // Deep link: ?m=<mission id> opens a mission directly (useful for sharing and for recording).
+  useEffect(() => {
+    const m = new URLSearchParams(window.location.search).get("m");
+    if (m && MISSIONS.some((x) => x.id === m)) setMissionId(m as MissionId);
+  }, []);
+
   useEffect(() => {
     if (missionId || paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -69,7 +75,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 h-[50dvh] w-full transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? "md:left-0 md:right-[404px]" : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 h-[46dvh] w-full pt-12 md:pt-0 transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? "md:left-0 md:right-[404px]" : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
@@ -85,12 +91,12 @@ export default function Home() {
         )}
       </div>
 
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-3 p-4 md:px-8">
-        <button onClick={home} className="display pointer-events-auto text-[17px] font-semibold">Logos <span className="text-[var(--mut)]">· Mission Analogs</span></button>
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-gradient-to-b from-[var(--bg)] to-transparent px-4 py-2 md:bg-none md:p-4 md:px-8">
+        <button onClick={home} className="display pointer-events-auto text-[17px] font-semibold">Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2">
-          <span className="chip hidden text-[var(--amber)] sm:inline-flex" style={{ borderColor: "var(--amber)" }}>Prototype</span>
-          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} onClick={() => setPaused((p) => !p)}>{paused ? "▶ Play motion" : "❚❚ Pause motion"}</button>
-          <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method & sources</button>
+          <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
+          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
+          <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method &amp; sources</button>
         </div>
       </header>
 

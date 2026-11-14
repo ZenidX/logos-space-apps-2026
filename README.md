@@ -7,7 +7,7 @@
 ## Idea
 Instead of asking "which place on Earth looks like the Moon?", we ask **"where on Earth can we rehearse this specific mission?"** — driving robots or testing suits on sand and regolith-like ground, building a base, operating solar panels under the target's sun angle, extracting water from ice — and we add a neutral **access risk** layer (can a team actually work there?).
 
-The idea is our team's own. See [Use of AI](#use-of-ai).
+The idea is our team's own. See [Use of SI / AI](#use-of-super-intelligence-si--ai).
 
 ## Run locally
 ```bash
@@ -17,7 +17,7 @@ npm test        # globe, scene and arc tests
 npm run build   # static export to out/
 ```
 
-## Use of AI
+## Use of Super Intelligence (SI) / AI
 The idea and the approach of this project are entirely our team's own: finding Earth analog sites **per mission** and weighing each one by its **geopolitical access risk**. No AI tool was used to come up with the idea, the problem framing or the solution design.
 
 We used AI (Claude agents by Anthropic, via Claude Code) only as a tool, for three tasks:
@@ -33,12 +33,12 @@ The team reviewed, tested and approved every AI-assisted output. AI-assisted cod
 - Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.
 - Software: three.js (MIT), Next.js (MIT, © Vercel, Inc.), React (MIT, © Meta Platforms, Inc.), Tailwind CSS (MIT).
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
-- Missions: real analog field campaigns by NASA and ESA (links in the app and in `docs/misiones.md`).
-- Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth, WDPCA (flag only). Full list and licences in the app («Method & sources») and `docs/method.md`, `docs/licencias-geopolitica.md`.
+- Missions: real analog field campaigns by NASA and ESA (links in the app and in `docs/missions.md`).
+- Earth data: NASA MODIS (MOD11A2, MOD13C1, MCD43C3), NASA GPM IMERG, ISRIC SoilGrids 2.0, GLiM; access layer: World Bank WGI, UCDP GED, US and UK travel advice, Natural Earth, Full list and licences in the app («Method & sources») and `docs/method.md` and `docs/sources.md`.
 - Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
 - Front design proposal «Orbit» by the team's design agent; fonts Space Grotesk, IBM Plex Sans, JetBrains Mono (SIL OFL 1.1).
 
 ## Licence
-Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences; protected-area flags derived from WDPCA are not covered by the code licence.
+Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences (see `docs/sources.md`).
 
 This project is not endorsed by NASA.

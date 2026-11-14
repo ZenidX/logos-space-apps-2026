@@ -49,11 +49,18 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
   useEffect(() => {
     const el = host.current;
     if (!el) return;
+    // Staged start: yield to the browser between heavy steps so the page stays responsive while the scene boots.
+    let cancelled = false;
+    let cleanup = () => {};
+    const tick = () => new Promise<void>((r) => setTimeout(r, 0));
+    void (async () => {
+    await tick();
+    if (cancelled) return;
     let renderer: THREE.WebGLRenderer;
     try {
       // ?capture=1 keeps the drawing buffer so screenshots and screen-recording tools can read the canvas.
       const capture = new URLSearchParams(window.location.search).has("capture");
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power", preserveDrawingBuffer: capture });
+      renderer = new THREE.WebGLRenderer({ antialias: window.innerWidth >= 700, alpha: true, powerPreference: "low-power", preserveDrawingBuffer: capture });
     } catch (e) {
       latest.current.onError?.(e);
       return;
@@ -66,6 +73,8 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
     renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block";
     renderer.domElement.setAttribute("aria-hidden", "true");
     el.prepend(renderer.domElement);
+    await tick();
+    if (cancelled) { renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove(); return; }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
@@ -263,7 +272,7 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
     raf = requestAnimationFrame(frame);
     api.current = { sync, invalidate: () => (dirty = true) };
 
-    return () => {
+    cleanup = () => {
       disposed = true; api.current = null;
       cancelAnimationFrame(raf); ro.disconnect(); io.disconnect();
       el.removeEventListener("pointerdown", down); el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up); el.removeEventListener("pointercancel", up);
@@ -272,6 +281,9 @@ export default function Orrery({ mode, markers, arcs, selectedId, onSelect, paus
       disposables.forEach((d) => d.dispose());
       renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
     };
+    if (cancelled) cleanup();
+    })();
+    return () => { cancelled = true; cleanup(); };
   }, []);
 
   return (
