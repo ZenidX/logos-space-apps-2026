@@ -1,0 +1,11 @@
+[0, 6]: Everything we send to the Moon or Mars gets tested on Earth first. But… where?
+
+[6, 13]: TerraVista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
+
+[13, 18]: Testing a spacesuit? An ice drill? It weighs what matters for that mission,
+
+[18, 22]: shows exactly where every analogy breaks,
+
+[22, 27]: and flags the places you can't safely, or legally, go.
+
+[27, 30]: TerraVista. Down to Earth.

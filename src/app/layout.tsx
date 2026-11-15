@@ -9,7 +9,7 @@ const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["lati
 const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "Terra Analog",
+  title: "TerraVista",
   description: "Finding the Moon and Mars on Earth with NASA data — NASA Space Apps Challenge 2026, team Logos.",
   manifest: "manifest.webmanifest",
 };

@@ -1,12 +1,12 @@
 # Logos · NASA Space Apps Challenge 2026
 
-<p align="center"><img src="docs/img/banner.svg" alt="Terra Analog: scanning Earth for places that resemble Moon and Mars base sites" width="100%"></p>
+<p align="center"><img src="docs/img/banner.svg" alt="TerraVista: scanning Earth for places that resemble Moon and Mars base sites" width="100%"></p>
 
 Project of team **Logos** for the NASA Space Apps Challenge 2026 (Barcelona local event, 14-15 November 2026).
 
 **Challenge:** [Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)
 
-## Terra Analog
+## TerraVista
 
 A mobile-first web app that searches all land between 85°N and 85°S for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
 
@@ -25,7 +25,7 @@ flowchart LR
     C --> D["Score per dimension<br/>Surface · Relief · Access"]
     D --> E["Validate against<br/>25 known analog sites"]
     D --> F["Rank new candidates<br/>known sites excluded"]
-    E --> G(["Terra Analog web app"])
+    E --> G(["TerraVista web app"])
     F --> G
 ```
 

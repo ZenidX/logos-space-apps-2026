@@ -2,6 +2,80 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 3) · Vídeo: subtítulos palabra a palabra (prototipo v3)
+
+- **Tiempos de cada palabra:** `video/scripts/align.py` pasa la voz por Vosk (modelo pequeño de inglés, instalado fuera del repo) y la alinea con el guion. 54 de 64 palabras salen tal cual; «TerraVista» (Vosk oye «terror beast») y «spacesuit? An ice drill?» se reparten en el tramo que ocupa ese sonido. Resultado en `video/audio/word-timings.json`.
+- **Estilo:** las palabras van apareciendo una a una (aparecen del 85 al 100 % en 0,12 s), en amarillo, Nimbus Sans negrita a 44 px y sin caja. La frase se compone entera desde el principio, así que la línea no se mueve al ir llegando palabras.
+- **El PC del evento se colgó** con la primera versión: un solo ffmpeg con 64 entradas (una imagen por palabra) agotó la memoria. Ahora `video/scripts/captions.cjs` dibuja los subtítulos con Chrome como una sola secuencia PNG transparente (897 fotogramas, ~35 s) y ffmpeg solo superpone esa secuencia: pico de 1,25 GB y 33 s de montaje.
+- Orden: `capture.cjs` → `overlays.cjs` → `captions.cjs` → `build.sh`. Salida: `video/build/terravista-test-v3.mp4` + `.webm` (29,9 s, 1920×1080, con voz).
+- Sigue faltando: en `origin/main` todavía no están el selector de misión ni los avisos de zonas en conflicto o protegidas, así que los tramos 13–18 y 22–27 siguen en negro. La web publicada sigue con la v2.
+
+## 2026-11-15 (tarde, 2) · Vídeo publicado en una página oculta de la web
+
+- Página `/demo-video/` (sin enlace en el menú y con `noindex`): https://zenidx.github.io/logos-space-apps-2026/demo-video/ · enlace directo al MP4: https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo.mp4
+- Reproductor: el `<video>` nativo del navegador, con MP4 (H.264 + AAC) y copia WebM de respaldo, más una imagen de portada (el cierre). Archivos en `public/demo/` y página en `src/app/demo-video/page.tsx`.
+- Commit `aa278ed`, directo en `main` (encima de `6044abb`, sin tocar nada más), y publicado con `npm run deploy` desde un worktree de `origin/main`. Desde la rama `video` no se puede publicar: lleva una versión vieja de la web.
+- Prueba de punta a punta: la página da 200, el MP4 se sirve como `video/mp4` con peticiones por rangos (206), y en Chrome se reproduce en escritorio (1440 px) y en móvil (390 px): dura 29,9 s, es 1920×1080 y tiene audio.
+- **Para cambiar el vídeo:** sustituir los tres archivos de `public/demo/` en `main`, hacer commit y volver a publicar. Ahora está el montaje de prueba v2 (con planos en negro).
+
+## 2026-11-15 (tarde) · Vídeo: voz de ElevenLabs montada
+
+- `video/audio/voice.wav` (44,1 kHz mono, 30,08 s; fuera de git). La voz termina en el s 29,6, así que el corte a 29,9 s no se come nada. Las pausas entre frases caen en 5,9 · 12,2 · 18,2 · 21,6 · 26,2 · 28,1 s, de acuerdo con `docs/timestamps.txt`.
+- `build.sh` acepta `voice.wav` o `voice.mp3`, recorta a 29,9 s con un fundido de 0,1 s y codifica AAC a 48 kHz (Opus en la copia WebM).
+
+## 2026-11-15 (mediodía, 2) · Vídeo: montaje de prueba v2, horizontal
+
+- Formato **horizontal 16:9** (1920×1080; captura a 1280×720 ×1,5). Duración **29,9 s**: la voz ocupa los 30 s y se recortan 0,1 s del cierre.
+- Subtítulos **amarillos sin caja**, con contorno oscuro, sombra y una entrada con un ligero «pop» (del 90 al 100 % en 0,2 s). Un degradado oscuro suave en la franja inferior hace que se lean sobre cualquier pantalla.
+- Marca de agua: `SI-assisted editing · SI voice: ElevenLabs`.
+- Plano 18–22: se oculta la tarjeta «Every number, every source» para que no compita con el subtítulo, y el título entra entero.
+- `build.sh` genera también una copia WebM (VP9), porque el ordenador del evento no tiene decodificador H.264.
+- Registro actualizado en `docs/normas.md`, `docs/guion-video.md` y en la memoria.
+
+## 2026-11-15 (mediodía) · Vídeo: primer montaje de prueba (v1)
+
+- `video/scripts/capture.cjs`: captura la web pública fotograma a fotograma con un reloj virtual (sin GPU solo salen ~2 capturas/s, así que el tiempo de la página avanza 1/30 s por captura y el movimiento queda fluido). `overlays.cjs`: subtítulos desde `docs/timestamps.txt`, marca de agua de SI y cierre. `build.sh`: montaje con ffmpeg.
+- Resultado: `video/build/terravista-test-v1.mp4` (fuera de git), 1080×1920, 30 fps, 30,000 s exactos, sin audio. Planos: escena Luna → Tierra (0–6), Discover con los tres objetivos (6–13), negro (13–18, ponderación por misión sin pantalla), «Where every analogy breaks» de Method (18–22), negro (22–27, avisos sin pantalla) y cierre (27–30).
+- Por pulir: los textos de la escena Luna → Tierra chocan con los subtítulos; el plano 18–22 enseña poco; la web aún dice «Terra Analog» (el equipo lo sabe).
+
+## 2026-11-15 (mañana, 2) · Guion del vídeo v3: «Down to Earth»
+
+La v2 sonaba floja. La v3 ([docs/guion-video.md](guion-video.md)) se escribe sobre el lema «TerraVista — Down to Earth» y la descripción oficial de la página del proyecto. 62 palabras.
+Hallazgo: la descripción oficial promete dos cosas que la web aún no enseña (comprobado en `origin/main`): la ponderación por misión, que está calculada en `operations.json` pero no sale en ninguna pantalla, y los avisos de zonas en conflicto o protegidas, que no existen. Están apuntadas las frases alternativas por si no da tiempo a construirlas. Además, la rama `video` va por detrás de `origin/main`.
+
+## 2026-11-15 (mañana) · Vídeo de 30 s: normas comprobadas y guion v2
+
+- Normas del vídeo comprobadas de nuevo y decisiones del equipo apuntadas en `docs/normas.md`: menos de 30 s (objetivo 27–28 s), voz y subtítulos en inglés, marca de agua de SI que nombra ElevenLabs y cada plano pensado para un criterio del jurado.
+- Guion v2 desde cero en [docs/guion-video.md](guion-video.md): 61 palabras para ElevenLabs, y la imagen es solo la web animada. Sale de las ideas de los guiones del equipo, sin cifras que no se puedan defender.
+
+## 2026-11-14 (noche, 9) · Vídeo de 30 s: borrón y cuenta nueva
+
+El guion tiene que cumplir unos requisitos nuevos y se empieza de cero. Borrado (recuperable desde el commit `ea2ce49` con `git checkout ea2ce49 -- <ruta>`):
+- `docs/guion-video.md` (guion v1 Apolo/Armstrong y alternativas) y la sección «Vídeo de demo» de `docs/pitch.md`.
+- `video/assets/` entera: el clip del primer paso del Apolo 11, el audio de Armstrong y `CREDITS.md`.
+- Fuera de git: `video/build/` (cinta del Apolo, miniaturas, recortes) y los temporales del reconocedor de voz.
+
+Se quedan los guiones originales del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`), los datos del presupuesto (`video/data/nasa_budget_share.csv`) y las herramientas (`video/tools/`). Los enlaces a esos archivos en entradas anteriores de esta bitácora ya no funcionan.
+
+## 2026-11-14 (noche, 8) · Vídeo, fase 0 y primer material
+
+- Herramientas en `video/tools/` (no se suben a git): ffmpeg 7.0.2 y ffprobe estáticos, y Playwright (`playwright-core`, con el Chrome del sistema).
+- **Cifras del presupuesto comprobadas:** 4,41 % del gasto federal en 1966 (máximo) y 0,33 % en 2026. Las dos frases del guion son correctas. Serie completa en `video/data/nasa_budget_share.csv`.
+- **Imagen del primer paso:** tramo de 35 s de la cinta restaurada del Apolo 11 (NASA Image and Video Library) en `video/assets/archive/`. El audio de Armstrong de la NASA empieza en el s 150,2 de esa cinta (correlación cruzada de la envolvente de audio).
+- **Pendiente:** confirmar de oído cuál de los tres bloques de voz del MP3 es *"That's one small step for man"*. Un reconocedor de voz (Vosk) no entiende la radio de 1969. Probablemente es el bloque 1 (0,3–2,2 s).
+
+## 2026-11-14 (noche, 7) · El producto pasa a llamarse TerraVista; guion v1 del equipo
+
+- **Nombre:** «Terra Analog» → **TerraVista** en la web (`layout.tsx`, `manifest.ts`), README, banner, `package.json` y documentos. El proyecto de Earth Engine y el asset siguen siendo `terra-analog`, porque no se pueden renombrar. La web pública cambiará con el próximo `npm run deploy`.
+- **Guion** ([docs/guion-video.md](guion-video.md)): versión del equipo con los tiempos reajustados (0:00–0:04 / 0:04–0:09 / 0:09–0:13 / 0:13–0:24 / 0:24–0:27 / 0:27–0:30). Vuelve *"and where they break"*. Llevará ~2 s del audio real de Armstrong de fondo al principio. Las funciones de acogida (Open Spaces) se construirán más adelante y saldrán en el vídeo.
+- **Audio de Armstrong** descargado de la NASA (dominio público) en `video/assets/archive/`; créditos en `video/assets/CREDITS.md`.
+
+## 2026-11-14 (noche, 6) · Guion del vídeo de 30 s
+
+Valorados los tres guiones del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`) y fundidos en una estructura v0 en [docs/guion-video.md](guion-video.md): contexto de Leo, pregunta de Víctor, producto en una frase y lema de Leo. Propuestas 3 intros y 3 cierres dramáticos, con tres parejas (recomendada: «un pequeño paso» + «el salto empieza aquí»). Quedan para después las cifras del presupuesto (fuente oficial) y el nombre «Open Spaces».
+Elegida la pareja A + 1. Escrita la v1 cronometrada (57 palabras de voz más ~4 s de audio de Armstrong), con la lista de piezas.
+Corrección: el equipo no grabará metraje propio. Todas las imágenes salen de archivo de la NASA, de la web y del visor 3D, o de gráficos generados; el cierre usa archivo de pruebas análogas de la NASA en la Tierra.
+
 ## 2026-11-14 (noche, 12) · «How it works» con el análisis en 3 fases (C_1)
 
 - «01 Measure» añade presión del aire, viento y polvo (NASA MERRA-2, de ahí «satellites and models»).
