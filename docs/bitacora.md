@@ -2,6 +2,11 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (noche, 25) · Preguntas difíciles del jurado
+
+- Nuevo `docs/preguntas-dificiles.md`: 21 preguntas probables del jurado, agrupadas por los criterios (validez, creatividad, impacto y relevancia, «Plan a base», datos e IA), con la respuesta en inglés lista para decir y, en español, la trampa de cada una. Al principio, las cifras que hay que saber; al final, qué hacer si la demo falla.
+- Aviso: `docs/pitch.md` describe el prototipo anterior (ahora en `/appendix/`); sus cifras no valen para la web actual.
+
 ## 2026-11-15 (noche, 24) · «Plan a base»: la base en la Tierra nada más elegir el sitio
 
 - Pedido: al encontrar o elegir un sitio en la Luna o en Marte, dar enseguida su equivalente en la Tierra; si no, la práctica no tiene sentido. Antes solo aparecía al abrir una submisión.
