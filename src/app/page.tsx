@@ -11,6 +11,7 @@ import SitePanel, { AccessBars } from "@/components/SitePanel";
 import EvidenceBadge from "@/components/Evidence";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
+import MissionPreview from "@/components/MissionPreview";
 import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/missions";
 
 const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
@@ -269,12 +270,12 @@ export default function Home() {
                 {MISSIONS.map((m) => {
                   const c = BODY_COLOR[m.target.body];
                   return (
-                    <button key={m.id} onClick={() => pick(m.id)} title={m.blurb} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ["--glow" as string]: c }}>
+                    <MissionPreview key={m.id} m={m} at="right" className="block"><button onClick={() => pick(m.id)} className="card glass w-full rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ["--glow" as string]: c }}>
                       <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                         <b className="display text-[19px] leading-tight">{m.short}</b>
                         <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
                       </span>
-                    </button>
+                    </button></MissionPreview>
                   );
                 })}
               </div>
@@ -306,8 +307,8 @@ export default function Home() {
 
       {!missionId && (
         <nav className={`dock ${calm || step === "explore" ? "off" : ""}`} aria-label="Jump to a mission">
-          <span>Missions</span>
-          {MISSIONS.map((m) => <button key={m.id} type="button" aria-current={step === m.id ? "step" : undefined} onClick={() => pick(m.id)} style={{ ["--c" as string]: BODY_COLOR[m.target.body] }} title={`${m.short} · ${m.target.name.split(" (")[0]}`}><i aria-hidden />{DOCK_NAME[m.id]}</button>)}
+          <span className="dock-k">Missions</span>
+          {MISSIONS.map((m) => <MissionPreview key={m.id} m={m} at="top"><button type="button" aria-current={step === m.id ? "step" : undefined} onClick={() => pick(m.id)} style={{ ["--c" as string]: BODY_COLOR[m.target.body] }} aria-label={`${m.short}, target ${m.target.name}: open the mission`}><i aria-hidden />{DOCK_NAME[m.id]}</button></MissionPreview>)}
         </nav>
       )}
 
@@ -316,7 +317,9 @@ export default function Home() {
           <div className="flex flex-wrap gap-2" role="group" aria-label="Choose a mission" data-scene-avoid>
             {MISSIONS.map((m) => {
               const c = BODY_COLOR[m.target.body];
-              return <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={m.id === missionId ? { borderColor: c, color: c } : undefined}>{m.short}</button>;
+              return m.id === missionId
+                ? <button key={m.id} aria-pressed onClick={() => pick(m.id)} className="chip glass !py-1.5" style={{ borderColor: c, color: c }}>{m.short}</button>
+                : <MissionPreview key={m.id} m={m} at="bottom"><button aria-pressed={false} onClick={() => pick(m.id)} className="chip glass !py-1.5">{m.short}</button></MissionPreview>;
             })}
           </div>
         </section>

@@ -185,6 +185,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       // the overview stops after a while without any input (nothing is drawn then) and goes on at the next one
       const still = isPaused || reduce, jump = still || first, rest = still || now - idleAt > IDLE_MS, focus = md.kind === "focus" ? md.body : null;
       let moving = false;
+      if (first && latest.current.intro && !still) introT = 0; // opening shot: only when the page opens on its first screen
       // framing: the subject sits in a virtual view (the canvas minus the part kept for text); the rest of the canvas still shows stars
       const fr = latest.current.frame;
       if (fx !== fr.x || fy !== fr.y) {
@@ -235,7 +236,6 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       // camera
       const room = vw >= ROOM_W ? NAME_ROOM : 0; // wide scenes keep room for names on the left of the Earth
       // opening shot: starts once the Earth's map is in, eases out to the overview; leaving the first screen finishes it fast
-      if (first && latest.current.intro && !still) introT = 0; // only when the page opens on its first screen
       if (introT >= 0 && introT < INTRO_S) {
         if (still) introT = INTRO_S; // paused or reduced motion: straight to the overview
         else if (mat.earth.uniforms.uDay.value) introT = Math.min(INTRO_S, introT + dt * (latest.current.intro && !focus ? 1 : 5)); // waits for the Earth's map
@@ -265,7 +265,10 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       // the companion keeps its marked point turned between the camera and the Earth
       if (compBody && target && target.body === compBody) {
         const C = mesh[compBody].position;
-        const face = camPos.clone().sub(C).normalize().multiplyScalar(0.45).addScaledVector(E.clone().sub(C).normalize(), 0.55).normalize();
+        // between the camera and the Earth, then tilted by the target's latitude: a south-polar target shows low on the disc, as it is
+        const base = camPos.clone().sub(C).normalize().multiplyScalar(0.62).addScaledVector(E.clone().sub(C).normalize(), 0.38).normalize();
+        const tilt = -THREE.MathUtils.degToRad(target.lat) * 0.72, upW = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+        const face = base.multiplyScalar(Math.cos(tilt)).addScaledVector(upW, -Math.sin(tilt)).normalize();
         mesh[compBody].quaternion.copy(orientToFace(latLonToVec3(target.lat, target.lon), face));
       }
 
@@ -400,7 +403,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
 
   return (
     <div ref={host} className={`relative h-full w-full overflow-hidden ${paused ? "is-paused" : ""} ${className}`} style={{ touchAction: "pan-y" }} role="group" aria-roledescription="3D scene" aria-label="The Sun with the Earth and Mars on their orbits, and the Moon around the Earth. Choosing a mission moves to a close-up of the Earth with the target world beside it. Sizes are not to scale. The list has the same places as text.">
-      {loading && <div role="status" aria-label="Loading" className="skel absolute inset-[30%] rounded-full" />}
+      {loading && <div role="status" className="boot"><span aria-hidden className="boot-logo" /><span className="boot-t">Loading NASA imagery</span></div>}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {NAMES.map(([id, label]) => <span key={id} ref={(n) => { if (n) names.current.set(id, n); else names.current.delete(id); }} className="body-name absolute left-0 top-0" style={{ visibility: "hidden" }}>{label}</span>)}
       </div>
@@ -422,7 +425,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
             onMouseEnter={m.kind === "candidate" ? () => onHover?.(m.id) : undefined}
             onMouseLeave={m.kind === "candidate" ? () => onHover?.(null) : undefined}
           >
-            <i />
+            <i>{m.kind === "candidate" && m.rank ? <b aria-hidden>{m.rank}</b> : null}</i>
             <span className="mk-l" ref={(n) => { if (n) labs.current.set(m.id, n); else labs.current.delete(m.id); }}>{m.label}</span>
           </button>
         ))}
