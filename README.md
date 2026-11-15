@@ -2,7 +2,7 @@
 
 <img src="public/logo-symbol.svg" width="56" alt="" />
 
-# Logos · Mission Analogs
+# Terra Vista · Mission Analogs
 
 **Where on Earth can we rehearse a specific Moon or Mars mission?**
 

@@ -189,7 +189,7 @@ export default function Home() {
     <main className="stars relative min-h-dvh overflow-x-clip">
       {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
       <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
-        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Logos, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Terra Vista <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           {!missionId && !calm && step !== "explore" && <span className="md:hidden"><button type="button" className="chip" onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}>Missions <span aria-hidden>↓</span></button></span>}
@@ -328,7 +328,7 @@ export default function Home() {
         </section>
       )}
 
-      {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
+      {missionId && <h1 className="sr-only">Terra Vista, Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
         <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 ${site ? "mb-24" : "mb-6"} rounded-[20px] transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-hidden ${site ? "md:w-[min(760px,60vw)]" : "md:w-[420px]"}`} aria-label={shown.title}>
           <div ref={scroller} className={`p-5 md:h-full md:overflow-y-auto ${site ? "md:p-8" : "md:p-6"}`}>

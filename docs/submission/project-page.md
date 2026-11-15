@@ -5,7 +5,7 @@ Figures are taken from `src/data/sites.json` (data v7, built 2026-11-15) and mus
 The fields "NASA Data", "Space Agency Partner Data and Other References" and "Use of Super Intelligence (SI)" are kept in `references.md` (next to this file).
 
 ## Project name
-Logos · Mission Analogs
+Terra Vista
 
 ## Links
 - Final project (live): https://spaceapp-logos.vercel.app
