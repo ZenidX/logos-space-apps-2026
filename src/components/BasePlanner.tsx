@@ -17,6 +17,7 @@ import { planBase, RULES, type BasePlan, type PlanetBody } from "@/lib/base-plan
 import { shapeMatch, shapeSig, subMissions, type Level, type ShapeSig, type SubMission } from "@/lib/submissions";
 import { STEP_DONE, type Layer } from "@/components/BaseScene";
 import operations from "@/data/operations.json";
+import bestSites from "@/data/base-sites.json";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
 const BaseScene = dynamic(() => import("@/components/BaseScene"), { ssr: false });
@@ -27,6 +28,37 @@ interface Site {
   lon: number;
   name: string;
 }
+
+// Los mejores sitios de nuestra búsqueda (scripts/base/find-sites.mts → src/data/base-sites.json; método en docs/sitios-base.md)
+const pctS = (x: number) => `${Math.round(x * 100)} %`;
+const BEST: Record<PlanetBody, (Site & { id: string; why: string; best: true })[]> = {
+  moon: bestSites.moon.map((s, i) => ({
+    id: `best-moon-${i}`,
+    best: true as const,
+    name: `★ Best site ${String.fromCharCode(65 + i)} · ${Math.abs(s.lat)}°S ${Math.abs(s.lon).toFixed(1)}°${s.lon >= 0 ? "E" : "W"}`,
+    lat: s.lat,
+    lon: s.lon,
+    why: `Our search, #${i + 1} of ${bestSites.searched.moon} south-pole sites (score ${s.score.toFixed(2)}): sun ${pctS(s.facts.sunAtHabitat)} of the time at the habitat, cold trap with ice ${s.facts.iceHaulKm ?? "–"} km away, ${s.facts.buildablePct} % buildable.`,
+  })),
+  mars: [
+    {
+      id: "best-mars-wo",
+      best: true as const,
+      name: `★ Best for water + oxygen · ${bestSites.marsWaterOxygen.region}`,
+      lat: bestSites.marsWaterOxygen.lat,
+      lon: bestSites.marsWaterOxygen.lon,
+      why: `${bestSites.marsWaterOxygen.ice} (${bestSites.marsWaterOxygen.iceSource}); air at ${bestSites.marsWaterOxygen.facts.pressurePa} Pa (${(bestSites.marsWaterOxygen.facts.elevationM / 1000).toFixed(1)} km) for oxygen from CO₂.`,
+    },
+    ...bestSites.mars.map((s, i) => ({
+      id: `best-mars-${i}`,
+      best: true as const,
+      name: `★ Best site ${String.fromCharCode(65 + i)} · ${s.region}`,
+      lat: s.lat,
+      lon: s.lon,
+      why: `#${i + 1} of ${bestSites.searched.mars} (score ${s.score.toFixed(2)}). ${s.ice}. Air ${s.facts.pressurePa} Pa; ${s.facts.buildablePct} % buildable.`,
+    })),
+  ],
+};
 
 const PRESETS: Record<PlanetBody, (Site & { id: string; why: string })[]> = {
   moon: [
@@ -316,6 +348,7 @@ export default function BasePlanner() {
   const markers: GlobeMarker[] = useMemo(
     () => [
       ...PRESETS[body].map((p) => ({ id: p.id, lat: p.lat, lon: p.lon, label: p.name, kind: "target" as const })),
+      ...BEST[body].map((p, i) => ({ id: p.id, lat: p.lat, lon: p.lon, label: p.name.replace(/ · .*/, ""), kind: "candidate" as const, rank: i + 1 })),
       ...(site ? [{ id: "pick", lat: site.lat, lon: site.lon, label: site.name, kind: "candidate" as const }] : []),
     ],
     [body, site],
@@ -362,7 +395,7 @@ export default function BasePlanner() {
               markers={markers}
               selectedId={site ? "pick" : null}
               onSelect={(id) => {
-                const p = PRESETS[body].find((x) => x.id === id);
+                const p = [...BEST[body], ...PRESETS[body]].find((x) => x.id === id);
                 if (p) choose(p);
               }}
               onPick={(lat, lon) => choose({ lat, lon, name: coord(lat, lon) })}
@@ -377,7 +410,7 @@ export default function BasePlanner() {
             patch around it.
           </p>
           <ul className="mt-4 flex flex-col gap-2">
-            {PRESETS[body].map((p) => (
+            {[...BEST[body], ...PRESETS[body]].map((p) => (
               <li key={p.id}>
                 <button
                   type="button"

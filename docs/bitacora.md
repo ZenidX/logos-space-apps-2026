@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 17) · Los mejores sitios para una base en la Luna y en Marte (agua y oxígeno incluidos)
+
+- Pedidos de zexu: un sitio en Marte para conseguir agua y oxígeno, y los sitios de la Luna y de Marte con más facilidades para todos los aspectos de una base, **guardados para poder elegirlos**.
+- `scripts/base/find-sites.mts` (`npm run sites:base`, ~25 s): pasa cada punto por el modelo de la base (luz, temperatura, hielo, pendientes, pista, ruta), puntúa cada aspecto y calcula la nota total. Barre 105 puntos del polo sur de la Luna y 82 de las regiones de Marte con hielo publicado (Arcadia/SWIM, Utopia, Deuteronilus, este de Hellas). Resultado en `src/data/base-sites.json`; método y fuentes en `docs/sitios-base.md`.
+- **Luna:** el mejor es **88°S 180°E** (0,84): 51 % de sol en el hábitat, trampa fría a 0,93 km, 63 % edificable.
+- **Marte:** el mejor en conjunto es **Arcadia Planitia 38°N 170°W** (0,86). Para **agua + oxígeno**, **Arcadia Planitia 46°N 170°W** (0,88): hielo a menos de 1 m (SWIM) y aire a 877 Pa a −4 km para sacar O₂ del CO₂.
+- En `/base/` salen con ★ en la lista y en el globo y se pueden elegir.
+
 ## 2026-11-15 (tarde, 16) · La web anterior pasa a un apéndice
 
 - Pedido de zexu: quitar de primer plano lo que quedaba de la web anterior (la de antes de que la app de SpaceApp-Logos fuera la principal) y llevarlo a un apéndice.

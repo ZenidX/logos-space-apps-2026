@@ -1,0 +1,294 @@
+{
+ "generatedAt": "2026-11-15T11:17:47.690Z",
+ "method": "scripts/base/find-sites.mts: each point = 11 × 11 km of real elevation run through src/lib/base-plan.ts (sunlight, temperature, ice, slopes, pad, rover route). Total = weighted geometric mean of the aspect scores. Sources: docs/sitios-base.md.",
+ "searched": {
+  "moon": 105,
+  "mars": 82
+ },
+ "weights": {
+  "moon": {
+   "water": 1.2,
+   "power": 1.2,
+   "crew": 0.6,
+   "build": 1,
+   "landing": 0.8,
+   "traverse": 0.6
+  },
+  "mars": {
+   "water": 1.2,
+   "oxygen": 1,
+   "power": 0.8,
+   "build": 1,
+   "landing": 0.8,
+   "traverse": 0.5
+  }
+ },
+ "moon": [
+  {
+   "lat": -88,
+   "lon": -180,
+   "score": 0.8420387205622885,
+   "scores": {
+    "build": 0.87,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "power": 0.66,
+    "crew": 0.62
+   },
+   "facts": {
+    "sunAtHabitat": 0.51,
+    "bestSolar": 0.6,
+    "surfaceIcePct": 3.23,
+    "buriedIcePct": 8.02,
+    "coldestK": 50,
+    "iceHaulKm": 0.93,
+    "buildablePct": 63,
+    "padSlope": 0.68,
+    "habitatToPadKm": 1.9
+   }
+  },
+  {
+   "lat": -87,
+   "lon": 128.57142857142856,
+   "score": 0.8328802191861004,
+   "scores": {
+    "build": 0.93,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "power": 0.56,
+    "crew": 0.68
+   },
+   "facts": {
+    "sunAtHabitat": 0.54,
+    "bestSolar": 0.55,
+    "surfaceIcePct": 3.37,
+    "buriedIcePct": 15.06,
+    "coldestK": 41,
+    "iceHaulKm": 1.75,
+    "buildablePct": 66,
+    "padSlope": 0.74,
+    "habitatToPadKm": 2.54
+   }
+  },
+  {
+   "lat": -87,
+   "lon": -25.714285714285722,
+   "score": 0.8292192564424865,
+   "scores": {
+    "build": 0.89,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "power": 0.57,
+    "crew": 0.69
+   },
+   "facts": {
+    "sunAtHabitat": 0.55,
+    "bestSolar": 0.56,
+    "surfaceIcePct": 1.09,
+    "buriedIcePct": 8.54,
+    "coldestK": 54,
+    "iceHaulKm": 2.02,
+    "buildablePct": 64,
+    "padSlope": 1.14,
+    "habitatToPadKm": 1.52
+   }
+  },
+  {
+   "lat": -86,
+   "lon": -47.36842105263159,
+   "score": 0.8234580623786909,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "power": 0.55,
+    "crew": 0.58
+   },
+   "facts": {
+    "sunAtHabitat": 0.49,
+    "bestSolar": 0.55,
+    "surfaceIcePct": 3.5,
+    "buriedIcePct": 12.04,
+    "coldestK": 41,
+    "iceHaulKm": 1.05,
+    "buildablePct": 85,
+    "padSlope": 0.79,
+    "habitatToPadKm": 1.55
+   }
+  },
+  {
+   "lat": -86,
+   "lon": -142.10526315789474,
+   "score": 0.8123798401022644,
+   "scores": {
+    "build": 0.92,
+    "landing": 1,
+    "traverse": 1,
+    "water": 0.93,
+    "power": 0.56,
+    "crew": 0.64
+   },
+   "facts": {
+    "sunAtHabitat": 0.52,
+    "bestSolar": 0.55,
+    "surfaceIcePct": 0.16,
+    "buriedIcePct": 0.58,
+    "coldestK": 62,
+    "iceHaulKm": 2.72,
+    "buildablePct": 66,
+    "padSlope": 1.18,
+    "habitatToPadKm": 1.99
+   }
+  }
+ ],
+ "mars": [
+  {
+   "lat": 38,
+   "lon": -170,
+   "region": "Arcadia Planitia",
+   "ice": "Ice within about a metre in places (NASA SWIM maps)",
+   "iceSource": "SWIM, NASA/JPL 2023",
+   "score": 0.8580586540382771,
+   "waterOxygen": 0.8774830743714984,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "oxygen": 0.77,
+    "power": 0.5
+   },
+   "facts": {
+    "elevationM": -3985,
+    "pressurePa": 873,
+    "buildablePct": 98,
+    "padSlope": 0,
+    "sunAtHabitat": 0.5
+   }
+  },
+  {
+   "lat": 38,
+   "lon": -165,
+   "region": "Arcadia Planitia",
+   "ice": "Ice within about a metre in places (NASA SWIM maps)",
+   "iceSource": "SWIM, NASA/JPL 2023",
+   "score": 0.8576435719384932,
+   "waterOxygen": 0.8763586550173822,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 1,
+    "oxygen": 0.77,
+    "power": 0.5
+   },
+   "facts": {
+    "elevationM": -3971,
+    "pressurePa": 872,
+    "buildablePct": 100,
+    "padSlope": 0,
+    "sunAtHabitat": 0.5
+   }
+  },
+  {
+   "lat": 40,
+   "lon": 100,
+   "region": "Utopia Planitia (west)",
+   "ice": "Ice sheet 80–170 m thick under 1–10 m of soil, up to 14,300 km³ of water",
+   "iceSource": "Stuurman et al. 2016",
+   "score": 0.8245977948475698,
+   "waterOxygen": 0.8431907002532666,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 0.8,
+    "oxygen": 0.89,
+    "power": 0.45
+   },
+   "facts": {
+    "elevationM": -4786,
+    "pressurePa": 939,
+    "buildablePct": 100,
+    "padSlope": 0.09,
+    "sunAtHabitat": 0.5
+   }
+  },
+  {
+   "lat": 40,
+   "lon": 95,
+   "region": "Utopia Planitia (west)",
+   "ice": "Ice sheet 80–170 m thick under 1–10 m of soil, up to 14,300 km³ of water",
+   "iceSource": "Stuurman et al. 2016",
+   "score": 0.8144532524620149,
+   "waterOxygen": 0.8159797651075871,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 0.8,
+    "oxygen": 0.83,
+    "power": 0.45
+   },
+   "facts": {
+    "elevationM": -4412,
+    "pressurePa": 908,
+    "buildablePct": 100,
+    "padSlope": 0.15,
+    "sunAtHabitat": 0.5
+   }
+  },
+  {
+   "lat": 42,
+   "lon": 20,
+   "region": "Deuteronilus Mensae",
+   "ice": "Debris-covered glaciers, radar says mostly pure ice",
+   "iceSource": "Plaut et al. 2009",
+   "score": 0.7552751574544909,
+   "waterOxygen": 0.7123074663073061,
+   "scores": {
+    "build": 1,
+    "landing": 1,
+    "traverse": 1,
+    "water": 0.7,
+    "oxygen": 0.72,
+    "power": 0.4
+   },
+   "facts": {
+    "elevationM": -3665,
+    "pressurePa": 849,
+    "buildablePct": 100,
+    "padSlope": 0.25,
+    "sunAtHabitat": 0.5
+   }
+  }
+ ],
+ "marsWaterOxygen": {
+  "lat": 46,
+  "lon": -170,
+  "region": "Arcadia Planitia",
+  "ice": "Ice within about a metre in places (NASA SWIM maps)",
+  "iceSource": "SWIM, NASA/JPL 2023",
+  "score": 0.7882085688125688,
+  "waterOxygen": 0.8806509151915746,
+  "scores": {
+   "build": 1,
+   "landing": 1,
+   "traverse": 1,
+   "water": 1,
+   "oxygen": 0.78,
+   "power": 0.28
+  },
+  "facts": {
+   "elevationM": -4024,
+   "pressurePa": 877,
+   "buildablePct": 100,
+   "padSlope": 0,
+   "sunAtHabitat": 0.5
+  }
+ }
+}
