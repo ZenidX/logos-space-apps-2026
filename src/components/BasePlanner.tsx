@@ -1,19 +1,25 @@
 "use client";
 
-// Página Base: elige cualquier punto de la Luna o de Marte → terreno real (Trek) → base colocada por reglas
-// (src/lib/base-plan.ts) → misión animada paso a paso, y para cada paso dónde ensayarlo en la Tierra
-// (src/data/operations.json, la misma búsqueda global sobre la rejilla de Earth Engine).
+// Página Base. Misión global: montar y mantener una base permanente en CUALQUIER punto de la Luna o de Marte.
+// 1) Eliges el sitio → relieve real (NASA Trek) → la base se coloca con reglas (src/lib/base-plan.ts).
+// 2) Submisiones (transporte, agua, energía…): operaciones que se repiten; cada una con su veredicto en ese sitio
+//    (src/lib/submissions.ts). En 3D, primero el montaje y luego la base funcionando en bucle.
+// 3) Simular en la Tierra: para cada submisión, los sitios de operations.json (búsqueda global en Earth Engine)
+//    ordenados por condiciones + parecido del relieve con el sitio elegido, y comparación en 3D lado a lado.
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Visor from "@/components/Visor";
 import type { GlobeMarker } from "@/components/Globe";
-import { loadJezeroCTX, loadMarsBlend, loadMoonAny, type TerrainData } from "@/lib/terrain";
+import type { ViewerSite, ViewerTarget } from "@/components/Viewer3D";
+import { loadEarthTerrain, loadJezeroCTX, loadMarsBlend, loadMoonAny, type TerrainData } from "@/lib/terrain";
 import { planBase, RULES, type BasePlan, type PlanetBody } from "@/lib/base-plan";
-import { STEP_DONE, STEP_IDS, type Layer } from "@/components/BaseScene";
+import { shapeMatch, shapeSig, subMissions, type Level, type ShapeSig, type SubMission } from "@/lib/submissions";
+import { STEP_DONE, type Layer } from "@/components/BaseScene";
 import operations from "@/data/operations.json";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
 const BaseScene = dynamic(() => import("@/components/BaseScene"), { ssr: false });
+const Viewer3D = dynamic(() => import("@/components/Viewer3D"), { ssr: false });
 
 interface Site {
   lat: number;
@@ -33,131 +39,166 @@ const PRESETS: Record<PlanetBody, (Site & { id: string; why: string })[]> = {
   ],
 };
 
-const SIZE_M: Record<PlanetBody, number> = { moon: 10000, mars: 14000 };
+// 11 × 11 km, como el resto de la web: así el sitio y su análogo terrestre se comparan a la misma escala.
+const SIZE_M = 11000;
+const N = 128;
+const SETUP = ["Landing", "Habitat", "Power", "Resources", "Rover", "Spacesuit walks"];
 
 // Marte: el DTM de CTX a 20 m si el sitio cae en Jezero; si no (o si falla), MOLA + HRSC a ~200 m.
-const loadMars = (lat: number, lon: number) =>
-  Math.abs(lat - 18.45) < 0.12 && Math.abs(lon - 77.45) < 0.12
-    ? loadJezeroCTX(lat, lon, SIZE_M.mars, 160).catch(() => loadMarsBlend(lat, lon, SIZE_M.mars, 120))
-    : loadMarsBlend(lat, lon, SIZE_M.mars, 120);
+const loadSite = (body: PlanetBody, lat: number, lon: number) =>
+  body === "moon"
+    ? loadMoonAny(lat, lon, SIZE_M, N)
+    : Math.abs(lat - 18.45) < 0.12 && Math.abs(lon - 77.45) < 0.12
+      ? loadJezeroCTX(lat, lon, SIZE_M, N).catch(() => loadMarsBlend(lat, lon, SIZE_M, N))
+      : loadMarsBlend(lat, lon, SIZE_M, N);
 
 const coord = (lat: number, lon: number) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
-const km = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`);
-const dist = (a: { x: number; z: number }, b: { x: number; z: number }) => Math.hypot(a.x - b.x, a.z - b.z);
 
+const LEVEL: Record<Level, { label: string; color: string }> = {
+  good: { label: "Works here", color: "var(--ok)" },
+  limited: { label: "With limits", color: "var(--acc)" },
+  hard: { label: "Hard here", color: "var(--warn)" },
+};
+
+// ---------- Sitios de la Tierra por submisión ----------
 type Task = (typeof operations.tasks)[number];
 const TASKS = new Map<string, Task>(operations.tasks.map((t) => [t.id, t]));
 
-interface StepText {
-  title: string;
-  what: string;
-  why: string;
-  task: string | null; // id en operations.json
+interface EarthSite {
+  key: string;
+  lat: number;
+  lon: number;
+  place: string;
+  taskScore: number;
+  accessH: number | null;
+  easy: boolean; // de la lista «accesible» (≤ N h de una ciudad)
 }
 
-function stepTexts(p: BasePlan): StepText[] {
-  const moon = p.body === "moon";
-  const power: StepText =
-    p.power.kind === "solar-masts"
-      ? {
-          title: "Raise the solar masts",
-          what: `${p.power.spots.length} vertical solar masts on the highest points nearby (up to ${km(Math.max(...p.power.spots.map((s) => dist(s, p.habitat))))} from the habitat), cabled back to it.`,
-          why: "Near the pole the Sun stays within a few degrees of the horizon: panels must be vertical and high. The best peaks are lit 80–90 % of the year (Bussey et al. 2010; Mazarico et al. 2011).",
-          task: "grazing_sun",
-        }
-      : {
-          title: moon ? "Solar field + fission reactor" : "Fission reactor + solar field",
-          what: `Solar field ${km(dist(p.power.spots[0], p.habitat))} from the habitat; reactor ${km(dist(p.power.spots[1], p.habitat))} away, kept clear of the crew and the pad.`,
-          why: moon
-            ? "Away from the poles a lunar night lasts ~14.8 Earth days, too long for batteries alone: NASA's Fission Surface Power (40 kWe class) covers it."
-            : "Dust storms can dim the Sun for weeks, so fission carries the base and solar helps (NASA Fission Surface Power).",
-          task: moon ? null : "power_mars",
-        };
-  const isru: StepText =
-    p.isru.kind === "ice-shadow"
-      ? {
-          title: "Prospect for ice in the shadows",
-          what: `Ice prospecting at the lowest ground in the area (${Math.round(p.isru.spot.h - p.habitat.h)} m relative to the habitat, ${km(dist(p.isru.spot, p.habitat))} away).`,
-          why: "Polar hollows that never see the Sun stay below ~40 K and can trap water ice (LCROSS, Colaprete et al. 2010; Li et al. 2018). Lowest ground is our proxy: this is not a computed shadow map.",
-          task: "cold_trap",
-        }
-      : p.isru.kind === "ice-ground"
-        ? {
-            title: "Drill for ground ice",
-            what: `Ice drill ${km(dist(p.isru.spot, p.habitat))} from the habitat on flat ground (${p.isru.spot.slope.toFixed(1)}°).`,
-            why: `At ${Math.abs(p.lat).toFixed(0)}° latitude NASA's SWIM maps suggest ice within metres of the surface: water, oxygen and rocket fuel. Our rule uses latitude only.`,
-            task: "permafrost_drill",
-          }
-        : {
-            title: moon ? "Oxygen from regolith" : "Oxygen from the air",
-            what: `Processing plant ${km(dist(p.isru.spot, p.habitat))} from the habitat.`,
-            why: moon
-              ? "No accessible ice this far from the poles: oxygen can be extracted from the oxides in lunar soil."
-              : "No shallow ice expected at this latitude: oxygen can be split from the CO₂ atmosphere, as Perseverance's MOXIE showed (2021–2023).",
-            task: null,
-          };
-  const goal = p.isru.kind === "ice-shadow" ? "the ice site" : "the science stop";
-  return [
-    {
-      title: "Land on the flattest pad",
-      what: `Pad on ${p.pad.slope.toFixed(1)}° ground, ${km(dist(p.pad, p.habitat))} from the habitat.`,
-      why: "Engine plumes blast regolith at high speed: pads go far from the habitat (Metzger et al.). NASA also picks landing regions by slope. The 1.5–3 km distance is our assumption.",
-      task: "landing_pad",
-    },
-    {
-      title: "Set up the habitat",
-      what: `Habitat on ${p.habitat.slope.toFixed(1)}° ground${p.polar && moon ? ", on high ground for light" : ""}, with a regolith berm for shielding.`,
-      why: "Flat and stable ground near the chosen point; regolith piled around the modules blocks radiation and blast debris.",
-      task: "regolith_build",
-    },
-    power,
-    isru,
-    {
-      title: "Rover traverse",
-      what: `Route to ${goal}: ${km(p.routeLenM)}, steepest stretch ${p.routeMaxGrade.toFixed(0)}° (limit ${p.routeLimitDeg}°${p.routeLimitDeg > RULES.roverLimitDeg ? ", raised because no gentler route exists" : ""}).`,
-      why: `Shortest path that avoids slopes over ${RULES.roverLimitDeg}° (our assumption; Apollo's rover was designed for ~25°), computed on the real elevation grid.`,
-      task: moon ? (p.polar ? "cold_trap" : "eva_cold_rough") : "rover_traverse",
-    },
-    {
-      title: "Walk out on EVA",
-      what: `Spacesuit walks within ${km(p.evaRadiusM)} of the habitat (dashed ring).`,
-      why: "Walk-back distance kept short so the crew can always return on foot (our assumption).",
-      task: "eva_cold_rough",
-    },
-  ];
+function earthSitesFor(sub: SubMission): EarthSite[] {
+  const out = new Map<string, EarthSite>();
+  for (const id of sub.tasks) {
+    const t = TASKS.get(id);
+    if (!t) continue;
+    const lists: [typeof t.best, boolean][] = [[t.best, false], [t.accessible, true]];
+    for (const [list, easy] of lists)
+      for (const s of list ?? []) {
+        const key = `${s.lat},${s.lon}`;
+        const v = s.values as Record<string, number | undefined>;
+        const prev = out.get(key);
+        out.set(key, {
+          key,
+          lat: s.lat,
+          lon: s.lon,
+          place: s.place,
+          taskScore: Math.max(prev?.taskScore ?? 0, s.score),
+          accessH: v.access_h ?? prev?.accessH ?? null,
+          easy: easy || !!prev?.easy,
+        });
+      }
+  }
+  return [...out.values()];
 }
 
-function EarthRehearsal({ id }: { id: string | null }) {
-  const t = id ? TASKS.get(id) : null;
-  if (!t) return <p className="text-sm text-[var(--dim)]">No Earth rehearsal task defined for this step yet.</p>;
-  const best = t.best?.[0];
-  const acc = t.accessible?.[0];
-  const osm = (s: { lat: number; lon: number }) => `https://www.openstreetmap.org/?mlat=${s.lat}&mlon=${s.lon}#map=7/${s.lat}/${s.lon}`;
+// Firma de forma de cada sitio terrestre: se descarga una vez (teselas Terrarium) y se guarda.
+const earthSigCache = new Map<string, Promise<ShapeSig>>();
+const earthSig = (s: EarthSite) => {
+  let p = earthSigCache.get(s.key);
+  if (!p) {
+    p = loadEarthTerrain(s.lat, s.lon, N, SIZE_M).then(shapeSig);
+    p.catch(() => earthSigCache.delete(s.key));
+    earthSigCache.set(s.key, p);
+  }
+  return p;
+};
+
+function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: ShapeSig; onCompare: (s: EarthSite) => void }) {
+  const sites = useMemo(() => earthSitesFor(sub), [sub]);
+  const [match, setMatch] = useState<Record<string, number | "error">>({});
+  useEffect(() => {
+    let cancel = false;
+    setMatch({});
+    // De tres en tres para no saturar la red del móvil
+    const queue = [...sites];
+    const worker = async () => {
+      for (let s = queue.shift(); s; s = queue.shift()) {
+        const site = s;
+        try {
+          const sig = await earthSig(site);
+          if (!cancel) setMatch((m) => ({ ...m, [site.key]: shapeMatch(siteSig, sig) }));
+        } catch {
+          if (!cancel) setMatch((m) => ({ ...m, [site.key]: "error" }));
+        }
+      }
+    };
+    void Promise.all([worker(), worker(), worker()]);
+    return () => {
+      cancel = true;
+    };
+  }, [sites, siteSig]);
+
+  if (!sub.tasks.length)
+    return <p className="text-sm text-[var(--dim)]">There is no Earth rehearsal task for this sub-mission in our catalogue yet.</p>;
+
+  const total = (s: EarthSite) => {
+    const m = match[s.key];
+    return typeof m === "number" ? 0.5 * s.taskScore + 0.5 * m : -1;
+  };
+  const ranked = [...sites].sort((a, b) => total(b) - total(a) || b.taskScore - a.taskScore);
+  const pending = sites.filter((s) => match[s.key] === undefined).length;
   return (
-    <div className="border-l-2 border-[var(--acc)] pl-3">
-      <p className="font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)]">Rehearse it on Earth</p>
-      <p className="mt-1 text-sm text-[var(--ink)]">{t.name}</p>
-      {best && (
-        <p className="mt-1 text-sm text-[var(--mut)]">
-          Best new site:{" "}
-          <a className="underline underline-offset-2 hover:text-[var(--acc)]" href={osm(best)} target="_blank" rel="noreferrer">
-            {best.place}
-          </a>{" "}
-          <span className="font-mono text-xs text-[var(--dim)]">({coord(best.lat, best.lon)})</span>
-        </p>
-      )}
-      {acc && acc.place !== best?.place && (
-        <p className="mt-0.5 text-sm text-[var(--mut)]">
-          Easy to reach:{" "}
-          <a className="underline underline-offset-2 hover:text-[var(--acc)]" href={osm(acc)} target="_blank" rel="noreferrer">
-            {acc.place}
-          </a>{" "}
-          <span className="font-mono text-xs text-[var(--dim)]">(≤ {operations.selection.accessibleMaxHours} h from a city)</span>
-        </p>
-      )}
-      <p className="mt-1 text-xs text-[var(--dim)]">From our global search of Earth&apos;s 0.1° grid (NASA data in Google Earth Engine), known analog sites excluded.</p>
+    <div>
+      <p className="text-sm text-[var(--mut)]">
+        {sub.tasks.map((id) => TASKS.get(id)?.name).filter(Boolean).join(" · ")}
+        {pending > 0 && <span className="vivo ml-2 font-mono text-xs text-[var(--acc)]">comparing terrain… {sites.length - pending}/{sites.length}</span>}
+      </p>
+      <ol className="mt-3 flex flex-col gap-2">
+        {ranked.map((s, i) => {
+          const m = match[s.key];
+          const t = total(s);
+          return (
+            <li key={s.key} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border border-[var(--line)] bg-[var(--bg2)] px-3 py-2.5">
+              <span className="font-mono text-xs text-[var(--dim)]">{String(i + 1).padStart(2, "0")}</span>
+              <span className="min-w-0">
+                <span className="block truncate text-[15px] text-[var(--ink)]">{s.place}</span>
+                <span className="block font-mono text-[11px] text-[var(--dim)]">
+                  {coord(s.lat, s.lon)} · conditions {Math.round(s.taskScore * 100)}% · terrain{" "}
+                  {typeof m === "number" ? `${Math.round(m * 100)}%` : m === "error" ? "n/a" : "…"}
+                  {s.easy && s.accessH !== null ? ` · ${s.accessH.toFixed(0)} h from a city` : ""}
+                </span>
+                {t >= 0 && (
+                  <span className="mt-1 block h-[3px] w-full bg-[var(--line)]">
+                    <span className="block h-full bg-[var(--acc)]" style={{ width: `${Math.round(t * 100)}%` }} />
+                  </span>
+                )}
+              </span>
+              <button
+                type="button"
+                onClick={() => onCompare(s)}
+                className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] px-3 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)] hover:border-[var(--acc)]"
+              >
+                3D
+                <span className="sr-only"> compare {s.place} with the base site</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="mt-2 text-xs text-[var(--dim)]">
+        Conditions: how well the place meets this sub-mission&apos;s needs (cold, thin air, dust, ice, access…), from our global search of
+        Earth&apos;s 0.1° grid with NASA data in Google Earth Engine, known analog sites excluded. Terrain: how close its 11 × 11 km slope mix
+        and relief are to your base site, computed now from elevation data. Rank = half each.
+      </p>
     </div>
+  );
+}
+
+// Antetítulo numerado de cada bloque de la página
+function H({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <p className="font-mono text-[11px] uppercase tracking-[.16em] text-[var(--acc)]">
+      {n} · {children}
+    </p>
   );
 }
 
@@ -169,13 +210,14 @@ export default function BasePlanner() {
   const [err, setErr] = useState("");
   const [step, setStep] = useState(0);
   const [stepKey, setStepKey] = useState(0);
-  const [auto, setAuto] = useState(true);
+  const [subId, setSubId] = useState<string | null>(null);
   const [layer, setLayer] = useState<Layer>("relief");
   const [ex, setEx] = useState(1.5);
   const [sun, setSun] = useState(20);
   const [symbol, setSymbol] = useState<number | null>(null);
   const [imagery, setImagery] = useState<"" | "loading" | "none">("");
   const [form, setForm] = useState({ lat: "", lon: "" });
+  const [viewer, setViewer] = useState<{ site: ViewerSite; target: ViewerTarget } | null>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const timer = useRef(0);
 
@@ -188,18 +230,16 @@ export default function BasePlanner() {
   useEffect(() => {
     if (!site) return;
     let cancel = false;
-    const key = `${body}:${site.lat}:${site.lon}`;
     setStatus("loading");
-    const load = body === "moon" ? loadMoonAny(site.lat, site.lon, SIZE_M.moon, 160) : loadMars(site.lat, site.lon);
-    load
+    loadSite(body, site.lat, site.lon)
       .then((terrain) => {
         if (cancel) return;
         const plan = planBase(terrain, body, site.lat, site.lon);
-        setData({ terrain, plan, key });
+        setData({ terrain, plan, key: `${body}:${site.lat}:${site.lon}` });
         setStatus("");
         setStep(0);
         setStepKey((k) => k + 1);
-        setAuto(true);
+        setSubId(null);
         setImagery("");
         // Sol: en el polo lunar, la altura máxima real (rasante); fuera, media mañana para ver el relieve.
         const max = Math.min(90, 90 - Math.abs(site.lat) + (body === "moon" ? 1.54 : 25.19));
@@ -225,29 +265,41 @@ export default function BasePlanner() {
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  const onStepEnd = useCallback(
-    (s: number) => {
-      if (!auto || s >= STEP_DONE) return;
-      window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => {
-        setStep(s + 1);
-        if (s + 1 >= STEP_DONE) setAuto(false);
-      }, 900);
-    },
-    [auto],
-  );
-
-  const goStep = (i: number) => {
+  // Montaje automático: un paso tras otro hasta que la base queda en marcha
+  const onStepEnd = useCallback((s: number) => {
+    if (s >= STEP_DONE) return;
     window.clearTimeout(timer.current);
-    setAuto(false);
-    setStep(i);
-    setStepKey((k) => k + 1);
-  };
+    timer.current = window.setTimeout(() => setStep(s + 1), 350);
+  }, []);
   const replay = () => {
     window.clearTimeout(timer.current);
-    setAuto(true);
+    setSubId(null);
     setStep(0);
     setStepKey((k) => k + 1);
+  };
+
+  const plan = data?.plan;
+  const subs = useMemo(() => (data ? subMissions(data.plan, data.terrain) : []), [data]);
+  const siteSig = useMemo(() => (data ? shapeSig(data.terrain) : null), [data]);
+  const sub = subs.find((s) => s.id === subId) ?? subs.find((s) => s.tasks.length) ?? null;
+  const running = step >= STEP_DONE;
+
+  const pickSub = (id: string) => {
+    window.clearTimeout(timer.current);
+    if (!running) {
+      setStep(STEP_DONE);
+      setStepKey((k) => k + 1);
+    }
+    setSubId(id);
+  };
+
+  const compare = (s: EarthSite) => {
+    if (!data || !site) return;
+    const terrain = data.terrain;
+    setViewer({
+      site: { lat: s.lat, lon: s.lon, name: s.place },
+      target: { name: `${site.name} · base site`, short: body === "moon" ? "Moon" : "Mars", load: () => Promise.resolve(terrain), sunPresetDeg: Math.round(sun * 10) / 10 },
+    });
   };
 
   const markers: GlobeMarker[] = useMemo(
@@ -258,9 +310,6 @@ export default function BasePlanner() {
     [body, site],
   );
 
-  const plan = data?.plan;
-  const texts = plan ? stepTexts(plan) : [];
-  const cur = texts[Math.min(step, texts.length - 1)];
   const switchBody = (b: PlanetBody) => {
     if (b === body) return;
     setBody(b);
@@ -310,10 +359,11 @@ export default function BasePlanner() {
           </Visor>
         </div>
         <div>
-          <h2 id="pick-h" className="text-2xl font-medium">Pick a site</h2>
+          <H n={1}>Choose the site</H>
+          <h2 id="pick-h" className="mt-2 text-2xl font-medium">Where will the base be?</h2>
           <p className="mt-2 text-sm text-[var(--mut)]">
-            Tap any point on the globe, choose a suggested site or type coordinates. We download the real elevation data for a{" "}
-            {SIZE_M[body] / 1000} × {SIZE_M[body] / 1000} km patch and lay out a base on it with simple, stated rules.
+            Tap any point on the globe, pick a suggestion or type coordinates. We download NASA&apos;s real elevation data for an 11 × 11 km
+            patch around it.
           </p>
           <ul className="mt-4 flex flex-col gap-2">
             {PRESETS[body].map((p) => (
@@ -346,16 +396,23 @@ export default function BasePlanner() {
         </div>
       </section>
 
-      {/* 2 · Base en 3D */}
-      <section ref={sceneRef} aria-labelledby="base-h" className="mt-10 scroll-mt-16">
-        <h2 id="base-h" className="text-2xl font-medium">
-          {site ? `Base at ${site.name}` : "Your base appears here"}
+      {/* 2 · La base y sus submisiones */}
+      <section ref={sceneRef} aria-labelledby="base-h" className="mt-12 scroll-mt-16">
+        <H n={2}>The base and its sub-missions</H>
+        <h2 id="base-h" className="mt-2 text-2xl font-medium">
+          {site ? `A permanent base at ${site.name}` : "Your base appears here"}
           {site && <span className="ml-2 font-mono text-sm text-[var(--dim)]">{coord(site.lat, site.lon)} · {body === "moon" ? "Moon" : "Mars"}</span>}
         </h2>
+        {plan && (
+          <p className="mt-1 max-w-[70ch] text-sm text-[var(--mut)]">
+            One mission: set up the base and keep it running. Below are the operations it must repeat for as long as it exists, and how
+            well this site supports each one.
+          </p>
+        )}
         <Visor
-          className="mt-3 h-[min(70vh,40rem)] min-h-[24rem]"
+          className="mt-3 h-[min(68vh,38rem)] min-h-[24rem]"
           reticle={false}
-          tl={plan && <><span className="k">Step {Math.min(step + 1, STEP_IDS.length)} / {STEP_IDS.length}</span><br />{cur?.title}</>}
+          tl={plan && (running ? <><span className="k">Base running</span><br />{sub ? sub.name : "All sub-missions"}</> : <><span className="k">Setting up · {Math.min(step + 1, SETUP.length)}/{SETUP.length}</span><br />{SETUP[Math.min(step, SETUP.length - 1)]}</>)}
           tr={plan && <><span className="k">Buildable</span> {Math.round(plan.stats.flatPct)} %<br /><span className="k">Mean slope</span> {plan.stats.meanSlope.toFixed(1)}°<br /><span className="k">Relief</span> {Math.round(plan.stats.reliefM)} m</>}
           bl={
             status === "loading" ? <span className="vivo">Downloading NASA elevation data…</span>
@@ -375,6 +432,7 @@ export default function BasePlanner() {
               layer={layer}
               exaggeration={ex}
               sunDeg={sun}
+              focus={running && subId ? (sub?.focus ?? null) : null}
               onStepEnd={onStepEnd}
               onSymbolScale={setSymbol}
               onImagery={setImagery}
@@ -389,10 +447,9 @@ export default function BasePlanner() {
 
         {plan && (
           <>
-            {/* Controles */}
             <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
               <button type="button" onClick={replay} className={tab(true)}>
-                {step >= STEP_DONE ? "Replay mission" : "Restart mission"}
+                Replay set-up
               </button>
               <div className="flex gap-1" role="group" aria-label="Ground layer">
                 {(["relief", "photo", "slope"] as Layer[]).map((l) => (
@@ -418,62 +475,83 @@ export default function BasePlanner() {
               </p>
             )}
 
-            {/* Misión paso a paso */}
-            <ol className="mt-6 grid grid-cols-3 gap-1.5 sm:grid-cols-6" aria-label="Mission steps">
-              {texts.map((t, i) => (
-                <li key={t.title}>
-                  <button
-                    type="button"
-                    onClick={() => goStep(i)}
-                    aria-current={i === Math.min(step, texts.length - 1) ? "step" : undefined}
-                    className={`h-full w-full border px-2 py-2 text-left transition-colors ${i === Math.min(step, texts.length - 1) ? "border-[var(--acc)] text-[var(--ink)]" : i < step ? "border-[var(--line2)] text-[var(--mut)]" : "border-[var(--line)] text-[var(--dim)]"}`}
-                  >
-                    <span className="block font-mono text-[10px] uppercase tracking-[.08em]">0{i + 1}</span>
-                    <span className="block text-[13px] leading-tight">{t.title}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            {cur && (
-              <div className="mt-3 grid gap-4 border border-[var(--line2)] bg-[var(--bg2)] p-4 md:grid-cols-[1.2fr_1fr]" aria-live="polite">
-                <div>
-                  <h3 className="text-lg">{cur.title}</h3>
-                  <p className="mt-1 text-[15px] text-[var(--ink)]">{cur.what}</p>
-                  <p className="mt-2 text-sm text-[var(--mut)]">{cur.why}</p>
-                </div>
-                <EarthRehearsal id={cur.task} />
-              </div>
-            )}
-
-            {/* Condiciones del sitio */}
-            <h3 className="mt-8 text-xl">What this site is like</h3>
-            <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {plan.conditions.map((c) => (
-                <div key={c.label} className="border border-[var(--line)] bg-[var(--bg2)] p-3">
-                  <dt className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--mut)]">
-                    {c.label}
-                    <span className={`px-1 text-[10px] ${c.kind === "data" ? "text-[var(--ok)]" : c.kind === "physics" ? "text-[var(--acc2-t)]" : "text-[var(--warn)]"}`}>
-                      {c.kind === "data" ? "measured" : c.kind === "physics" ? "physics" : "rough rule"}
-                    </span>
-                  </dt>
-                  <dd className="mt-1 text-lg text-[var(--ink)]">{c.value}</dd>
-                  <dd className="text-xs text-[var(--dim)]">{c.note}</dd>
-                </div>
-              ))}
-            </dl>
-
-            <aside className="mt-6 border-l-2 border-[var(--warn)] pl-3 text-sm text-[var(--mut)]">
-              <p className="text-[var(--ink)]">A concept, not a NASA design.</p>
-              <p className="mt-1">
-                TerraVista places each part with simple rules on real NASA elevation data: pad {RULES.padMinM / 1000}–{RULES.padMaxM / 1000} km from the
-                habitat, reactor ~{RULES.reactorM / 1000} km away, rover slopes under {RULES.roverLimitDeg}°, walks within {RULES.evaRadiusM / 1000} km,
-                &quot;buildable&quot; = under {RULES.flatDeg}°. Distances are our assumptions; sources for the reasons are in each step. Elevation at
-                {" "}{Math.round(plan.cellM)} m per pixel hides boulders and small craters, and modules are drawn larger than life so you can see them.
-              </p>
-            </aside>
+            {/* Submisiones */}
+            <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4" aria-label="Sub-missions">
+              {subs.map((s) => {
+                const on = sub?.id === s.id;
+                return (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      onClick={() => pickSub(s.id)}
+                      aria-pressed={on}
+                      className={`flex h-full w-full flex-col border bg-[var(--bg2)] p-3 text-left transition-colors hover:border-[var(--acc)] ${on ? "border-[var(--acc)]" : "border-[var(--line)]"}`}
+                    >
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="text-[15px] text-[var(--ink)]">{s.name}</span>
+                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[.06em]" style={{ color: LEVEL[s.level].color }}>
+                          {LEVEL[s.level].label}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 font-mono text-[10px] uppercase tracking-[.06em] text-[var(--dim)]">{s.cadence}</span>
+                      <span className="mt-1.5 text-[13px] text-[var(--mut)]">{s.verdict}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </>
         )}
       </section>
+
+      {/* 3 · Simular en la Tierra */}
+      {plan && sub && siteSig && (
+        <section aria-labelledby="earth-h" className="mt-12" aria-live="polite">
+          <H n={3}>Simulate it on Earth</H>
+          <h2 id="earth-h" className="mt-2 text-2xl font-medium">Where to rehearse “{sub.name}” for this base</h2>
+          <p className="mt-1 max-w-[70ch] text-sm text-[var(--mut)]">
+            <span className="text-[var(--ink)]">Needs: </span>
+            {sub.needs} Pick another sub-mission above to change the list; tap <span className="font-mono text-[var(--acc)]">3D</span> to see
+            the Earth site next to your base site at the same scale.
+          </p>
+          <div className="mt-4">
+            <EarthSim key={`${data?.key}:${sub.id}`} sub={sub} siteSig={siteSig} onCompare={compare} />
+          </div>
+        </section>
+      )}
+
+      {plan && (
+        <>
+          <h3 className="mt-12 text-xl">What this site is like</h3>
+          <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {plan.conditions.map((c) => (
+              <div key={c.label} className="border border-[var(--line)] bg-[var(--bg2)] p-3">
+                <dt className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--mut)]">
+                  {c.label}
+                  <span className={`px-1 text-[10px] ${c.kind === "data" ? "text-[var(--ok)]" : c.kind === "physics" ? "text-[var(--acc2-t)]" : "text-[var(--warn)]"}`}>
+                    {c.kind === "data" ? "measured" : c.kind === "physics" ? "physics" : "rough rule"}
+                  </span>
+                </dt>
+                <dd className="mt-1 text-lg text-[var(--ink)]">{c.value}</dd>
+                <dd className="text-xs text-[var(--dim)]">{c.note}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <aside className="mt-6 border-l-2 border-[var(--warn)] pl-3 text-sm text-[var(--mut)]">
+            <p className="text-[var(--ink)]">A concept, not a NASA design.</p>
+            <p className="mt-1">
+              TerraVista places each part with simple rules on real NASA elevation data: pad {RULES.padMinM / 1000}–{RULES.padMaxM / 1000} km from
+              the habitat, reactor ~{RULES.reactorM / 1000} km away, rover slopes under {RULES.roverLimitDeg}°, walks within{" "}
+              {RULES.evaRadiusM / 1000} km, &quot;buildable&quot; = under {RULES.flatDeg}°. Distances and how often each sub-mission repeats
+              are our assumptions. Elevation at {Math.round(plan.cellM)} m per pixel hides boulders and small craters, and modules are drawn
+              larger than life so you can see them.
+            </p>
+          </aside>
+        </>
+      )}
+
+      {viewer && <Viewer3D site={viewer.site} target={viewer.target} onClose={() => setViewer(null)} />}
     </div>
   );
 }

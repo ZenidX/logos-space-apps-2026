@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 8) · Base: misión global → submisiones → simular en la Tierra (rama `zexu/base-mode`)
+
+- Corrección de zexu: la misión es **una**, montar y mantener la base en el sitio elegido. De ella cuelgan **submisiones que se repiten**, y el objetivo del reto es saber **dónde simular cada una en la Tierra** para esa base concreta.
+- `src/lib/submissions.ts`: 7 submisiones (8 en Marte): transporte, construcción, agua y oxígeno, energía, exploración, salidas con traje, (polvo) y tripulación y comunicaciones. Cada una tiene su frecuencia (suposición), lo que necesita del terreno y un **veredicto en ese sitio** («Works here», «With limits» o «Hard here») calculado con el plan sobre el relieve real.
+- **Simular en la Tierra:** para la submisión elegida, los sitios de `operations.json` (los 5 mejores y 3 accesibles de cada tarea) se ordenan por **condiciones** (la nota de la búsqueda global) más el **parecido del relieve** con el sitio de la base. El relieve se compara en el momento: se descargan 11 × 11 km de la Tierra (Terrarium) y se cruzan el reparto de pendientes (0–5, 5–10, 10–20, 20–30 y más de 30°) y el relieve. El parecido va de 0 a 1 y se calcula como 70 % intersección de histogramas + 30 % relieve menor / mayor. Hacía falta porque en `operations.json` los mejores sitios de cada tarea están empatados (nota ≈ 1,00): el relieve es lo que los separa.
+- Botón **3D**: abre el visor de siempre con el sitio de la Tierra junto al sitio de la base, a la misma escala (11 km también para la base).
+- Escena: montaje rápido (6 pasos de 2,2 s) y después **la base en marcha en bucle**: llega una nave de carga cada 16 s, el rover va y vuelve por su ruta y hay tripulantes andando. Al elegir una submisión, la cámara va a ella.
+- Comprobado: `tsc`, `eslint`, prueba en Node (Shackleton consigo mismo = 1,00; frente a Arcadia = 0,10) y prueba completa en Chromium sin pantalla (montaje → «Water & oxygen» → lista de la Tierra con el relieve comparado → visor 3D), sin errores en la consola.
+
 ## 2026-11-15 (tarde, 6) · Página Base: una base en cualquier punto de la Luna o de Marte (rama `zexu/base-mode`)
 
 - Pedido del equipo: la intro impresiona, pero el cierre con datos se queda corto. Queremos ver cómo sería la base y cómo se harían las misiones en el sitio elegido.

@@ -1,7 +1,7 @@
 "use client";
 
-// 04 · Base: cualquier punto de la Luna o de Marte → terreno real → base colocada por reglas → misión animada
-// → dónde ensayar cada paso en la Tierra.
+// 04 · Base: cualquier punto de la Luna o de Marte → base sobre el terreno real → submisiones → dónde simular
+// cada una en la Tierra (el objetivo del reto: análogos terrestres).
 import BasePlanner from "@/components/BasePlanner";
 import { NextPage } from "@/components/SiteNav";
 import { PageIntro } from "@/components/HowItWorks";
@@ -9,9 +9,9 @@ import { PageIntro } from "@/components/HowItWorks";
 export default function BasePage() {
   return (
     <div className="pt-12">
-      <PageIntro step={4} title="Build a base anywhere on the Moon or Mars.">
-        Pick any point. We load NASA&apos;s real elevation data for it, lay out a base with simple rules and play the mission:
-        landing, habitat, power, resources, rover and spacesuit walks. Each step tells you where on Earth to rehearse it.
+      <PageIntro step={4} title="Plan a base anywhere. Rehearse it on Earth.">
+        Choose any point on the Moon or Mars and we set up a permanent base on its real terrain. Then see the sub-missions that keep it
+        running (transport, water, power, exploration…) and, for each one, the places on Earth where you could simulate it.
       </PageIntro>
       <BasePlanner />
       <NextPage href="/method/" label="Does it work?" />

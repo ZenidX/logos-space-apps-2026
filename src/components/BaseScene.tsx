@@ -8,6 +8,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { TerrainData } from "@/lib/terrain";
 import type { BasePlan, Spot } from "@/lib/base-plan";
+import type { FocusKey } from "@/lib/submissions";
 
 export const STEP_IDS = ["landing", "habitat", "power", "isru", "traverse", "eva"] as const;
 export const STEP_DONE = STEP_IDS.length; // todo colocado
@@ -22,11 +23,15 @@ interface Props {
   exaggeration: number;
   sunDeg: number;
   onStepEnd?: (step: number) => void;
+  // Con la base montada (step = STEP_DONE): submisión en la que se centra la cámara.
+  focus?: FocusKey | null;
   onSymbolScale?: (factor: number) => void;
   onImagery?: (state: "" | "loading" | "none") => void;
 }
 
-const STEP_MS = 3400;
+const STEP_MS = 2200; // montaje rápido: lo importante es la base funcionando
+const CARGO_MS = 16000; // ciclo de una nave de carga (llega, se queda, otra)
+const ROVER_MS = 22000; // ida y vuelta del rover
 const ease = (k: number) => 1 - Math.pow(1 - k, 3);
 const clamp01 = (k: number) => Math.max(0, Math.min(1, k));
 
@@ -57,7 +62,11 @@ function slopeCanvas(slope: Float32Array, n: number) {
   return c;
 }
 
-export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery }: Props) {
+export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery, focus = null }: Props) {
+  const focusRef = useRef(focus);
+  useEffect(() => {
+    focusRef.current = focus;
+  }, [focus]);
   const mount = useRef<HTMLDivElement>(null);
   const labelsHost = useRef<HTMLDivElement>(null);
   const stepRef = useRef({ step, t0: 0, ended: false });
@@ -205,7 +214,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       return o;
     };
 
-    interface Piece { obj: THREE.Object3D; spot: { x: number; z: number }; stepIdx: number; lift?: number; label?: string; anim?: (p: number) => void }
+    interface Piece { obj: THREE.Object3D; spot: { x: number; z: number }; stepIdx: number; lift?: number; label?: string; anim?: (p: number) => void; loop?: (now: number) => number }
     const pieces: Piece[] = [];
     const add = (p: Piece) => {
       p.obj.visible = false;
@@ -246,6 +255,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       obj: lander,
       spot: plan.pad,
       stepIdx: 0,
+      // En marcha: llega una nave de carga en cada ciclo (baja en el primer cuarto y se queda)
+      loop: (now) => clamp01((now % CARGO_MS) / CARGO_MS / 0.25),
       anim: (p) => {
         const k = ease(p);
         lander.position.y += (1 - k) * 0.35; // baja desde ~3,5 km de «altura» de escena
@@ -433,6 +444,11 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       spot: roverSpot,
       stepIdx: 4,
       label: "Rover",
+      // En marcha: ida y vuelta continua por la ruta
+      loop: (now) => {
+        const u = (now % ROVER_MS) / ROVER_MS;
+        return u < 0.5 ? u * 2 : 2 - u * 2;
+      },
       anim: (p) => {
         const k = p; // velocidad constante
         const a = along(k), b = along(Math.min(1, k + 0.01));
@@ -490,6 +506,14 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
 
     // Foco de cámara por paso
     const mid = plan.route[Math.floor(plan.route.length / 2)] ?? plan.habitat;
+    const focusSpot: Record<FocusKey, { x: number; z: number }> = {
+      pad: plan.pad,
+      habitat: plan.habitat,
+      power: plan.power.spots[plan.power.spots.length - 1],
+      isru: plan.isru.spot,
+      route: mid,
+      eva: plan.habitat,
+    };
     const focusOf = (st: number): Spot | { x: number; z: number } =>
       [plan.pad, plan.habitat, plan.power.spots[plan.power.spots.length - 1], plan.isru.spot, mid, plan.habitat][st] ?? plan.habitat;
     const focus = new THREE.Vector3();
@@ -511,14 +535,15 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         pc.obj.visible = show;
         if (!show) continue;
         pc.obj.position.set(pc.spot.x * s, yAt(pc.spot.x, pc.spot.z), pc.spot.z * s);
-        pc.anim?.(pc.stepIdx === st.step ? p : 1);
+        const running = st.step >= STEP_DONE && pc.loop && !reduce.matches;
+        pc.anim?.(running ? pc.loop!(now) : pc.stepIdx === st.step ? p : 1);
       }
       for (const c of cables) {
         c.line.visible = st.step >= 2;
         c.g.setDrawRange(0, st.step === 2 ? Math.max(2, Math.floor(c.N * ease(clamp01(p * 1.4 - 0.3)))) : c.N);
       }
       routeLine.visible = st.step >= 4;
-      if (st.step > 4) routeG.setDrawRange(0, routePts);
+      if (st.step > 4) routeG.setDrawRange(0, routePts + 1);
       evaRing.visible = st.step >= 5;
       if (st.step === 5) updateRing(Math.max(0.02, ease(p)));
       astros.forEach((a, i) => {
@@ -531,7 +556,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         a.position.set(x * s, yAt(x, z) + 0.12 * U, z * s);
       });
       // Cámara: el objetivo se desliza hacia lo que se está montando
-      const f = focusOf(Math.min(st.step, STEP_IDS.length - 1));
+      const fk = st.step >= STEP_DONE ? focusRef.current : null;
+      const f = fk ? focusSpot[fk] : focusOf(Math.min(st.step, STEP_IDS.length - 1));
       focus.set(f.x * s, yAt(f.x, f.z), f.z * s);
       controls.target.lerp(focus, reduce.matches ? 1 : 0.04);
       controls.update();
