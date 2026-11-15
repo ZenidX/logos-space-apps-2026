@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (mediodía) · Vídeo: primer montaje de prueba (v1)
+
+- `video/scripts/capture.cjs`: captura la web pública fotograma a fotograma con un reloj virtual (sin GPU solo salen ~2 capturas/s, así que el tiempo de la página avanza 1/30 s por captura y el movimiento queda fluido). `overlays.cjs`: subtítulos desde `docs/timestamps.txt`, marca de agua de SI y cierre. `build.sh`: montaje con ffmpeg.
+- Resultado: `video/build/terravista-test-v1.mp4` (fuera de git), 1080×1920, 30 fps, 30,000 s exactos, sin audio. Planos: escena Luna → Tierra (0–6), Discover con los tres objetivos (6–13), negro (13–18, ponderación por misión sin pantalla), «Where every analogy breaks» de Method (18–22), negro (22–27, avisos sin pantalla) y cierre (27–30).
+- Por pulir: los textos de la escena Luna → Tierra chocan con los subtítulos; el plano 18–22 enseña poco; la web aún dice «Terra Analog» (el equipo lo sabe).
+
 ## 2026-11-15 (mañana, 2) · Guion del vídeo v3: «Down to Earth»
 
 La v2 sonaba floja. La v3 ([docs/guion-video.md](guion-video.md)) se escribe sobre el lema «TerraVista — Down to Earth» y la descripción oficial de la página del proyecto. 62 palabras.
