@@ -144,12 +144,12 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         </div>
         <header className="mt-1">
           <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
-          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `new region to investigate, not a surveyed site${mission.validated ? ` · index rank ${site.rank} of ${site.of}` : ""}` : "known analog · 0.1° cell around the site"}</span></p>
+          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `new region, not a surveyed site${mission.validated ? ` · index rank ${site.rank} of ${site.of}` : ""}` : "known analog · 0.1° cell around the site"}</span></p>
         </header>
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
-          <RadialDial index={idx(site.match)} rings={rings} className="h-[clamp(150px,24vh,232px)] w-[clamp(150px,24vh,232px)]" />
+          <div style={{ width: "clamp(170px, 27vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
           <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Grey rings: 1 = same as the target. Amber: fuller = more complex access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
@@ -165,9 +165,9 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           </div>
         </div>
         {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
-        <p className="mt-2 text-[12px] text-[var(--mut)]"><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"} by our ${FILTERS.flatDeg}° threshold)`}. Neither is part of the index or of the access ring.</p>
+        <p className="mt-2 text-[12px] text-[var(--mut)]" title={`Travel time: modelled, to the nearest city (2015). Slope: mean over the 11 × 11 km window; flat means ${FILTERS.flatDeg}° or less. Neither is part of the index or of the access ring.`}><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"})`} · not part of the index.</p>
 
-        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
+        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.glanceLimit ?? `${mission.keyLimit} ${mission.always[0]?.text.split(";")[0]}.`}</span></p>
 
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (

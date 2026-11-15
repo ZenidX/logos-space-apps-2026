@@ -42,12 +42,12 @@ export interface Target { name: string; body: GlobeBody; lat: number; lon: numbe
 export interface Mission {
   id: MissionId; short: string; title: string; blurb: string; target: Target;
   campaigns: { name: string; url: string }[]; variables: Variable[]; sites: Site[];
-  validation: { method: string; result: string; controlPercentile: number | null }; validated: boolean; landCells: number | null; notScored: string[]; keyLimit: string; rehearse: string; matters: string;
+  validation: { method: string; result: string; controlPercentile: number | null }; validated: boolean; landCells: number | null; notScored: string[]; keyLimit: string; glanceLimit?: string; rehearse: string; matters: string;
   always: { text: string; source: string; url: string | null }[];
 }
 
 // Team copy for each mission (short name, one-line pitch, what Earth can never reproduce).
-const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; matters: string; keyLimit: string; notScored: string[]; always: string[] }> = {
+const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; matters: string; keyLimit: string; glanceLimit?: string; notScored: string[]; always: string[] }> = {
   "m1-eva-basalt": {
     short: "Suited EVA on volcanic terrain",
     blurb: "An operational analogue for suited traverses and field geology — not a match to Mons Mouton's highland rock.",
@@ -81,6 +81,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Working and driving with long shadows and glare from a Sun close to the horizon, and running solar arrays at low Sun angles. NASA's JETT3 and JETT5 tests simulated this at night in Arizona, with a lighting cart and a portable spotlight.",
     matters: "At Mons Mouton the noon Sun stays about 4° to 7° above the horizon all year (computed from latitude; terrain ignored). Light decides what crews can see and where solar arrays get power.",
     keyLimit: "Computed, not validated: no field campaign has rehearsed this under a real low Sun, so there is no known site to check the index against. The Sun's height comes from latitude only.",
+    glanceLimit: "Computed, not validated. The Sun's height comes from latitude only, and on Earth the low-Sun season is winter: snow, cold and short days.",
     notScored: ["Snow cover and cold in the low-Sun months, which are winter on Earth", "Cloud cover — the monthly clearness index is shown per site as context only", "Terrain shadows — the Sun's height is computed from latitude only"],
     always: ["Gravity: 1.62 m/s² on the Moon vs 9.80 on Earth."],
   },

@@ -2,10 +2,20 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
-## 2026-11-15 · 01:27 · Etiquetas B, misión 4 y datos v8
+## 2026-11-15 · 01:40 · Evidencia, filtros, hardware y gráfico solar (commit 289d5a0, en vivo)
+- 2c: niveles de evidencia (Used by agencies / Support nearby / Partial support / No support found / Not checked) con color y 4 puntos; son la insignia principal del sitio y el orden de la lista. Regla única: «respaldo cercano» = fuente a ~100 km o menos, o sobre la isla o el campo de lava del punto; por eso el norte de Ellesmere (fuente a 300 km) pasa a «parcial». Tras la comprobación de Datos (v8) no queda ninguna región sin comprobar: 6 con respaldo cercano, 10 parcial, 3 sin respaldo.
+- 2a y 2b: filtros «Reachable in < 6 h», «Remote > 48 h», «Low access complexity» y Terrain Any / Flat ≤ 5° / Steep > 5°. Umbrales en `FILTERS` (`src/lib/missions.ts`); nada de esto entra en el índice. Los filtros también quitan los puntos del globo.
+- 2d: línea «Hardware rehearsed» por misión, solo con fuente (filas C3, C6, C7, C8a, C10, C12a y L15–L17 de `docs/sources.md`). IceBite fuera: solo estaba anunciado.
+- Panel de misión rehecho para que la lista quede arriba; lo demás, en el desplegable «About this mission». Panel de 420 px.
+- Pestaña «When»: energía solar que llega al suelo por mes e índice de claridad (NASA POWER, CERES SYN1deg), con los meses de Sol bajo marcados en la misión 4.
+- Comentarios de código y mensajes de pruebas en inglés.
+- Medido en local con la máquina cargada: Lighthouse móvil 77 (antes 70), TBT 1,0 s (antes 2,3 s); accesibilidad, buenas prácticas y SEO 100.
+- Pendiente: deslizadores «Your priorities» (10:00, si todo está estable), medir fps y Lighthouse con máquina libre (09:00), 2.ª prueba a ciegas del Tester, revisión de Legal, `docs/submission/` (antes de las 12:00), congelar a las 13:00.
+
+## 2026-11-15 · 01:27 · Etiquetas B, misión 4 y datos v7
 - Decisiones de zexu (00:43, vía Jefe): sitios en la Tierra con «líneas a etiquetas» (opción B, sin línea al mundo objetivo); 4 añadidos baratos (filtros de logística, selector Flat/Steep/Any, niveles de evidencia como insignia y orden, «Hardware rehearsed» por misión); extra opcional: deslizadores «Your priorities». Orden: escena + etiquetas B → radial → misión 4 → 2a–2d → deslizadores. Congelación a las 13:00.
 - Hecho en esta tanda: `src/lib/label-layout.ts` (colocación 2D de nombres fuera del globo, con prueba: no se pisan, no tapan la Tierra, el mundo objetivo ni los botones; la línea no es mucho más larga que la mínima); `SolarScene.tsx` sin líneas 3D ni `Line2`; pulso en el sitio abierto (se para con «Pause motion»); la vista general se para tras 30 s sin interacción; `MeshLambertMaterial`; los enlaces directos abren ya en primer plano.
-- Datos v8 de Logos Datos: 4 misiones (la 4.ª, «Low-Sun operations and solar power», calculada y NO validada: índice = media de similitudes), `coverageWeight`, suelo de avisos y permisos con fuente en el pipeline, nombre de Chukotka en inglés. Comprobación independiente de 9 regiones más (`docs/independent-check-v8.md`).
+- Datos v7 de Logos Datos (carpeta de entrega v8): 4 misiones (la 4.ª, «Low-Sun operations and solar power», calculada y NO validada: índice = media de similitudes), `coverageWeight`, suelo de avisos y permisos con fuente en el pipeline, nombre de Chukotka en inglés. Comprobación independiente de 9 regiones más (`docs/independent-check-v8.md`).
 - Retirada: Tankwa Karoo (m1-new7): la fuente geológica la sitúa en lutitas, sin dolerita; queda en «Removed» con su motivo. Total: 19 regiones nuevas.
 - Pendiente: filtros 2a/2b, insignias y orden 2c, línea 2d, rehacer el panel de misión (lista más arriba), gráfico de energía solar por mes, medir fps y Lighthouse a las 09:00, capturas y textos a las 12:00.
 

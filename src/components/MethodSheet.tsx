@@ -68,6 +68,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>
           <li>• Moon: LROC WAC mosaic, CGI Moon Kit, NASA&apos;s Scientific Visualization Studio (NASA/GSFC/Arizona State University).</li>
           <li>• Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.</li>
+          <li>• The logistics filters, the terrain selector, the evidence levels and the “Hardware rehearsed” list were adapted from feature ideas of our team&apos;s parallel prototype for the same challenge; no code was reused.</li>
           <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Bricolage Grotesque © 2022 The Bricolage Grotesque Project Authors; Martian Mono © 2021 The Martian Mono Project Authors.</li>
         </ul>
         <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>

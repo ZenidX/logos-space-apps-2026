@@ -1,5 +1,5 @@
 // AI-assisted (Claude), reviewed by team Logos
-// To run: copy next to globe-math.ts in a folder with node_modules (three), then `node globe-math.test.mjs`
+// Run with `npm test`.
 import assert from "node:assert/strict";
 import * as THREE from "three";
 import { latLonToVec3, isFacing, flyPosition, declutter, viewLat } from "./globe-math.ts";

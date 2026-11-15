@@ -15,7 +15,7 @@ const DEMO_MS = 7000;
 // Project in numbers, computed from the data file (nothing typed by hand).
 const STATS: [string, string][] = [
   [String(MISSIONS.length), "missions from real field campaigns"],
-  [`${(Math.min(...MISSIONS.map((m) => m.landCells ?? Infinity)) / 1e6).toFixed(1)}M+`, "land cells scored per mission"],
+  [`${(Math.floor(Math.min(...MISSIONS.map((m) => m.landCells ?? Infinity)) / 1e5) / 10).toFixed(1)}M+`, "land cells scored per mission"], // rounded down, so "+" is true
   [String(MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.kind === "new").length, 0)), "new regions to investigate"],
   [String(MISSIONS.filter((m) => m.validated).reduce((n, m) => n + m.sites.filter((s) => s.kind === "known").length, 0)), "known analogs used to validate"],
 ];
@@ -207,7 +207,7 @@ export default function Home() {
                   <div><dt className="label">Why it matters</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.matters}</dd></div>
                   {t.description && <div><dt className="label">About the target</dt><dd className="mt-0.5 text-[var(--mut)]">{t.description} {t.descriptionSources?.map((d, i) => <a key={d.url} href={d.url} target="_blank" rel="noopener noreferrer" className="underline" title={d.name}>[{i + 1}]</a>)}</dd></div>}
                 </dl>
-                <h3 className="label mt-3">Rehearsed for real by</h3>
+                <h3 className="label mt-3">{shown.validated ? "Rehearsed for real by" : "Closest real campaigns · the low Sun was simulated"}</h3>
                 <ul className="mt-1 grid gap-1 text-[13px]">
                   {shown.campaigns.map((c) => <li key={c.name}><a href={c.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{c.name}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></li>)}
                 </ul>

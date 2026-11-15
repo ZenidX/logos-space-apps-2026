@@ -1,6 +1,6 @@
 // AI-assisted (Claude), reviewed by team Logos
 // Acceptance band of a condition. Similarity = exp(−½ (d/τ)²), with d = distance to the ideal range and τ = tolerance;
-// the rule is met when similarity ≥ 0.5, i.e. at ≤ 1.1774·τ from the range (docs/method.md). Checked against the 105 similarities in sites.json.
+// the rule is met when similarity ≥ 0.5, i.e. at ≤ 1.1774·τ from the range (docs/method.md). Checked against every similarity in sites.json (rules.test.mjs).
 export const K = Math.sqrt(2 * Math.LN2); // 1.1774
 /** "<= 0.05" → [-∞, 0.05] · "<= -5" → [-∞, -5] · ">= 50" → [50, ∞] · "0.07-0.20" → [0.07, 0.2] · "1" → [1, 1] */
 export function parseIdeal(t: string): [number, number] {

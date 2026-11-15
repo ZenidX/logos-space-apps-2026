@@ -1,6 +1,7 @@
+// AI-assisted (Claude), reviewed by team Logos
 // "D · RADIAL": large index in the centre + one ring per condition. Pure SVG; draws in ONCE (CSS), static with prefers-reduced-motion.
 // Status without relying on colour: "in range" = thick arc + filled dot ●; "accepted" = thick arc + hollow dot ○; "out of range" = thin arc + cross ✕.
-// The legend repeats the status in words. Requires radial.css.
+// The legend repeats the status in words. Styles: the .dial* rules in src/app/globals.css.
 import { DIAL, GROUP_COLOR, GROUP_NAME, dialGeometry, dialLabel, type Ring, type RingGroup } from "@/lib/radial-data";
 
 const C = DIAL.size / 2;

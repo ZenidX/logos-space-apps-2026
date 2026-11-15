@@ -15,7 +15,7 @@ Actualizado el 15-11 a la 01:40. Cambio de zexu (14-11, ~21:30): la entrega se a
 ## Horario del domingo
 | Hora | Quién | Qué |
 |---|---|---|
-| 01:28 (hecho) | Líder | En vivo: etiquetas B, misión 4, datos v8, comprobación independiente de 9 regiones más (commit `1300144`) |
+| 01:28 (hecho) | Líder | En vivo: etiquetas B, misión 4, datos v7, comprobación independiente de 9 regiones más (commit `1300144`) |
 | 01:45 | Líder | En vivo: niveles de evidencia (insignia y orden), filtros de logística y terreno, «Hardware rehearsed», gráfico de energía solar por mes |
 | 02:00–04:00 | Logos Tester · Logos Legal · Crítico | 2.ª prueba a ciegas; licencias de las fuentes nuevas; revisión como jurado |
 | 04:00–09:00 | Líder | Arreglos de las revisiones; medidas baratas de rendimiento; textos |
