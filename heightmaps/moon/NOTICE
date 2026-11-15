@@ -1,0 +1,5 @@
+Elevation: "LRO LOLA DEM, 75 deg v4, S Pole" (NASA Moon Trek layer LRO_LOLA_DEM_SPole75_30mp_v04), a 30 m/px south polar stereographic shape map of the Moon from Lunar Orbiter Laser Altimeter (LOLA) altimetry acquired through September 2011, heights relative to a 1,737,400 m reference radius (Moon Trek FGDC metadata, read 2026-11-14: https://trek.nasa.gov/moon/TrekWS/rest/cat/metadata/fgdc/html?label=LRO_LOLA_DEM_SPole75_30mp_v04).
+Product family: LOLA Gridded Data Record LDEM_75S_30M, data set LRO-L-LOLA-4-GDR-V1.0, produced by the LRO LOLA Team (D. E. Smith, NASA Goddard Space Flight Center), NASA Planetary Data System (https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/IMG/LDEM_75S_30M.LBL; the current PDS edition is V2.0 with data to 2017, Moon Trek serves an earlier edition).
+Instrument reference: Smith, D. E., et al. (2010), The Lunar Orbiter Laser Altimeter investigation on the Lunar Reconnaissance Orbiter mission, Space Science Reviews, 150, 209-241, doi:10.1007/s11214-009-9512-y.
+NASA data, not subject to copyright in the United States.
+Cropped and resampled to an 11 x 11 km heightmap (96 x 96, 114.6 m step) by team Logos.

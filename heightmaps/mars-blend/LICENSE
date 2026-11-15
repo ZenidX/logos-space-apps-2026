@@ -1,0 +1,4 @@
+Elevation: Fergason, R. L., Hare, T. M., & Laura, J. (2018). HRSC and MOLA Blended Digital Elevation Model at 200m v2. Astrogeology PDS Annex, U.S. Geological Survey. https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m
+MOLA: NASA/GSFC (CC0). HRSC: ESA/DLR/FU Berlin (CC BY-SA 3.0 IGO).
+Modified by team Logos: cropped and resampled to 11 x 11 km heightmaps (96 x 96, 114.6 m step).
+These derived heightmaps are licensed under CC BY-SA 3.0 IGO: https://creativecommons.org/licenses/by-sa/3.0/igo/
