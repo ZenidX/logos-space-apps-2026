@@ -198,7 +198,7 @@ export default function Home() {
       {!missionId && (
         // Las páginas del equipo (antes un repo aparte): otra raíz de la web, con su propia barra
         <nav aria-label="More in Terra Vista" className="mb-8 flex flex-wrap gap-2 text-[13.5px]">
-          {[["/base/", "Plan a base anywhere"], ["/appendix/", "Appendix: earlier prototype (Earth Engine global search)"]].map(([href, label]) => (
+          {[["/base/", "Plan a base anywhere"]].map(([href, label]) => (
             <Link key={href} href={href} className="chip hover:border-[var(--ink)]">{label}</Link>
           ))}
         </nav>

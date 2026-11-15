@@ -10,7 +10,6 @@ import BackButton from "@/components/BackButton";
 export const PAGES = [
   { href: "/", label: "Missions", short: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
   { href: "/base/", label: "Plan a base", short: "Base" },
-  { href: "/appendix/", label: "Appendix", short: "More" }, // prototipo anterior: Story, Discover, 3D, Method, Data
 ] as const;
 
 const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
@@ -30,7 +29,7 @@ export default function SiteNav() {
         </div>
         <ul className="-my-1 -mr-1 flex items-center gap-2 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
-            const on = p.href === "/appendix/" ? path.startsWith("/appendix/") : path === norm(p.href);
+            const on = path === norm(p.href);
             return (
               <li key={p.href} className="shrink-0">
                 <Link href={p.href} aria-current={on ? "page" : undefined} className="chip">

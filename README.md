@@ -20,14 +20,12 @@ NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Perm
 
 <table>
 <tr>
-<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/"><img src="docs/logos/img/story-mission.jpg" alt="Missions: the camera flies to the Earth with the Moon beside it, numbered analog sites" /></a></td>
-<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/base/"><img src="docs/img/base-assembly.gif" alt="Plan a base: a Moon base assembles itself on real south-pole terrain" /></a></td>
-<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/appendix/discover/"><img src="docs/img/appendix-discover.jpg" alt="Appendix: the first global search, Earth candidates for Shackleton on a globe" /></a></td>
+<td width="50%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/"><img src="docs/logos/img/story-mission.jpg" alt="Missions: the camera flies to the Earth with the Moon beside it, numbered analog sites" /></a></td>
+<td width="50%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/base/"><img src="docs/img/base-assembly.gif" alt="Plan a base: a Moon base assembles itself on real south-pole terrain" /></a></td>
 </tr>
 <tr>
 <td><b>1 · Missions</b> (home)<br/>Pick a real field task. See where on Earth it can be rehearsed, how close each place is and where the analogy breaks.</td>
 <td><b>2 · <a href="#plan-a-base-run-a-moon-or-mars-base-on-real-terrain">Plan a base</a></b><br/>Drop a base anywhere on the Moon or Mars, watch it run on real terrain, and find where on Earth to rehearse each of its jobs.</td>
-<td><b>3 · <a href="#how-we-started-the-global-search">How we started</a></b><br/>Our first prototype: every 0.1° of Earth's land scored against Moon and Mars base sites in Google Earth Engine.</td>
 </tr>
 </table>
 
@@ -88,12 +86,6 @@ A permanent base is not one mission: it is the same jobs repeated for months. Th
 
 Every comparison ends with **where it breaks**: gravity, vacuum, radiation and lunar dust have no match on Earth. The base is a concept placed with simple rules, not a NASA design.
 
-## How we started: the global search
-
-Before the mission app, Terra Vista was a single global search: **every 0.1° of Earth's land scored against three base sites** (Shackleton on the Moon, Jezero and Arcadia on Mars) with NASA data processed in Google Earth Engine, validated against 25 known analogs. Its pages live on in the **[appendix](https://zenidx.github.io/logos-space-apps-2026/appendix/)** (story, discover, 3D, method, data), and its data still feeds the Earth rehearsal sites in *Plan a base*.
-
-<p align="center"><img src="docs/img/appendix-discover.jpg" alt="Appendix, Discover: choose Shackleton, Jezero or Arcadia; the globe marks the best new matches on Earth and a list ranks them" width="760" /></p>
-
 ## How it works (no server, no database)
 
 ```
@@ -130,7 +122,7 @@ LOGOS_IN=/path/to/inputs npm run data:logos   # rebuild sites.json from the publ
 | `scripts/data/` | Data pipeline (inputs, versions and checksums in its README) |
 | `src/app/(team)/base/`, `src/components/BasePlanner.tsx`, `src/components/BaseScene.tsx` | Plan a base: site choice, 3D base on real relief, jobs and Earth rehearsal |
 | `src/lib/base-plan.ts`, `src/lib/submissions.ts`, `src/data/base-sites.json`, `src/data/operations.json` | Base layout rules, job verdicts, our best base sites and the Earth sites for each job |
-| `src/app/(team)/appendix/`, `scripts/ee/` | How we started: the global Earth Engine search and its pages |
+| `scripts/ee/` | The global Earth Engine search whose data feeds the Earth rehearsal sites in Plan a base |
 | `docs/logos/` | [method](docs/logos/method.md), [sources](docs/logos/sources.md), [missions](docs/logos/missions.md), [independent check](docs/logos/independent-check.md), [design rationale](docs/logos/design-rationale.md); the original Spanish idea note is in [`docs/logos/es/origen-idea.md`](docs/logos/es/origen-idea.md) |
 
 ## Use of Super Intelligence (SI) / AI

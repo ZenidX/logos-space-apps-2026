@@ -21,18 +21,12 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 ## Arquitectura
 - **Dos partes con su propio layout raíz** (grupos de rutas; cada una carga solo su CSS y sus fuentes):
   - `src/app/(logos)/`: **portada `/`**, la app de misiones (antes el repo `zexuguo/SpaceApp-Logos`, unido con su historia el 15-11). Código en `src/components/logos/` y `src/lib/logos/`; datos en `src/data/sites.json` (flujo en Python: `scripts/data/`); docs en inglés en `docs/logos/`. Rutas de `/public` siempre con `asset()` (`src/lib/logos/asset.ts`) por el basePath de Pages.
-  - `src/app/(team)/`: `/base/` y el apéndice `/appendix/` con la web anterior; barra: Missions · Plan a base · Appendix.
+  - `src/app/(team)/`: `/base/`; barra: Missions · Plan a base. (El apéndice `/appendix/` con el prototipo anterior se descartó el 15-11; está en el historial de git.)
 - **Publicación:** cada push a `main` publica la web (`.github/workflows/deploy.yml` → rama `gh-pages`). `npm run deploy` sigue sirviendo para hacerlo a mano.
-- **Apéndice `/appendix/` (prototipo anterior; desde el 15-11 ya no es la web principal):** `/appendix/story/` (antigua portada + escena Luna→Tierra), `/appendix/discover/` (destino + deslizador ciencia↔logística), `/appendix/3d/` (comparación 11×11 km), `/appendix/method/` (validación + límites + fuentes), `/appendix/data/` (pestañas técnicas, `src/components/DataExplorer.tsx`). Barra común `src/components/SiteNav.tsx`; estado compartido (destino y peso) en `src/components/AppState.tsx`; las secciones de la historia están en `src/components/Story.tsx` y cada página elige cuáles pinta con `<Story sections={[…]} />`. `src/app/template.tsx` hace la transición (solo opacidad: un transform rompería los `position:fixed`).
+- Barra común `src/components/SiteNav.tsx`; estado compartido en `src/components/AppState.tsx`. `src/app/(team)/template.tsx` hace la transición (solo opacidad: un transform rompería los `position:fixed`).
 - `/base/` («Plan a base», enlazada desde la portada y la barra): base en cualquier punto de la Luna o de Marte. `BasePlanner.tsx` (página) → `loadMoonAny`/`loadMarsBlend` (terreno real de Trek) → `src/lib/base-plan.ts` (reglas, A* del rover) → `BaseScene.tsx` (montaje + base en marcha). Submisiones en `src/lib/submissions.ts`; cada una enlaza con dónde simularla en la Tierra (`operations.json` + parecido del relieve calculado en el momento).
-- `src/app/page.tsx`: 4 pestañas (Candidatos, Análisis, Datos, Mapas).
-- `src/components/CandidatesTab.tsx` ← `src/data/ee-global.json`: búsqueda global, validación y ranking.
-- `src/components/AnalysisTab.tsx` + `src/lib/analysis.ts` ← `src/data/ee-samples.json`: similitud por dimensión en 5 sitios de referencia.
-- `src/components/DataTab.tsx` ← `src/data/catalog.ts` + `ee-samples.json`: fichas de cada capa.
-- `src/components/Viewer3D.tsx` + `Terrain3D.tsx` + `src/lib/terrain.ts`: visor 3D de 11 × 11 km, candidato frente a objetivo. Luna/Marte desde el **ArcGIS ImageServer de Trek** (`exportImage`, F32, `format=bsq`); las teselas WMTS de Trek NO son alturas.
 - Interfaz en inglés (la entrega tiene que ir en inglés); la documentación interna sigue en español.
 - **Estilo:** el de la portada (Logos) en toda la web: Bricolage Grotesque + Martian Mono, paleta azul (`--earth` #5db4ff), paneles de cristal y botones en píldora (`glass`, `glass-tab`). En la parte del equipo, los tokens y las clases están al final de `src/app/(team)/globals.css` (la paleta de Tailwind slate/orange/sky sigue remapeada); el estilo «Consola» antiguo se anula ahí, no se ha borrado.
-- `src/components/TileMap.tsx`: Leaflet con NASA GIBS (Tierra, EPSG:3857) y Moon/Mars Trek (EPSG:4326).
 - `src/data/targets.ts`: huellas de Shackleton, Jezero y Arcadia (valores **aproximados**).
 - Método: posición relativa dentro del rango terrestre p1–p99. «Fuera de rango» se marca contra el mín./máx. real. Ver `docs/metodo.md`.
 
