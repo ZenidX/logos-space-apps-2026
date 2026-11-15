@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 11) · Base: por qué sirve cada sitio de la Tierra y la misión animada en los dos lados
+
+- Pedido de zexu: para cada misión, explicar **por qué** se puede hacer en cada sitio de la Tierra y **animarla tanto en la Tierra como en la base** lunar o marciana.
+- `src/lib/rehearsal.ts` interpreta las reglas de `operations.json` (`lo`, `hi`, `band`, las mismas que `scripts/ops/tasks.mjs`) y explica cada criterio con el valor real del sitio. Por ejemplo, «Rain: 64 mm/yr (best ≤ 100, fails ≥ 300) · Dry». También da la lista fija de **dónde se rompe** la analogía según el cuerpo: gravedad, vacío o aire de CO₂, radiación y regolito o frío.
+- Cada fila de «Simulate it on Earth» muestra los criterios con ✓, ~ o ✕. El botón pasa a ser **«Rehearse ▶»**.
+- `src/components/MissionCompare.tsx` (pantalla completa): **las mismas reglas de base** sobre el relieve real del sitio de la Tierra (izquierda, foto Sentinel-2) y sobre el sitio de la Luna o Marte (derecha), con **la operación de esa submisión en bucle en los dos**: aterrizajes, montaje del hábitat, cables, perforación, rover o salidas con traje. Debajo van tres bloques: «Why this place works», «Same ground?» (parecido del relieve, % edificable, pendiente, relieve, ruta del rover) y «Where it breaks».
+- `BaseScene.tsx`: aspecto `world="earth"` (cielo, niebla y suelo terrestres) y `loopFocus` (repite solo el grupo de piezas de la submisión).
+- Comprobado en Chromium sin pantalla: Shackleton → «Exploration traverses» → Atacama: las dos escenas animadas, el rover avanzando en las dos y sin errores en la consola.
+
 ## 2026-11-15 (tarde, 10) · Todo junto en ZenidX: SpaceApp-Logos es la portada (rama `zexu/converge`)
 
 - zexu aclara que lo que comentaba (la intro con el movimiento galáctico) era la app de **`zexuguo/SpaceApp-Logos`** (Vercel: spaceapp-logos.vercel.app), no este repo. Pide traerla aquí y juntarlo todo en `ZenidX/logos-space-apps-2026`. Decide: **Logos en la portada (`/`)** y la portada del equipo pasa a **`/story/`**.

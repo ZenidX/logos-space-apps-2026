@@ -10,7 +10,8 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Visor from "@/components/Visor";
 import type { GlobeMarker } from "@/components/Globe";
-import type { ViewerSite, ViewerTarget } from "@/components/Viewer3D";
+import type { RehearsalSite } from "@/components/MissionCompare";
+import { whyRows, type Criterion } from "@/lib/rehearsal";
 import { loadEarthTerrain, loadJezeroCTX, loadMarsBlend, loadMoonAny, type TerrainData } from "@/lib/terrain";
 import { planBase, RULES, type BasePlan, type PlanetBody } from "@/lib/base-plan";
 import { shapeMatch, shapeSig, subMissions, type Level, type ShapeSig, type SubMission } from "@/lib/submissions";
@@ -19,7 +20,7 @@ import operations from "@/data/operations.json";
 
 const Globe = dynamic(() => import("@/components/Globe"), { ssr: false });
 const BaseScene = dynamic(() => import("@/components/BaseScene"), { ssr: false });
-const Viewer3D = dynamic(() => import("@/components/Viewer3D"), { ssr: false });
+const MissionCompare = dynamic(() => import("@/components/MissionCompare"), { ssr: false });
 
 interface Site {
   lat: number;
@@ -65,13 +66,7 @@ const LEVEL: Record<Level, { label: string; color: string }> = {
 type Task = (typeof operations.tasks)[number];
 const TASKS = new Map<string, Task>(operations.tasks.map((t) => [t.id, t]));
 
-interface EarthSite {
-  key: string;
-  lat: number;
-  lon: number;
-  place: string;
-  taskScore: number;
-  accessH: number | null;
+interface EarthSite extends RehearsalSite {
   easy: boolean; // de la lista «accesible» (≤ N h de una ciudad)
 }
 
@@ -94,10 +89,31 @@ function earthSitesFor(sub: SubMission): EarthSite[] {
           taskScore: Math.max(prev?.taskScore ?? 0, s.score),
           accessH: v.access_h ?? prev?.accessH ?? null,
           easy: easy || !!prev?.easy,
+          byTask: { ...prev?.byTask, [id]: v as Record<string, number | null> },
         });
       }
   }
   return [...out.values()];
+}
+
+// Resumen del «por qué» en la fila: cada criterio con su valor real y si se cumple
+function WhyChips({ sub, site }: { sub: SubMission; site: EarthSite }) {
+  const id = sub.tasks.find((t) => site.byTask[t]);
+  const t = id ? TASKS.get(id) : null;
+  if (!t || !id) return null;
+  const rows = whyRows(t.criteria as Criterion[], site.byTask[id], Math.abs(site.lat));
+  return (
+    <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[12px] text-[var(--mut)]">
+      {rows.map((r) => (
+        <span key={r.label}>
+          <span aria-hidden style={{ color: r.score == null ? "var(--dim)" : r.score >= 0.75 ? "var(--ok)" : r.score > 0 ? "var(--acc)" : "var(--warn)" }}>
+            {r.score == null ? "–" : r.score >= 0.75 ? "✓" : r.score > 0 ? "~" : "✕"}
+          </span>{" "}
+          {r.label} {r.value}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 // Firma de forma de cada sitio terrestre: se descarga una vez (teselas Terrarium) y se guarda.
@@ -166,6 +182,7 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
                   {typeof m === "number" ? `${Math.round(m * 100)}%` : m === "error" ? "n/a" : "…"}
                   {s.easy && s.accessH !== null ? ` · ${s.accessH.toFixed(0)} h from a city` : ""}
                 </span>
+                <WhyChips sub={sub} site={s} />
                 {t >= 0 && (
                   <span className="mt-1 block h-[3px] w-full bg-[var(--line)]">
                     <span className="block h-full bg-[var(--acc)]" style={{ width: `${Math.round(t * 100)}%` }} />
@@ -177,8 +194,8 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
                 onClick={() => onCompare(s)}
                 className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] px-3 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)] hover:border-[var(--acc)]"
               >
-                3D
-                <span className="sr-only"> compare {s.place} with the base site</span>
+                Rehearse <span aria-hidden>▶</span>
+                <span className="sr-only"> {sub.name} at {s.place}, side by side with the base site</span>
               </button>
             </li>
           );
@@ -217,7 +234,7 @@ export default function BasePlanner() {
   const [symbol, setSymbol] = useState<number | null>(null);
   const [imagery, setImagery] = useState<"" | "loading" | "none">("");
   const [form, setForm] = useState({ lat: "", lon: "" });
-  const [viewer, setViewer] = useState<{ site: ViewerSite; target: ViewerTarget } | null>(null);
+  const [rehearse, setRehearse] = useState<EarthSite | null>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const timer = useRef(0);
 
@@ -293,14 +310,7 @@ export default function BasePlanner() {
     setSubId(id);
   };
 
-  const compare = (s: EarthSite) => {
-    if (!data || !site) return;
-    const terrain = data.terrain;
-    setViewer({
-      site: { lat: s.lat, lon: s.lon, name: s.place },
-      target: { name: `${site.name} · base site`, short: body === "moon" ? "Moon" : "Mars", load: () => Promise.resolve(terrain), sunPresetDeg: Math.round(sun * 10) / 10 },
-    });
-  };
+  const compare = (s: EarthSite) => setRehearse(s);
 
   const markers: GlobeMarker[] = useMemo(
     () => [
@@ -511,8 +521,7 @@ export default function BasePlanner() {
           <h2 id="earth-h" className="mt-2 text-2xl font-medium">Where to rehearse “{sub.name}” for this base</h2>
           <p className="mt-1 max-w-[70ch] text-sm text-[var(--mut)]">
             <span className="text-[var(--ink)]">Needs: </span>
-            {sub.needs} Pick another sub-mission above to change the list; tap <span className="font-mono text-[var(--acc)]">3D</span> to see
-            the Earth site next to your base site at the same scale.
+            {sub.needs} Pick another sub-mission above to change the list; tap <span className="font-mono text-[var(--acc)]">Rehearse ▶</span> to watch this sub-mission played on the Earth site and on your base, side by side, and see why the place qualifies.
           </p>
           <div className="mt-4">
             <EarthSim key={`${data?.key}:${sub.id}`} sub={sub} siteSig={siteSig} onCompare={compare} />
@@ -551,7 +560,14 @@ export default function BasePlanner() {
         </>
       )}
 
-      {viewer && <Viewer3D site={viewer.site} target={viewer.target} onClose={() => setViewer(null)} />}
+      {rehearse && data && site && sub && siteSig && (
+        <MissionCompare
+          sub={sub}
+          site={rehearse}
+          base={{ terrain: data.terrain, plan: data.plan, sig: siteSig, name: site.name, sun, layer }}
+          onClose={() => setRehearse(null)}
+        />
+      )}
     </div>
   );
 }

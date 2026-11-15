@@ -25,6 +25,10 @@ interface Props {
   onStepEnd?: (step: number) => void;
   // Con la base montada (step = STEP_DONE): submisión en la que se centra la cámara.
   focus?: FocusKey | null;
+  // Aspecto del mundo: por defecto el del plan. "earth" = el mismo plan dibujado en un sitio de ensayo terrestre.
+  world?: "moon" | "mars" | "earth";
+  // Con la base montada y un foco: repite en bucle solo la operación de esa submisión (comparación Tierra ↔ base).
+  loopFocus?: boolean;
   onSymbolScale?: (factor: number) => void;
   onImagery?: (state: "" | "loading" | "none") => void;
 }
@@ -32,6 +36,8 @@ interface Props {
 const STEP_MS = 2200; // montaje rápido: lo importante es la base funcionando
 const CARGO_MS = 16000; // ciclo de una nave de carga (llega, se queda, otra)
 const ROVER_MS = 22000; // ida y vuelta del rover
+const LOOP_MS = 5200; // bucle de una submisión en la comparación
+const FOCUS_STEP: Record<FocusKey, number> = { pad: 0, habitat: 1, power: 2, isru: 3, route: 4, eva: 5 };
 const ease = (k: number) => 1 - Math.pow(1 - k, 3);
 const clamp01 = (k: number) => Math.max(0, Math.min(1, k));
 
@@ -62,7 +68,11 @@ function slopeCanvas(slope: Float32Array, n: number) {
   return c;
 }
 
-export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery, focus = null }: Props) {
+export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery, focus = null, world, loopFocus = false }: Props) {
+  const loopRef = useRef(loopFocus);
+  useEffect(() => {
+    loopRef.current = loopFocus;
+  }, [loopFocus]);
   const focusRef = useRef(focus);
   useEffect(() => {
     focusRef.current = focus;
@@ -95,10 +105,12 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       return;
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mars = plan.body === "mars";
+    const look = world ?? plan.body;
+    const mars = look === "mars";
+    const earth = look === "earth";
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
-    renderer.setClearColor(mars ? 0x1a0e08 : 0x020407);
+    renderer.setClearColor(earth ? 0x0b1828 : mars ? 0x1a0e08 : 0x020407);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.touchAction = "pan-y";
@@ -106,6 +118,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
 
     const scene = new THREE.Scene();
     if (mars) scene.fog = new THREE.Fog(0x3a2214, 1.6, 4.2); // aire con polvo; la Luna no tiene niebla
+    if (earth) scene.fog = new THREE.Fog(0x1c3552, 1.8, 4.6); // aire de la Tierra
     const camera = new THREE.PerspectiveCamera(42, el.clientWidth / el.clientHeight, 0.005, 60);
     camera.position.set(0.35, 0.42, 0.62);
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -132,8 +145,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       scene.add(stars);
     }
 
-    scene.add(new THREE.AmbientLight(mars ? 0xffc9a0 : 0x6f88a8, mars ? 0.42 : 0.26));
-    const sun = new THREE.DirectionalLight(mars ? 0xffe6cc : 0xffffff, mars ? 2.2 : 2.8);
+    scene.add(new THREE.AmbientLight(earth ? 0xcfe0ff : mars ? 0xffc9a0 : 0x6f88a8, earth ? 0.5 : mars ? 0.42 : 0.26));
+    const sun = new THREE.DirectionalLight(mars ? 0xffe6cc : 0xffffff, earth ? 2.3 : mars ? 2.2 : 2.8);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     const sc = sun.shadow.camera;
@@ -165,7 +178,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       t.anisotropy = 8;
     }
     if (mars) reliefTex.colorSpace = THREE.SRGBColorSpace;
-    const terrainMat = new THREE.MeshStandardMaterial({ map: reliefTex, roughness: 0.96, metalness: 0, color: mars ? 0xe0a27a : 0xffffff });
+    const terrainMat = new THREE.MeshStandardMaterial({ map: reliefTex, roughness: 0.96, metalness: 0, color: earth ? 0xc9bfa6 : mars ? 0xe0a27a : 0xffffff });
     const ground = new THREE.Mesh(geo, terrainMat);
     ground.receiveShadow = true;
     ground.castShadow = true;
@@ -199,7 +212,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       grey: new THREE.MeshStandardMaterial({ color: 0x8c96a3, roughness: 0.7, metalness: 0.4 }),
       gold: new THREE.MeshStandardMaterial({ color: 0xd8b25c, roughness: 0.35, metalness: 0.8 }),
       panel: new THREE.MeshStandardMaterial({ color: 0x1d3f7a, roughness: 0.25, metalness: 0.7, side: THREE.DoubleSide, emissive: 0x061a3a }),
-      berm: new THREE.MeshStandardMaterial({ color: mars ? 0x9a5a38 : 0x77746e, roughness: 1 }),
+      berm: new THREE.MeshStandardMaterial({ color: earth ? 0x8a7a5e : mars ? 0x9a5a38 : 0x77746e, roughness: 1 }),
       pad: new THREE.MeshStandardMaterial({ color: 0xb7bdc4, roughness: 0.9 }),
       accent: new THREE.MeshStandardMaterial({ color: 0x5ee6ff, emissive: 0x2aa8c4, emissiveIntensity: 0.9 }),
       ice: new THREE.MeshStandardMaterial({ color: 0x9fdcff, emissive: 0x3fa6ff, emissiveIntensity: 1.2, transparent: true, opacity: 0.85 }),
@@ -530,26 +543,31 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         st.ended = true;
         queueMicrotask(() => cb.current.onStepEnd?.(st.step));
       }
+      // Bucle de una sola submisión (comparación): su grupo de piezas se repite; el resto queda montado
+      const lk = st.step >= STEP_DONE && loopRef.current && focusRef.current ? FOCUS_STEP[focusRef.current] : -1;
+      const lp = reduce.matches ? 1 : clamp01(((now % LOOP_MS) / LOOP_MS) * 1.35);
       for (const pc of pieces) {
         const show = pc.stepIdx <= st.step;
         pc.obj.visible = show;
         if (!show) continue;
         pc.obj.position.set(pc.spot.x * s, yAt(pc.spot.x, pc.spot.z), pc.spot.z * s);
         const running = st.step >= STEP_DONE && pc.loop && !reduce.matches;
-        pc.anim?.(running ? pc.loop!(now) : pc.stepIdx === st.step ? p : 1);
+        pc.anim?.(pc.stepIdx === lk && !(running && lk === 4) ? lp : running ? pc.loop!(now) : pc.stepIdx === st.step ? p : 1);
       }
       for (const c of cables) {
         c.line.visible = st.step >= 2;
-        c.g.setDrawRange(0, st.step === 2 ? Math.max(2, Math.floor(c.N * ease(clamp01(p * 1.4 - 0.3)))) : c.N);
+        const cp = lk === 2 ? lp : st.step === 2 ? p : 1;
+        c.g.setDrawRange(0, cp < 1 ? Math.max(2, Math.floor(c.N * ease(clamp01(cp * 1.4 - 0.3)))) : c.N);
       }
       routeLine.visible = st.step >= 4;
       if (st.step > 4) routeG.setDrawRange(0, routePts + 1);
       evaRing.visible = st.step >= 5;
       if (st.step === 5) updateRing(Math.max(0.02, ease(p)));
+      else if (lk === 5) updateRing(Math.max(0.02, ease(lp)));
       astros.forEach((a, i) => {
         a.visible = st.step >= 5;
         if (!a.visible) return;
-        const k = st.step === 5 ? ease(p) : 1;
+        const k = st.step === 5 ? ease(p) : lk === 5 ? ease(lp) : 1;
         const ang = i * 2.1 + now * 0.00008 * (reduce.matches ? 0 : 1);
         const x = plan.habitat.x + Math.cos(ang) * 600 * k;
         const z = plan.habitat.z + Math.sin(ang) * 600 * k;
@@ -599,7 +617,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       wantLayer = l;
       if (l === "slope") { terrainMat.map = slopeTex; terrainMat.color.set(0xffffff); }
       else if (l === "photo" && photo) { terrainMat.map = photo; terrainMat.color.set(0xffffff); }
-      else { terrainMat.map = reliefTex; terrainMat.color.set(mars ? 0xe0a27a : 0xffffff); }
+      else { terrainMat.map = reliefTex; terrainMat.color.set(earth ? 0xc9bfa6 : mars ? 0xe0a27a : 0xffffff); }
       terrainMat.needsUpdate = true;
       if (l === "photo" && photo === undefined && terrain.loadImagery) {
         photo = null;
@@ -650,7 +668,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       host.replaceChildren();
       api.current = null;
     };
-  }, [terrain, plan]);
+  }, [terrain, plan, world]);
 
   useEffect(() => api.current?.setEx(exaggeration), [exaggeration, terrain, plan]);
   useEffect(() => api.current?.setSun(sunDeg), [sunDeg, terrain, plan]);
