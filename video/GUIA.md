@@ -3,7 +3,7 @@
 Léela entera antes de tocar nada. Contexto del proyecto en `CLAUDE.md`. Guion, planos y decisiones en `docs/guion-video.md` y `docs/normas.md` («Vídeo de demo: decisiones del equipo»).
 
 ## Qué es
-- Vídeo de **29,5 s**, 1920×1080, 30 fps, H.264 + AAC (y copia WebM). Voz de ElevenLabs (la genera el usuario), subtítulos quemados palabra a palabra y marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
+- Vídeo de **28,85 s** (v5, voz masculina `video/audio/male_voice.wav`; la v4 con `voice.wav` duraba 29,5 s), 1920×1080, 30 fps, H.264 + AAC (y copia WebM). Voz de ElevenLabs (la genera el usuario), subtítulos quemados palabra a palabra y marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
 - **La imagen sale de la web real que se entrega:** la del repo del equipo `zexuguo/SpaceApp-Logos`, publicada en **https://spaceapp-logos.vercel.app** (clon local: `/home/event/SpaceApps-v2`). **No escribas en ese repo.** Solo se abre la web pública.
 - **Dónde se publica:** página oculta https://zenidx.github.io/logos-space-apps-2026/demo-video/ de ESTE repo (MP4 directo en `/demo/terravista-demo.mp4`).
 
@@ -20,7 +20,7 @@ Léela entera antes de tocar nada. Contexto del proyecto en `CLAUDE.md`. Guion, 
 | Archivo | Qué hace |
 |---|---|
 | `docs/timestamps.txt` | Texto de la voz por tramos `[inicio, fin]: frase`. De aquí salen los subtítulos. |
-| `video/audio/voice.wav` | Voz (la deja el usuario). |
+| `video/audio/male_voice.wav` | Voz actual (v5). `voice.wav` es la femenina de la v4. `align.py`, `build.sh` y `make.sh` usan `voice.wav` salvo que se pase `VOICE=/ruta/absoluta.wav`. |
 | `video/scripts/align.py` | Vosk: tiempo de cada palabra → `video/audio/word-timings.json` (se commitea, así que no hace falta Vosk si la voz no cambia). |
 | `video/scripts/capture.cjs` | Graba la web fotograma a fotograma con reloj virtual → `video/build/frames/{a,b,c1,c2}`. |
 | `video/scripts/overlays.cjs` | Marca de agua + degradado inferior, cierre y negro → `video/build/overlays/`. |
@@ -46,7 +46,14 @@ python3 -m venv $SCRATCH/vosk/venv && $SCRATCH/vosk/venv/bin/pip install vosk
 **Solo cambian los textos de los subtítulos o el cierre** (~1,5 min):
 editar `docs/timestamps.txt` (y `overlays.cjs` si es el cierre) → `align.py` → `SKIP_CAPTURE=1 video/scripts/make.sh`.
 
-**Voz nueva:** el usuario deja `video/audio/voice.wav` y actualiza `docs/timestamps.txt`.
+**Voz nueva:** el usuario deja el WAV en `video/audio/`; se pasa con `VOICE=$PWD/video/audio/<archivo>.wav` a `align.py` y a `make.sh`. Los tramos de `docs/timestamps.txt` hay que recortarlos a las pausas de la voz nueva: `align.py` encaja cada palabra dentro de su tramo y los subtítulos solo salen dentro de él.
+
+Cómo se hizo la v5 (sin volver a capturar, ~2 min):
+```bash
+VOICE=$PWD/video/audio/male_voice.wav $SCRATCH/vosk/venv/bin/python -I video/scripts/align.py $SCRATCH/vosk/vosk-model-small-en-us-0.15
+VOICE=$PWD/video/audio/male_voice.wav SKIP_CAPTURE=1 video/scripts/make.sh terravista-demo-male
+video/scripts/publish-demo.sh terravista-demo-male
+```
 1. Mirar la duración y las pausas: `video/tools/node_modules/ffmpeg-static/ffmpeg -i video/audio/voice.wav -af silencedetect=n=-40dB:d=0.25 -f null -`.
 2. `$SCRATCH/vosk/venv/bin/python -I video/scripts/align.py $SCRATCH/vosk/vosk-model-small-en-us-0.15`. Es normal que «Terra Vista» y «spacesuit? An ice drill?» salgan «not aligned»: se reparten en el tramo que se oye.
 3. Si cambia la duración, ajustar `DUR` (por defecto en `make.sh`, <30) y los cortes de plano en `build.sh` y `capture.cjs` (`path1d` del plano `a`, número de fotogramas de cada plano).

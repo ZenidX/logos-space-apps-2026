@@ -8,7 +8,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 NAME=${1:-terravista-demo}; shift || true
-export DUR=${DUR:-29.5}   # video length: the voice is 29.5 s (rules: 30 s or less)
+export DUR=${DUR:-28.85}   # video length: the male voice is 28.85 s (rules: 30 s or less)
 t0=$(date +%s)
 if [ "${SKIP_CAPTURE:-0}" != 1 ]; then node scripts/capture.cjs "$@"; fi
 node scripts/overlays.cjs

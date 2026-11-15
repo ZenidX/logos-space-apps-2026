@@ -66,4 +66,4 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
   - Recuperar el NDVI real de los candidatos (necesita la cuenta de Google dueña del proyecto EE `terra-analog`).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
-  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). Vídeo de 30 s **hecho y publicado** (v4, 29,5 s, grabado sobre la web del equipo): https://zenidx.github.io/logos-space-apps-2026/demo-video/ (cómo rehacerlo: `video/GUIA.md`). Falta ensayar el pitch y rellenar la página del proyecto.
+  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). Vídeo de 30 s **hecho y publicado** (v5, voz masculina, 28,85 s; mismas capturas que la v4, grabadas sobre la web del equipo): https://zenidx.github.io/logos-space-apps-2026/demo-video/ (cómo rehacerlo: `video/GUIA.md`). Falta ensayar el pitch y rellenar la página del proyecto.

@@ -29,7 +29,7 @@ Cinco criterios, cada uno de 1 a 5: **Impact, Creativity, Validity, Relevance, P
 
 ## Vídeo de demo: decisiones del equipo (15-11-2026)
 Comprobado de nuevo el 15-11. La página de la guía no se pudo volver a abrir (fallo de certificado en la red), pero las búsquedas confirman los límites: 30 s o menos, subtítulos en inglés, enlace público.
-- **Duración:** menos de 30 s. La voz nueva (v4) dura 29,5 s y el archivo se corta a **29,5 s**, así que ningún reproductor lo redondea por encima de 30 (tramos en `docs/timestamps.txt`).
+- **Duración:** menos de 30 s. La voz masculina (v5, `male_voice.wav`) dura 28,85 s y el archivo se corta a **28,85 s**, así que ningún reproductor lo redondea por encima de 30 (tramos en `docs/timestamps.txt`).
 - **Imagen:** solo la web real que se entrega, la del repo del equipo (https://spaceapp-logos.vercel.app), sin tramos en negro. El vídeo se publica en `/demo-video/` de la web de este repo.
 - **Nombre:** voz y cierre dicen Terra Vista (en dos palabras, como la web); la web se enseña tal cual (su cabecera dice «Terra Vista · Mission Analogs»).
 - **Nada que la web no respalde:** la frase de los avisos pasa a ser *«and flags where access needs permits, or extra care»*, porque el indicador de acceso de la web dice que no es una evaluación de seguridad (Validity).

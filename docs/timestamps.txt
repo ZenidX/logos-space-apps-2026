@@ -1,11 +1,11 @@
-[0, 6]: Everything we send to the Moon or Mars gets tested on Earth first. But… where?
+[0, 5.9]: Everything we send to the Moon or Mars gets tested on Earth first. But… where?
 
-[6, 13]: Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
+[5.9, 12.3]: Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
 
-[13, 18]: Testing a spacesuit? An ice drill? It weighs what matters for that mission,
+[12.3, 17.7]: Testing a spacesuit? An ice drill? It weighs what matters for that mission,
 
-[18, 22]: shows exactly where every analogy breaks,
+[17.7, 21.3]: shows exactly where every analogy breaks,
 
-[22, 26]: and flags where access needs permits, or extra care.
+[21.3, 25.6]: and flags where access needs permits, or extra care.
 
-[26, 29]: Terra Vista. Down to Earth.
+[25.6, 28.85]: Terra Vista. Down to Earth.

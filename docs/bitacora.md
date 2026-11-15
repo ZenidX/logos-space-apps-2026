@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 23) · Vídeo de demo v5: voz masculina
+
+- Pedido del usuario: rehacer el vídeo con la voz masculina (`video/audio/male_voice.wav`, 28,85 s) reutilizando las capturas (el plano `a` tarda ~40 min). Mismo guion; cambian la entonación y los tiempos.
+- `docs/timestamps.txt`: mismo texto, tramos recortados a las pausas de la voz nueva (0–5,9 · 5,9–12,3 · 12,3–17,7 · 17,7–21,3 · 21,3–25,6 · 25,6–28,85). Con los antiguos, «Testing a spacesuit?» y «and flags…» habrían salido tarde.
+- `align.py` y `build.sh` aceptan `VOICE=/ruta.wav` (por defecto sigue `voice.wav`). Alineación con Vosk: todo encaja salvo «Terra Vista» (dos veces) y un «where», que se reparten en su tramo.
+- Cortes: b se recorta a 108 fotogramas (18–21,6), c1 21,6–24, c2 24–25,6, cierre 25,6–28,85. `DUR` por defecto 28,85.
+- Comprobado: 1920×1080, H.264 + AAC, 28,87 s; hoja de contactos y fotogramas en cada inicio de frase y corte. Publicado en `/demo-video/`.
+- Límite conocido: el plano `a` lleva el ritmo de la voz femenina; las frases 2–3 empiezan ~0,3 s antes que la imagen.
 ## 2026-11-15 (tarde, 22) · Lista de mejoras 4–11: ficha más gráfica, salir, clic en los astros, giro de los planetas, pie, sin «Prototype», «Plan a base»
 
 - **4 · Ficha del sitio más gráfica y simple** (`SitePanel.tsx`, `logos.css`): la frase del veredicto pasa a píldoras por condición (✓ en rango, ≈ aceptada, ✕ fuera, – sin dato) y el párrafo de logística a tres cifras (tiempo a una ciudad, pendiente media, acceso con sus barras). En «Why», el «por qué importa» y las fuentes de cada condición quedan plegados («Why it matters · sources»), y los textos de ayuda son más cortos.

@@ -4,11 +4,11 @@ Usage (Vosk and its model live outside the repo):
   python -I video/scripts/align.py <vosk-model-dir> [ffmpeg]
 Writes video/audio/word-timings.json: [{phrase, start, end, text, words: [{w, start, end, aligned}]}]
 """
-import difflib, json, re, subprocess, sys, wave, pathlib
+import difflib, json, os, re, subprocess, sys, wave, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 TS = ROOT / "docs/timestamps.txt"
-WAV = ROOT / "video/audio/voice.wav"
+WAV = pathlib.Path(os.environ.get("VOICE", ROOT / "video/audio/voice.wav")).resolve()
 OUT = ROOT / "video/audio/word-timings.json"
 model_dir = sys.argv[1]
 ffmpeg = sys.argv[2] if len(sys.argv) > 2 else str(ROOT / "video/tools/node_modules/ffmpeg-static/ffmpeg")
