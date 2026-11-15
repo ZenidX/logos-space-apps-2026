@@ -19,7 +19,7 @@ export const EARTH_R = 1; // scene unit = one Earth radius
 export const RADIUS: Record<BodyId, number> = { earth: EARTH_R, mars: FACTS.marsKm / FACTS.earthKm, moon: FACTS.moonKm / FACTS.earthKm };
 export const AU = 8.6; // scene units per astronomical unit (bodies are enlarged against the orbits)
 export const ORBIT = { earth: AU, mars: AU * FACTS.marsAU, moon: 1.9 } as const; // the Moon's distance is enlarged
-export const SUN_R = 0.75;
+export const SUN_R = 1.5; // not to scale (the real Sun is 109 Earth radii); drawn larger than the Earth so its surface reads
 export const YEAR_S = 60; // one Earth year of the overview lasts this many seconds
 export const PERIOD_S = { earth: YEAR_S, mars: (YEAR_S * FACTS.marsDays) / FACTS.earthDays, moon: (YEAR_S * FACTS.moonDays) / FACTS.earthDays } as const;
 const PHASE = { earth: 0.6, mars: 2.4, moon: 1.0 };
@@ -59,9 +59,13 @@ export function overviewPose(aspect: number): Pose {
   return { look, pos: dir.clone().multiplyScalar(fitDistance(look, dir, overviewExtent(), aspect, 0.93)) };
 }
 
-/** Close-up frame around the Earth at E: `dir` points from the Earth to the camera (from the sunlit side, a little above the ecliptic). */
+/** Angle between the Sun's direction and the close-up camera, around the vertical: the Sun lights the Earth from the
+ * front right, so the day side faces the viewer and the night side (with its city lights) shows along the left limb. */
+export const CLOSE_SUN_ANGLE = 0.7;
+/** Close-up frame around the Earth at E: `dir` points from the Earth to the camera (on the sunlit side, a little above the ecliptic). */
 export function closeFrame(E: THREE.Vector3) {
-  const dir = E.clone().normalize().multiplyScalar(-0.95).add(new THREE.Vector3(0, 0.31, 0)).normalize();
+  const toSun = E.clone().normalize().negate(), side = new THREE.Vector3().crossVectors(toSun, UP).normalize();
+  const dir = toSun.multiplyScalar(Math.cos(CLOSE_SUN_ANGLE)).addScaledVector(side, Math.sin(CLOSE_SUN_ANGLE)).multiplyScalar(0.95).add(new THREE.Vector3(0, 0.31, 0)).normalize();
   const right = new THREE.Vector3().crossVectors(UP, dir).normalize(), up = new THREE.Vector3().crossVectors(dir, right).normalize();
   return { dir, right, up };
 }

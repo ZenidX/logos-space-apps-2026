@@ -83,6 +83,9 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• Earth: NASA Blue Marble via NASA GIBS.</li>
           <li>• Moon: LROC WAC mosaic, CGI Moon Kit, NASA&apos;s Scientific Visualization Studio (NASA/GSFC/Arizona State University).</li>
           <li>• Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.</li>
+          <li>• Earth at night and clouds: city lights from NASA Earth Observatory&apos;s Black Marble 2016 (Suomi NPP VIIRS), which also gives the water mask for the sun glint; clouds from the NASA Visible Earth Blue Marble cloud layer (MODIS).</li>
+          <li>• Relief: Moon from LOLA elevation (NASA SVS CGI Moon Kit), Mars from MGS MOLA elevation (NASA PDS), turned into lighting maps with the relief exaggerated ×12 and ×10 so it shows at globe size.</li>
+          <li>• The Sun&apos;s surface, glow and the stars are drawn by our code (decoration, not data). The light on every body comes from the Sun&apos;s position. Script: <Doc path="scripts/tex/make-textures.sh" />.</li>
           <li>• The logistics filters, the terrain selector, the evidence levels and the “Hardware rehearsed” list were adapted from feature ideas of our team&apos;s parallel prototype for the same challenge; no code was reused.</li>
           <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Bricolage Grotesque © 2022 The Bricolage Grotesque Project Authors; Martian Mono © 2021 The Martian Mono Project Authors.</li>
         </ul>

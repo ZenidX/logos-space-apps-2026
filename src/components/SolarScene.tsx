@@ -9,7 +9,8 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { latLonToVec3 } from "@/lib/globe-math";
-import { GLOBE_TEX } from "@/lib/globe-tex";
+import { EARTH_EXTRA, GLOBE_TEX, NORMAL_TEX } from "@/lib/globe-tex";
+import { ATMO_FRAG, ATMO_VERT, EARTH_FRAG, GLOBE_VERT, GLOW_FRAG, GLOW_VERT, ROCKY_FRAG, STAR_FRAG, STAR_VERT, SUN_FRAG, SUN_VERT } from "@/lib/scene-shaders";
 import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/label-layout";
 import { EARTH_R, FOV, NAME_ROOM, ORBIT, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
 
@@ -29,8 +30,10 @@ interface Props {
 const BODIES: BodyId[] = ["earth", "moon", "mars"];
 const COLOR: Record<BodyId, number> = { earth: 0x5db4ff, moon: 0xd7dce6, mars: 0xff8d5e };
 const NAMES = [["sun", "Sun"], ["earth", "Earth"], ["moon", "Moon"], ["mars", "Mars"]] as const;
-const ATMO_VERT = "varying vec3 n; void main(){ n = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
-const ATMO_FRAG = "uniform vec3 c; uniform float k; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0) * k; }";
+// Atmosphere shells: radius (globe = 1), colour on the sunlit limb, colour at the terminator, strength.
+const ATMO: Partial<Record<BodyId, { r: number; day: number; dusk: number; k: number }>> = { earth: { r: 1.06, day: 0x5a9eff, dusk: 0xc8704e, k: 1.1 }, mars: { r: 1.035, day: 0xf0a070, dusk: 0x9a5a48, k: 0.5 } };
+// Moon and Mars: Lommel–Seeliger share (1 = evenly bright full disc), brightness, relief strength, limb haze (linear rgb).
+const ROCK = { moon: { ls: 0.75, gain: 1.9, relief: 0.9, haze: [0, 0, 0] }, mars: { ls: 0.35, gain: 2.2, relief: 0.8, haze: [0.3, 0.14, 0.06] } } as const;
 const JOURNEY_S = 2.8, BACK_S = 1.3, IDLE_MS = 30000, COMPACT_W = 620, COMPACT_NAMES = 3, ROOM_W = 560;
 const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
 
@@ -53,8 +56,9 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     try {
       // ?capture=1 keeps the drawing buffer so screenshots and screen-recording tools can read the canvas.
       const capture = new URLSearchParams(window.location.search).has("capture");
-      renderer = new THREE.WebGLRenderer({ antialias: !small, alpha: true, powerPreference: "low-power", preserveDrawingBuffer: capture });
+      renderer = new THREE.WebGLRenderer({ antialias: !small, alpha: false, powerPreference: "low-power", preserveDrawingBuffer: capture });
     } catch (e) { latest.current.onError?.(e); return; }
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0; renderer.setClearColor(0x04060c, 1); // opaque, the page background colour (--bg)
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lite = small || window.matchMedia("(pointer: coarse)").matches || navigator.hardwareConcurrency <= 4;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.5 : 2));
@@ -63,42 +67,82 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     el.prepend(renderer.domElement);
 
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(FOV, 1, 0.05, 400);
-    scene.add(camera, new THREE.AmbientLight(0xffffff, 0.5));
-    const key = new THREE.DirectionalLight(0xffffff, 2.4);
-    key.position.set(-2, 1.4, 3); camera.add(key); // light travels with the camera so the visible side is always lit
+    scene.add(camera); // no lights: every body is shaded by its own shader, with the light coming from the Sun at the origin
     let width = 1, height = 1, disposed = false;
     const disposables: { dispose: () => void }[] = [];
     const keep = <T extends { dispose: () => void }>(x: T) => { disposables.push(x); return x; };
 
-    // ---------- Sun ----------
-    const sun = new THREE.Mesh(keep(new THREE.SphereGeometry(SUN_R, 40, 28)), keep(new THREE.MeshBasicMaterial({ color: 0xfff1cf })));
-    const halo = new THREE.Mesh(keep(new THREE.SphereGeometry(SUN_R * 2.6, 40, 28)), keep(new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, uniforms: { c: { value: new THREE.Color(0xffe2a0) }, k: { value: 0.45 } }, vertexShader: ATMO_VERT, fragmentShader: ATMO_FRAG })));
-    sun.add(halo); scene.add(sun);
+    // ---------- Sun: moving granulation and limb darkening (shader), and a camera-facing glow ----------
+    const sunMat = keep(new THREE.ShaderMaterial({ toneMapped: false, uniforms: { uTime: { value: 0 }, uOpacity: { value: 1 } }, vertexShader: SUN_VERT, fragmentShader: SUN_FRAG }));
+    const sun = new THREE.Mesh(keep(new THREE.SphereGeometry(SUN_R, lite ? 48 : 72, lite ? 32 : 48)), sunMat);
+    const GLOW = 6; // the glow quad reaches this many Sun radii
+    const glowMat = keep(new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, uniforms: { uTime: { value: 0 }, uOpacity: { value: 1 }, uRs: { value: 1 / GLOW } }, vertexShader: GLOW_VERT, fragmentShader: GLOW_FRAG }));
+    const glow = new THREE.Mesh(keep(new THREE.PlaneGeometry(SUN_R * GLOW * 2, SUN_R * GLOW * 2)), glowMat);
+    glow.renderOrder = 3; scene.add(sun, glow);
+
+    // ---------- stars: a fixed, seeded field far behind everything (decoration, not a catalogue) ----------
+    {
+      const n = lite ? 900 : 1700, pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), gain = new Float32Array(n);
+      let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < n; i++) {
+        const z = rnd() * 2 - 1, a = rnd() * Math.PI * 2, r = Math.sqrt(1 - z * z), R = 190;
+        pos.set([R * r * Math.cos(a), R * z, R * r * Math.sin(a)], i * 3);
+        const t = rnd(); col.set(t < 0.2 ? [0.75, 0.84, 1] : t > 0.85 ? [1, 0.86, 0.7] : [1, 1, 1], i * 3);
+        const b = Math.pow(rnd(), 3.2); size[i] = 1.1 + b * 1.9; gain[i] = 0.16 + b * 0.75;
+      }
+      const g = keep(new THREE.BufferGeometry());
+      g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+      g.setAttribute("aSize", new THREE.BufferAttribute(size, 1)); g.setAttribute("aGain", new THREE.BufferAttribute(gain, 1));
+      const stars = new THREE.Points(g, keep(new THREE.ShaderMaterial({ vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uDpr: { value: renderer.getPixelRatio() } }, vertexShader: STAR_VERT, fragmentShader: STAR_FRAG })));
+      stars.renderOrder = -1; scene.add(stars);
+    }
 
     // ---------- globes ----------
-    const loader = new THREE.TextureLoader(), aniso = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-    const mesh = {} as Record<BodyId, THREE.Mesh>, mat = {} as Record<BodyId, THREE.MeshLambertMaterial>, atmo = {} as Partial<Record<BodyId, THREE.Mesh>>;
-    const loadTex = (url: string) => new Promise<THREE.Texture>((res, rej) => loader.load(url, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = aniso; res(t); }, undefined, rej));
-    const segs: [number, number] = lite ? [48, 32] : [64, 48];
+    const loader = new THREE.TextureLoader(), aniso = Math.min(lite ? 4 : 8, renderer.capabilities.getMaxAnisotropy());
+    const mesh = {} as Record<BodyId, THREE.Mesh>, mat = {} as Record<BodyId, THREE.ShaderMaterial>, atmo = {} as Partial<Record<BodyId, THREE.Mesh>>;
+    // colour maps are sRGB; data maps (normals, masks, clouds, lights) are read as plain numbers
+    const loadTex = (url: string, colour = true) => new Promise<THREE.Texture>((res, rej) => loader.load(url, (t) => { if (colour) t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.anisotropy = aniso; res(t); }, undefined, rej));
+    const setTex = (id: BodyId, key: string, t: THREE.Texture) => { const u = mat[id].uniforms[key]; (u.value as THREE.Texture | null)?.dispose(); u.value = t; dirty = true; };
+    const mapKey = (id: BodyId) => (id === "earth" ? "uDay" : "uMap");
     for (const id of BODIES) {
-      const m = keep(new THREE.MeshLambertMaterial());
+      const segs: [number, number] = id === "earth" ? (lite ? [64, 48] : [128, 96]) : lite ? [48, 32] : [96, 64];
+      const m = keep(id === "earth"
+        ? new THREE.ShaderMaterial({ uniforms: { uDay: { value: null }, uNight: { value: null }, uClouds: { value: null }, uOcean: { value: null }, uExtra: { value: 0 }, uCloudShift: { value: 0 }, uOpacity: { value: 1 } }, vertexShader: GLOBE_VERT, fragmentShader: EARTH_FRAG })
+        : new THREE.ShaderMaterial({ uniforms: { uMap: { value: null }, uNormal: { value: null }, uHasNormal: { value: 0 }, uNormalScale: { value: ROCK[id].relief }, uLS: { value: ROCK[id].ls }, uGain: { value: ROCK[id].gain }, uOpacity: { value: 1 }, uHaze: { value: new THREE.Vector3(...ROCK[id].haze) } }, vertexShader: GLOBE_VERT, fragmentShader: ROCKY_FRAG }));
       mesh[id] = new THREE.Mesh(keep(new THREE.SphereGeometry(1, segs[0], segs[1])), m); mat[id] = m; mesh[id].scale.setScalar(RADIUS[id]);
-      const a = GLOBE_TEX[id].atmosphere;
-      if (a !== null) { atmo[id] = new THREE.Mesh(keep(new THREE.SphereGeometry(1.045, 40, 28)), keep(new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, uniforms: { c: { value: new THREE.Color(a) }, k: { value: 0.55 } }, vertexShader: ATMO_VERT, fragmentShader: ATMO_FRAG }))); mesh[id].add(atmo[id]!); }
+      const a = ATMO[id];
+      if (a) { atmo[id] = new THREE.Mesh(keep(new THREE.SphereGeometry(a.r, 64, 40)), keep(new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, toneMapped: false, uniforms: { uColor: { value: new THREE.Color(a.day) }, uTwilight: { value: new THREE.Color(a.dusk) }, uK: { value: a.k }, uEdge: { value: Math.sqrt(1 - 1 / (a.r * a.r)) } }, vertexShader: ATMO_VERT, fragmentShader: ATMO_FRAG }))); mesh[id].add(atmo[id]!); }
       scene.add(mesh[id]);
       loadTex(GLOBE_TEX[id].lo).then((t) => {
         if (disposed) { t.dispose(); return; }
-        m.map = t; m.needsUpdate = true;
-        if (BODIES.every((b) => mat[b].map)) setLoading(false);
-        if (id === "earth" && !lite) window.setTimeout(() => { if (!disposed) loadTex(GLOBE_TEX.earth.hi).then((hi) => { if (disposed) { hi.dispose(); return; } m.map?.dispose(); m.map = hi; m.needsUpdate = true; }).catch(() => {}); }, 6000);
+        setTex(id, mapKey(id), t);
+        if (BODIES.every((b) => mat[b].uniforms[mapKey(b)].value)) setLoading(false);
       }).catch((e) => { if (!disposed) latest.current.onError?.(e); });
     }
+    // Detail arrives later, so the first view is quick: the Earth's lights, clouds and water first, then sharper maps;
+    // the Moon's and Mars's sharper maps and relief load when they are shown in the close-up (or after a while).
+    const timers: number[] = [], later = (ms: number, f: () => void) => timers.push(window.setTimeout(() => { if (!disposed) f(); }, ms));
+    const v2 = lite ? 0 : 1;
+    later(lite ? 3500 : 1200, () => {
+      Promise.all([loadTex(EARTH_EXTRA.night[v2], false), loadTex(EARTH_EXTRA.clouds[v2], false), loadTex(EARTH_EXTRA.ocean[v2], false)]).then(([n, c, o]) => {
+        if (disposed) { n.dispose(); c.dispose(); o.dispose(); return; }
+        setTex("earth", "uNight", n); setTex("earth", "uClouds", c); setTex("earth", "uOcean", o); mat.earth.uniforms.uExtra.value = 1;
+      }).catch(() => {});
+    });
+    if (!lite) later(4000, () => { loadTex(GLOBE_TEX.earth.hi).then((t) => { if (disposed) t.dispose(); else setTex("earth", "uDay", t); }).catch(() => {}); });
+    const detailed = new Set<BodyId>();
+    const detail = (id: "moon" | "mars") => {
+      if (detailed.has(id)) return; detailed.add(id);
+      if (!lite) loadTex(GLOBE_TEX[id].hi).then((t) => { if (disposed) t.dispose(); else setTex(id, "uMap", t); }).catch(() => {});
+      if (!lite) loadTex(NORMAL_TEX[id], false).then((t) => { if (disposed) { t.dispose(); return; } setTex(id, "uNormal", t); mat[id].uniforms.uHasNormal.value = 1; }).catch(() => {}); // phones: the relief would not show at that size
+    };
+    if (!lite) later(12000, () => { detail("moon"); detail("mars"); });
 
     // ---------- orbits: thin dashed circles (overview only) ----------
     const circle = (r: number, color: number) => {
       const pts: THREE.Vector3[] = [];
       for (let i = 0; i <= 256; i++) { const a = (i / 256) * Math.PI * 2; pts.push(new THREE.Vector3(r * Math.cos(a), 0, r * Math.sin(a))); }
-      const line = new THREE.Line(keep(new THREE.BufferGeometry().setFromPoints(pts)), keep(new THREE.LineDashedMaterial({ color, transparent: true, opacity: 0.5, dashSize: r * 0.022, gapSize: r * 0.018 })));
+      const line = new THREE.Line(keep(new THREE.BufferGeometry().setFromPoints(pts)), keep(new THREE.LineDashedMaterial({ color, transparent: true, opacity: 0.5, dashSize: r * 0.022, gapSize: r * 0.018, toneMapped: false })));
       line.computeLineDistances(); scene.add(line); return line;
     };
     const orbitEarth = circle(ORBIT.earth, COLOR.earth), orbitMars = circle(ORBIT.mars, COLOR.mars), orbitMoon = circle(ORBIT.moon, COLOR.moon);
@@ -127,7 +171,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
       sizeOf.clear(); readAvoid(); dirty = true;
     };
-    const setAlpha = (id: BodyId, a: number) => { mesh[id].visible = a > 0.01; mat[id].opacity = a; mat[id].transparent = a < 0.999; if (atmo[id]) atmo[id]!.visible = a > 0.6; };
+    const setAlpha = (id: BodyId, a: number) => { mesh[id].visible = a > 0.01; mat[id].uniforms.uOpacity.value = a; const tr = a < 0.999; if (mat[id].transparent !== tr) { mat[id].transparent = tr; mat[id].needsUpdate = true; } if (atmo[id]) atmo[id]!.visible = a > 0.6; };
     const world = (m: SceneMarker) => { const n = latLonToVec3(m.lat, m.lon).applyQuaternion(mesh[m.body].quaternion).normalize(); return { n, p: mesh[m.body].position.clone().addScaledVector(n, mesh[m.body].scale.x) }; };
 
     const step = (now: number) => {
@@ -162,7 +206,10 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         if (compBody === id) { mesh[id].position.copy(companionPos(E, id)); setAlpha(id, compAlpha); }
         else { mesh[id].position.copy(P[id]); setAlpha(id, far); }
       }
-      sun.visible = far > 0.01; (halo.material as THREE.ShaderMaterial).uniforms.k.value = 0.45 * far; (sun.material as THREE.MeshBasicMaterial).opacity = far; (sun.material as THREE.MeshBasicMaterial).transparent = far < 0.999;
+      sun.visible = glow.visible = far > 0.01; sunMat.uniforms.uOpacity.value = far; glowMat.uniforms.uOpacity.value = far;
+      if (sunMat.transparent !== far < 0.999) { sunMat.transparent = far < 0.999; sunMat.needsUpdate = true; }
+      sunMat.uniforms.uTime.value = glowMat.uniforms.uTime.value = tScene; mat.earth.uniforms.uCloudShift.value = (tScene * 0.0008) % 1;
+      if (compBody) detail(compBody);
       for (const [line, o] of [[orbitEarth, 0.5], [orbitMars, 0.5], [orbitMoon, 0.38]] as const) { line.visible = far > 0.01; (line.material as THREE.LineDashedMaterial).opacity = o * far; }
       orbitMoon.position.copy(E);
 
@@ -173,6 +220,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         : k <= 0.5 ? lerpPose(over, targetPose(P[focus], focus), ease(k / 0.5))
         : lerpPose(targetPose(P[focus], focus), closePose(E, focus, aspect, room), ease((k - 0.5) / 0.5));
       camera.position.copy(pose.pos); camera.lookAt(pose.look); camera.updateMatrixWorld(true); camPos.copy(pose.pos);
+      glow.quaternion.copy(camera.quaternion);
 
       // the Earth: slow spin, or turn the opened site to its facing direction
       if (ms !== lastMarkers) { lastMarkers = ms; userTurned = false; } // a new mission or a new filter: show its sites again
@@ -272,7 +320,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         if (id === "moon" && width < COMPACT_W) { s.style.visibility = "hidden"; continue; } // small scenes: the Moon's name would sit on the Earth's
         const p = id === "sun" ? sun.position : mesh[id as BodyId].position, r = id === "sun" ? SUN_R : RADIUS[id as BodyId];
         v.copy(p).project(camera);
-        const below = new THREE.Vector3().copy(p).addScaledVector(camera.up, -r * 1.25).project(camera);
+        const below = new THREE.Vector3().copy(p).addScaledVector(camera.up, -r * (id === "sun" ? 1.55 : 1.25)).project(camera); // the Sun's glow needs more room
         s.style.opacity = String(fade); s.style.visibility = fade > 0.02 ? "visible" : "hidden";
         s.classList.toggle("is-target", id === ms[0]?.body && ms[0]?.kind === "target"); // the world of the mission being shown
         s.style.transform = `translate(${((v.x * 0.5 + 0.5) * width).toFixed(1)}px, ${((-below.y * 0.5 + 0.5) * height + 6).toFixed(1)}px) translate(-50%, 0)`;
@@ -306,10 +354,10 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     resize(); raf = requestAnimationFrame(frame);
 
     return () => {
-      disposed = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect();
+      disposed = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); timers.forEach((t) => window.clearTimeout(t));
       for (const e of WAKE) window.removeEventListener(e, wake);
       el.removeEventListener("pointerdown", down); el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up); el.removeEventListener("pointercancel", up);
-      for (const id of BODIES) mat[id].map?.dispose();
+      for (const id of BODIES) for (const u of Object.values(mat[id].uniforms)) if (u.value instanceof THREE.Texture) u.value.dispose();
       disposables.forEach((d) => d.dispose());
       renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
     };

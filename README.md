@@ -44,6 +44,8 @@ AI-assisted outputs are reviewed by the team before submission. AI-assisted code
 - Earth: NASA Blue Marble via NASA GIBS.
 - Moon: LROC WAC mosaic, CGI Moon Kit, NASA's Scientific Visualization Studio (NASA/GSFC/Arizona State University).
 - Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek.
+- Earth at night: NASA Earth Observatory, Black Marble 2016 (Suomi NPP VIIRS); also used for the water mask. Clouds: NASA Visible Earth, Blue Marble cloud layer.
+- Relief: LOLA (NASA SVS CGI Moon Kit) and MGS MOLA MEGDR (NASA PDS), as normal maps. Rebuild with `bash scripts/tex/make-textures.sh`.
 - Software: three.js (MIT), Next.js (MIT, © Vercel, Inc.), React (MIT, © Meta Platforms, Inc.), Tailwind CSS (MIT).
 - The 3D globe code is reused from our team's earlier prototype during this same hackathon.
 - Missions: real analog field campaigns by NASA, ESA and the Mars Society (links in the app and in `docs/missions.md`).

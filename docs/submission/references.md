@@ -26,6 +26,10 @@ Globe imagery:
 - Earth: NASA Blue Marble via NASA GIBS — https://nasa-gibs.github.io/gibs-api-docs/
 - Moon: LROC WAC colour mosaic, CGI Moon Kit, NASA's Scientific Visualization Studio (NASA/GSFC/Arizona State University) — https://svs.gsfc.nasa.gov/4720
 - Mars: Viking MDIM 2.1 colour mosaic (NASA/USGS) via NASA Mars Trek — https://trek.nasa.gov/mars/
+- Earth city lights and water mask: NASA Earth Observatory, Black Marble 2016 (Suomi NPP VIIRS) — https://science.nasa.gov/earth/earth-observatory/earth-at-night/maps/
+- Earth clouds: NASA Visible Earth, Blue Marble cloud layer (2002, MODIS) — https://visibleearth.nasa.gov/images/57747/blue-marble-clouds (original file retrieved through the Internet Archive)
+- Moon relief: LOLA elevation, CGI Moon Kit, NASA's Scientific Visualization Studio — https://svs.gsfc.nasa.gov/4720
+- Mars relief: MGS MOLA Mission Experiment Gridded Data Record (MEGDR), NASA PDS Geosciences Node — https://pds-geosciences.wustl.edu/missions/mgs/megdr.html
 
 NASA field campaigns and facilities used to define the four missions and to check the index:
 - JETT3 (2022) — https://www.nasa.gov/humans-in-space/nasa-to-practice-artemis-moonwalking-roving-operations-in-arizona-desert ; field log — https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log
