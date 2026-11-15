@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const src = (f: string) => `${BASE}/demo/${f}`;
+// Versioned file names: a new version gets new URLs, so no browser plays a cached older cut (video/scripts/publish-demo.sh).
+const V = "terravista-demo-v6";
 
 export const metadata: Metadata = {
   title: "Demo video",
@@ -27,18 +29,18 @@ export default function DemoVideoPage() {
             controls
             playsInline
             preload="metadata"
-            poster={src("terravista-demo-poster.jpg")}
+            poster={src(`${V}-poster.jpg`)}
             aria-label="TerraVista demo video, 30 seconds, with burned-in English captions"
           >
-            <source src={src("terravista-demo.mp4")} type="video/mp4" />
-            <source src={src("terravista-demo.webm")} type="video/webm" />
-            Your browser cannot play this video. <a href={src("terravista-demo.mp4")}>Download the MP4</a>.
+            <source src={src(`${V}.mp4`)} type="video/mp4" />
+            <source src={src(`${V}.webm`)} type="video/webm" />
+            Your browser cannot play this video. <a href={src(`${V}.mp4`)}>Download the MP4</a>.
           </video>
         </div>
 
         <p className="mt-4 font-mono text-xs uppercase tracking-[.08em] text-[var(--dim)]">
           SI use: editing assisted by SI · voice generated with ElevenLabs ·{" "}
-          <a className="text-[var(--acc)] underline" href={src("terravista-demo.mp4")}>
+          <a className="text-[var(--acc)] underline" href={src(`${V}.mp4`)}>
             direct MP4 link
           </a>
         </p>

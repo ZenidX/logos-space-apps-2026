@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (noche, 27) · Vídeo: archivos con versión en el nombre
+
+- Problema: en otro portátil se seguía viendo el vídeo viejo (mismo nombre de archivo y caché del navegador de 10 min).
+- Ahora los archivos llevan la versión: `public/demo/terravista-demo-v6.{mp4,webm}` y `terravista-demo-v6-poster.jpg`. `publish-demo.sh` nombra los archivos según la salida y la página `/demo-video/` los toma de la constante `V`.
+- Enlace para compartir: https://zenidx.github.io/logos-space-apps-2026/demo-video/?v=6 · MP4 directo: https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo-v6.mp4
+
 ## 2026-11-15 (noche, 26) · Vídeo de demo v6: grabado de nuevo, con *Plan a base*
 
 - Pedido del usuario: vídeo nuevo porque la web cambió; centrado en el problema (emparejar la Tierra con cada misión, con sus valores y atributos, incluidos permisos y política) y con *Plan a base* como lo que nos diferencia. Voz nueva `video/audio/final-voice.wav` (29,59 s); el usuario cambió el texto al grabar y no tocó `docs/timestamps.txt`: lo rehice yo con la transcripción de Vosk y las pausas medidas.

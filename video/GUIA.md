@@ -5,7 +5,7 @@ Léela entera antes de tocar nada. Contexto del proyecto en `CLAUDE.md`. Guion, 
 ## Qué es
 - Vídeo de **29,5 s** (v6, voz `video/audio/final-voice.wav`; planos y texto en `docs/guion-video.md`), 1920×1080, 30 fps, H.264 + AAC (y copia WebM). Voz de ElevenLabs (la genera el usuario), subtítulos quemados palabra a palabra y marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
 - **La imagen sale de la web real que se entrega:** desde la v6, https://zenidx.github.io/logos-space-apps-2026/ (portada de misiones + `/base/`). Planos de `capture.cjs`: a (apertura → misiones), s (ficha de Haughton → permisos), b (*Plan a base* montándose), r (ensayo en la Tierra lado a lado → «Where it breaks»). Tiempos en este PC: a ≈ 4,5 min, s ≈ 2,5, b ≈ 2, r ≈ 6.
-- **Dónde se publica:** página oculta https://zenidx.github.io/logos-space-apps-2026/demo-video/ de ESTE repo (MP4 directo en `/demo/terravista-demo.mp4`).
+- **Dónde se publica:** página oculta https://zenidx.github.io/logos-space-apps-2026/demo-video/ de ESTE repo (MP4 directo en `/demo/terravista-demo-v6.mp4`). **Cada versión lleva su nombre** (`publish-demo.sh <nombre>` + `V` en `src/app/(team)/demo-video/page.tsx`): con el mismo nombre, los navegadores que ya la habían abierto seguían enseñando la versión vieja.
 
 ## Reglas que no se negocian (las puso el usuario)
 - Menos de 30 s, siempre. Horizontal 16:9. Audio y subtítulos en inglés.
@@ -67,7 +67,7 @@ video/scripts/publish-demo.sh
 git add public/demo video docs && git commit -m "Demo video: …" && git pull --rebase origin main && git push origin main
 ```
 El push a `main` publica la web solo (GitHub Actions, `.github/workflows/deploy.yml`, ~90 s). No lances además `npm run deploy`: los dos hacen push forzado a `gh-pages`. Comprobar que el tamaño del MP4 publicado coincide con el local:
-`curl -sI https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo.mp4?x=1 | grep -i content-length`.
+`curl -sI https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo-v6.mp4?x=1 | grep -i content-length`.
 Añadir entrada en `docs/bitacora.md` y, si cambian planos o texto, actualizar `docs/guion-video.md`.
 
 ## Antes de dar el vídeo por bueno
