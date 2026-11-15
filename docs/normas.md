@@ -29,7 +29,10 @@ Cinco criterios, cada uno de 1 a 5: **Impact, Creativity, Validity, Relevance, P
 
 ## Vídeo de demo: decisiones del equipo (15-11-2026)
 Comprobado de nuevo el 15-11. La página de la guía no se pudo volver a abrir (fallo de certificado en la red), pero las búsquedas confirman los límites: 30 s o menos, subtítulos en inglés, enlace público.
-- **Duración:** menos de 30 s. La voz ocupa los 30 s (`docs/timestamps.txt`), así que el archivo se corta a **29,9 s** para que ningún reproductor lo redondee por encima de 30.
+- **Duración:** menos de 30 s. La voz nueva (v4) dura 29,5 s y el archivo se corta a **29,5 s**, así que ningún reproductor lo redondea por encima de 30 (tramos en `docs/timestamps.txt`).
+- **Imagen:** solo la web real que se entrega, la del repo del equipo (https://spaceapp-logos.vercel.app), sin tramos en negro. El vídeo se publica en `/demo-video/` de la web de este repo.
+- **Nombre:** voz y cierre dicen Terra Vista (en dos palabras, como la web); la web se enseña tal cual (su cabecera dice «Terra Vista · Mission Analogs»).
+- **Nada que la web no respalde:** la frase de los avisos pasa a ser *«and flags where access needs permits, or extra care»*, porque el indicador de acceso de la web dice que no es una evaluación de seguridad (Validity).
 - **Formato:** horizontal, 16:9 (1920×1080). Se enseña la pantalla tal cual, sin marco de móvil.
 - **Audio y subtítulos en inglés.** Subtítulos quemados en la imagen, idénticos a la locución (el jurado puede verlo sin sonido). Estilo: **palabra a palabra, acumulándose** (cada palabra aparece cuando se dice, con un ligero «pop», y la frase se queda hasta el final de su tramo); amarillo, sin caja, contorno oscuro, **Nimbus Sans** (clon de Helvetica) en negrita a 44 px. Tiempos de cada palabra sacados de la voz con Vosk (`video/audio/word-timings.json`).
 - **Marca de agua de SI** pequeña y visible durante todo el vídeo, que diga que la edición se hizo con ayuda de SI y que la voz está generada con **ElevenLabs** (nombrado explícitamente). Texto: `SI-assisted editing · SI voice: ElevenLabs` (se usa «SI», el término de las normas, no «AI»).

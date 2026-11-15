@@ -37,7 +37,7 @@ const head = `<meta charset="utf-8">
   await shot(`<div class="full"><div class="shade"></div><div class="wm">${esc(WATERMARK)}</div></div>`, "watermark.png");
   // The closing phrase is already the end card, so no site name is repeated under it.
   await shot(
-    `<div class="full end"><h1>Terra<b>Vista</b></h1><p>Down to Earth</p><small>Team Logos · NASA Space Apps 2026</small></div>`,
+    `<div class="full end"><h1>Terra <b>Vista</b></h1><p>Down to Earth</p><small>Team Logos · NASA Space Apps 2026</small></div>`,
     "end.png",
     false,
   );

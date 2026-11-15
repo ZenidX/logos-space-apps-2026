@@ -99,17 +99,23 @@
  {
   "start": 6.0,
   "end": 13.0,
-  "text": "TerraVista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.",
+  "text": "Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.",
   "words": [
    {
-    "w": "TerraVista",
+    "w": "Terra",
     "start": 6.48,
-    "end": 7.08,
+    "end": 6.88,
+    "aligned": false
+   },
+   {
+    "w": "Vista",
+    "start": 6.88,
+    "end": 7.28,
     "aligned": false
    },
    {
     "w": "scans",
-    "start": 7.08,
+    "start": 7.28,
     "end": 7.68,
     "aligned": false
    },
@@ -329,8 +335,8 @@
  },
  {
   "start": 22.0,
-  "end": 27.0,
-  "text": "and flags the places you can't safely, or legally, go.",
+  "end": 26.0,
+  "text": "and flags where access needs permits, or extra care.",
   "words": [
    {
     "w": "and",
@@ -345,82 +351,82 @@
     "aligned": true
    },
    {
-    "w": "the",
+    "w": "where",
     "start": 22.86,
-    "end": 22.98,
+    "end": 23.04,
+    "aligned": false
+   },
+   {
+    "w": "access",
+    "start": 23.04,
+    "end": 23.58,
     "aligned": true
    },
    {
-    "w": "places",
-    "start": 22.98,
-    "end": 23.49,
+    "w": "needs",
+    "start": 23.585,
+    "end": 23.85,
     "aligned": true
    },
    {
-    "w": "you",
-    "start": 23.49,
-    "end": 23.61,
-    "aligned": true
-   },
-   {
-    "w": "can't",
-    "start": 23.61,
-    "end": 24.0,
-    "aligned": true
-   },
-   {
-    "w": "safely,",
-    "start": 24.0,
-    "end": 24.72,
+    "w": "permits,",
+    "start": 23.85,
+    "end": 24.6,
     "aligned": true
    },
    {
     "w": "or",
-    "start": 24.78,
-    "end": 25.03,
+    "start": 24.6,
+    "end": 24.93,
     "aligned": true
    },
    {
-    "w": "legally,",
-    "start": 25.05,
-    "end": 25.74,
+    "w": "extra",
+    "start": 24.93,
+    "end": 25.29,
     "aligned": true
    },
    {
-    "w": "go.",
-    "start": 25.8,
-    "end": 26.25,
+    "w": "care.",
+    "start": 25.29,
+    "end": 25.77,
     "aligned": true
    }
   ]
  },
  {
-  "start": 27.0,
-  "end": 30.0,
-  "text": "TerraVista. Down to Earth.",
+  "start": 26.0,
+  "end": 29.0,
+  "text": "Terra Vista. Down to Earth.",
   "words": [
    {
-    "w": "TerraVista.",
-    "start": 27.21,
-    "end": 28.14,
+    "w": "Terra",
+    "start": 26.64,
+    "end": 27.12,
+    "aligned": false
+   },
+   {
+    "w": "Vista.",
+    "start": 27.12,
+    "end": 27.6,
     "aligned": false
    },
    {
     "w": "Down",
-    "start": 28.62,
-    "end": 28.95,
+    "start": 28.05,
+    "end": 28.41,
     "aligned": true
    },
    {
     "w": "to",
-    "start": 28.95,
-    "end": 29.1,
+    "start": 28.41,
+    "end": 28.56,
     "aligned": true
    },
    {
     "w": "Earth.",
-    "start": 29.1,
-    "end": 29.64,
+    "start": 28.56,
+    "end": 29.0,
     "aligned": true
    }
   ]

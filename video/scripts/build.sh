@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
-# Assembles the test cut (1920x1080, 30 fps, 29.9 s) from video/build/frames, video/build/overlays and video/build/captions.
+# Assembles the demo video (1920x1080, 30 fps, $DUR s) from video/build/frames, video/build/overlays and video/build/captions.
 # Order: capture.cjs → overlays.cjs → captions.cjs → build.sh
 # Usage: video/scripts/build.sh [output-name]     Optional audio: video/audio/voice.wav or voice.mp3 (muxed if present)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 FF=tools/node_modules/ffmpeg-static/ffmpeg
 B=build; O=$B/overlays; F=$B/frames
-NAME=${1:-terravista-test-v3}
-DUR=29.9          # hard cap: the rules say 30 s or less, so keep a margin
+NAME=${1:-terravista-demo}
+DUR=${DUR:-29.5}  # the voice is 29.5 s; the rules say 30 s or less
 CAP_Y=905         # vertical centre of the captions
 N="scale=1920:1080,setsar=1,fps=30,format=yuv420p"
 
-# Timeline (docs/timestamps.txt): s1 0–6 · s2 6–13 · black 13–18 · s4 18–22 · black 22–27 · end card 27–29.9
+# Timeline (docs/timestamps.txt), all real screens of the team's app (capture.cjs):
+# a 0–18 (story) · b 18–22 (where it breaks) · c1 22–24.4 (permit) · c2 24.4–26 (access High) · end card 26–$DUR
+END=$(node -e "console.log(($DUR-26).toFixed(2))")
 in=(
-  -framerate 30 -i $F/s1/%04d.jpg
-  -framerate 30 -i $F/s2/%04d.jpg
-  -loop 1 -framerate 30 -t 5 -i $O/black.png
-  -framerate 30 -i $F/s4/%04d.jpg
-  -loop 1 -framerate 30 -t 5 -i $O/black.png
-  -loop 1 -framerate 30 -t 3 -i $O/end.png
+  -framerate 30 -i $F/a/%04d.jpg
+  -framerate 30 -i $F/b/%04d.jpg
+  -framerate 30 -i $F/c1/%04d.jpg
+  -framerate 30 -i $F/c2/%04d.jpg
+  -loop 1 -framerate 30 -t $END -i $O/end.png
   -i $O/watermark.png
 )
-fc="[0:v]$N[a];[1:v]$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N[e];[5:v]$N,fade=in:st=0:d=0.4[f];"
-fc+="[a][b][c][d][e][f]concat=n=6:v=1:a=0[v0];[v0][6:v]overlay=0:0[w0];"
+fc="[0:v]$N[a];[1:v]$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N,fade=in:st=0:d=0.4[e];"
+fc+="[a][b][c][d][e]concat=n=5:v=1:a=0[v0];[v0][5:v]overlay=0:0[w0];"
 
 # Captions, word by word: one transparent PNG sequence rendered by captions.cjs (1920x240 strip), centred on CAP_Y
 in+=(-framerate 30 -i $B/captions/%04d.png)
-fc+="[w0][7:v]overlay=0:$((CAP_Y - 120)):eof_action=pass[v]"
+fc+="[w0][6:v]overlay=0:$((CAP_Y - 120)):eof_action=pass[v]"
 n=1
 
 # Voice: starts at 0, cut at $DUR with a 0.1 s fade so the cut doesn't click
@@ -34,7 +35,7 @@ VOICE=$(ls audio/voice.wav audio/voice.mp3 2>/dev/null | head -1 || true)
 audio=()
 if [ -n "$VOICE" ]; then
   in+=(-i "$VOICE")
-  fc+=";[$((7 + n)):a]atrim=0:$DUR,afade=out:st=$(node -e "console.log($DUR-0.1)"):d=0.1,aresample=48000[aout]"
+  fc+=";[$((6 + n)):a]atrim=0:$DUR,afade=out:st=$(node -e "console.log($DUR-0.1)"):d=0.1,aresample=48000[aout]"
   audio=(-map "[aout]" -c:a aac -b:a 192k)
 fi
 
