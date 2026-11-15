@@ -1,6 +1,6 @@
 # Origin of the idea
 
-Recorded on **14 November 2026 (CET)**, during the NASA Space Apps Challenge 2026 (Barcelona local event). English translation of the original Spanish note (`docs/es/origen-idea.md`, first committed at 21:31 CET, commit `db61bf7`).
+Recorded on **14 November 2026 (CET)**, during the NASA Space Apps Challenge 2026 (Barcelona local event). English translation of the original Spanish note (`docs/es/origen-idea.md`, first committed at 21:31 CET, commit `d281f34`).
 
 ## Statement
 - The idea of this project belongs to **zexu and the team (Logos)**:
