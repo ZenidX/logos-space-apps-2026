@@ -1,6 +1,6 @@
 # Preguntas difíciles del jurado (y cómo responder)
 
-Preparación del pitch, 15-11-2026. Las respuestas van **en inglés**, listas para decir en voz alta (30–40 s cada una). Debajo de cada una, en español, la **trampa**: qué no hay que decir o en qué se puede pillar al equipo.
+Preparación del pitch, 15-11-2026. **El jurado preguntará en español**, así que las respuestas están en español y listas para decir en voz alta (30–40 s cada una). Los nombres propios y de datos (MODIS, Trek, Jezero…) se dicen tal cual. Debajo de cada respuesta va la **trampa**: qué no decir o en qué os pueden pillar.
 
 Todo sale de la web actual (portada de misiones + «Plan a base») y de `docs/logos/method.md`, `docs/logos/missions.md`, `docs/sitios-base.md` y `docs/estrategias-bases.md`.
 
@@ -8,7 +8,7 @@ Todo sale de la web actual (portada de misiones + «Plan a base») y de `docs/lo
 
 ## Cifras que hay que saber de memoria
 - **4 misiones**, cada una basada en campañas reales: M1 EVA con traje en terreno volcánico (objetivo: Mons Mouton, polo sur lunar) · M2 rover en arena (cráter Jezero, Marte) · M3 hielo en el suelo (Arcadia Planitia, Marte) · M4 Sol bajo y energía solar (Mons Mouton). **M4 está calculada, no validada.**
-- **Celdas de 0,1° (~11 km)**, toda la tierra firme; datos de **2024** (MODIS NDVI y albedo, MODIS temperatura, GPM IMERG lluvia, SoilGrids arena, GLiM rocas volcánicas).
+- **Celdas de 0,1° (~11 km)**, toda la tierra firme; datos de **2024** (MODIS vegetación y albedo, MODIS temperatura, GPM IMERG lluvia, SoilGrids arena, GLiM rocas volcánicas).
 - **Índice = 0,5·F + 0,5·(1 − D)**. F: fracción de condiciones cumplidas. D: distancia (en percentiles terrestres) a la mediana de los análogos conocidos de esa misión.
 - **Validación:** M1 3 de 4 análogos conocidos en el 2 % superior; M2 3 de 3 en el 2,1 %; M3 2 de 2 en el 1 %. Control negativo (Amazonia central): percentil 31, 1,5 y 2,8.
 - **19 regiones nuevas** (5 · 6 · 4 · 4). Todas con índice ≥ 0,98: **no se ordenan entre sí por el índice**.
@@ -17,111 +17,111 @@ Todo sale de la web actual (portada de misiones + «Plan a base») y de `docs/lo
 
 ---
 
-## A. Método y validez (Validity)
+## A. Método y validez
 
-### 1. «Your known analogs set the median you compare against. Isn't the validation circular?»
-Cómo puede llegar: *"How do you know your index works?"* · *"Did you just tune it until it found the places you already knew?"* · *"3 of 4 in the top 2 % — impressive. But is that a fair test?"* (invita a presumir: no piquéis).
+### 1. «Los análogos conocidos fijan la mediana con la que comparáis. ¿No es circular la validación?»
+Cómo puede llegar: *«¿Cómo sabéis que vuestro índice funciona?»* · *«¿No habéis ajustado el método hasta que salieran los sitios que ya conocíais?»* · *«3 de 4 en el 2 % superior, impresionante. ¿Pero es una prueba justa?»* (invita a presumir: no piquéis).
 
-> "Partly, yes — and we say it on the page. Half of the index measures how close a place is to the median of the known training sites, so their high rank is partly built in.
-> That's why we don't rely on it alone. We use a negative control: central Amazonia, which shares nothing with these sites, falls to the 31st percentile or lower in all three validated missions. And the result isn't perfect: Kīlauea Iki only reaches the 86th percentile, because its 11-kilometre cell is mostly rainforest. A tuned score would have put it on top.
-> So our claim is narrow: the index reproduces where agencies actually trained, and it points to new places with the same surface conditions, at least 300 km away from any known site, each checked against the literature."
+> «En parte, sí, y lo decimos en la web. La mitad del índice mide lo cerca que está un sitio de la mediana de los sitios donde ya se entrenó, así que su buena nota está en parte garantizada.
+> Por eso no nos quedamos ahí. Usamos un control negativo: la Amazonia central, que no se parece en nada, cae al percentil 31 o menos en las tres misiones validadas. Y el resultado no es perfecto: Kīlauea Iki solo llega al percentil 86, porque su celda de 11 km es casi toda selva. Un índice amañado lo habría puesto arriba.
+> Así que lo que afirmamos es concreto: el índice reproduce dónde entrenaron de verdad las agencias, y señala sitios nuevos con las mismas condiciones de superficie, a más de 300 km de cualquier sitio conocido y revisados en la bibliografía.»
 
-Corta: *"Partly, yes. Half the score uses the known sites, so we added a negative control — Amazonia drops to the 31st percentile or lower — and we only claim that it reproduces where agencies actually trained."*
+Corta: *«En parte, sí. La mitad del índice usa los sitios conocidos; por eso añadimos un control negativo, la Amazonia, que cae al percentil 31 o menos, y solo afirmamos que reproduce dónde entrenaron de verdad las agencias.»*
 
 Repreguntas:
-- *"What would a proper test look like?"* → *"Leave-one-out: remove one known site, rebuild the median from the others, and see if it still ranks high. That's the first thing we'd run next."* (**No está hecho**: no digáis que sí.)
-- *"Why only 2 to 4 known sites?"* → *"That's how many places hosted a documented campaign for that exact task, with an official source. Mission 4 has none, so it's labelled 'computed, not validated'."*
-- *"Then how do you know the new regions are good?"* → *"We don't, until someone goes there. Each shows an evidence level from an independent literature check; it's a shortlist to verify."*
+- *«¿Cómo sería una prueba de verdad?»* → «Dejar uno fuera: quitar un sitio conocido, recalcular la mediana con los demás y ver si el que hemos quitado sigue arriba. Es lo primero que haríamos.» (**No está hecho**: no digáis que sí.)
+- *«¿Por qué solo 2 a 4 sitios conocidos?»* → «Son los sitios donde hay una campaña documentada para esa tarea concreta, con fuente oficial. Pocos, pero reales. La misión 4 no tiene ninguno, y por eso pone "calculada, no validada".»
+- *«¿Y cómo sabéis que las regiones nuevas son buenas?»* → «No lo sabemos hasta que alguien vaya. Por eso cada una muestra su nivel de evidencia, de una revisión bibliográfica independiente, y la presentamos como una lista corta para comprobar.»
 
-*Trampa:* no digáis «it's not circular» ni «we validated the method»; decid «it finds the places agencies already chose». No uséis «nobody has used these places» (no se puede demostrar): «as far as we found». La fuerza no está en «3 de 4 en el top 2 %» (eso es lo circular), sino en el control y en Kīlauea Iki. F es independiente solo en parte: sus rangos se fijaron conociendo los sitios.
+*Trampa:* no digáis «no es circular» ni «hemos validado el método»; decid «encuentra los sitios que las agencias ya eligieron». No digáis «nadie ha usado estos sitios» (no se puede demostrar): «que sepamos». La fuerza no está en «3 de 4 en el 2 % superior» (eso es lo circular), sino en el control y en Kīlauea Iki. F es independiente solo en parte: sus rangos se fijaron conociendo los sitios.
 
-### 2. «Why do all your new regions score 0.98 or more? How do you rank them?»
-> We don't rank them by the index, and the page says so. They come from the very top of Earth's ranking, so differences in the third decimal mean nothing. We read them as a shortlist. To compare them we use the site view: the 3D terrain against the target, the Sun through the year, how far the nearest city is and how complex access is. And we sort them by independent evidence, like a literature check of each region.
+### 2. «¿Por qué todas las regiones nuevas sacan 0,98 o más? ¿Cómo las ordenáis?»
+> «No las ordenamos por el índice, y la web lo dice. Salen de lo más alto de la clasificación de toda la Tierra, así que las diferencias en el tercer decimal no significan nada. Las tratamos como una lista corta. Para compararlas usamos la ficha de cada sitio: el terreno en 3D frente al objetivo, el Sol a lo largo del año, a cuánto está la ciudad más cercana y lo complicado que es el acceso. Y las ordenamos por evidencia independiente, como la revisión bibliográfica de cada región.»
 
 *Trampa:* no defendáis que la región n.º 1 es «la mejor».
 
-### 3. «The Moon has no air, no water, one-sixth gravity. How can any place on Earth be an analog?»
-> No place on Earth is an analog of the Moon in general, and that's our starting point: a site is an analog for a task. Arizona's lava fields are good for practising suited geology traverses, not for testing radiation or gravity. For every site we list where the analogy breaks: gravity, vacuum, radiation, plus what the data can't see. The question we answer is "where on Earth can you rehearse this specific task".
+### 3. «La Luna no tiene aire, ni agua, y tiene un sexto de la gravedad. ¿Cómo va a haber un análogo en la Tierra?»
+> «Ningún sitio de la Tierra es un análogo de la Luna en general, y ese es justo nuestro punto de partida: un sitio es análogo para una tarea. Los campos de lava de Arizona sirven para practicar travesías geológicas con traje, no para probar radiación ni gravedad. Para cada sitio decimos dónde se rompe la analogía: gravedad, vacío, radiación y lo que los datos no ven. La pregunta que respondemos es "dónde puedo ensayar esta tarea concreta".»
 
-### 4. «Why 11 km cells? A crater or an outcrop is much smaller.»
-> 0.1° is the finest resolution at which all the global layers exist together for the whole planet with 2024 data. It's a screening tool: it tells a field team where to look. Then the site view zooms into 11 × 11 km of real elevation at 30 m. Choosing the exact spot still needs high-resolution imagery and a field check, and the page says that too.
+### 4. «¿Por qué celdas de 11 km? Un cráter o un afloramiento es mucho más pequeño.»
+> «0,1° es la resolución más fina a la que existen juntas todas las capas globales, para todo el planeta y con datos de 2024. Es una herramienta de cribado: le dice a un equipo de campo dónde mirar. Luego la ficha del sitio se acerca a 11 × 11 km de relieve real a 30 m. Elegir el punto exacto sigue necesitando imágenes de alta resolución y una visita, y la web también lo dice.»
 
-### 5. «Mission 4 says "not validated". Why show it?»
-> Because it's the most honest example of the gap we want to show. No campaign has rehearsed low-Sun work under a real low Sun: NASA's JETT tests in Arizona did it at night with artificial lights, because the noon Sun there never drops below about 31°. Our M4 regions in the Arctic and Iceland have months with the noon Sun between 0 and 12°, like the lunar pole. There is no real campaign to validate it against, so we label it "computed, not validated" instead of pretending.
+### 5. «La misión 4 pone "no validada". ¿Por qué la enseñáis?»
+> «Porque es el ejemplo más claro del hueco que queremos mostrar. Ninguna campaña ha ensayado el trabajo con Sol bajo bajo un Sol bajo de verdad: las pruebas JETT de la NASA en Arizona lo hicieron de noche y con luces artificiales, porque allí el Sol del mediodía nunca baja de unos 31°. Nuestras regiones de la misión 4, en el Ártico y en Islandia, tienen meses con el Sol del mediodía entre 0 y 12°, como en el polo lunar. No hay campaña real con la que validarla, así que la marcamos como "calculada, no validada" en vez de fingir.»
 
-### 6. «Who chose the ranges, tolerances and the 50/50 mix? Isn't that arbitrary?»
-> They're team choices, and they're all written down in the method sheet with the reason for each. The ranges come from the target where the quantity is comparable (no vegetation, dark basaltic ground) and from what the task needs (loose sand for rover sinkage). Tolerances turn hard cut-offs into gradual bands. Anyone can change them and rerun: the scripts and the data are open.
+### 6. «¿Quién ha elegido los rangos, las tolerancias y el reparto 50/50? ¿No es arbitrario?»
+> «Son decisiones del equipo, y están todas escritas en la hoja del método con el porqué de cada una. Los rangos salen del objetivo cuando la magnitud es comparable (sin vegetación, suelo basáltico oscuro) y de lo que necesita la tarea (arena suelta para que el rover se hunda). Las tolerancias convierten los cortes duros en bandas graduales. Cualquiera puede cambiarlas y volver a calcular: los scripts y los datos son abiertos.»
 
 *Trampa:* no digáis que salen de un estudio de sensibilidad; no se ha hecho.
 
-### 7. «Your Moon and Mars values: where do they come from?»
-> From published products: TES albedo for Jezero and Arcadia, the Mars Climate Database model for Arcadia's temperature, and LOLA for Mons Mouton. Mons Mouton's albedo is an estimate converted from LOLA's 1064-nanometre reflectance. Each value shows its source in the app. Getting them straight from the PDS products is one of our next steps.
+### 7. «Los valores de la Luna y de Marte, ¿de dónde salen?»
+> «De productos publicados: el albedo de TES para Jezero y Arcadia, el modelo Mars Climate Database para la temperatura de Arcadia y LOLA para Mons Mouton. El albedo de Mons Mouton es una estimación convertida de la reflectancia de LOLA a 1064 nanómetros. Cada valor muestra su fuente en la web. Sacarlos directamente de los productos del PDS es uno de los siguientes pasos.»
 
-### 8. «Mission 3 is about ground ice. You don't measure ice.»
-> Right: we infer it from a mean surface temperature below −5 °C, which is a permafrost proxy, plus dry, bare ground that isn't a glacier. We check the two places where ice drilling was actually rehearsed, Haughton and the Dry Valleys, and both rank in Earth's top 1 %. But it can't confirm ice in the ground. That's written as a limit, and a permafrost map is the obvious next layer.
+### 8. «La misión 3 va de hielo en el suelo, pero no medís hielo.»
+> «Cierto: lo deducimos de una temperatura media de superficie por debajo de −5 °C, que es un indicador de permafrost, más suelo seco, desnudo y que no sea glaciar. Comprobamos los dos sitios donde de verdad se ha ensayado la perforación de hielo, Haughton y los Valles Secos, y los dos quedan en el 1 % superior de la Tierra. Pero no puede confirmar que haya hielo en el suelo. Está escrito como límite, y un mapa de permafrost es la siguiente capa evidente.»
 
-### 9. «Your sand data (SoilGrids) is a model with huge uncertainty.»
-> Yes. At these sites its 90 % interval spans roughly 5 to 95 % sand, and we show that warning next to the value. That's also why every new region sits near 54 % sand: it's the median of the known rover test sites. It's good enough to rule places out, not to promise dunes. That's what the site view and the field check are for.
+### 9. «Vuestro dato de arena (SoilGrids) es un modelo con muchísima incertidumbre.»
+> «Sí. En estos sitios su intervalo del 90 % va más o menos del 5 al 95 % de arena, y lo avisamos al lado del valor. También por eso todas las regiones nuevas rondan el 54 % de arena: es la mediana de los sitios donde se probaron rovers. Sirve para descartar sitios, no para prometer dunas. Para eso están la ficha del sitio y la comprobación sobre el terreno.»
 
-### 10. «Mons Mouton: wasn't Artemis III changed?»
-> Mons Mouton was among the lunar south-pole regions NASA listed as Artemis III landing candidates in 2024. NASA now describes Artemis III differently, with landings from Artemis IV, and the south-pole regions remain the targets. We use Mons Mouton because it's a real, named south-pole site with published data.
+### 10. «Mons Mouton: ¿no cambió Artemis III?»
+> «Mons Mouton estaba entre las regiones del polo sur lunar que la NASA presentó en 2024 como candidatas para el alunizaje de Artemis III. Ahora la NASA plantea Artemis III de otra forma, con los alunizajes a partir de Artemis IV, y las regiones del polo sur siguen siendo el objetivo. Usamos Mons Mouton porque es un sitio real del polo sur, con nombre y con datos publicados.»
 
-*Trampa:* no digáis «Artemis III will land at Mons Mouton».
-
----
-
-## B. Novedad y creatividad (Creativity)
-
-### 11. «There are lots of analog maps already. What's new here?»
-> Most analog work picks sites one by one, from experience, and compares them with "the Moon" in general. We start from the mission: four tasks that agencies have actually rehearsed in the field. We turn each one into measurable conditions, score every land cell on Earth, check that the score finds the real campaign sites, and then show new places plus where each one stops being useful. "Plan a base" then goes the other way: pick any site on the Moon or Mars, see the base laid out on real NASA terrain, and get the place on Earth to rehearse each job.
-
-### 12. «Can you prove nobody has used your new regions?»
-> No, and we don't claim that. We exclude everything within 300 km of the known analog sites we found, and we ran an independent literature check of every new region. The app shows what it found as an evidence level. Two regions were removed by hand after that check, for example Tankwa Karoo, because it turned out to be shale, not volcanic rock.
+*Trampa:* no digáis «Artemis III aterrizará en Mons Mouton».
 
 ---
 
-## C. Impacto y relevancia (Impact / Relevance)
+## B. Novedad y creatividad
 
-### 13. «Who would actually use this?»
-> Field-test planners at agencies and universities, and rover or suit teams, when they choose where to test. Every analog campaign costs a lot of money and logistics. Our tool gives them a first-pass shortlist with its limits, for example "remote, needs a research permit, no basalt at the exact spot", before anyone flies out. It's a screening tool, not a site recommendation, and the page says that.
+### 11. «Ya hay muchos mapas de análogos. ¿Qué aportáis de nuevo?»
+> «Casi todo el trabajo de análogos elige los sitios uno a uno, por experiencia, y los compara con "la Luna" en general. Nosotros empezamos por la misión: cuatro tareas que las agencias han ensayado de verdad sobre el terreno. Convertimos cada una en condiciones medibles, puntuamos cada celda de tierra firme del planeta, comprobamos que la puntuación encuentra los sitios de las campañas reales, y después enseñamos sitios nuevos y dónde deja de servir cada uno. "Plan a base" va en el sentido contrario: eliges cualquier sitio de la Luna o de Marte, ves la base montada sobre relieve real de la NASA y te dice dónde ensayar en la Tierra cada trabajo.»
 
-### 14. «Why do you show "access complexity"? Isn't rating countries political?»
-> It's not a rating of any country, and the page says so. It estimates how much coordination an external field team may need: World Bank governance data, conflict events within 200 km and official travel advice, combined with weights we chose. It also flags special permits, like research licences in Nunavut. Remoteness can even be the point: some analog missions rehearse isolation.
+### 12. «¿Podéis demostrar que nadie ha usado vuestras regiones nuevas?»
+> «No, y no lo afirmamos. Excluimos todo lo que está a menos de 300 km de los análogos conocidos que encontramos, e hicimos una revisión bibliográfica independiente de cada región nueva. La web muestra lo que salió como nivel de evidencia. Quitamos dos regiones a mano después de esa revisión; por ejemplo, Tankwa Karoo, porque resultó ser pizarra y no roca volcánica.»
 
-### 15. «Is it relevant to the challenge? It asks for permanent base locations.»
-> The challenge asks for Earth locations that are analogs of the permanent Moon base sites and of Mars, plus what is similar, how much, and where the analogy breaks. The four missions answer that for real targets. "Plan a base" answers it for the base itself: choose a site at the lunar south pole or on Mars and you get the Earth place with the most alike ground, and where to rehearse each job of the base.
+---
+
+## C. Impacto y relevancia
+
+### 13. «¿Quién usaría esto de verdad?»
+> «Los equipos que planifican pruebas de campo en agencias y universidades, y los equipos de rovers o de trajes, cuando eligen dónde probar. Cada campaña de análogos cuesta mucho dinero y logística. Nuestra herramienta les da una primera lista corta con sus límites, por ejemplo "remoto, necesita permiso de investigación, no hay basalto justo en el punto", antes de que nadie coja un avión. Es una herramienta de cribado, no una recomendación de sitio, y la web lo dice.»
+
+### 14. «¿Por qué mostráis la "complejidad de acceso"? ¿Puntuar países no es político?»
+> «No puntúa ningún país, y la web lo dice. Estima cuánta coordinación puede necesitar un equipo de campo de fuera: datos de gobernanza del Banco Mundial, episodios de conflicto a menos de 200 km y los avisos oficiales de viaje, combinados con pesos que elegimos nosotros. También avisa de permisos especiales, como las licencias de investigación en Nunavut. Y lo remoto puede ser justo lo que se busca: algunas misiones análogas ensayan el aislamiento.»
+
+### 15. «¿Encaja con el reto? Pide sitios para bases permanentes.»
+> «El reto pide lugares de la Tierra análogos a los sitios de las bases permanentes en la Luna y a Marte, y explicar en qué se parecen, cuánto y dónde se rompe la analogía. Las cuatro misiones responden a eso con objetivos reales. "Plan a base" lo responde para la propia base: eliges un sitio en el polo sur lunar o en Marte y te da el lugar de la Tierra con el terreno más parecido, y dónde ensayar cada trabajo de la base.»
 
 ---
 
 ## D. «Plan a base»
 
-### 16. «Is that base layout a NASA design?»
-> No, it's a concept, and the page says so. Each part is placed with simple rules on real NASA elevation data: landing pad at a set distance from the habitat, reactor away from it, rover slopes under 20°, buildable ground under 10°. Sunlight and temperature come from the relief itself. Ice on the Moon is placed only where the ground stays below 110 K, the temperature at which water ice can last. The distances and how often each job repeats are our assumptions.
+### 16. «¿Esa distribución de la base es un diseño de la NASA?»
+> «No, es un concepto, y la web lo dice. Cada parte se coloca con reglas sencillas sobre relieve real de la NASA: la pista de aterrizaje a una distancia fija del hábitat, el reactor apartado, el rover por pendientes de menos de 20°, el terreno edificable por debajo de 10°. La luz y la temperatura salen del propio relieve. El hielo en la Luna solo se coloca donde el suelo se queda por debajo de 110 K, la temperatura a la que el hielo de agua puede durar. Las distancias y cada cuánto se repite cada trabajo son supuestos nuestros.»
 
-### 17. «Why does each job go to a different place on Earth?»
-> Because each rehearsal needs its own conditions: dust work needs a dry, dusty place, ice drilling needs frozen ground, power tests need a low Sun. With our data one Earth site rarely covers more than one job of the base well. So we give two answers: the place with the most alike ground overall, and the best place for each job. You don't rehearse a whole base in one place.
+### 17. «¿Por qué cada trabajo va a un sitio distinto de la Tierra?»
+> «Porque cada ensayo necesita sus propias condiciones: el trabajo con polvo, un sitio seco y polvoriento; la perforación de hielo, suelo helado; las pruebas de energía, un Sol bajo. Con nuestros datos es raro que un mismo sitio de la Tierra sirva bien para más de un trabajo de la base. Por eso damos dos respuestas: el sitio con el terreno más parecido en conjunto y el mejor sitio para cada trabajo. Una base entera no se ensaya en un solo lugar.»
 
-### 18. «How do you measure that the terrain is "alike"?»
-> We compare 11 × 11 km windows on the same grid: 70 % is how the slopes are spread (flat, gentle, steep…), 30 % is the total relief. It's computed live in the browser from NASA Trek data for the Moon or Mars, and from open elevation tiles for Earth. It compares the shape of the ground, not the rock or the colour.
+### 18. «¿Cómo medís que el terreno se "parece"?»
+> «Comparamos ventanas de 11 × 11 km en la misma rejilla: un 70 % es cómo se reparten las pendientes (llano, suave, empinado…) y un 30 % el desnivel total. Se calcula en el momento, en el navegador, con datos de NASA Trek para la Luna o Marte y con teselas de elevación abiertas para la Tierra. Compara la forma del terreno, no la roca ni el color.»
 
 ---
 
 ## E. Datos, IA y proceso
 
-### 19. «Which NASA data did you use?»
-> MODIS vegetation, albedo and surface temperature, GPM IMERG precipitation, NASA Trek for the Moon and Mars (LRO LOLA elevation, LRO WAC imagery, Viking and MOLA–HRSC for Mars), Blue and Black Marble imagery, and NASA POWER climatology for sunlight and temperature through the year. Partner data: ESA Copernicus DEM and WorldCover, SoilGrids, and the GLiM rock map. The full list with licences is in Method & sources.
+### 19. «¿Qué datos de la NASA habéis usado?»
+> «MODIS para vegetación, albedo y temperatura de superficie; GPM IMERG para la lluvia; NASA Trek para la Luna y Marte (elevación LOLA e imágenes WAC del LRO, Viking y MOLA–HRSC para Marte); las imágenes Blue Marble y Black Marble; y la climatología NASA POWER para el sol y la temperatura a lo largo del año. De socios: el modelo de elevación Copernicus y WorldCover de la ESA, SoilGrids y el mapa de rocas GLiM. La lista completa, con licencias, está en "Method & sources".»
 
-### 20. «How did you use AI? The rules forbid using it for the idea.»
-> The idea and the approach are ours: start from real field campaigns, score each task, and show where the analogy breaks. We used an AI coding assistant, Claude Code, as a tool to write code, process data and draft texts. Every decision was ours. There's a file-by-file log of what the AI did in the repository, linked from the footer.
+### 20. «¿Cómo habéis usado la IA? Las normas prohíben usarla para tener la idea.»
+> «La idea y el planteamiento son nuestros: partir de campañas de campo reales, puntuar cada tarea y enseñar dónde se rompe la analogía. Usamos un asistente de programación con IA, Claude Code, como herramienta para escribir código, procesar datos y redactar textos. Todas las decisiones las tomamos nosotros. En el repositorio hay un registro, archivo por archivo, de lo que hizo la IA, enlazado desde el pie de la web.»
 
-*Trampa:* sed coherentes con `AI_USAGE.md` y con el pie de la web. No minimicéis («just a little»): el registro dice cuánto se usó.
+*Trampa:* sed coherentes con `AI_USAGE.md` y con el pie de la web. No le quitéis importancia («solo un poquito»): el registro dice cuánto se usó.
 
-### 21. «What would you do with three more months?»
-> Three things. First, replace our Moon and Mars estimates with values straight from PDS products. Second, add the layers we're missing: a permafrost map for ice, emissivity for real rock type (ASTER on Earth, Diviner on the Moon, TES on Mars), and terrain shading for the low Sun. Third, the real test: show the shortlist to a field-campaign team and check one region on the ground.
+### 21. «¿Qué haríais con tres meses más?»
+> «Tres cosas. Primero, cambiar nuestras estimaciones de la Luna y Marte por valores sacados directamente de los productos del PDS. Segundo, añadir las capas que faltan: un mapa de permafrost para el hielo, la emisividad para el tipo de roca real (ASTER en la Tierra, Diviner en la Luna, TES en Marte) y las sombras del relieve para el Sol bajo. Tercero, la prueba de verdad: enseñar la lista corta a un equipo de campañas de campo y comprobar una región sobre el terreno.»
 
 ---
 
 ## F. Si algo falla en directo
 - **La web 3D no carga o va lenta:** tened el **vídeo de 30 s** abierto (https://zenidx.github.io/logos-space-apps-2026/demo-video/) y capturas de la ficha de un sitio.
-- **«Plan a base» dice «Trek 500»:** el servidor de relieve de NASA a veces falla. Decid «that's NASA's Trek elevation service timing out, it's live data» y recargad, o enseñad Jezero (Marte), que cargó bien en las pruebas.
-- **Pregunta que no sabéis:** «Good question — we didn't measure that. Our data can't tell, and it's on our limits list.» Mejor reconocerlo que inventar una cifra.
+- **«Plan a base» dice «Trek 500»:** el servidor de relieve de la NASA a veces falla. Decid «es el servicio de elevación Trek de la NASA, son datos en directo» y recargad, o enseñad Jezero (Marte), que cargó bien en las pruebas.
+- **Pregunta que no sabéis:** «Buena pregunta: no lo hemos medido. Nuestros datos no lo pueden decir, y está en nuestra lista de límites.» Mejor reconocerlo que inventar una cifra.
