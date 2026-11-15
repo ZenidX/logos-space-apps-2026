@@ -1,0 +1,628 @@
+{
+ "grid": {
+  "n": 96,
+  "sizeM": 11000.0,
+  "stepM": 114.6,
+  "format": "Float32 little-endian, row 0 = north, column 0 = west, metres",
+  "slopeMethod": "central differences on the 96 x 96 grid (114.6 m step), all bodies",
+  "roughnessMethod": "standard deviation of elevation after removing the best-fit plane"
+ },
+ "sources": {
+  "earth": {
+   "source": "Copernicus DEM GLO-30 (ESA / Copernicus, produced using Copernicus WorldDEM-30 (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018), AWS Open Data s3://copernicus-dem-30m",
+   "url": "https://registry.opendata.aws/copernicus-dem/",
+   "nativeResolutionM": 30,
+   "licence": "Copernicus DEM licence (free, worldwide, attribution required); to be verified by the team"
+  },
+  "moon": {
+   "source": "NASA LRO LOLA south-pole DEM 30 m/px (LRO_LOLA_DEM_SPole75_30mp_v04) via NASA Moon Trek",
+   "url": "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_SPole75_30mp_v04/ImageServer",
+   "nativeResolutionM": 30,
+   "licence": "NASA data, public domain (cite NASA/GSFC LOLA team)"
+  },
+  "mars": {
+   "source": "NASA/ESA MOLA-HRSC blended DEM 200 m/px (Mars_MOLA_blend200ppx_HRSC_DEM) via NASA Mars Trek",
+   "url": "https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_MOLA_blend200ppx_HRSC_DEM_clon0dd_200mpp_lzw/ImageServer",
+   "nativeResolutionM": 200,
+   "licence": "NASA/ESA/DLR/FU Berlin data; NASA Trek terms (to be verified by the team)"
+  }
+ },
+ "items": {
+  "target-m1-eva-basalt": {
+   "name": "Mons Mouton (lunar south pole)",
+   "body": "moon",
+   "lat": -84.6,
+   "lon": 31.0,
+   "file": "/heightmaps/moon/target-m1-eva-basalt.bin",
+   "stats": {
+    "slopeMeanDeg": 6.02,
+    "slopeP90Deg": 10.38,
+    "roughnessStdM": 93.2,
+    "reliefM": 735.5,
+    "nodataFraction": 0.0
+   },
+   "source": "moon",
+   "minM": 4838.5,
+   "maxM": 5574.0
+  },
+  "sp_crater_az": {
+   "name": "SP Crater, San Francisco Volcanic Field, Arizona",
+   "body": "earth",
+   "lat": 35.5823524,
+   "lon": -111.63186,
+   "file": "/heightmaps/earth/sp_crater_az.bin",
+   "stats": {
+    "slopeMeanDeg": 4.77,
+    "slopeP90Deg": 12.42,
+    "roughnessStdM": 49.9,
+    "reliefM": 541.0,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 1696.5,
+   "maxM": 2237.6
+  },
+  "craters_of_the_moon_id": {
+   "name": "Craters of the Moon, Idaho",
+   "body": "earth",
+   "lat": 43.4050421,
+   "lon": -113.5060838,
+   "file": "/heightmaps/earth/craters_of_the_moon_id.bin",
+   "stats": {
+    "slopeMeanDeg": 1.85,
+    "slopeP90Deg": 4.11,
+    "roughnessStdM": 19.0,
+    "reliefM": 334.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 1641.8,
+   "maxM": 1976.6
+  },
+  "timanfaya_lanzarote": {
+   "name": "Timanfaya, Lanzarote",
+   "body": "earth",
+   "lat": 29.0216435,
+   "lon": -13.7812357,
+   "file": "/heightmaps/earth/timanfaya_lanzarote.bin",
+   "stats": {
+    "slopeMeanDeg": 3.41,
+    "slopeP90Deg": 7.04,
+    "roughnessStdM": 48.6,
+    "reliefM": 488.1,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 0.0,
+   "maxM": 488.1
+  },
+  "kilauea_iki_hi": {
+   "name": "Kilauea Iki, Hawai'i",
+   "body": "earth",
+   "lat": 19.4148967,
+   "lon": -155.25574,
+   "file": "/heightmaps/earth/kilauea_iki_hi.bin",
+   "stats": {
+    "slopeMeanDeg": 3.03,
+    "slopeP90Deg": 4.54,
+    "roughnessStdM": 48.2,
+    "reliefM": 479.6,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 908.2,
+   "maxM": 1387.8
+  },
+  "m1-eva-basalt-new1": {
+   "name": "Tihāmah · Abha · 'Asir Province",
+   "body": "earth",
+   "lat": 18.265,
+   "lon": 41.75,
+   "file": "/heightmaps/earth/m1-eva-basalt-new1.bin",
+   "stats": {
+    "slopeMeanDeg": 5.72,
+    "slopeP90Deg": 15.04,
+    "roughnessStdM": 57.8,
+    "reliefM": 533.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 169.2,
+   "maxM": 703.0
+  },
+  "m1-eva-basalt-new2": {
+   "name": "Patagonia · Deseado · Santa Cruz",
+   "body": "earth",
+   "lat": -48.335,
+   "lon": -69.15,
+   "file": "/heightmaps/earth/m1-eva-basalt-new2.bin",
+   "stats": {
+    "slopeMeanDeg": 2.15,
+    "slopeP90Deg": 5.26,
+    "roughnessStdM": 30.7,
+    "reliefM": 361.4,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 464.5,
+   "maxM": 825.9
+  },
+  "m1-eva-basalt-new3": {
+   "name": "Chalbi Desert · North Horr · Marsabit County",
+   "body": "earth",
+   "lat": 3.441,
+   "lon": 36.75,
+   "file": "/heightmaps/earth/m1-eva-basalt-new3.bin",
+   "stats": {
+    "slopeMeanDeg": 1.73,
+    "slopeP90Deg": 3.52,
+    "roughnessStdM": 15.2,
+    "reliefM": 155.3,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 528.8,
+   "maxM": 684.1
+  },
+  "m1-eva-basalt-new4": {
+   "name": "Western Plateau · Western Australia",
+   "body": "earth",
+   "lat": -23.029,
+   "lon": 117.35,
+   "file": "/heightmaps/earth/m1-eva-basalt-new4.bin",
+   "stats": {
+    "slopeMeanDeg": 5.7,
+    "slopeP90Deg": 11.45,
+    "roughnessStdM": 42.8,
+    "reliefM": 361.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 370.8,
+   "maxM": 732.6
+  },
+  "m1-eva-basalt-new5": {
+   "name": "Patagonia · Departamento Valcheta · Río Negro",
+   "body": "earth",
+   "lat": -41.453,
+   "lon": -65.75,
+   "file": "/heightmaps/earth/m1-eva-basalt-new5.bin",
+   "stats": {
+    "slopeMeanDeg": 1.16,
+    "slopeP90Deg": 2.15,
+    "roughnessStdM": 8.0,
+    "reliefM": 109.0,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 262.3,
+   "maxM": 371.3
+  },
+  "m1-eva-basalt-new7": {
+   "name": "Great Karoo · Cape Winelands District Municipality · Western Cape",
+   "body": "earth",
+   "lat": -32.665,
+   "lon": 19.75,
+   "file": "/heightmaps/earth/m1-eva-basalt-new7.bin",
+   "stats": {
+    "slopeMeanDeg": 0.68,
+    "slopeP90Deg": 1.01,
+    "roughnessStdM": 10.1,
+    "reliefM": 77.0,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 404.2,
+   "maxM": 481.2
+  },
+  "target-m2-rover-sand": {
+   "name": "Jezero crater",
+   "body": "mars",
+   "lat": 18.4,
+   "lon": 77.7,
+   "file": "/heightmaps/mars-blend/target-m2-rover-sand.bin",
+   "stats": {
+    "slopeMeanDeg": 1.55,
+    "slopeP90Deg": 2.72,
+    "roughnessStdM": 11.6,
+    "reliefM": 133.8,
+    "nodataFraction": 0.0
+   },
+   "source": "mars",
+   "minM": -2719.6,
+   "maxM": -2585.8
+  },
+  "dumont_dunes_ca": {
+   "name": "Dumont Dunes, California",
+   "body": "earth",
+   "lat": 35.6810623,
+   "lon": -116.2247997,
+   "file": "/heightmaps/earth/dumont_dunes_ca.bin",
+   "stats": {
+    "slopeMeanDeg": 3.22,
+    "slopeP90Deg": 8.36,
+    "roughnessStdM": 35.8,
+    "reliefM": 328.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 128.1,
+   "maxM": 456.9
+  },
+  "yungay_atacama": {
+   "name": "Yungay, Atacama Desert",
+   "body": "earth",
+   "lat": -24.08,
+   "lon": -69.93,
+   "file": "/heightmaps/earth/yungay_atacama.bin",
+   "stats": {
+    "slopeMeanDeg": 4.98,
+    "slopeP90Deg": 12.75,
+    "roughnessStdM": 84.6,
+    "reliefM": 506.4,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 957.5,
+   "maxM": 1464.0
+  },
+  "mdrs_hanksville_ut": {
+   "name": "Mars Desert Research Station, Utah",
+   "body": "earth",
+   "lat": 38.4053762,
+   "lon": -110.7898833,
+   "file": "/heightmaps/earth/mdrs_hanksville_ut.bin",
+   "stats": {
+    "slopeMeanDeg": 3.47,
+    "slopeP90Deg": 8.33,
+    "roughnessStdM": 35.8,
+    "reliefM": 234.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 1300.6,
+   "maxM": 1535.3
+  },
+  "m2-rover-sand-new1": {
+   "name": "Asia · Torbat-e-jam County · Razavi Khorasan",
+   "body": "earth",
+   "lat": 35.1,
+   "lon": 60.55,
+   "file": "/heightmaps/earth/m2-rover-sand-new1.bin",
+   "stats": {
+    "slopeMeanDeg": 2.29,
+    "slopeP90Deg": 4.08,
+    "roughnessStdM": 18.1,
+    "reliefM": 254.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 973.4,
+   "maxM": 1228.1
+  },
+  "m2-rover-sand-new2": {
+   "name": "Arabian Peninsula · Al Jawf Governorate",
+   "body": "earth",
+   "lat": 16.465,
+   "lon": 44.95,
+   "file": "/heightmaps/earth/m2-rover-sand-new2.bin",
+   "stats": {
+    "slopeMeanDeg": 1.98,
+    "slopeP90Deg": 4.25,
+    "roughnessStdM": 10.8,
+    "reliefM": 277.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 1484.9,
+   "maxM": 1762.7
+  },
+  "m2-rover-sand-new3": {
+   "name": "Arabian Peninsula · Ad Dhahirah Governorate",
+   "body": "earth",
+   "lat": 22.606,
+   "lon": 56.75,
+   "file": "/heightmaps/earth/m2-rover-sand-new3.bin",
+   "stats": {
+    "slopeMeanDeg": 0.92,
+    "slopeP90Deg": 2.14,
+    "roughnessStdM": 6.9,
+    "reliefM": 110.9,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 265.5,
+   "maxM": 376.4
+  },
+  "m2-rover-sand-new4": {
+   "name": "Sahel · Bourem Cercle · Gao",
+   "body": "earth",
+   "lat": 17.841,
+   "lon": 0.05,
+   "file": "/heightmaps/earth/m2-rover-sand-new4.bin",
+   "stats": {
+    "slopeMeanDeg": 0.64,
+    "slopeP90Deg": 1.39,
+    "roughnessStdM": 7.3,
+    "reliefM": 70.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 303.9,
+   "maxM": 374.6
+  },
+  "m2-rover-sand-new7": {
+   "name": "Tibetan Plateau · Shuanghu County · Xizang",
+   "body": "earth",
+   "lat": 33.194,
+   "lon": 87.65,
+   "file": "/heightmaps/earth/m2-rover-sand-new7.bin",
+   "stats": {
+    "slopeMeanDeg": 3.04,
+    "slopeP90Deg": 7.44,
+    "roughnessStdM": 39.3,
+    "reliefM": 324.0,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 4846.5,
+   "maxM": 5170.5
+  },
+  "m2-rover-sand-new6": {
+   "name": "Andes · Angaco · San Juan",
+   "body": "earth",
+   "lat": -31.288,
+   "lon": -68.25,
+   "file": "/heightmaps/earth/m2-rover-sand-new6.bin",
+   "stats": {
+    "slopeMeanDeg": 0.43,
+    "slopeP90Deg": 1.4,
+    "roughnessStdM": 10.6,
+    "reliefM": 79.9,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 581.0,
+   "maxM": 660.9
+  },
+  "target-m3-ground-ice": {
+   "name": "Arcadia Planitia",
+   "body": "mars",
+   "lat": 46.66,
+   "lon": 192.0,
+   "file": "/heightmaps/mars-blend/target-m3-ground-ice.bin",
+   "stats": {
+    "slopeMeanDeg": 0.23,
+    "slopeP90Deg": 0.43,
+    "roughnessStdM": 2.7,
+    "reliefM": 17.6,
+    "nodataFraction": 0.0
+   },
+   "source": "mars",
+   "minM": -4017.0,
+   "maxM": -3999.4
+  },
+  "haughton_crater": {
+   "name": "Haughton impact crater, Devon Island",
+   "body": "earth",
+   "lat": 75.3771298,
+   "lon": -89.6804276,
+   "file": "/heightmaps/earth/haughton_crater.bin",
+   "stats": {
+    "slopeMeanDeg": 4.45,
+    "slopeP90Deg": 9.68,
+    "roughnessStdM": 28.8,
+    "reliefM": 209.5,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 68.6,
+   "maxM": 278.1
+  },
+  "mcmurdo_dry_valleys": {
+   "name": "McMurdo Dry Valleys",
+   "body": "earth",
+   "lat": -77.5145082,
+   "lon": 161.9469821,
+   "file": "/heightmaps/earth/mcmurdo_dry_valleys.bin",
+   "stats": {
+    "slopeMeanDeg": 15.96,
+    "slopeP90Deg": 29.89,
+    "roughnessStdM": 401.1,
+    "reliefM": 1654.6,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 106.4,
+   "maxM": 1761.0
+  },
+  "m3-ground-ice-new1": {
+   "name": "Ellesmere Island · Qikiqtaaluk Region · Nunavut",
+   "body": "earth",
+   "lat": 81.476,
+   "lon": -70.85,
+   "file": "/heightmaps/earth/m3-ground-ice-new1.bin",
+   "stats": {
+    "slopeMeanDeg": 7.51,
+    "slopeP90Deg": 15.6,
+    "roughnessStdM": 96.5,
+    "reliefM": 568.0,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 266.4,
+   "maxM": 834.4
+  },
+  "m3-ground-ice-new2": {
+   "name": "Banks Island · Inuvik Region · Northwest Territories",
+   "body": "earth",
+   "lat": 74.276,
+   "lon": -121.95,
+   "file": "/heightmaps/earth/m3-ground-ice-new2.bin",
+   "stats": {
+    "slopeMeanDeg": 3.14,
+    "slopeP90Deg": 7.1,
+    "roughnessStdM": 27.6,
+    "reliefM": 192.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 103.8,
+   "maxM": 296.5
+  },
+  "m3-ground-ice-new7": {
+   "name": "New Siberian Islands · Bulunsky Ulus · Sakha Republic",
+   "body": "earth",
+   "lat": 75.335,
+   "lon": 140.45,
+   "file": "/heightmaps/earth/m3-ground-ice-new7.bin",
+   "stats": {
+    "slopeMeanDeg": 0.16,
+    "slopeP90Deg": 0.35,
+    "roughnessStdM": 2.7,
+    "reliefM": 17.2,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 4.5,
+   "maxM": 21.7
+  },
+  "m3-ground-ice-new8": {
+   "name": "Canadian Arctic Archipelago · Qikiqtaaluk Region · Nunavut",
+   "body": "earth",
+   "lat": 67.924,
+   "lon": -69.95,
+   "file": "/heightmaps/earth/m3-ground-ice-new8.bin",
+   "stats": {
+    "slopeMeanDeg": 5.61,
+    "slopeP90Deg": 11.21,
+    "roughnessStdM": 58.3,
+    "reliefM": 270.5,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 195.6,
+   "maxM": 466.1
+  },
+  "m3-ground-ice-new9": {
+   "name": "Qilian Mountains · Subeigiin Mongolian Autonomous County · Gansu",
+   "body": "earth",
+   "lat": 39.335,
+   "lon": 96.55,
+   "file": "/heightmaps/earth/m3-ground-ice-new9.bin",
+   "stats": {
+    "slopeMeanDeg": 8.68,
+    "slopeP90Deg": 18.98,
+    "roughnessStdM": 110.8,
+    "reliefM": 1323.7,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 3937.9,
+   "maxM": 5261.6
+  },
+  "target-m4-low-sun": {
+   "name": "Mons Mouton (lunar south pole)",
+   "body": "moon",
+   "lat": -84.6,
+   "lon": 31.0,
+   "file": "/heightmaps/moon/target-m4-low-sun.bin",
+   "stats": {
+    "slopeMeanDeg": 6.02,
+    "slopeP90Deg": 10.38,
+    "roughnessStdM": 93.2,
+    "reliefM": 735.5,
+    "nodataFraction": 0.0
+   },
+   "source": "moon",
+   "minM": 4838.5,
+   "maxM": 5574.0
+  },
+  "askja_iceland": {
+   "name": "Askja highlands, Iceland",
+   "body": "earth",
+   "lat": 65.05,
+   "lon": -16.75,
+   "file": "/heightmaps/earth/askja_iceland.bin",
+   "stats": {
+    "slopeMeanDeg": 6.91,
+    "slopeP90Deg": 17.99,
+    "roughnessStdM": 86.2,
+    "reliefM": 595.9,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 890.2,
+   "maxM": 1486.0
+  },
+  "m4-low-sun-new1": {
+   "name": "Ungava Peninsula · Kativik · Quebec",
+   "body": "earth",
+   "lat": 62.206,
+   "lon": -73.15,
+   "file": "/heightmaps/earth/m4-low-sun-new1.bin",
+   "stats": {
+    "slopeMeanDeg": 6.53,
+    "slopeP90Deg": 14.37,
+    "roughnessStdM": 63.9,
+    "reliefM": 499.6,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 0.0,
+   "maxM": 499.6
+  },
+  "m4-low-sun-new2": {
+   "name": "Greenland · Qeqqata",
+   "body": "earth",
+   "lat": 66.335,
+   "lon": -49.95,
+   "file": "/heightmaps/earth/m4-low-sun-new2.bin",
+   "stats": {
+    "slopeMeanDeg": 9.62,
+    "slopeP90Deg": 19.3,
+    "roughnessStdM": 125.5,
+    "reliefM": 572.2,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 691.5,
+   "maxM": 1263.7
+  },
+  "m4-low-sun-new3": {
+   "name": "Chukchi Peninsula · Far Eastern Federal District · Chukotka Autonomous Okrug",
+   "body": "earth",
+   "lat": 66.018,
+   "lon": -177.75,
+   "file": "/heightmaps/earth/m4-low-sun-new3.bin",
+   "stats": {
+    "slopeMeanDeg": 7.06,
+    "slopeP90Deg": 18.24,
+    "roughnessStdM": 85.0,
+    "reliefM": 432.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 89.1,
+   "maxM": 521.9
+  },
+  "m4-low-sun-new4": {
+   "name": "Iceland · Vesturbyggð",
+   "body": "earth",
+   "lat": 65.594,
+   "lon": -23.55,
+   "file": "/heightmaps/earth/m4-low-sun-new4.bin",
+   "stats": {
+    "slopeMeanDeg": 9.04,
+    "slopeP90Deg": 20.03,
+    "roughnessStdM": 122.7,
+    "reliefM": 687.5,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 0.0,
+   "maxM": 687.5
+  }
+ },
+ "generatedWith": "AI-assisted (Claude), to be reviewed by team Logos"
+}

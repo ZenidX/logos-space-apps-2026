@@ -1,0 +1,412 @@
+/* AI-assisted (Claude), reviewed by team Logos */
+@import "tailwindcss";
+
+:root {
+  --bg: #04060c; --bg2: #090d18; --bg3: #101627;
+  --line: rgba(150, 175, 230, .16); --line2: rgba(150, 175, 230, .32);
+  --ink: #eef2f9;   /* 18.0:1 */
+  --mut: #a3b0c6;   /*  9.2:1 */
+  --dim: #8392ac;   /*  6.4:1 (min. 5.7:1 on --bg3) */
+  --earth: #5db4ff; /*  9.1:1 */
+  --moon: #d7dce6;  /* 14.7:1 */
+  --mars: #ff8d5e;  /*  8.9:1 */
+  --amber: #ffb454; /* 11.5:1 — "the analogy breaks here" */
+  --sand: #e9c98a;  /* 12.7:1 — access complexity (one ink, never red) */
+  --focus: #fff;
+  --r1: 6px; --r2: 12px; --r3: 20px;
+  --tap: 44px; --ease: cubic-bezier(.05, .7, .1, 1); /* Material 3 emphasized-decelerate */
+  --t-xs: 11px; --t-sm: 13px; --t-md: 15px; --t-lg: 18px; --t-xl: 24px; --t-hero: clamp(38px, min(6vw, 8.6vh), 100px);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+}
+html { color-scheme: dark; }
+/* Font tokens live on body: next/font sets its variables on <body>, so they must be resolved there (not on :root). */
+body { --display: var(--f-sans), "Helvetica Neue", Arial, sans-serif; --sans: var(--f-sans), system-ui, -apple-system, "Segoe UI", sans-serif; --mono: var(--f-mono), ui-monospace, Menlo, monospace; }
+body { background: var(--bg); color: var(--ink); font: 400 15.5px/1.55 var(--sans); font-optical-sizing: auto; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+b, strong { font-weight: 600; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Markers (placed by SolarScene.tsx with an inline transform; --c = colour of the body) */
+.mk { position: absolute; width: var(--tap); height: var(--tap); background: none; border: 0; padding: 0; cursor: pointer; z-index: 4; }
+.mk i { position: absolute; left: 50%; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; background: var(--earth); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px #fff; transition: transform 240ms var(--ease); }
+.mk.sel { z-index: 6; } .mk.hi { z-index: 5; }
+.mk.sel i, .mk.hi i { transform: scale(1.4); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #fff, 0 0 18px 7px rgba(93, 180, 255, .5); }
+.mk.target i { width: 20px; height: 20px; margin: -10px 0 0 -10px; background: transparent; border: 2px solid var(--c, var(--mars)); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px #fff; }
+.mk.target i::before { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: var(--c, var(--mars)); }
+.mk.target i::after { content: ""; position: absolute; inset: -10px; border-radius: 50%; border: 1px solid var(--c, var(--mars)); animation: pulso 2s var(--ease) infinite; }
+@keyframes pulso { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+.mk-l { position: absolute; left: 50%; top: 50%; margin-left: 15px; transform: translateY(-50%); white-space: nowrap; padding: 5px 8px; font: 500 var(--t-xs)/1 var(--mono); letter-spacing: .04em; color: var(--ink); background: rgba(4, 6, 12, .86); border: 1px solid var(--line2); }
+.mk.flip .mk-l { left: auto; right: 50%; margin-left: 0; margin-right: 15px; }
+.skel { border: 1px solid var(--line2); background: radial-gradient(circle at 35% 30%, #12304a, #09111c 70%); overflow: hidden; }
+.skel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(93, 180, 255, .14) 50%, transparent 70%); transform: translateX(-100%); animation: brillo 1.6s linear infinite; }
+@keyframes brillo { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) {
+  .mk.target i::after { animation: none; transform: scale(1.1); opacity: .5; }
+  .skel::after { animation: none; display: none; }
+  .mk i { transition: none; }
+}
+
+/* App */
+.mk.target .mk-l { left: 50%; right: auto; top: auto; bottom: calc(50% + 18px); margin: 0; transform: translateX(-50%); }
+@media (pointer: coarse), (max-width: 700px) { .chip, .back-btn { min-height: 44px; } }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.label { font: 400 10.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.chip { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line2); border-radius: 999px; font: 600 13.5px/1.2 var(--sans); letter-spacing: 0; }
+/* Voice: ideas → serif · places → serif italic · explanation → sans · measurements → mono */
+.display { font-family: var(--display); font-weight: 700 !important; letter-spacing: -.035em; text-wrap: balance; }
+.title-sm { font-family: var(--sans); font-weight: 600; letter-spacing: 0; }
+.place { font-family: var(--display); font-style: normal; font-weight: 700; letter-spacing: -.02em; } /* Bricolage has no italic */
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.stars { background: radial-gradient(1px 1px at 12% 22%, #fff8, transparent), radial-gradient(1px 1px at 72% 12%, #fff6, transparent), radial-gradient(1px 1px at 42% 82%, #fff5, transparent), radial-gradient(1.5px 1.5px at 88% 64%, #fff7, transparent), radial-gradient(1px 1px at 28% 58%, #fff4, transparent), radial-gradient(1px 1px at 58% 38%, #fff5, transparent), var(--bg); }
+.fade-in { animation: fadein 380ms var(--ease) both; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } }
+
+/* Motion: staggered entries, bars, hover */
+.stagger > * { animation: fadein 420ms var(--ease) both; }
+.stagger > *:nth-child(1) { animation-delay: 40ms; } .stagger > *:nth-child(2) { animation-delay: 90ms; } .stagger > *:nth-child(3) { animation-delay: 140ms; }
+.stagger > *:nth-child(4) { animation-delay: 190ms; } .stagger > *:nth-child(5) { animation-delay: 240ms; } .stagger > *:nth-child(6) { animation-delay: 290ms; }
+.stagger > *:nth-child(7) { animation-delay: 340ms; } .stagger > *:nth-child(8) { animation-delay: 390ms; } .stagger > *:nth-child(n+9) { animation-delay: 440ms; }
+.slide-in { animation: slidein 520ms var(--ease) both; }
+@keyframes slidein { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+.bar-fill { transform-origin: left; animation: grow 800ms var(--ease) both; animation-delay: 180ms; }
+.bar-up { transform-box: fill-box; transform-origin: bottom; animation: growup 700ms var(--ease) both; }
+@keyframes growup { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.line-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1100ms var(--ease) 200ms forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.dot-slide { animation: dotslide 900ms var(--ease) 250ms both; }
+@keyframes dotslide { from { transform: translateX(var(--from, 0px)); opacity: .2; } to { transform: none; opacity: 1; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.card { transition: transform 220ms var(--ease), border-color 220ms var(--ease), background-color 220ms var(--ease), box-shadow 220ms var(--ease); }
+.card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px var(--glow, rgba(93, 180, 255, .8)); }
+.card:active { transform: translateY(0) scale(.99); }
+.row { transition: background-color 180ms var(--ease), border-color 180ms var(--ease), transform 180ms var(--ease); }
+.row:hover { background: rgba(150, 175, 230, .07); transform: translateX(2px); }
+.row:active { transform: translateX(0) scale(.995); }
+.chip { transition: border-color 180ms var(--ease), color 180ms var(--ease), background-color 180ms var(--ease); }
+.step-n { font-family: var(--display); font-weight: 700; font-size: 38px; line-height: 1; letter-spacing: -.04em; color: var(--earth); }
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *, .slide-in, .bar-fill, .bar-up { animation: none; } .line-draw { animation: none; stroke-dashoffset: 0; } .dot-slide { animation: none; }
+  .card, .row, .chip { transition: none; } .card:hover, .row:hover { transform: none; }
+}
+
+/* Inset figure tiles and detail tabs */
+/* Figures: a big number and a small label, no box (no boxes inside boxes) */
+.glass-inset { background: none; border: 0; }
+
+/* A site marker pulses once when it appears */
+.mk.cand i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1.5px solid var(--earth); opacity: 0; animation: land 900ms var(--ease) var(--land, 900ms) 1 both; }
+@keyframes land { 0% { transform: scale(.4); opacity: 0; } 30% { opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mk.cand i::after { animation: none; } }
+
+/* ===== Liquid-glass HUD (art direction v3) ===== */
+/* In the components layer so Tailwind utilities (position, radius) can override it. */
+@layer components {
+/* ===== "Liquid glass" for the HUD over the full-screen 3D scene · Logos v3 =====
+   Two panel layers + chip + tab. AA contrast computed for the WORST case (panel over pure white / bright Moon / snow):
+     .glass-chip   α .62 → ONLY --ink text (≥ 4.9:1)
+     .glass        α .78 → --ink (8.9:1) and --mut (4.6:1). NEVER --dim
+     .glass-strong α .90 → --ink, --mut and --dim (4.9:1)
+   Rule: small text and data go in .glass-strong; chips and tabs carry --ink text only. */
+:root {
+  --glass-tint: 9 13 24;                 /* rgb of the background (--bg2) */
+  --glass-blur: 30px; --glass-sat: 180%; --glass-dim: .5;
+  --glass-edge: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.07) 36%, rgba(93,180,255,.12) 64%, rgba(255,255,255,.30));
+  --glass-solid: #0b1020;                /* fallback without transparency (≥ 15:1 with --ink) */
+}
+.glass, .glass-strong, .glass-chip, .glass-tab {
+  position: relative; isolation: isolate; color: var(--ink);
+  background: rgb(var(--glass-tint) / var(--a));
+  /* brightness() dims whatever is behind, so text keeps AA contrast even over the bright side of a planet */
+  -webkit-backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim)); backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim));
+}
+/* thin bright edge (1 px gradient) and top highlight; both sit BEHIND the content (z-index -1 inside the isolated context) */
+.glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: var(--glass-edge);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.glass::after, .glass-strong::after { /* specular highlight: soft light from above */
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 70% at 50% -12%, rgba(255,255,255,.13), rgba(255,255,255,0) 62%);
+}
+
+/* Layer 1: main panel (running text, lists, cards) */
+.glass { --a: .46; --b: var(--glass-blur); border-radius: 28px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(0,0,0,.35) inset, 0 2px 6px rgba(0,0,0,.35), 0 14px 34px -10px rgba(0,0,0,.6); }
+/* Layer 2: on top of a .glass or over very bright areas (dossier, small data, notices) */
+.glass-strong { --a: .90; --b: 26px; border-radius: 18px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 -1px 0 rgba(0,0,0,.45) inset, 0 4px 10px rgba(0,0,0,.4), 0 24px 56px -14px rgba(0,0,0,.7); }
+/* Chip: small floating buttons (--ink text only) */
+.glass-chip { --a: .62; --b: 14px; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; font: 500 14px/1 var(--sans);
+  box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 6px 16px -6px rgba(0,0,0,.6); transition: background-color .12s ease, transform .08s ease; }
+.glass-chip:hover { --a: .72; } .glass-chip:active { transform: scale(.97); }
+/* Tab: .glass-tab by default; selected = light pill with dark text (18:1) */
+.glass-tab { --a: .62; --b: 14px; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; font: 500 14px/1 var(--sans); cursor: pointer;
+  transition: background-color .24s var(--ease), color .24s var(--ease); }
+.glass-tab:hover { --a: .74; }
+.glass-tab[aria-selected="true"], .glass-tab[aria-pressed="true"] { background: rgb(238 242 249 / .94); color: #04060c; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 1px 0 #fff inset, 0 8px 20px -8px rgba(0,0,0,.7); }
+.glass-tab[aria-selected="true"]::before, .glass-tab[aria-pressed="true"]::before { display: none; }
+:is(.glass-chip, .glass-tab):focus-visible { outline: 2px solid var(--focus, #fff); outline-offset: 2px; }
+
+/* phones / touch pointers: cheaper blur (the canvas repaints every frame and the browser blurs again underneath) */
+@media (pointer: coarse), (max-width: 640px) { :root { --glass-blur: 12px; } .glass-strong { --b: 16px; } .glass-chip, .glass-tab { --b: 8px; } }
+
+/* no backdrop-filter (old Firefox, power-saving modes): SOLID background, same contrast or better */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass, .glass-strong { background: var(--glass-solid); }
+  .glass-chip, .glass-tab { background: #121a2e; }
+}
+/* system preference: reduced transparency (macOS/iOS "Reduce transparency") */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-solid); }
+  .glass::after, .glass-strong::after { display: none; }
+}
+/* high contrast: visible border and solid background */
+@media (prefers-contrast: more) {
+  .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: #050810; border: 1px solid rgba(255,255,255,.6); }
+  .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .glass-chip, .glass-tab { transition: none; } .glass-chip:active { transform: none; } }
+
+/* Phones and touch screens: solid panels (no blur, masks or reflections). Measured: the glass effect cost about
+   3 s of blocked main thread in a throttled mobile run; the solid variant keeps the layout and contrast. */
+@media (max-width: 700px), (pointer: coarse) {
+  .glass, .glass-strong, .glass-chip, .glass-tab { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgb(11 16 32 / .94); border: 1px solid var(--line2); box-shadow: none; }
+  .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before, .glass::after, .glass-strong::after { display: none; }
+}
+
+}
+
+/* ===== Story: the first screen is the scene alone; one idea per screen fades in as it is scrolled to ===== */
+.skip { position: absolute; left: 12px; top: -60px; z-index: 40; padding: 10px 16px; border-radius: 999px; background: var(--ink); color: var(--bg); font: 600 14px/1.2 var(--sans); transition: top 160ms var(--ease); }
+.skip:focus { top: 12px; }
+.icon-btn { width: 36px; height: 36px; padding: 0; justify-content: center; font-size: 11px; }
+@media (pointer: coarse), (max-width: 700px) { .icon-btn { width: 44px; height: 44px; } }
+.hide-names .body-name { visibility: hidden !important; }
+.story-hero { position: relative; height: 100svh; }
+.scroll-cue { position: absolute; left: 50%; bottom: max(26px, 4svh); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; margin: 0; font: 400 10.5px/1 var(--mono); letter-spacing: .24em; text-transform: uppercase; color: var(--mut); transition: opacity 500ms var(--ease); }
+.scroll-cue i { display: block; width: 1px; height: 44px; background: linear-gradient(var(--mut), transparent); transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
+@keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+.scroll-cue.gone { opacity: 0; }
+.scroll-cue.still i { animation: none; }
+.story-step { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 96px clamp(20px, 5vw, 72px); }
+.story-copy { width: min(500px, 38vw); }
+.story-title { margin-top: 14px; font-size: clamp(40px, min(5.4vw, 9vh), 92px); line-height: .94; letter-spacing: -.045em; }
+.story-h2 { margin-top: 12px; font-size: clamp(32px, min(3.9vw, 7vh), 60px); line-height: 1.02; letter-spacing: -.04em; }
+.story-lead { margin-top: 16px; max-width: 44ch; font-size: 17px; line-height: 1.5; color: var(--mut); }
+.story-limit { margin-top: 14px; max-width: 46ch; padding-left: 12px; border-left: 2px solid var(--amber); font-size: 14px; line-height: 1.45; color: var(--amber); }
+.story-go { margin-top: 22px; }
+.story-figures { margin: 18px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 24px; }
+.story-figures div { display: flex; flex-direction: column; }
+.story-figures dd { order: 1; margin: 0; font-size: clamp(40px, 4.4vw, 66px); line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+.story-figures dt { order: 2; margin-top: 8px; max-width: 18ch; font-size: 13px; line-height: 1.35; color: var(--mut); }
+.story-explore { align-items: flex-start; padding-top: 16svh; }
+/* a soft dark veil on the text side (no box behind the text); none on the first screen */
+.story::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, rgba(4, 6, 12, .84) 0%, rgba(4, 6, 12, .6) 34%, rgba(4, 6, 12, 0) 54%); transition: opacity 700ms var(--ease); }
+.story.calm::before { opacity: 0; }
+.reveal { transition: opacity 900ms var(--ease), transform 900ms var(--ease); transition-delay: var(--d, 0ms); }
+@media (prefers-reduced-motion: no-preference) { .armed .reveal:not(.in) { opacity: 0; transform: translateY(28px); } }
+@media (prefers-reduced-motion: reduce) { .scroll-cue i { animation: none; } .reveal, .skip { transition: none; } }
+@media (max-width: 767px) {
+  .story-step { align-items: flex-end; padding: 0 20px 9svh; }
+  .story-copy { width: 100%; }
+  .story-title { font-size: clamp(38px, 11vw, 56px); }
+  .story-h2 { font-size: clamp(30px, 8.6vw, 44px); }
+  .story-lead { font-size: 16px; }
+  .story-explore { align-items: flex-start; padding-top: 50svh; }
+  .story::before { background: linear-gradient(0deg, rgba(4, 6, 12, .94) 0%, rgba(4, 6, 12, .72) 40%, rgba(4, 6, 12, 0) 60%); }
+}
+
+/* Target label near a screen edge: keep it inside the frame */
+.mk.target.edge-r .mk-l { left: auto; right: 50%; transform: none; }
+.mk.target.edge-l .mk-l { left: 50%; right: auto; transform: none; }
+
+/* Scene: names of the bodies in the overview, and site names at the end of their dashed leader lines */
+.body-name { font: 400 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mut); white-space: nowrap; transition: color 300ms linear; }
+.body-name.is-target { color: var(--ink); font-weight: 600; }
+.body-name.is-target::after { content: " · target"; color: var(--amber); }
+/* Site names: outside the globe, at the end of a thin dashed leader (placed by SolarScene.tsx with label-layout.ts). */
+.mk.cand .mk-l { left: 50%; top: 50%; right: auto; margin: 0; padding: 4px 7px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; font: 600 12px/14px var(--sans); letter-spacing: 0; color: #d3dcec; background: rgba(4, 6, 12, .62); border: 0; border-radius: 6px; cursor: pointer;
+  opacity: 0; visibility: hidden; transition: opacity 160ms linear, visibility 0s linear 160ms, color 160ms linear, background-color 160ms linear; }
+.mk.cand .mk-l.on { opacity: 1; visibility: visible; transition: opacity 160ms linear, color 160ms linear, background-color 160ms linear; }
+.mk.cand.hi .mk-l, .mk.cand:hover .mk-l { color: #fff; background: rgba(4, 6, 12, .88); }
+.mk.cand.sel .mk-l { color: #fff; background: rgba(4, 6, 12, .94); box-shadow: 0 0 0 1px rgba(255, 255, 255, .6); }
+.lead { fill: none; stroke: #cfe2ff; stroke-opacity: .5; stroke-width: 1; stroke-dasharray: 3 4; transition: stroke-opacity 160ms linear; }
+.lead.hi { stroke-opacity: .9; }
+.lead.sel { stroke: #fff; stroke-opacity: 1; stroke-width: 1.5; stroke-dasharray: 5 4; }
+/* The opened site pulses; "Pause motion" and reduced motion stop every pulse. */
+.mk.cand.sel i::after { border-color: #fff; opacity: 1; animation: pulso 1.9s var(--ease) infinite; }
+.is-paused .mk.cand.sel i::after, .is-paused .mk.target i::after { animation: none; transform: scale(1.1); opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .mk.cand.sel i::after { animation: none; transform: scale(1.1); opacity: .5; } .mk.cand .mk-l, .lead { transition: none; } }
+@media (max-width: 700px) { .mk.cand .mk-l { max-width: 172px; padding: 3px 6px; font-size: 11px; } }
+
+/* Evidence level: four pips and a name, in the colour of the level (never colour alone) */
+.ev { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--sans); color: var(--ev); white-space: nowrap; }
+.ev-pips { display: inline-flex; gap: 3px; }
+.ev-pips i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--ev); }
+.ev-pips i.f { background: var(--ev); }
+/* List filters: small toggle chips */
+.fchip { padding: 4px 8px; border: 1px solid var(--line2); border-radius: 999px; font: 500 11.5px/1.2 var(--sans); color: var(--mut); white-space: nowrap; transition: background-color 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease); }
+.fchip:hover { border-color: var(--ink); color: var(--ink); }
+.fchip[aria-pressed="true"] { background: rgb(238 242 249 / .94); border-color: transparent; color: #04060c; }
+@media (pointer: coarse), (max-width: 700px) { .fchip { min-height: 40px; padding: 0 14px; font-size: 12.5px; } }
+@media (prefers-reduced-motion: reduce) { .fchip { transition: none; } }
+/* "About this mission": detail on demand */
+.about > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line2); border-radius: 999px; font: 600 13px/1.2 var(--sans); }
+.about > summary::-webkit-details-marker { display: none; }
+.about > summary::before { content: "+"; font-family: var(--mono); color: var(--mut); }
+.about[open] > summary::before { content: "–"; }
+.about > summary:hover { border-color: var(--ink); }
+
+/* ===== Radial dial (art direction v4) ===== */
+/* RadialDial. Colours: cyan #5ee6ff (12.8:1 on #0b1020), grey #b9c2d3 (10.6:1), amber #ffb454 (11.5:1 on --bg). */
+.dial { display: block; width: 100%; height: auto; }
+.dial-arc { stroke-dashoffset: 0; animation: dial-draw 900ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes dial-draw { from { stroke-dashoffset: var(--len); } }
+.dial-cap { animation: dial-pop 240ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes dial-pop { from { opacity: 0; } }
+.dial-index { font-family: var(--mono); fill: var(--ink); letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.dial-caption { font: 400 8px var(--mono); letter-spacing: .1em; text-transform: uppercase; fill: var(--mut); }
+.dial-legend { display: grid; gap: 8px; align-content: center; min-width: 0; }
+.dial-legend h4 { margin: 0 0 2px; font: 400 10.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.dial-legend ul { margin: 0; padding: 0; list-style: none; }
+.dial-legend li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 24px; font-size: 13.5px; color: var(--ink); }
+.dial-legend li svg { width: 12px; height: 12px; }
+.dial-legend .l { line-height: 1.2; overflow-wrap: anywhere; } /* full label, wraps if needed (never cut) */
+.dial-legend .v { font: 400 12px var(--mono); color: var(--mut); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dial-mini { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 6px; }
+.dial-mini li { display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
+.dial-mini svg { width: 48px; height: 48px; }
+.dial-mini .l { font-size: 11px; line-height: 1.2; color: var(--ink); max-width: 100%; overflow-wrap: anywhere; }
+.dial-mini .v { font: 400 10.5px var(--mono); color: var(--mut); white-space: nowrap; }
+.dial-mini-n { font: 400 13px var(--mono); fill: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .dial-arc, .dial-cap { animation: none; } }
+
+.dial-mini .v { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+@media (max-height: 840px) and (min-width: 768px) { .dial-legend { gap: 3px; } .dial-legend li { min-height: 19px; font-size: 12.5px; } .dial-legend h4 { margin: 0; } }
+
+/* Provenance under each number (Why tab): small, quiet, always there */
+.src { font: 400 11px/1.4 var(--mono); color: var(--dim); overflow-wrap: anywhere; }
+.src > span:first-child { display: inline-block; min-width: 4.6em; margin-right: 6px; color: var(--mut); letter-spacing: .06em; text-transform: uppercase; font-size: 9.5px; }
+
+/* First screen: one quiet line arrives with the sunrise, then leaves as soon as the reader scrolls */
+.hero-line { position: absolute; left: 50%; bottom: calc(max(26px, 4svh) + 84px); transform: translateX(-50%); margin: 0; width: max-content; max-width: calc(100vw - 40px); text-align: center;
+  font: 600 clamp(22px, 2.5vw, 36px)/1.12 var(--display, var(--sans)); letter-spacing: -.035em; color: var(--ink); text-shadow: 0 2px 30px rgba(0, 0, 0, .7); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+.hero-line span { display: inline-block; opacity: 0; transform: translateY(14px); filter: blur(6px); animation: hero-in 1.6s var(--ease) forwards; animation-delay: 3.1s; }
+.hero-line span + span { color: var(--earth); animation-delay: 4.2s; }
+@keyframes hero-in { to { opacity: 1; transform: none; filter: none; } }
+.hero-line.gone { opacity: 0; transform: translate(-50%, -12px); }
+@media (max-width: 700px) { .hero-line span { display: block; } }
+@media (prefers-reduced-motion: reduce) { .hero-line span { animation: none; opacity: 1; transform: none; filter: none; } }
+/* Header over scrolled text: a soft veil so the title never sits on the copy */
+.head-veil { background: linear-gradient(rgba(4, 6, 12, .92), rgba(4, 6, 12, .55) 70%, transparent); backdrop-filter: blur(6px); }
+
+/* Site panel: browse the mission's sites in place (‹ 02/09 ›, also ← →) */
+.site-nav { display: inline-flex; align-items: center; gap: 2px; margin-left: 6px; padding: 2px; border: 1px solid var(--line2); border-radius: 999px; font-size: 11px; color: var(--mut); }
+.site-nav button { width: 26px; height: 26px; border-radius: 999px; font: 600 16px/1 var(--sans); color: var(--ink); }
+.site-nav button:hover { background: rgb(255 255 255 / .1); }
+.site-nav span { padding: 0 4px; letter-spacing: .04em; }
+@media (pointer: coarse) { .site-nav button { width: 38px; height: 38px; } }
+/* One plain sentence under the name: how the site does, before any chart */
+.verdict { font-size: 13.5px; line-height: 1.45; color: var(--mut); }
+.verdict b { color: var(--ink); font-weight: 600; }
+/* Detail tabs stay reachable while the panel scrolls */
+.tabs-sticky { position: sticky; top: 52px; z-index: 5; margin-inline: -8px; padding: 8px; border-radius: 16px; background: rgb(8 11 20 / .96); backdrop-filter: blur(10px); box-shadow: 0 8px 18px -10px rgb(0 0 0 / .8); }
+@media (min-width: 768px) { .tabs-sticky { top: -12px; } }
+/* Story: quick jump to any mission, from the second screen on */
+.dock { position: fixed; left: 50%; bottom: 18px; z-index: 15; display: flex; align-items: center; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid var(--line2); border-radius: 999px; background: rgb(6 9 16 / .78); backdrop-filter: blur(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease), visibility 0s linear 0s; }
+.dock.off { opacity: 0; visibility: hidden; transform: translate(-50%, 16px); transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s linear 400ms; }
+.dock > .dock-k { padding: 0 8px 0 10px; font: 400 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
+.dock button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; font: 600 12.5px/1 var(--sans); color: var(--mut); white-space: nowrap; transition: background-color 200ms, color 200ms; }
+.dock button i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+.dock button:hover, .dock button[aria-current="step"] { color: var(--ink); background: rgb(255 255 255 / .08); }
+@media (max-width: 767px) { .dock { display: none; } }
+@media (prefers-reduced-motion: reduce) { .dock, .dock.off { transition: none; } }
+
+/* Mission list: filters folded by default (open while one is on) */
+.filters > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--sans); color: var(--mut); }
+.filters > summary::-webkit-details-marker { display: none; }
+.filters > summary::before { content: "⌄"; font-size: 13px; transition: transform 200ms var(--ease); transform: rotate(-90deg); }
+.filters[open] > summary::before { transform: none; }
+.filters > summary b { color: var(--amber); font-weight: 600; }
+.filters > summary:hover { color: var(--ink); }
+@media (max-width: 767px) { .tabs-sticky { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .tabs-sticky > * { flex: none; } }
+
+/* Site dots carry their number in the list (01, 02…), so the globe and the list read together */
+.mk.cand i { width: 17px; height: 17px; margin: -8.5px 0 0 -8.5px; }
+.mk.cand i b { position: absolute; inset: 0; display: grid; place-items: center; font: 700 9px/1 var(--mono); letter-spacing: -.02em; color: #04060c; pointer-events: none; }
+@media (max-width: 700px) { .mk.cand i { width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px; } .mk.cand i b { font-size: 8px; } }
+/* Target marker: smaller, so it marks the place without hiding the world */
+.mk.target i { width: 14px; height: 14px; margin: -7px 0 0 -7px; border-width: 1.5px; }
+.mk.target i::after { inset: -6px; }
+.mk.target .mk-l { bottom: calc(50% + 13px); }
+/* Loading: the starfield with the mark breathing, never a grey disc */
+.boot { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; z-index: 2; pointer-events: none; animation: boot-in 600ms var(--ease) both; }
+.boot-logo { width: 44px; height: 44px; background: url(/logo-symbol.svg) center / contain no-repeat; animation: breathe 2.2s ease-in-out infinite; }
+.boot-t { font: 400 10px/1 var(--mono); letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
+@keyframes breathe { 0%, 100% { opacity: .35; transform: scale(.94); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes boot-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .boot-logo { animation: none; } }
+/* First-screen line: leaves on its own after a while, so the scene is left alone */
+.hero-line { animation: hero-out 1.4s var(--ease) 11s forwards; }
+@keyframes hero-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero-line { animation: none; } }
+
+/* Mission preview on hover / keyboard focus (MissionPreview.tsx); click still opens the mission */
+.mh { position: relative; display: inline-flex; }
+.mh.block { display: block; }
+.mh-pop { position: absolute; z-index: 40; width: 330px; display: grid; gap: 9px; padding: 14px 15px 13px; border-radius: 18px; text-align: left; pointer-events: none;
+  opacity: 0; visibility: hidden; transition: opacity 180ms var(--ease), transform 220ms var(--ease), visibility 0s linear 180ms; }
+.mh-top .mh-pop { left: 50%; bottom: calc(100% + 12px); transform: translate(-50%, 8px); }
+.mh-bottom .mh-pop { left: 0; top: calc(100% + 10px); transform: translateY(-6px); }
+.mh-right .mh-pop { left: calc(100% + 14px); top: 50%; transform: translate(-8px, -50%); }
+@media (hover: hover) {
+  .mh:hover .mh-pop, .mh:focus-within .mh-pop { opacity: 1; visibility: visible; transition: opacity 180ms var(--ease) 90ms, transform 220ms var(--ease) 90ms, visibility 0s; }
+  .mh-top:hover .mh-pop, .mh-top:focus-within .mh-pop { transform: translate(-50%, 0); }
+  .mh-bottom:hover .mh-pop, .mh-bottom:focus-within .mh-pop { transform: none; }
+  .mh-right:hover .mh-pop, .mh-right:focus-within .mh-pop { transform: translate(0, -50%); }
+}
+@media (max-width: 1100px) { .mh-right .mh-pop { left: 0; top: auto; bottom: calc(100% + 10px); transform: translateY(8px); } .mh-right:hover .mh-pop, .mh-right:focus-within .mh-pop { transform: none; } }
+.mh-head { display: flex; align-items: center; gap: 12px; }
+.mh-world { flex: none; width: 46px; height: 46px; border-radius: 50%; background-size: 200% 100%; background-position: 30% 50%; box-shadow: inset -12px -8px 18px rgba(0, 0, 0, .8), inset 3px 2px 6px rgba(255, 255, 255, .18), 0 0 22px -4px var(--c); animation: mh-spin 24s linear infinite; }
+@keyframes mh-spin { to { background-position: -170% 50%; } }
+.mh-k { display: block; font: 400 10px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.mh-t { display: block; margin-top: 2px; font: 700 18px/1.08 var(--display); letter-spacing: -.03em; color: var(--ink); }
+.mh-blurb { font-size: 12.5px; line-height: 1.45; color: var(--mut); }
+.mh-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 9px 0; border-block: 1px solid var(--line); }
+.mh-stats > span { display: grid; align-content: start; gap: 1px; font-size: 11px; line-height: 1.25; color: var(--mut); }
+.mh-stats b { font: 500 16px/1.1 var(--mono); letter-spacing: -.03em; color: var(--ink); }
+.mh-stats i { font-style: normal; font-size: 10px; color: var(--dim); }
+.mh-first { font-size: 11.5px; line-height: 1.35; color: var(--mut); }
+.mh-first b { color: var(--ink); font-weight: 600; }
+.mh-limit { font-size: 11.5px; line-height: 1.4; color: var(--amber); }
+.mh-go { justify-self: end; font: 600 11.5px/1 var(--sans); color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .mh-pop { transition: none; } .mh-world { animation: none; } }
+
+/* ===== Phones ===== */
+/* Missions in the explorer: one row that swipes sideways (fades at the edge), instead of three wrapped rows */
+@media (max-width: 767px) {
+  .chip-row { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 2px 16px 6px; scroll-snap-type: x proximity; scrollbar-width: none;
+    -webkit-mask: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent); mask: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent); }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip-row > * { flex: none; scroll-snap-align: start; }
+}
+/* Mission cards: what the hover preview says on computers, written in the card on phones */
+.card-meta { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.35; color: var(--mut); }
+.card-meta .mh-world { width: 34px; height: 34px; }
+.card-meta b { color: var(--ink); font-weight: 600; }
+/* Site browsing on phones: a bar within thumb reach (back to the list, previous, name and position, next) */
+.site-bar { position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 30; display: flex; align-items: center; gap: 4px; padding: 6px; border: 1px solid var(--line2); border-radius: 22px;
+  background: rgb(8 11 20 / .9); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); box-shadow: 0 12px 30px -8px rgb(0 0 0 / .8); animation: bar-in 420ms var(--ease) both; }
+.site-bar button { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 16px; font: 600 20px/1 var(--sans); color: var(--ink); }
+.site-bar button:active { background: rgb(255 255 255 / .1); }
+.site-bar button:first-child { font-size: 15px; color: var(--mut); }
+.site-bar-t { flex: 1; min-width: 0; display: grid; gap: 3px; text-align: center; }
+.site-bar-t b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 14.5px/1.1 var(--display); letter-spacing: -.02em; }
+.site-bar-t i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal; font-size: 9.5px; letter-spacing: .06em; color: var(--dim); }
+@keyframes bar-in { from { opacity: 0; transform: translateY(20px); } }
+@media (prefers-reduced-motion: reduce) { .site-bar { animation: none; } }
+@media (min-width: 768px) { .site-bar { display: none; } }
+@media (max-width: 767px) { .site-nav { display: none; } }
+/* The Moon's marker sits at its south pole, so on wide screens the name goes below it and does not cover the disc; on phones the names of the Earth sites are close, so it stays above. */
+@media (min-width: 701px) { .mk.target.b-moon:not(.edge-r):not(.edge-l) .mk-l { bottom: auto; top: calc(50% + 13px); } }
