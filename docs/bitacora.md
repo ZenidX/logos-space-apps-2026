@@ -2,6 +2,11 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde) · Vídeo: voz de ElevenLabs montada
+
+- `video/audio/voice.wav` (44,1 kHz mono, 30,08 s; fuera de git). La voz termina en el s 29,6, así que el corte a 29,9 s no se come nada. Las pausas entre frases caen en 5,9 · 12,2 · 18,2 · 21,6 · 26,2 · 28,1 s, de acuerdo con `docs/timestamps.txt`.
+- `build.sh` acepta `voice.wav` o `voice.mp3`, recorta a 29,9 s con un fundido de 0,1 s y codifica AAC a 48 kHz (Opus en la copia WebM).
+
 ## 2026-11-15 (mediodía, 2) · Vídeo: montaje de prueba v2, horizontal
 
 - Formato **horizontal 16:9** (1920×1080; captura a 1280×720 ×1,5). Duración **29,9 s**: la voz ocupa los 30 s y se recortan 0,1 s del cierre.

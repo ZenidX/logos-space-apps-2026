@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Assembles the test cut (1920x1080, 30 fps, 29.9 s) from video/build/frames and video/build/overlays.
-# Usage: video/scripts/build.sh [output-name]     Optional audio: video/audio/voice.mp3 (muxed if present)
+# Usage: video/scripts/build.sh [output-name]     Optional audio: video/audio/voice.wav or voice.mp3 (muxed if present)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 FF=tools/node_modules/ffmpeg-static/ffmpeg
@@ -34,7 +34,14 @@ for i in $(seq 0 $((n - 1))); do
 done
 fc+="[w$n]null[v]"
 
-audio=(); [ -f audio/voice.mp3 ] && { in+=(-i audio/voice.mp3); audio=(-map "$((7 + n)):a" -c:a aac -b:a 192k); }
+# Voice: starts at 0, cut at $DUR with a 0.1 s fade so the cut doesn't click
+VOICE=$(ls audio/voice.wav audio/voice.mp3 2>/dev/null | head -1 || true)
+audio=()
+if [ -n "$VOICE" ]; then
+  in+=(-i "$VOICE")
+  fc+=";[$((7 + n)):a]atrim=0:$DUR,afade=out:st=$(node -e "console.log($DUR-0.1)"):d=0.1,aresample=48000[aout]"
+  audio=(-map "[aout]" -c:a aac -b:a 192k)
+fi
 
 $FF -hide_banner -loglevel error -y "${in[@]}" -filter_complex "$fc" -map "[v]" "${audio[@]}" \
   -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 -t $DUR -movflags +faststart "$B/$NAME.mp4"
