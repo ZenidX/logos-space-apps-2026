@@ -347,6 +347,7 @@ export default function Home() {
 
               <div className="mt-4 flex items-baseline justify-between"><h3 className="label">Sites · {filtered ? `${list.length} of ${shown.sites.length}` : shown.sites.length}</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
               <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-snug text-[var(--dim)]"><span className="ev-pips" style={{ ["--ev" as string]: "var(--mut)" }} aria-hidden><i className="f" /><i className="f" /><i className="f" /><i /></span>dots: independent evidence, more is stronger<span aria-hidden>·</span><span className="inline-flex items-center gap-0.5" aria-hidden><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--sand)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /></span>bars: access complexity, low to high</p>
+              <p className="mt-1 text-[11px] leading-snug text-[var(--dim)]">New regions score within a few thousandths of each other, or tie: read them as a shortlist, not a ranking (details at the end of the list).</p>
               <details className="filters mt-2" open={filtered || undefined}>
               <summary>Filter by logistics and terrain{filtered && <b> · on</b>}</summary>
               <div className="mt-2 flex flex-wrap gap-1" role="group" aria-label="Filter the sites by logistics">
