@@ -12,7 +12,7 @@ import type { FocusKey } from "@/lib/submissions";
 
 export const STEP_IDS = ["landing", "habitat", "power", "isru", "traverse", "eva"] as const;
 export const STEP_DONE = STEP_IDS.length; // todo colocado
-export type Layer = "relief" | "photo" | "slope";
+export type Layer = "relief" | "photo" | "slope" | "sun";
 
 interface Props {
   terrain: TerrainData;
@@ -63,6 +63,25 @@ function slopeCanvas(slope: Float32Array, n: number) {
     const t = b > a ? clamp01((s - a) / (b - a)) : 1;
     for (let ch = 0; ch < 3; ch++) img.data[i * 4 + ch] = ca[ch] + (cb[ch] - ca[ch]) * t;
     img.data[i * 4 + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  return c;
+}
+
+// Horas de sol: negro-azulado (nunca) → ámbar → amarillo claro (casi siempre). Sombra permanente en azul hielo.
+function sunCanvas(lit: Float32Array, psr: Uint8Array, n: number) {
+  const c = document.createElement("canvas");
+  c.width = c.height = n;
+  const ctx = c.getContext("2d")!;
+  const img = ctx.createImageData(n, n);
+  for (let i = 0; i < n * n; i++) {
+    let rgb: [number, number, number];
+    if (psr[i]) rgb = [70, 150, 255];
+    else {
+      const k = Math.min(1, lit[i] / 0.7); // 70 % o más = máximo
+      rgb = [30 + 225 * k, 26 + 200 * Math.pow(k, 1.3), 40 + 120 * Math.pow(k, 3)];
+    }
+    img.data.set([rgb[0], rgb[1], rgb[2], 255], i * 4);
   }
   ctx.putImageData(img, 0, 0);
   return c;
@@ -173,7 +192,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     setTerrainY();
     const reliefTex = new THREE.CanvasTexture(terrain.texture);
     const slopeTex = new THREE.CanvasTexture(slopeCanvas(plan.slope, n));
-    for (const t of [reliefTex, slopeTex]) {
+    const sunTex = new THREE.CanvasTexture(sunCanvas(plan.sun.lit, plan.sun.psr, n));
+    for (const t of [reliefTex, slopeTex, sunTex]) {
       t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = 8;
     }
@@ -616,6 +636,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     const applyLayer = (l: Layer) => {
       wantLayer = l;
       if (l === "slope") { terrainMat.map = slopeTex; terrainMat.color.set(0xffffff); }
+      else if (l === "sun") { terrainMat.map = sunTex; terrainMat.color.set(0xffffff); }
       else if (l === "photo" && photo) { terrainMat.map = photo; terrainMat.color.set(0xffffff); }
       else { terrainMat.map = reliefTex; terrainMat.color.set(earth ? 0xc9bfa6 : mars ? 0xe0a27a : 0xffffff); }
       terrainMat.needsUpdate = true;
@@ -660,6 +681,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       terrainMat.dispose();
       reliefTex.dispose();
       slopeTex.dispose();
+      sunTex.dispose();
       photo?.dispose();
       if (stars) { stars.geometry.dispose(); (stars.material as THREE.Material).dispose(); }
       renderer.dispose();

@@ -462,9 +462,9 @@ export default function BasePlanner() {
                 Replay set-up
               </button>
               <div className="flex gap-1" role="group" aria-label="Ground layer">
-                {(["relief", "photo", "slope"] as Layer[]).map((l) => (
+                {(["relief", "photo", "slope", "sun"] as Layer[]).map((l) => (
                   <button key={l} type="button" className="glass-tab text-[14px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
-                    {l === "relief" ? "Relief" : l === "photo" ? "Photo" : "Slope"}
+                    {l === "relief" ? "Relief" : l === "photo" ? "Photo" : l === "slope" ? "Slope" : "Sunlight"}
                   </button>
                 ))}
               </div>
@@ -477,6 +477,14 @@ export default function BasePlanner() {
                 <input type="range" min={1} max={70} step={0.5} value={sun} onChange={(e) => setSun(Number(e.target.value))} aria-valuetext={`Sun ${sun} degrees above the horizon`} />
               </label>
             </div>
+            {layer === "sun" && (
+              <p className="mt-2 font-mono text-[11px] text-[var(--mut)]">
+                Share of the time each point sees the Sun (day, night and seasons, computed from the relief):{" "}
+                <span style={{ color: "#1e1a28" }}>■</span> never <span style={{ color: "#a08a4a" }}>■</span> ~35 %{" "}
+                <span style={{ color: "#ffe6a0" }}>■</span> 70 %+ · <span style={{ color: "#4696ff" }}>■</span> permanent shadow
+                {plan.body === "moon" ? " (the only place lunar ice can last)" : ""}. Horizon limited to this 11 km patch.
+              </p>
+            )}
             {layer === "slope" && (
               <p className="mt-2 font-mono text-[11px] text-[var(--mut)]">
                 <span style={{ color: "#2ec478" }}>■</span> &lt; 5° <span style={{ color: "#96d65c" }}>■</span> 5–10° buildable ·{" "}
@@ -553,7 +561,10 @@ export default function BasePlanner() {
               TerraVista places each part with simple rules on real NASA elevation data: pad {RULES.padMinM / 1000}–{RULES.padMaxM / 1000} km from
               the habitat, reactor ~{RULES.reactorM / 1000} km away, rover slopes under {RULES.roverLimitDeg}°, walks within{" "}
               {RULES.evaRadiusM / 1000} km, &quot;buildable&quot; = under {RULES.flatDeg}°. Distances and how often each sub-mission repeats
-              are our assumptions. Elevation at {Math.round(plan.cellM)} m per pixel hides boulders and small craters, and modules are drawn
+              are our assumptions. Sunlight is computed from the relief (the Sun&apos;s path over a day and a year against each
+              point&apos;s horizon) but only sees this 11 km patch and ground level: published values for the best polar peaks, with
+              masts and the full horizon, are higher (80–90 %). On the Moon, ice is placed only in ground the model finds in permanent
+              shadow; anywhere else there is none. Elevation at {Math.round(plan.cellM)} m per pixel hides boulders and small craters, and modules are drawn
               larger than life so you can see them.
             </p>
           </aside>

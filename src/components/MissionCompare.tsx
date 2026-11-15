@@ -56,7 +56,9 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
     loadEarthTerrain(site.lat, site.lon, base.terrain.n, base.terrain.widthM)
       .then((terrain) => {
         if (cancel) return;
-        setEarth({ terrain, plan: planBase(terrain, base.plan.body, base.plan.lat, base.plan.lon), sig: shapeSig(terrain) });
+        // Reglas de la base, pero con el Sol real de la Tierra en ese sitio (latitud e inclinación terrestres)
+        const plan = planBase(terrain, base.plan.body, base.plan.lat, base.plan.lon, { sunLat: site.lat, tiltDeg: 23.44, radiusM: 6371000, isruKind: base.plan.isru.kind });
+        setEarth({ terrain, plan, sig: shapeSig(terrain) });
       })
       .catch((e: Error) => !cancel && setErr(e.message));
     return () => {
@@ -186,6 +188,8 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
                 {earth && row("Buildable (< 10°)", `${Math.round(earth.plan.stats.flatPct)} %`, `${Math.round(base.plan.stats.flatPct)} %`)}
                 {earth && row("Mean slope", `${earth.plan.stats.meanSlope.toFixed(1)}°`, `${base.plan.stats.meanSlope.toFixed(1)}°`)}
                 {earth && row("Relief", `${Math.round(earth.plan.stats.reliefM)} m`, `${Math.round(base.plan.stats.reliefM)} m`)}
+                {earth && row("Sun at the habitat", `${Math.round(earth.plan.habitatLit * 100)} %`, `${Math.round(base.plan.habitatLit * 100)} %`)}
+                {earth && row("Best solar spot", `${Math.round(earth.plan.powerLit * 100)} %`, `${Math.round(base.plan.powerLit * 100)} %`)}
                 {earth && row("Rover route", `${(earth.plan.routeLenM / 1000).toFixed(1)} km`, `${(base.plan.routeLenM / 1000).toFixed(1)} km`)}
               </tbody>
             </table>

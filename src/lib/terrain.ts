@@ -13,6 +13,9 @@ export interface TerrainData {
   maxH: number;
   source: string; // atribución
   resolutionM: number; // resolución aproximada del dato de elevación
+  // Rumbo (°, horario) del norte geográfico visto desde «arriba» de la malla. 0 en las cajas lat/lon;
+  // en las polares estereográficas depende de la longitud (hace falta para orientar el Sol).
+  northBearingDeg?: number;
 }
 
 export interface BBox {
@@ -286,6 +289,7 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
   const box = `${x - hs},${y - hs},${x + hs},${y + hs}`;
   return {
     ...finish(h, n, sizeM, sizeM, 5, "Elevation: NASA LRO LOLA south pole DEM 5 m/px · Imagery: LRO WAC south pole mosaic 100 m/px (Moon Trek)"),
+    northBearingDeg: lon,
     loadImagery: () => trekImage(MOON_WAC_SP, box, 512),
   };
 }
@@ -315,6 +319,7 @@ export async function loadMoonAny(lat: number, lon: number, sizeM = 10000, n = 1
     const res = fine ? 5 : 30;
     return {
       ...finish(h, n, sizeM, sizeM, res, `Elevation: NASA LRO LOLA ${south ? "south" : "north"} pole DEM ${res} m/px · Imagery: LRO WAC polar mosaic 100 m/px (Moon Trek)`),
+      northBearingDeg: south ? lon : -lon,
       loadImagery: () => trekImage(south ? MOON_WAC_SP : MOON_WAC_NP, box, 512),
     };
   }

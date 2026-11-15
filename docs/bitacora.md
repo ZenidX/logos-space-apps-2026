@@ -2,6 +2,34 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 13) · Base: luz y sombra reales (paneles por orientación, hielo lunar solo en sombra permanente)
+
+- Pedido de zexu: que la simulación no sea solo topográfica; que cuenten la orientación para los paneles solares y cosas básicas como el hielo de la Luna.
+- **Matiz:** en la Luna sí hay hielo, pero **solo en suelo polar que nunca ve el Sol** (LCROSS 2009: ~5,6 % de agua en Cabeus; M³ 2018: hielo en superficie). Fuera de esas trampas frías no hay. El fallo del modelo era que ponía «hielo en el punto más hondo» sin comprobar la sombra.
+- `sunlight()` en `src/lib/base-plan.ts`:
+  - Horizonte de cada celda en 24 direcciones, sobre las alturas reales y con la caída por la curvatura.
+  - Recorrido del Sol: ángulo horario cada 7,5° × 5 declinaciones entre −inclinación y +inclinación (Luna 1,54°, Marte 25,19°, Tierra 23,44°).
+  - Resultado por celda: fracción del tiempo con sol, energía según la orientación de la ladera y **sombra permanente** (ningún Sol del modelo llega).
+  - Las mallas polares estereográficas llevan `northBearingDeg` para orientar bien el Sol.
+- **Reglas nuevas:**
+  - Hábitat polar donde más horas de sol hay.
+  - Mástiles en los puntos con más sol, no en los más altos.
+  - Campo solar donde el suelo recibe más energía (orientación y sombras).
+  - **Hielo lunar solo en sombra permanente**; si no hay en la zona: «no ice, water brought in».
+  - Luna fuera del polo: sin hielo.
+- **Resultados con terreno real:**
+  - Fondo de Shackleton: **56 % en sombra permanente** (correcto: es una de las regiones en sombra permanente conocidas).
+  - Cresta de Shackleton: mástiles con sol el 59–65 % del tiempo y 1,5 % de sombra permanente a 1,8 km.
+  - Tranquility: 50 % de sol, 0 % de sombra, sin hielo.
+  - Marte: ~50 %.
+  - Unos 0,2 s por sitio.
+- **Web:**
+  - Capa **«Sunlight»** con su leyenda.
+  - Veredictos de agua y energía con estas cifras.
+  - Condiciones nuevas: «Sun at the habitat» y «Permanent shadow».
+  - En la comparación con la Tierra, el plan terrestre usa el Sol de la Tierra en ese sitio, y la tabla añade sol en el hábitat y en el mejor punto solar.
+- **Límite, dicho en la web:** el horizonte solo ve la zona de 11 km y se mide a ras de suelo. Los artículos dan 80–90 % para los mejores picos polares, con mástiles y el horizonte completo.
+
 ## 2026-11-15 (tarde, 12) · Las páginas del equipo, con el estilo de la portada (Logos)
 
 - Pedido de zexu: Base y las demás páginas tienen que llevar el estilo general de la app de Logos.

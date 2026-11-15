@@ -62,36 +62,44 @@ export function subMissions(p: BasePlan, g: HeightGrid): SubMission[] {
   });
 
   const ice = p.isru.kind === "ice-shadow" || p.isru.kind === "ice-ground";
+  const pct = (x: number) => `${Math.round(x * 100)} %`;
   out.push({
     id: "water",
     name: "Water & oxygen",
     cadence: "Daily: mining, melting, splitting",
-    needs: moon ? "Water ice within reach: only in permanently shadowed polar ground." : "Shallow ground ice (mostly poleward of ~35°), or else the CO₂ air for oxygen.",
+    needs: moon
+      ? "Water ice survives on the Moon only where the Sun never shines: permanently shadowed polar ground. Everywhere else there is none."
+      : "Shallow ground ice (mostly poleward of ~35°), or else the CO₂ air for oxygen.",
     level: ice ? (p.isru.kind === "ice-shadow" ? "limited" : "good") : "hard",
     verdict:
       p.isru.kind === "ice-shadow"
-        ? `Candidate ice in the lowest, darkest ground ${km(dist(p.isru.spot, p.habitat))} away: crews must work in the deep cold.`
+        ? `${p.sun.psrPct.toFixed(1)} % of this patch never sees the Sun (computed from the relief): ice can last there. Nearest spot ${km(dist(p.isru.spot, p.habitat))} away, in the deep cold.`
         : p.isru.kind === "ice-ground"
           ? `Ice likely within metres at ${Math.abs(p.lat).toFixed(0)}° latitude; drill ${km(dist(p.isru.spot, p.habitat))} from the habitat.`
-          : moon
-            ? "No ice expected this far from the poles: oxygen from regolith, water shipped from Earth."
-            : "No shallow ice expected here: oxygen from the CO₂ air, water is the hard part.",
+          : p.noIce === "no-psr"
+            ? "No ground in this patch stays dark all year, so no ice: oxygen from regolith, water brought from a shadowed crater or from Earth."
+            : moon
+              ? "No ice: away from the poles every point gets two weeks of sunlight a month. Oxygen from regolith, water shipped in."
+              : "No shallow ice expected here: oxygen from the CO₂ air, water is the hard part.",
     tasks: ice ? (p.isru.kind === "ice-shadow" ? ["permafrost_drill", "cold_trap"] : ["permafrost_drill"]) : moon ? ["regolith_build"] : [],
     focus: "isru",
   });
 
+  const lit = p.powerLit;
   out.push({
     id: "power",
     name: "Power",
     cadence: "Around the clock",
-    needs: moon ? "Sunlit high ground near the pole, or a reactor to survive the two-week lunar night." : "Solar plus a reactor: dust storms can dim the Sun for weeks.",
-    level: p.power.kind === "solar-masts" ? "good" : "limited",
+    needs: moon
+      ? "Sunlight most of the time: only high polar ground facing the low Sun gets it. Elsewhere, a reactor for the two-week night."
+      : "Solar on ground facing the Sun, plus a reactor: dust storms can dim the Sun for weeks.",
+    level: p.power.kind === "solar-masts" ? (lit >= 0.6 ? "good" : lit >= 0.35 ? "limited" : "hard") : "limited",
     verdict:
       p.power.kind === "solar-masts"
-        ? `${p.power.spots.length} vertical solar masts on the highest points; the Sun grazes the horizon at ${(90 - Math.abs(p.lat) + 1.54).toFixed(1)}° at most.`
+        ? `${p.power.spots.length} vertical solar masts on the sunniest points: lit ${pct(lit)} of the time at ground level (computed from the relief; the Sun never rises above ${(90 - Math.abs(p.lat) + 1.54).toFixed(1)}°).`
         : moon
-          ? "Away from the pole every night lasts ~14.8 Earth days: a fission reactor ~1 km away carries the base."
-          : "Fission reactor ~1 km away plus a solar field next to the habitat.",
+          ? `The best ground here is lit ${pct(lit)} of the time: every lunar night lasts ~14.8 Earth days, so a fission reactor ~1 km away carries the base.`
+          : `Solar field on the ground that catches the most sunlight (orientation and shadows computed), lit ${pct(lit)} of the time; fission reactor ~1 km away for nights and dust storms.`,
     tasks: p.power.kind === "solar-masts" ? ["grazing_sun"] : moon ? [] : ["power_mars"],
     focus: "power",
   });

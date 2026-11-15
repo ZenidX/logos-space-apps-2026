@@ -10,6 +10,16 @@ export interface HeightGrid {
   n: number;
   widthM: number;
   heightM: number;
+  northBearingDeg?: number; // rumbo del norte geográfico respecto a «arriba» de la malla (polares)
+}
+
+// Luz solar sobre el relieve real (ver sunlight()).
+export interface SunMap {
+  lit: Float32Array; // fracción del tiempo (día + noche, todo el año) con el Sol por encima del horizonte local
+  irr: Float32Array; // energía media sobre el suelo, relativa a «Sol en el cénit todo el tiempo» = 1
+  psr: Uint8Array; // 1 = sombra permanente: ningún Sol del modelo llega nunca (trampa fría posible)
+  psrPct: number;
+  litMean: number;
 }
 
 export interface Spot {
@@ -23,6 +33,15 @@ export interface Spot {
 
 export type PowerKind = "solar-masts" | "solar-fission" | "fission-solar";
 export type IsruKind = "ice-shadow" | "ice-ground" | "oxygen-regolith" | "oxygen-co2";
+
+// Para dibujar el mismo plan en un sitio de ensayo de la Tierra: el Sol es el de la Tierra en ese sitio,
+// y el tipo de recurso se copia de la base (se ensaya la misma operación).
+export interface PlanOptions {
+  sunLat?: number;
+  tiltDeg?: number;
+  radiusM?: number;
+  isruKind?: IsruKind;
+}
 
 export interface BasePlan {
   body: PlanetBody;
@@ -42,6 +61,10 @@ export interface BasePlan {
   routeLimitDeg: number; // límite de pendiente que hubo que usar (sube si no hay camino con el normal)
   evaRadiusM: number;
   polar: boolean;
+  sun: SunMap;
+  habitatLit: number; // fracción del tiempo con sol en el hábitat
+  powerLit: number; // la mejor fracción de luz entre las piezas solares
+  noIce: "" | "no-psr" | "not-polar"; // Luna sin hielo: por qué
   conditions: Condition[];
   taskIds: string[]; // misiones de operations.json que aplican aquí
 }
@@ -107,12 +130,102 @@ export function maxSunElevation(body: PlanetBody, lat: number): number {
 // Presión media en Marte según la altura MOLA: 610 Pa en el datum, escala ~11 km (aprox.).
 export const marsPressurePa = (elevM: number) => 610 * Math.exp(-elevM / 11100);
 
-export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: number): BasePlan {
+const BODY = {
+  moon: { tilt: 1.54, radius: 1737400 },
+  mars: { tilt: 25.19, radius: 3389500 },
+} as const;
+
+// Luz solar real sobre el relieve.
+// 1) Horizonte de cada celda en NAZ direcciones (marcha sobre la malla, con la caída por la curvatura del cuerpo).
+// 2) Recorrido del Sol: ángulo horario cada 7,5° × 5 declinaciones entre −inclinación y +inclinación (día y estaciones).
+// 3) Una celda tiene sol si el Sol está por encima de su horizonte en ese acimut.
+// Límite: el horizonte solo ve dentro de la caja (11 km); montañas más lejanas no tapan, así que la luz se sobreestima
+// un poco y la sombra permanente se subestima en los bordes.
+export function sunlight(g: HeightGrid, lat: number, tiltDeg: number, radiusM: number, nAz = 24): SunMap {
+  const { heights: h, n, widthM } = g;
+  const N = n * n;
+  const cell = widthM / (n - 1);
+  const north = ((g.northBearingDeg ?? 0) * Math.PI) / 180;
+  const hor = new Float32Array(nAz * N); // tangente del ángulo de horizonte
+  const maxSteps = Math.ceil(n * 1.45);
+  for (let k = 0; k < nAz; k++) {
+    const gb = (k / nAz) * 2 * Math.PI + north; // rumbo en la malla de la dirección geográfica k
+    const dc = Math.sin(gb), dr = -Math.cos(gb);
+    for (let r = 0; r < n; r++)
+      for (let c = 0; c < n; c++) {
+        const h0 = h[r * n + c];
+        let best = -Infinity;
+        for (let s = 1; s <= maxSteps; s++) {
+          const rr = Math.round(r + dr * s), cc = Math.round(c + dc * s);
+          if (rr < 0 || cc < 0 || rr >= n || cc >= n) break;
+          const d = s * cell;
+          const tan = (h[rr * n + cc] - h0 - (d * d) / (2 * radiusM)) / d;
+          if (tan > best) best = tan;
+        }
+        hor[k * N + r * n + c] = best === -Infinity ? -1 : best;
+      }
+  }
+  // Normales del suelo (este, norte geográficos) para la energía según la orientación
+  const dx = cell;
+  const gE = new Float32Array(N), gN = new Float32Array(N);
+  const cn = Math.cos(north), sn = Math.sin(north);
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) {
+      const c0 = Math.max(0, c - 1), c1 = Math.min(n - 1, c + 1), r0 = Math.max(0, r - 1), r1 = Math.min(n - 1, r + 1);
+      const gx = (h[r * n + c1] - h[r * n + c0]) / ((c1 - c0) * dx); // hacia +columna (derecha de la malla)
+      const gy = (h[r0 * n + c] - h[r1 * n + c]) / ((r1 - r0) * dx); // hacia arriba de la malla
+      // de ejes de malla a este/norte geográficos (la malla está girada «north» respecto al norte)
+      gE[r * n + c] = gx * cn - gy * sn;
+      gN[r * n + c] = gx * sn + gy * cn;
+    }
+  const lit = new Float32Array(N), irr = new Float32Array(N), seen = new Uint8Array(N);
+  const phi = (lat * Math.PI) / 180;
+  const decl = [-1, -0.5, 0, 0.5, 1].map((f) => (f * tiltDeg * Math.PI) / 180);
+  let total = 0;
+  for (const d of decl)
+    for (let H = -180; H < 180; H += 7.5) {
+      total++;
+      const hr = (H * Math.PI) / 180;
+      const sinE = Math.sin(phi) * Math.sin(d) + Math.cos(phi) * Math.cos(d) * Math.cos(hr);
+      const e = Math.asin(Math.max(-1, Math.min(1, sinE)));
+      if (e <= -0.01) continue; // noche (el radio del Sol visto desde la Luna ≈ 0,27°)
+      const A = Math.atan2(Math.sin(hr), Math.cos(hr) * Math.sin(phi) - Math.tan(d) * Math.cos(phi)) + Math.PI;
+      const kf = ((A / (2 * Math.PI)) * nAz) % nAz;
+      const k0 = Math.floor(kf), k1 = (k0 + 1) % nAz, t = kf - k0;
+      const tanE = Math.tan(e);
+      const sE = Math.cos(e) * Math.sin(A), sN = Math.cos(e) * Math.cos(A), sU = Math.sin(e);
+      for (let i = 0; i < N; i++) {
+        const hz = hor[k0 * N + i] * (1 - t) + hor[k1 * N + i] * t;
+        if (tanE <= hz) continue;
+        lit[i]++;
+        seen[i] = 1;
+        const nx = -gE[i], ny = -gN[i];
+        const dot = (nx * sE + ny * sN + sU) / Math.hypot(nx, ny, 1);
+        if (dot > 0) irr[i] += dot;
+      }
+    }
+  let psrCnt = 0, litSum = 0;
+  const psr = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    lit[i] /= total;
+    irr[i] /= total;
+    litSum += lit[i];
+    if (!seen[i]) {
+      psr[i] = 1;
+      psrCnt++;
+    }
+  }
+  return { lit, irr, psr, psrPct: (100 * psrCnt) / N, litMean: litSum / N };
+}
+
+export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: number, opt: PlanOptions = {}): BasePlan {
   const { heights: h, n, widthM, heightM } = g;
   const cellM = widthM / (n - 1);
   const slope = slopeGrid(g);
   const flat = windowMean(slope, n, Math.max(1, Math.round(150 / cellM)));
   const polar = Math.abs(lat) >= RULES.polarLat;
+  const sun = sunlight(g, opt.sunLat ?? lat, opt.tiltDeg ?? BODY[body].tilt, opt.radiusM ?? BODY[body].radius);
+  const L = sun.lit;
 
   let minH = Infinity, maxH = -Infinity, sum = 0, flatCnt = 0;
   for (let i = 0; i < n * n; i++) {
@@ -163,7 +276,8 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
   const habitat = pick((r, c) => {
     const s = spot(r, c);
     const elev = (h[r * n + c] - minH) / span;
-    return flat[r * n + c] + (dist(s, centre) / (0.25 * widthM)) * 2.5 - (body === "moon" && polar ? elev * 6 : 0);
+    // En el polo lunar manda la luz calculada (horas de sol), con un poco de altura como desempate
+    return flat[r * n + c] + (dist(s, centre) / (0.25 * widthM)) * 2.5 - (body === "moon" && polar ? L[r * n + c] * 8 + elev : 0);
   });
 
   // 2. Pista: lo más llana posible, a 1,5–3 km del hábitat (chorro del motor).
@@ -186,13 +300,15 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
         const s = spot(r, c);
         if (top && dist(s, habitat) <= 3500 && dist(s, habitat) >= 250 && dist(s, pad) > 500) cand.push(s);
       }
-    cand.sort((a, b) => b.h - a.h);
+    // Los puntos con más horas de sol (relieve real), no solo los más altos
+    cand.sort((a, b) => L[b.r * n + b.c] - L[a.r * n + a.c] || b.h - a.h);
     for (const s of cand) if (spots.length < 3 && spots.every((o) => dist(o, s) >= 600) && dist(s, habitat) >= 150) spots.push(s);
     used.push(...spots);
-    if (!spots.length) spots.push(pick((r, c) => -h[r * n + c], ring(habitat, 200, 1500)));
+    if (!spots.length) spots.push(pick((r, c) => -L[r * n + c], ring(habitat, 200, 1500)));
     power = { kind: "solar-masts", spots };
   } else {
-    const field = pick((r, c) => flat[r * n + c] + dist(spot(r, c), habitat) / 400, ring(habitat, 250, 700));
+    // Campo solar donde el suelo recibe más energía: cuenta la orientación de la ladera y las sombras
+    const field = pick((r, c) => flat[r * n + c] * 0.6 + dist(spot(r, c), habitat) / 500 - sun.irr[r * n + c] * 12, (r, c) => ring(habitat, 250, 900)(r, c) && flat[r * n + c] < 12);
     const reactor = pick(
       (r, c) => flat[r * n + c] + Math.abs(dist(spot(r, c), habitat) - RULES.reactorM) / 300,
       (r, c) => ring(habitat, 700, 1600)(r, c) && dist(spot(r, c), pad) > 800,
@@ -202,15 +318,30 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
   }
 
   // 4. Recursos (ISRU).
+  // Luna: hielo SOLO en suelo que nunca ve el Sol (sombra permanente calculada). Si no hay, no hay hielo aquí.
   let isru: BasePlan["isru"];
-  if (body === "moon" && polar) {
-    // Lo más hondo de la zona: proxy de suelo en sombra permanente (trampa fría). No es un mapa de sombra.
-    isru = { kind: "ice-shadow", spot: pick((r, c) => h[r * n + c], ring(habitat, 800, 0.48 * widthM)) };
-  } else if (body === "mars" && Math.abs(lat) >= RULES.marsIceLat) {
+  let noIce: BasePlan["noIce"] = "";
+  const wantKind = opt.isruKind;
+  const psrIn = (r: number, c: number) => sun.psr[r * n + c] === 1;
+  const anyPsr = (() => {
+    for (let r = margin; r < n - margin; r++) for (let c = margin; c < n - margin; c++) if (psrIn(r, c)) return true;
+    return false;
+  })();
+  if (wantKind === "ice-shadow" || (!wantKind && body === "moon" && polar && anyPsr)) {
+    // La sombra permanente más cercana al hábitat (en un ensayo terrestre: el suelo con menos sol)
+    isru = {
+      kind: "ice-shadow",
+      spot: pick(
+        (r, c) => (wantKind ? L[r * n + c] * 20 : 0) + dist(spot(r, c), habitat) / 1000 + flat[r * n + c] / 10,
+        (r, c) => (wantKind ? true : psrIn(r, c)) && dist(spot(r, c), habitat) >= 500,
+      ),
+    };
+  } else if (wantKind === "ice-ground" || (!wantKind && body === "mars" && Math.abs(lat) >= RULES.marsIceLat)) {
     isru = { kind: "ice-ground", spot: pick((r, c) => flat[r * n + c] + Math.abs(dist(spot(r, c), habitat) - 500) / 200, ring(habitat, 300, 900)) };
   } else {
+    if (body === "moon" && !wantKind) noIce = polar ? "no-psr" : "not-polar";
     isru = {
-      kind: body === "moon" ? "oxygen-regolith" : "oxygen-co2",
+      kind: wantKind ?? (body === "moon" ? "oxygen-regolith" : "oxygen-co2"),
       spot: pick((r, c) => flat[r * n + c] + Math.abs(dist(spot(r, c), habitat) - 350) / 150, ring(habitat, 200, 600)),
     };
   }
@@ -266,7 +397,11 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
     routeLimitDeg: limit,
     evaRadiusM: RULES.evaRadiusM,
     polar,
-    conditions: conditions(body, lat, lon, stats, habitat.h),
+    sun,
+    habitatLit: L[habitat.r * n + habitat.c],
+    powerLit: Math.max(...power.spots.slice(0, power.kind === "solar-masts" ? 3 : 1).map((s) => L[s.r * n + s.c])),
+    noIce,
+    conditions: conditions(body, lat, lon, stats, habitat.h, sun, L[habitat.r * n + habitat.c], noIce),
     taskIds: tasksFor(body, lat, polar, isru.kind),
   };
 }
@@ -342,7 +477,7 @@ function route(h: Float32Array, n: number, cellM: number, a: Spot, b: Spot, limi
   return out.reverse();
 }
 
-function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["stats"], habH: number): Condition[] {
+function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["stats"], habH: number, sunMap: SunMap, habLit: number, noIce: BasePlan["noIce"]): Condition[] {
   const sun = maxSunElevation(body, lat);
   const out: Condition[] = [
     { label: "Buildable ground", value: `${Math.round(s.flatPct)} %`, note: `Share of this patch with slope under ${RULES.flatDeg}° (same rule as our Earth buildability score).`, kind: "data" },
@@ -355,7 +490,25 @@ function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["sta
       kind: "physics",
     },
     { label: "Gravity", value: body === "moon" ? "1.62 m/s² (⅙ g)" : "3.72 m/s² (⅜ g)", note: "Standard values.", kind: "physics" },
+    {
+      label: "Sun at the habitat",
+      value: `${Math.round(habLit * 100)} % of the time`,
+      note: "Computed from the real relief: the Sun's path over a day and a year against each point's horizon (inside the 11 km patch only).",
+      kind: "data",
+    },
   ];
+  if (body === "moon")
+    out.push({
+      label: "Permanent shadow",
+      value: `${sunMap.psrPct.toFixed(1)} % of the patch`,
+      note:
+        noIce === "not-polar"
+          ? "Away from the poles every point sees the Sun for two weeks a month: no ice can survive."
+          : sunMap.psrPct > 0
+            ? "Ground the Sun never reaches in our model: the only place lunar water ice can last (LCROSS, LRO)."
+            : "No ground in this patch stays dark all year, so no ice is expected here.",
+      kind: "data",
+    });
   if (body === "moon") {
     const near = Math.abs(((lon + 540) % 360) - 180) < 90;
     out.push({

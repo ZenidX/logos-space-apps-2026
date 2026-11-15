@@ -4,7 +4,7 @@
 >
 > Etiquetas: **[fuente]** = dato publicado (ver §8); **[suposición]** = propuesta nuestra, razonada pero sin fuente que la respalde tal cual; **[proxy]** = variable aproximada a partir de otra.
 
-> **En la web:** la página `/base/` aplica estas reglas a cualquier punto de la Luna o de Marte sobre el relieve real (ver `src/lib/base-plan.ts`, constante `RULES`).
+> **En la web:** la página `/base/` aplica estas reglas a cualquier punto de la Luna o de Marte sobre el relieve real (ver `src/lib/base-plan.ts`, constante `RULES`). La luz se calcula con el relieve (`sunlight()`): los paneles van donde más sol hay y el hielo lunar solo en sombra permanente calculada.
 
 ## 0. Resumen
 
