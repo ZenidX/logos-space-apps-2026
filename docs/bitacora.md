@@ -2,7 +2,7 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
-## 2026-11-15 (tarde, 9) · Todo junto en ZenidX: SpaceApp-Logos es la portada (rama `zexu/converge`)
+## 2026-11-15 (tarde, 10) · Todo junto en ZenidX: SpaceApp-Logos es la portada (rama `zexu/converge`)
 
 - zexu aclara que lo que comentaba (la intro con el movimiento galáctico) era la app de **`zexuguo/SpaceApp-Logos`** (Vercel: spaceapp-logos.vercel.app), no este repo. Pide traerla aquí y juntarlo todo en `ZenidX/logos-space-apps-2026`. Decide: **Logos en la portada (`/`)** y la portada del equipo pasa a **`/story/`**.
 - **Con historia:** clon de `~/Logos` con el commit sin subir de las 09:29 (`25120e6`); encima, un commit que reubica los archivos; luego `git merge --allow-unrelated-histories`. Se conservan sus 55 commits y sus autores. `~/Logos` no se ha tocado.
@@ -21,7 +21,21 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 - **Comprobado:** `tsc`, `eslint` (solo los 2 avisos de antes), `npm test` (6/6), build con `NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026` (11 rutas) y prueba servida en `/logos-space-apps-2026/` con Chromium: portada, ficha de SP Crater con terreno 3D, Story, Discover y Base; navegación en los dos sentidos; **ningún 404**.
 - Pendiente: el proyecto de Vercel `spaceapp-logos` sigue publicando el repo de zexuguo. Hay que decidir si se archiva o si se redirige a la web de Pages.
 
-## 2026-11-15 (tarde, 8) · Base: misión global → submisiones → simular en la Tierra (rama `zexu/base-mode`)
+## 2026-11-15 (tarde, 9) · Guía para rehacer el vídeo
+
+- `video/GUIA.md`: cómo rehacer y publicar el vídeo desde una sesión nueva (reglas, archivos, recetas, comprobaciones y trampas ya resueltas).
+- `CLAUDE.md` al día: la web se publica sola con cada push a `main`, la web que se entrega es la del repo del equipo y el vídeo ya está publicado.
+- `video/tools/package.json` y su lock pasan a git (`node_modules` sigue fuera), para poder reinstalar ffmpeg y Playwright con `npm ci`.
+
+## 2026-11-15 (tarde, 8) · Vídeo v4: grabado sobre la web real del equipo
+
+- La web que se entrega es la del repo del equipo (`zexuguo/SpaceApp-Logos`, https://spaceapp-logos.vercel.app), no la de este repo. El vídeo se ha grabado de nuevo entero sobre esa web y ya no tiene tramos en negro: apertura de la portada → «Rehearse the Moon and Mars on Earth» → la idea → misión EVA (vuelo a la Luna) → hielo en el suelo (vuelo a Marte) → ficha de SP Crater con «Where the analogy breaks» → acceso de Haughton (licencia de Nunavut) y de Nueva Siberia (High) → cierre. Plano a plano en `docs/guion-video.md`.
+- Voz nueva del equipo (29,5 s). El vídeo se corta a 29,5 s. La línea de los avisos pasa a *«and flags where access needs permits, or extra care»*, porque el indicador de acceso de la web dice que no es una evaluación de seguridad (Validity).
+- Nombre escrito **«Terra Vista»** (dos palabras, como la cabecera de la web) en los subtítulos y en el cierre.
+- Captura (`video/scripts/capture.cjs`) desde la web pública con `?capture=1`, sin tocar el repo del equipo. Lecciones: las animaciones CSS también hay que llevarlas con el reloj virtual (si no, saltan entre capturas). Durante la carga hay que dar pocos pasos de reloj, porque si no el WebGL por software acumula fotogramas y la primera captura tarda minutos. La escena 3D a pantalla completa va a ~0,25 fps: el plano de 18 s tarda ~39 min, y los de la ficha ~1,3 fps.
+- Rehacer: `video/scripts/make.sh` (todo) o `SKIP_CAPTURE=1 video/scripts/make.sh` (~85 s). Publicar: `video/scripts/publish-demo.sh` + push a `main` (el workflow publica solo).
+
+## 2026-11-15 (tarde, 7b) · Base: misión global → submisiones → simular en la Tierra (rama `zexu/base-mode`)
 
 - Corrección de zexu: la misión es **una**, montar y mantener la base en el sitio elegido. De ella cuelgan **submisiones que se repiten**, y el objetivo del reto es saber **dónde simular cada una en la Tierra** para esa base concreta.
 - `src/lib/submissions.ts`: 7 submisiones (8 en Marte): transporte, construcción, agua y oxígeno, energía, exploración, salidas con traje, (polvo) y tripulación y comunicaciones. Cada una tiene su frecuencia (suposición), lo que necesita del terreno y un **veredicto en ese sitio** («Works here», «With limits» o «Hard here») calculado con el plan sobre el relieve real.
@@ -29,6 +43,12 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 - Botón **3D**: abre el visor de siempre con el sitio de la Tierra junto al sitio de la base, a la misma escala (11 km también para la base).
 - Escena: montaje rápido (6 pasos de 2,2 s) y después **la base en marcha en bucle**: llega una nave de carga cada 16 s, el rover va y vuelve por su ruta y hay tripulantes andando. Al elegir una submisión, la cámara va a ella.
 - Comprobado: `tsc`, `eslint`, prueba en Node (Shackleton consigo mismo = 1,00; frente a Arcadia = 0,10) y prueba completa en Chromium sin pantalla (montaje → «Water & oxygen» → lista de la Tierra con el relieve comparado → visor 3D), sin errores en la consola.
+
+## 2026-11-15 (tarde, 7) · Publicación automática con GitHub Actions
+
+- Nuevo `.github/workflows/deploy.yml`: en cada push a `main` (o a mano desde la pestaña Actions) construye la web con `NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026` y sube `out/` a `gh-pages`, igual que `npm run deploy`. Si llegan varios push seguidos, solo se publica el último.
+- Pages sigue en modo «legacy» (rama `gh-pages`): la cuenta no es administradora del repo, así que no se puede cambiar la fuente a «GitHub Actions», y tampoco hace falta.
+- `npm run deploy` sigue funcionando para publicar a mano.
 
 ## 2026-11-15 (tarde, 6) · Página Base: una base en cualquier punto de la Luna o de Marte (rama `zexu/base-mode`)
 
@@ -50,6 +70,7 @@ Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 - `Globe.tsx`: nueva propiedad opcional `onPick(lat, lon)` (clic sin arrastre → rayo → lat/lon; la inversa se comprobó con 5 puntos).
 - Comprobado: `tsc`, `eslint` (solo los 2 avisos de antes), `next build`; prueba en Node con terreno real (Shackleton, Tranquilidad, Jezero, Arcadia: planificar tarda < 0,2 s); capturas en Chromium sin pantalla a 1280 px (Shackleton, Jezero, Arcadia) y 390 px (Tranquilidad), sin errores en la consola. **Sin probar:** móvil real y táctil.
 - Sin unir a `main` ni publicar.
+
 
 ## 2026-11-15 (tarde, 5) · Nombre: quedaban restos de «Terra Analog»
 

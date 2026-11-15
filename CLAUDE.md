@@ -14,7 +14,9 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - **Documentar cada avance**: añadir una entrada arriba del todo en `docs/bitacora.md` y actualizar el documento temático que toque (`docs/datos.md`, `docs/metodo.md`, `docs/normas.md`). Los scripts de Earth Engine van en `scripts/ee/`, numerados.
 - Idioma: la documentación interna va en español y el README y la entrega en inglés.
 - Arrancar: `npm install && npm run dev` → http://localhost:3000
-- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · se publica sola con cada push a `main` (GitHub Actions); a mano, `npm run deploy`.
+- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · se publica sola en cada push a `main` (GitHub Actions, `.github/workflows/deploy.yml`, ~90 s). `npm run deploy` sigue sirviendo para publicar a mano, pero no lo lances justo después de un push: los dos hacen push forzado a `gh-pages`.
+- **Qué web se entrega:** hasta el 15-11 a las 11:29 era la del repo `zexuguo/SpaceApp-Logos` (https://spaceapp-logos.vercel.app, clon en `/home/event/SpaceApps-v2`); el vídeo v4 está grabado sobre ella. **El 15-11 por la tarde zexu pidió unir esa app en este repo**: ahora es la portada (`/`) de https://zenidx.github.io/logos-space-apps-2026/. Falta que el equipo decida qué enlace va en la entrega. No escribas en `zexuguo/SpaceApp-Logos` sin permiso. Esta web aloja la página oculta del vídeo (`/demo-video/`).
+- **Vídeo de demo:** para rehacerlo o publicarlo, sigue `video/GUIA.md`.
 
 ## Arquitectura
 - **Dos partes con su propio layout raíz** (grupos de rutas; cada una carga solo su CSS y sus fuentes):
@@ -64,4 +66,4 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
   - Recuperar el NDVI real de los candidatos (necesita la cuenta de Google dueña del proyecto EE `terra-analog`).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
-  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). El vídeo de 30 s se rehace desde cero con requisitos nuevos. Falta ensayar, grabar el vídeo y rellenar la página del proyecto.
+  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). Vídeo de 30 s **hecho y publicado** (v4, 29,5 s, grabado sobre la web del equipo): https://zenidx.github.io/logos-space-apps-2026/demo-video/ (cómo rehacerlo: `video/GUIA.md`). Falta ensayar el pitch y rellenar la página del proyecto.

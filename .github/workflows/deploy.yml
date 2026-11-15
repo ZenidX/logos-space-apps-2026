@@ -1,0 +1,44 @@
+# Publica la web en GitHub Pages en cada push a main (o a mano desde la pestaña Actions).
+# Hace lo mismo que `npm run deploy` (scripts/deploy-pages.sh): build estático con el basePath del repo
+# y push forzado de out/ a la rama gh-pages, que es la que sirve Pages (modo «legacy», sin tocar ajustes).
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Si llegan varios push seguidos, solo se publica el último.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npx next build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /logos-space-apps-2026
+
+      - name: Push out/ to gh-pages
+        run: |
+          touch out/.nojekyll
+          cd out
+          git init -q -b gh-pages
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898299+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Deploy ${GITHUB_SHA::7} $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages

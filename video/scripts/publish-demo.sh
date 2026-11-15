@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copies a built video into the web app's hidden page /demo-video/ (public/demo/), with a poster from the end card.
-# Usage: video/scripts/publish-demo.sh [output-name]    then commit public/demo on main and run `npm run deploy`.
+# Usage: video/scripts/publish-demo.sh [output-name]    then commit public/demo and push to main (GitHub Actions deploys it).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 NAME=${1:-terravista-demo}

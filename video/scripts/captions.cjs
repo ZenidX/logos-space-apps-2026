@@ -10,7 +10,9 @@ const { chromium } = require(path.join(__dirname, "../tools/node_modules/playwri
 const OUT = path.join(__dirname, "../build/captions");
 const phrases = JSON.parse(fs.readFileSync(path.join(__dirname, "../audio/word-timings.json"), "utf8"));
 const FPS = 30;
-const DUR = +(process.argv[2] || 29.9);
+const DUR = +(process.argv[2] || process.env.DUR || 29.5);
+// the last phrase stays on until the end of the video
+phrases[phrases.length - 1].end = Math.max(phrases[phrases.length - 1].end, DUR);
 const STRIP = { w: 1920, h: 240 };
 const POP = 0.12, FADE = 0.08, FROM = 0.85;
 

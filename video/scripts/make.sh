@@ -2,12 +2,13 @@
 # One command for the whole demo video: capture → overlays → captions → build.
 # Usage: video/scripts/make.sh [output-name] [shot ...]
 #   output-name   default terravista-demo (video/build/<name>.mp4 + .webm)
-#   shot ...      re-capture only these shots (s1 s2 s4); default all. SKIP_CAPTURE=1 reuses the frames already captured.
+#   shot ...      re-capture only these shots (a b c1 c2); default all. SKIP_CAPTURE=1 reuses the frames already captured.
 # Word timings (video/audio/word-timings.json) only need redoing if the voice changes: see video/scripts/align.py.
 # Publish the result on /demo-video/ with video/scripts/publish-demo.sh <output-name>.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 NAME=${1:-terravista-demo}; shift || true
+export DUR=${DUR:-29.5}   # video length: the voice is 29.5 s (rules: 30 s or less)
 t0=$(date +%s)
 if [ "${SKIP_CAPTURE:-0}" != 1 ]; then node scripts/capture.cjs "$@"; fi
 node scripts/overlays.cjs

@@ -1,63 +1,58 @@
-# Guion del vídeo de 30 s (v3)
+# Guion del vídeo de 30 s (v4)
 
-Requisitos: ver `docs/normas.md` → «Vídeo de demo: decisiones del equipo». Voz con ElevenLabs (la genera el equipo) e imagen solo de la web TerraVista animada, sin metraje de archivo ni logos de NASA.
-La v3 sustituye a la v2 (15-11): se rehace sobre el lema **«TerraVista — Down to Earth»** y la descripción oficial de la página del proyecto (ponderación por misión y avisos de zonas en conflicto o protegidas).
+Requisitos: ver `docs/normas.md` → «Vídeo de demo: decisiones del equipo». La voz es de ElevenLabs (la genera el equipo). La imagen es solo la web real del equipo, animada, sin metraje de archivo ni logos de NASA.
 
-## Texto para ElevenLabs (en inglés, 62 palabras)
+**La v4 (15-11, tarde) sustituye a la v3.** La web que se entrega es la del repo del equipo (`zexuguo/SpaceApp-Logos`, publicada en https://spaceapp-logos.vercel.app), no la de este repo. Todos los planos se graban de nuevo sobre esa web y ya no queda ningún tramo en negro. El vídeo se sigue publicando en `/demo-video/` de la web de este repo.
+
+## Texto para ElevenLabs (en inglés)
 
 ```
 Everything we send to the Moon or Mars gets tested on Earth first. But… where?
 
-TerraVista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
+Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
 
 Testing a spacesuit? An ice drill? It weighs what matters for that mission,
 
 shows exactly where every analogy breaks,
 
-and flags the places you can't safely, or legally, go.
+and flags where access needs permits, or extra care.
 
-TerraVista. Down to Earth.
+Terra Vista. Down to Earth.
 ```
 
-La voz ocupa los 30 s (tiempos en `docs/timestamps.txt`); el archivo se corta a 29,9 s.
+Cambio respecto a la v3: la línea 5 decía *«and flags the places you can't safely, or legally, go»*. La web no la respalda. Su «Access complexity» es un indicador de coordinación (gobernanza WGI, violencia organizada UCDP, avisos de viaje de EE. UU. y Reino Unido y notas de permisos), dice expresamente que **no** es una evaluación de seguridad y no cartografía zonas protegidas. La frase nueva solo dice lo que la web enseña (criterio Validity).
 
-## Plano a plano
+La voz dura 29,5 s (habla hasta el s 29,05) y los tramos están en `docs/timestamps.txt`. El vídeo se corta a **29,5 s**.
 
-| Tiempo | Voz | Imagen (la web, animada) | Texto en pantalla | Criterio |
-|---|---|---|---|---|
-| 0:00–0:05 | *Everything we send… But where?* | Escena Luna → Tierra de la portada (Story), o el visor 3D de Shackleton que se funde en el globo. | — | Impact |
-| 0:05–0:11 | *TerraVista scans the whole planet… Earth's own Moon and Mars.* | Globo: el mapa de puntuación se rellena y aparecen los candidatos; cambio Shackleton → Jezero → Arcadia. | `NASA MODIS · GPM · MERRA-2 · LRO · MOLA` | Relevance, Creativity |
-| 0:11–0:16 | *Testing a spacesuit? An ice drill? It weighs what matters…* | Selector de tarea (EVA → perforación de permafrost); las barras de peso cambian y el ranking se reordena. | «Ice drill → mean temperature ×2» | Creativity, Impact |
-| 0:16–0:20 | *shows exactly where every analogy breaks,* | Ficha del candidato: «Where the analogy breaks» y el visor 3D candidato frente a objetivo. | «Validated on 25 known analogs» | Validity |
-| 0:20–0:24 | *and flags the places you can't safely, or legally, go.* | Un candidato con aviso ⚠ (zona en conflicto o protegida, p. ej. North Sentinel Island). | «⚠ Conflict zone · ⚠ Protected area» | Validity, Impact |
-| 0:24–0:28 | *TerraVista. Down to Earth.* | Cierre: logotipo TerraVista, «Down to Earth», URL y «Team Logos · Space Apps 2026». | — | Presentation |
+## Plano a plano (capturas de `video/scripts/capture.cjs`)
+
+| Tiempo | Voz | Imagen (web del equipo) | Criterio |
+|---|---|---|---|
+| 0–6 | *Everything we send… But where?* | **a**: plano de apertura de la portada (el Sol sale tras la cara nocturna de la Tierra y la cámara se aleja hasta el sistema solar). Se oculta la frase propia de la web y el «Scroll» porque caen justo donde van los subtítulos. | Impact |
+| 6–11 | *Terra Vista scans the whole planet with open NASA data…* | **a**: scroll a «Rehearse the Moon and Mars on Earth» y luego a «Start from the mission, not the planet». | Relevance |
+| 11–14 | *…Earth's own Moon and Mars. Testing a spacesuit?* | **a**: misión 1, «Suited EVA on volcanic terrain»; la cámara vuela a la Luna (Mons Mouton). | Creativity, Impact |
+| 14–18 | *An ice drill? It weighs what matters for that mission,* | **a**: misión 3, «Water from ground ice»; la cámara vuela a Marte (Arcadia Planitia). | Creativity |
+| 18–22 | *shows exactly where every analogy breaks,* | **b**: se abre la ficha de SP Crater (dial del índice, condiciones, terreno 3D) y luego la pestaña «Limits & sources»: «Where the analogy breaks». | Validity |
+| 22–24,4 | *and flags where access needs permits,* | **c1**: Haughton crater, pestaña «How»: «Access complexity», con la licencia de investigación de Nunavut y su fuente. | Validity, Impact |
+| 24,4–26 | *or extra care.* | **c2**: Islas de Nueva Siberia: acceso **High** (aviso de EE. UU. de nivel 4 de 4). | Validity |
+| 26–29,5 | *Terra Vista. Down to Earth.* | Cierre: Terra Vista, «Down to Earth», «Team Logos · NASA Space Apps 2026». | Presentation |
 
 Durante todo el vídeo: subtítulos quemados palabra a palabra, idénticos a la voz y sincronizados con ella, y la marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
 
-## Bloqueos: la web todavía no enseña dos cosas que dice la voz
-Comprobado en `origin/main` el 15-11:
-1. **Ponderación por misión:** está calculada (`src/data/operations.json`: 11 tareas, por ejemplo `permafrost_drill` con `lst_mean` ×2), pero **ninguna pantalla la usa**. Hace falta un selector de tarea en la web para el plano 0:11–0:16.
-2. **Avisos de conflicto y zonas protegidas:** **no existen** en el código. El #3 de Shackleton está en la provincia de Kapisa (Afganistán), que sería el ejemplo perfecto para el plano. Hay que construirlo o cambiar la frase.
+**Nombre:** la web del equipo se llama ahora «Terra Vista · Mission Analogs» en la cabecera (la publicada el 15-11 por la tarde). La voz y el cierre dicen Terra Vista (dos palabras, como la web). Decisión del equipo: enseñar la web tal cual.
 
-Si no da tiempo, se usan estas frases (en vez de las líneas 3 y 5):
-- *"It shows how close each site is, and exactly where every analogy breaks."*
-- La línea de los avisos se quita y el «Validated on 25 known analogs» pasa a la voz.
+## Cómo se rehace
+- Todo: `video/scripts/make.sh` (~12 min, la escena 3D va a ~1,3 fps sin GPU). Solo montaje: `SKIP_CAPTURE=1 video/scripts/make.sh`. Un plano: `video/scripts/make.sh terravista-demo b`.
+- Voz nueva: dejar `video/audio/voice.wav`, actualizar `docs/timestamps.txt` y lanzar `align.py` (Vosk) antes de `make.sh`.
+- Publicar: `video/scripts/publish-demo.sh`, commit y push a `main` (se publica solo). Guía completa: `video/GUIA.md`.
+- La captura usa la web pública con `?capture=1` (modo de grabación de la propia web). No toca el repo del equipo.
 
 ## Por qué así
-- **Impact:** el problema se dice en una frase. Se da un ejemplo concreto de uso (traje, taladro) y el aviso de seguridad o legalidad hace que la herramienta sea práctica.
-- **Creativity:** *«Earth's own Moon and Mars»* y la ponderación según lo que se ensaya.
-- **Validity:** dice dónde se rompe la analogía, añade la validación en pantalla y no da cifras que no podamos defender.
-- **Relevance:** «open NASA data» en la voz y los productos en pantalla.
-- **Presentation:** el lema cierra el vídeo, hay una idea por frase y todo cabe en 28 s.
+- **Impact:** el problema se dice en una frase, con ejemplos concretos de uso (traje, taladro) y los permisos de acceso, que hacen práctica la herramienta.
+- **Creativity:** *«Earth's own Moon and Mars»*, la cámara que vuela al mundo objetivo de cada misión y la puntuación por misión.
+- **Validity:** dónde se rompe la analogía, con sus fuentes en pantalla, y ninguna promesa que la web no cumpla.
+- **Relevance:** «open NASA data» en la voz; en pantalla, los mosaicos de NASA (Blue/Black Marble, LROC, MOLA) y los conjuntos de datos que se citan.
+- **Presentation:** el lema cierra el vídeo, hay una idea por frase y todo cabe en 29,5 s.
 
 ## Ajustes en ElevenLabs
-Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio. Los puntos suspensivos de «But… where?» y las comas de «safely, or legally,» marcan las pausas. Si pasa de 26 s, se quita «exactly» o «the». Dejar el audio en `video/audio/`.
-
-## Material: comprobación previa al montaje (15-11)
-- **Herramientas:** ffmpeg 7.0.2 estático (con libass, x264 y xfade; sin `drawtext`, así que los textos van como superposición HTML o ASS); Playwright con el Chrome del sistema. WebGL funciona sin GPU (SwiftShader): el globo y el visor 3D se renderizan, aunque más lentos (~20 s por terreno).
-- **Captura:** desde la web pública (https://zenidx.github.io/logos-space-apps-2026/), por fotogramas. Así no se toca la carpeta de trabajo de los otros agentes. `recordVideo` de Playwright no sirve (le falta su propio ffmpeg y la calidad es baja).
-- **Pantallas disponibles:** portada (globo + «Where on Earth is the Moon?»), Discover (selector Shackleton/Jezero/Arcadia, globo con candidatos y deslizador de similitud frente a acceso), 3D (ranking + visor lado a lado con el control del Sol), Method y Data.
-- Resuelto el 15-11: la web ya dice «TerraVista» en todas las pantallas (barra, portada, Cómo funciona). Se verá en la web pública después del próximo `npm run deploy`.
-- **Atención:** con 430 px de ancho, en el visor 3D se solapan los textos del HUD de la Luna. Hay que capturar más ancho o recortar.
-- **Sin pantalla todavía:** selector de misión y avisos de conflicto o zonas protegidas (plano provisional: el ranking del visor 3D, donde sale Kapisa, Afganistán, en el #5 de Shackleton).
-- **Formato decidido:** horizontal 16:9 (1920×1080), pantalla tal cual. Los tiempos están en `docs/timestamps.txt`. Falta el archivo de audio (`video/audio/voice.mp3`).
+Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio. Los puntos suspensivos de «But… where?» marcan la pausa. Dejar el audio en `video/audio/voice.wav`.
