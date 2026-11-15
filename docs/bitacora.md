@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 7) · Publicación automática con GitHub Actions
+
+- Nuevo `.github/workflows/deploy.yml`: en cada push a `main` (o a mano desde la pestaña Actions) construye la web con `NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026` y sube `out/` a `gh-pages`, igual que `npm run deploy`. Si llegan varios push seguidos, solo se publica el último.
+- Pages sigue en modo «legacy» (rama `gh-pages`): la cuenta no es administradora del repo, así que no se puede cambiar la fuente a «GitHub Actions», y tampoco hace falta.
+- `npm run deploy` sigue funcionando para publicar a mano.
+
 ## 2026-11-15 (tarde, 5) · Nombre: quedaban restos de «Terra Analog»
 
 - El cambio a **TerraVista** (`6ab5252`) no llegó a las pantallas añadidas después: logo de la barra (`SiteNav.tsx`, ahora «Terra**Vista**» con «Vista» en color de acento), texto de «How it works» (`HowItWorks.tsx`), texto de la escena de límites (`Story.tsx`) y documentos internos (`valor-anadido.md`, `estrategias-bases.md`, HANDOFF*).
