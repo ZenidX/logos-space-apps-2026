@@ -1,11 +1,11 @@
 // AI-assisted (Claude), reviewed by team Logos
-// Datos del dial radial: función PURA (sin React ni JSON importado) → lista de anillos. Probada con los datos reales (radial-data.test.mjs).
-// cian = condiciones de la misión · gris = forma frente al objetivo · ámbar = permisos y política.
+// Radial dial data: PURE function (no React, no imported JSON) → list of rings. Tested with the real data (radial-data.test.mjs).
+// cyan = mission conditions · grey = shape vs target · amber = permits and politics.
 import { conditionStatus } from "./rules.ts";
 
 export type RingGroup = "mission" | "shape" | "access";
 export type RingStatus = "in range" | "accepted" | "out of range" | "none";
-export interface Ring { id: string; group: RingGroup; label: string; /** 0..1; null = sin dato (anillo punteado vacío) */ value: number | null; /** valor real, legible */ text: string; status: RingStatus }
+export interface Ring { id: string; group: RingGroup; label: string; /** 0..1; null = no data (empty dotted ring) */ value: number | null; /** actual value, readable */ text: string; status: RingStatus }
 
 export interface CondIn { id: string; label: string; unit: string; ideal: string | null; tolerance: number | null; value: number | null; similarity: number | null }
 export interface ShapeIn { reliefM: number; slopeMeanDeg: number }
@@ -14,9 +14,10 @@ export interface AccessIn { score: number | null; level: string }
 const num = (x: number, unit: string) => {
   const a = Math.abs(x), s = a === 0 ? "0" : a >= 100 ? x.toFixed(0) : a >= 10 ? x.toFixed(1) : a >= 1 ? x.toFixed(2) : x.toFixed(3);
   const u = unit === "index" || unit === "0-1" || unit === "0/1" ? "" : unit === "degC" ? " °C" : unit === "deg" ? "°" : unit === "%" ? " %" : ` ${unit}`;
+  if (unit === "months/yr") return `${Number.isInteger(x) ? x : x.toFixed(1)} ${x === 1 ? "month" : "months"}`;
   return unit === "0/1" ? (x >= 0.5 ? "yes" : "no") : s + u;
 };
-/** Parecido de forma: cociente menor/mayor (1 = igual; simétrico: más llano o más abrupto que el objetivo penalizan igual). */
+/** Shape likeness: smaller/larger ratio (1 = equal; symmetric: flatter or steeper than the target is penalised equally). */
 export const shapeRatio = (site: number, target: number): number => (site <= 0 && target <= 0 ? 1 : Math.min(site, target) / Math.max(site, target));
 
 export function buildRings(conds: CondIn[], site: ShapeIn | null, target: ShapeIn | null, access: AccessIn): Ring[] {
@@ -37,8 +38,8 @@ export function buildRings(conds: CondIn[], site: ShapeIn | null, target: ShapeI
   return rings;
 }
 
-// ---------- geometría compartida por el dial y la maqueta ----------
-export interface RingGeo { ring: Ring; r: number; /** grados del final del arco, 0 = arriba, horario */ endDeg: number; x: number; y: number }
+// ---------- geometry shared by the dial and the mockup ----------
+export interface RingGeo { ring: Ring; r: number; /** degrees at the end of the arc, 0 = top, clockwise */ endDeg: number; x: number; y: number }
 export const DIAL = { size: 260, outer: 122, stroke: 8, pitch: 11, groupGap: 4 };
 export function dialGeometry(rings: Ring[]): RingGeo[] {
   let r = DIAL.outer, prev: RingGroup | null = null;
@@ -49,7 +50,7 @@ export function dialGeometry(rings: Ring[]): RingGeo[] {
     return { ring, r, endDeg, x: DIAL.size / 2 + r * Math.cos(a), y: DIAL.size / 2 + r * Math.sin(a) };
   });
 }
-/** Frase completa para lectores de pantalla. */
+/** Full sentence for screen readers. */
 export const dialLabel = (index: string, rings: Ring[]): string =>
   `Analog index ${index}. ` + rings.map((g) => `${g.label}: ${g.text}${g.value === null ? "" : `, ring ${Math.round(g.value * 100)} percent`}`).join(". ") + ".";
 export const GROUP_COLOR: Record<RingGroup, string> = { mission: "#5ee6ff", shape: "#b9c2d3", access: "#ffb454" };

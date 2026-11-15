@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
-import { INDEPENDENT, MISSIONS, fmt, idx, topNote, type Mission, type Site } from "@/lib/missions";
+import { EVIDENCE, FILTERS, INDEPENDENT, MISSIONS, SHORT_LABEL, fmt, idx, topNote, travelText, type Mission, type Site } from "@/lib/missions";
+import EvidenceBadge from "@/components/Evidence";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import LocatorMap from "@/components/LocatorMap";
 import RadialDial, { RadialLegend, RadialMini } from "@/components/RadialDial";
@@ -13,7 +14,7 @@ import { conditionStatus } from "@/lib/rules";
 import detailsRaw from "@/data/site-details.json";
 
 interface Details {
-  when?: { surfaceTempC?: (number | null)[] | null };
+  when?: { surfaceTempC?: (number | null)[] | null; solarKWhM2Day?: (number | null)[] | null; clearnessIndex?: (number | null)[] | null };
   how?: {
     nearestCity50k?: { name: string; country: string; straightLineKm: number } | null;
     travelTimeToCityHours?: number | null;
@@ -32,7 +33,7 @@ function TempChart({ t, targetC, targetName }: { t: (number | null)[]; targetC: 
   return (
     <div className="mt-3">
       <p className="label">Surface (skin) temperature by month</p>
-      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`Monthly surface temperature here: ${Math.min(...v).toFixed(0)} to ${hi.toFixed(0)} degrees Celsius.`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full max-w-[460px]" role="img" aria-label={`Monthly surface temperature here: ${Math.min(...v).toFixed(0)} to ${hi.toFixed(0)} degrees Celsius.`}>
         {lo < 0 && hi > 0 && <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--line2)" strokeWidth={1} />}
         {targetC !== null && <><line x1={0} x2={W} y1={y(targetC)} y2={y(targetC)} stroke="var(--mars)" strokeDasharray="4 3" strokeWidth={1} /><text x={W - 2} y={y(targetC) - 3} textAnchor="end" fontSize="9" fill="var(--mars)" fontFamily="var(--mono)">{targetName} mean {targetC.toFixed(0)} °C</text></>}
         <polyline className="line-draw" points={pts} fill="none" stroke="var(--earth)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" pathLength={1} />
@@ -43,9 +44,33 @@ function TempChart({ t, targetC, targetName }: { t: (number | null)[]; targetC: 
   );
 }
 
-export function KindChip({ kind }: { kind: Site["kind"] }) {
-  const c = kind === "new" ? "var(--earth)" : "var(--moon)";
-  return <span className="chip" style={{ color: c, borderColor: c }}>{kind === "new" ? "New region to investigate" : "Known analog"}</span>;
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+/** Sunlight reaching the ground by month (NASA POWER, all-sky) and how clear the sky is. Context only: not part of the index. */
+function SolarChart({ kwh, kt, lowMonths }: { kwh: (number | null)[]; kt: (number | null)[] | null; lowMonths: number[] }) {
+  if (kwh.length !== 12 || kwh.every((x) => x === null)) return null;
+  const v = kwh.map((x) => x ?? 0), max = Math.max(...v, 0.5), W = 300, H = 64, bw = W / 12, y = (d: number) => H - (d / max) * H;
+  const clear = (kt ?? []).map((x, i) => ({ x, i })).filter((o): o is { x: number; i: number } => typeof o.x === "number" && o.x > 0);
+  const best = clear.length ? clear.reduce((p, c) => (c.x > p.x ? c : p)) : null, worst = clear.length ? clear.reduce((p, c) => (c.x < p.x ? c : p)) : null;
+  const low = lowMonths.map((i) => v[i]);
+  return (
+    <div className="mt-3">
+      <p className="label">Sunlight reaching the ground by month · kWh/m² per day</p>
+      <svg viewBox={`0 0 ${W} ${H + 16}`} className="mt-1 w-full max-w-[460px]" role="img" aria-label={`Sunlight reaching the ground by month: from ${Math.min(...v).toFixed(1)} to ${Math.max(...v).toFixed(1)} kilowatt-hours per square metre per day.`}>
+        {v.map((d, i) => (
+          <g key={i}>
+            <rect className="bar-up" x={i * bw + 3} y={y(d)} width={bw - 6} height={Math.max(1, H - y(d))} rx={2} fill={lowMonths.includes(i) ? "#5ee6ff" : "var(--amber)"} opacity={lowMonths.includes(i) ? 0.95 : 0.6} style={{ animationDelay: `${i * 35}ms` }} />
+            {(d === Math.max(...v) || d === Math.min(...v)) && <text x={i * bw + bw / 2} y={Math.max(9, y(d) - 3)} textAnchor="middle" fontSize="9" fill="var(--ink)" fontFamily="var(--mono)">{d.toFixed(1)}</text>}
+            <text x={i * bw + bw / 2} y={H + 12} textAnchor="middle" fontSize="9" fill={lowMonths.includes(i) ? "#5ee6ff" : "var(--dim)"} fontFamily="var(--mono)">{MONTHS[i]}</text>
+          </g>
+        ))}
+      </svg>
+      <p className="mt-1 text-[12.5px] text-[var(--mut)]">
+        {lowMonths.length > 0 && <>In the low-Sun months here ({lowMonths.map((i) => MONTH_NAMES[i]).join(", ")}; cyan bars) the ground receives <b className="text-[var(--ink)]">{Math.min(...low).toFixed(2)}–{Math.max(...low).toFixed(2)} kWh/m² per day</b>. </>}
+        {best && worst && <>Clearest skies: <b className="text-[var(--ink)]">{MONTH_NAMES[best.i]}</b> (clearness index {best.x.toFixed(2)}); cloudiest: <b className="text-[var(--ink)]">{MONTH_NAMES[worst.i]}</b> ({worst.x.toFixed(2)}).</>}
+      </p>
+      <p className="text-[11.5px] text-[var(--dim)]">NASA POWER climatology 2001–2025 (satellite-based, CERES SYN1deg; 1° cell, not a station). All-sky, on a horizontal surface. The clearness index is the share of the sunlight above the atmosphere that reaches the ground. Context only: not part of the index.</p>
+    </div>
+  );
 }
 
 export function AccessBars({ site }: { site: Site }) {
@@ -76,7 +101,7 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
   const full = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   return (
     <div>
-      <svg viewBox={`0 0 ${W} ${H + 16}`} className="w-full" role="img" aria-label={`Noon Sun elevation by month at this site: from ${Math.max(0, Math.min(...v)).toFixed(0)} to ${Math.max(...v).toFixed(0)} degrees.`}>
+      <svg viewBox={`0 0 ${W} ${H + 16}`} className="w-full max-w-[460px]" role="img" aria-label={`Noon Sun elevation by month at this site: from ${Math.max(0, Math.min(...v)).toFixed(0)} to ${Math.max(...v).toFixed(0)} degrees.`}>
         {v.map((d, i) => (
           <g key={i}>
             <rect className="bar-up" x={i * bw + 3} y={y(d)} width={bw - 6} height={H - y(d)} rx={2} fill={d <= 0 ? "var(--line2)" : "var(--amber)"} opacity={d <= 0 ? 1 : 0.35 + 0.65 * (1 - Math.min(1, d / 90))} style={{ animationDelay: `${i * 35}ms` }} />
@@ -106,7 +131,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const det = DETAILS[site.id], how = det?.how;
   const ts = terrainOf(site.id), tt = terrainOf(`target-${mission.id}`);
   const rings = buildRings(
-    mission.variables.filter((v) => v.inMatch).map((v) => { const p = site.vars.find((x) => x.id === v.id); return { id: v.id, label: v.label, unit: v.unit, ideal: v.ideal, tolerance: v.tolerance, value: p?.value ?? null, similarity: p?.similarity ?? null }; }),
+    mission.variables.filter((v) => v.inMatch).map((v) => { const p = site.vars.find((x) => x.id === v.id); return { id: v.id, label: SHORT_LABEL[v.id] ?? v.label, unit: v.unit, ideal: v.ideal, tolerance: v.tolerance, value: p?.value ?? null, similarity: p?.similarity ?? null }; }),
     ts?.stats ?? null, tt?.stats ?? null, { score: site.access.score, level: site.access.level });
   const TABS = [["why", "Why"], ["shape", "Shape"], ["when", "When"], ["how", "How"], ["limits", "Limits & sources"]] as const;
   return (
@@ -115,11 +140,11 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
       <div className="stagger">
         <div className="flex items-center justify-between gap-2">
           <button onClick={onBack} className="back-btn label -ml-1 px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
-          <span className="flex items-center gap-2"><KindChip kind={site.kind} />{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">Used by {site.campaign}</span>}</span>
+          <span className="flex items-center gap-2">{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">{site.campaign}</span>}<span className="chip" style={{ borderColor: EVIDENCE[site.evidence].color }}><EvidenceBadge level={site.evidence} /></span></span>
         </div>
         <header className="mt-1">
           <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
-          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `#${site.rank} of ${site.of} new regions to investigate, not a surveyed site` : "0.1° cell around the site"}</span></p>
+          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `new region to investigate, not a surveyed site${mission.validated ? ` · index rank ${site.rank} of ${site.of}` : ""}` : "known analog · 0.1° cell around the site"}</span></p>
         </header>
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
@@ -140,7 +165,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           </div>
         </div>
         {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
-        {how?.travelTimeToCityHours != null && <p className="mt-2 text-[12px] text-[var(--mut)]"><b className="text-[var(--ink)]">Remoteness:</b> about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city (not part of the access ring).</p>}
+        <p className="mt-2 text-[12px] text-[var(--mut)]"><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"} by our ${FILTERS.flatDeg}° threshold)`}. Neither is part of the index or of the access ring.</p>
 
         <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
 
@@ -191,6 +216,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             const hot = tv.reduce((p, c) => (c.x > p.x ? c : p)), cold = tv.reduce((p, c) => (c.x < p.x ? c : p)), mn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             return <p className="mt-3 text-[13px] text-[var(--mut)]">Warmest month: <b className="text-[var(--ink)]">{mn[hot.i]}</b> ({hot.x.toFixed(0)} °C at the surface). Coldest: <b className="text-[var(--ink)]">{mn[cold.i]}</b> ({cold.x.toFixed(0)} °C).{mission.id === "m3-ground-ice" && " Frozen ground is easier to drill and travel over outside the summer thaw; daylight and access are best in summer."}</p>;
           })()}
+          {det?.when?.solarKWhM2Day && <SolarChart kwh={det.when.solarKWhM2Day} kt={det.when.clearnessIndex ?? null} lowMonths={mission.validated ? [] : noonSunByMonth(site.lat).map((d, i) => (d > 0 && d <= 12 ? i : -1)).filter((i) => i >= 0)} />}
           {det?.when?.surfaceTempC && <TempChart t={det.when.surfaceTempC} targetC={t.values.lst_mean?.value ?? null} targetName={targetShort} />}
           {t.body === "moon" && <p className="mt-1 text-[12px] text-[var(--dim)]">NASA&apos;s JETT3 test rehearsed the low polar Sun with night moonwalks and a lighting cart; JETT5 used a portable spotlight acting as the Sun (USGS).</p>}
         </>}
@@ -207,8 +233,8 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             </>
           )}
           {site.kind === "new" && (() => { const ic = INDEPENDENT[site.id] ?? { verdict: "Not checked" as const, text: "No independent check was done for this region." }; return (
-            <div className="mt-3 border-l-2 pl-3 text-[13px]" style={{ borderColor: ic.verdict === "Supported nearby" ? "var(--earth)" : "var(--line2)" }}>
-              <p><span className="label mr-2">Independent check</span><b>{ic.verdict}</b></p>
+            <div className="mt-3 border-l-2 pl-3 text-[13px]" style={{ borderColor: EVIDENCE[site.evidence].color }}>
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1"><span className="label">Independent check</span><EvidenceBadge level={site.evidence} /></p>
               <p className="mt-1 text-[var(--mut)]">{ic.text} {ic.url && <a className="underline" href={ic.url} target="_blank" rel="noopener noreferrer">Source</a>}</p>
               {ic.image && <p className="mt-1 text-[12.5px]"><a className="underline" href={ic.image.url} target="_blank" rel="noopener noreferrer">{ic.image.label}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></p>}
               <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Distances are approximate.{!mission.validated && " The check is about the ground and analog use nearby, not about low-Sun work."} Full notes: docs/independent-check.md and docs/independent-check-v8.md.</p>

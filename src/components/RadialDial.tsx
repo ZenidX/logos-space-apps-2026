@@ -1,6 +1,6 @@
-// «D · RADIAL»: índice grande en el centro + un anillo por condición. SVG puro; se dibuja UNA vez (CSS), quieto con prefers-reduced-motion.
-// Estado sin depender del color: «in range» = arco grueso + punto lleno ●; «accepted» = arco grueso + punto hueco ○; «out of range» = arco fino + aspa ✕.
-// La leyenda repite el estado con palabras. Requiere radial.css.
+// "D · RADIAL": large index in the centre + one ring per condition. Pure SVG; draws in ONCE (CSS), static with prefers-reduced-motion.
+// Status without relying on colour: "in range" = thick arc + filled dot ●; "accepted" = thick arc + hollow dot ○; "out of range" = thin arc + cross ✕.
+// The legend repeats the status in words. Requires radial.css.
 import { DIAL, GROUP_COLOR, GROUP_NAME, dialGeometry, dialLabel, type Ring, type RingGroup } from "@/lib/radial-data";
 
 const C = DIAL.size / 2;
@@ -15,7 +15,7 @@ export default function RadialDial({ index, caption = "analog index", rings, cla
   return (
     <svg viewBox={`0 0 ${DIAL.size} ${DIAL.size}`} className={`dial ${className}`} role="img" aria-label={dialLabel(index, rings)}>
       {geo.map(({ ring, r, x, y }, i) => {
-        const col = GROUP_COLOR[ring.group], circ = 2 * Math.PI * r, len = (ring.value ?? 0) * circ, thin = ring.status === "out of range"; // longitudes reales (sin pathLength)
+        const col = GROUP_COLOR[ring.group], circ = 2 * Math.PI * r, len = (ring.value ?? 0) * circ, thin = ring.status === "out of range"; // actual lengths (no pathLength)
         return (
           <g key={ring.id}>
             <circle cx={C} cy={C} r={r} fill="none" stroke={col} strokeOpacity=".16" strokeWidth={DIAL.stroke} strokeDasharray={ring.value === null ? "1.5 5" : undefined} />
@@ -35,7 +35,7 @@ export default function RadialDial({ index, caption = "analog index", rings, cla
   );
 }
 
-/** Leyenda: grupo, muestra de color, etiqueta, valor real y estado en palabras. Va a la derecha del dial (escritorio). */
+/** Legend: group, colour swatch, label, actual value and status in words. Goes to the right of the dial (desktop). */
 export function RadialLegend({ rings }: { rings: Ring[] }) {
   const groups: RingGroup[] = ["mission", "shape", "access"];
   return (
@@ -57,7 +57,7 @@ export function RadialLegend({ rings }: { rings: Ring[] }) {
   );
 }
 
-/** Móvil: cada anillo es un mini-medidor (anillo de 48 px + valor) en una rejilla de 4 columnas → 2 filas. */
+/** Mobile: each ring is a mini gauge (48 px ring + value) in a 4-column grid → 2 rows. */
 export function RadialMini({ rings }: { rings: Ring[] }) {
   return (
     <ul className="dial-mini">

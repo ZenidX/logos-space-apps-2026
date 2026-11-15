@@ -87,29 +87,28 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
 };
 
 /**
- * Hardware that real campaigns rehearsed with, per mission. Every item is quoted from an agency page or report;
- * the rows in brackets are the checks in docs/sources.md.
+ * Hardware that real campaigns rehearsed with, per mission. Every item is taken from an agency page or report;
+ * `rows` are the checks in docs/sources.md. Equipment that was only announced or planned is left out.
  */
-export const HARDWARE: Record<MissionId, { text: string; by: string; url: string }[]> = {
+export const HARDWARE: Record<MissionId, { short: string; text: string; by: string; rows: string; url: string }[]> = {
   "m1-eva-basalt": [
-    { text: "Rover operations run by NASA and JAXA at Black Point Lava Flow", by: "Desert RATS, 2022 [C3a, C3b]", url: "https://www.nasa.gov/humans-in-space/nasa-practices-rover-operations-in-simulated-lunar-environment/" },
-    { text: "Science EVAs under a 5-minute one-way communication delay", by: "BASALT, 2017 [C4c]", url: "https://www.nasa.gov/general/basalt-research-program-hawaii-2017-field-deployment/" },
-    { text: "A lighting cart that mimicked the low Sun of the lunar south pole on night moonwalks", by: "JETT3, 2022 [L15]", url: "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log" },
+    { short: "NASA–JAXA rover", text: "Rover operated by NASA with JAXA", by: "Desert RATS, Black Point Lava Flow, 2022", rows: "C3a, C3b", url: "https://www.nasa.gov/humans-in-space/nasa-practices-rover-operations-in-simulated-lunar-environment/" },
+    { short: "lighting cart as the polar Sun", text: "Lighting cart that mimicked the Sun of the lunar south pole", by: "JETT3, 2022", rows: "L15", url: "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log" },
+    { short: "portable spotlight as the Sun", text: "Portable spotlight acting as the Sun", by: "JETT5, 2024", rows: "L16", url: "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field" },
   ],
   "m2-rover-sand": [
-    { text: "Scarecrow, a test rover that weighs on Earth about what Curiosity weighs on Mars", by: "JPL, Dumont Dunes, 2012 [C6]", url: "https://www.jpl.nasa.gov/news/mojave-desert-tests-prepare-for-nasa-mars-roving/" },
-    { text: "Bridget, the rover of ESA's five-day SAFER field trial", by: "ESA, Atacama, 2013 [C7]", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/ESA_rover_completes_exploring_Mars-like_desert" },
-    { text: "KREX2 medium rover prototype with a 1 m rotary-percussive drill", by: "NASA ARADS, Atacama, 2015–2019 [C8a]", url: "https://ntrs.nasa.gov/citations/20220002136" },
+    { short: "Scarecrow test rover", text: "Scarecrow, a test rover that weighs on Earth about what Curiosity weighs on Mars", by: "JPL, Dumont Dunes, 2012", rows: "C6", url: "https://www.jpl.nasa.gov/news/mojave-desert-tests-prepare-for-nasa-mars-roving/" },
+    { short: "Bridget rover", text: "Bridget, the rover of the SAFER field trial", by: "ESA, Atacama, 2013", rows: "C7", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/ESA_rover_completes_exploring_Mars-like_desert" },
+    { short: "KREX2 rover with a 1 m drill", text: "KREX2 rover prototype with a 1 m rotary-percussive drill", by: "NASA ARADS, Atacama, 2015–2019", rows: "C8a", url: "https://ntrs.nasa.gov/citations/20220002136" },
   ],
   "m3-ground-ice": [
-    { text: "TRIDENT drill: nearly 11 m drilled, 4 m of it into ice-cemented materials", by: "NASA, Haughton crater, 6–11 August 2024 [C10a, C10b]", url: "https://ntrs.nasa.gov/citations/20250004164" },
-    { text: "RESOLVE: real-time water quantification in four days of lunar analog testing", by: "NASA, Mauna Kea, February 2010 [C12a]", url: "https://ntrs.nasa.gov/citations/20100033667" },
-    { text: "IceBite, an auger and sampling system for ground ice on Mars, to be tested in University Valley, Antarctica", by: "NASA ASTEP, announced 2008 [C11b]", url: "https://astrobiology.nasa.gov/news/new-astep-projects-reach-from-arctic-to-antarctic-mars-to-europa/" },
+    { short: "TRIDENT drill", text: "TRIDENT drill: nearly 11 m drilled, 4 m into ice-cemented materials", by: "NASA, Haughton crater, August 2024", rows: "C10a, C10b", url: "https://ntrs.nasa.gov/citations/20250004164" },
+    { short: "RESOLVE water-measuring payload", text: "RESOLVE: water measured in real time during four days of lunar analog testing", by: "NASA, Mauna Kea, February 2010", rows: "C12a", url: "https://ntrs.nasa.gov/citations/20100033667" },
   ],
   "m4-low-sun": [
-    { text: "A lighting cart that mimicked the Sun and the lighting of the lunar south pole", by: "JETT3, 2022 [L15]", url: "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log" },
-    { text: "A portable spotlight acting as the Sun on night EVAs", by: "JETT5, 2024 [L16]", url: "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field" },
-    { text: "Regolith testbeds for navigating in low-angle lighting and harsh solar glare", by: "NASA Ames Lunar Lab [L17]", url: "https://www.nasa.gov/centers-and-facilities/ames/the-lunar-lab-and-regolith-testbeds/" },
+    { short: "lighting cart as the polar Sun", text: "Lighting cart that mimicked the Sun of the lunar south pole", by: "JETT3, 2022", rows: "L15", url: "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log" },
+    { short: "portable spotlight as the Sun", text: "Portable spotlight acting as the Sun", by: "JETT5, 2024", rows: "L16", url: "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field" },
+    { short: "low-angle lighting testbeds", text: "Regolith testbeds for low-angle lighting and solar glare", by: "NASA Ames Lunar Lab", rows: "L17", url: "https://www.nasa.gov/centers-and-facilities/ames/the-lunar-lab-and-regolith-testbeds/" },
   ],
 };
 
@@ -170,7 +169,7 @@ export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly
   "m2-rover-sand-new4": { verdict: "None found", text: "No source found for this region." },
   "m2-rover-sand-new6": { verdict: "Partly", text: "The Médanos Grandes dune field is nearby, but it is described as largely inactive, which weakens it as a test of loose, moving sand.", image: { label: "Satellite image of Médanos Grandes (CC BY-SA 2.0; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:M%C3%A9danos_Grandes,_Argentina.jpg" } },
   "m2-rover-sand-new7": { verdict: "Partly", text: "A land-cover study of the whole Qiangtang Plateau, which contains this point, reports 26 % bare land and sand-covered ground in a cold, dry, windy climate (Bian et al. 2023, Frontiers in Environmental Science). It does not map dunes or name this county.", url: "https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2023.1217225/full" },
-  "m3-ground-ice-new1": { verdict: "Supported nearby", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature; the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
+  "m3-ground-ice-new1": { verdict: "Partly", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature, but the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
   "m3-ground-ice-new2": { verdict: "Supported nearby", text: "Banks Island has ice-rich continuous permafrost (Lewkowicz & Way 2019, Nature Communications). No analog study was found." },
   "m3-ground-ice-new7": { verdict: "Supported nearby", text: "Permafrost ice wedges were sampled on Kotelny Island, about 90 km away on the same island (Opel et al. 2019, Alfred Wegener Institute dataset on PANGAEA).", url: "https://doi.pangaea.de/10.1594/PANGAEA.904091" },
   "m3-ground-ice-new8": { verdict: "Partly", text: "A national ground-ice model places Baffin Island in continuous permafrost; the ice-rich areas it names are about 209 km away (O'Neill et al. 2019, The Cryosphere). Nothing specific to this point was found.", url: "https://tc.copernicus.org/articles/13/753/2019/" },
@@ -180,7 +179,11 @@ export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly
   "m4-low-sun-new4": { verdict: "Supported nearby", text: "Gullies on basalt fjord slopes above Ísafjörður, about 57 km away, are described as a good analogue for Martian gullies (Conway et al. 2008, Lunar and Planetary Institute workshop abstract).", url: "https://www.lpi.usra.edu/meetings/gullies2008/pdf/8024.pdf" },
 };
 const EVIDENCE_OF: Record<string, Evidence> = { "Supported nearby": "nearby", Partly: "partial", "None found": "none", "Not checked": "unchecked" };
-/** Evidence levels, strongest first: the main badge of every site and the order of the list (the index does not tell the new regions apart). */
+/**
+ * Evidence levels, strongest first: the main badge of every site and the order of the list (the index does not tell the new regions apart).
+ * "Support nearby" = a source confirms the key property, or analog use, within about 100 km or for the island or lava field the point lies on;
+ * "Partial" = the source is farther away, regional in scale, or covers only part of the property.
+ */
 export const EVIDENCE: Record<Evidence, { label: string; group: string; note: string; color: string; pips: number }> = {
   agency: { label: "Used by agencies", group: "Used by agencies", note: "A real field campaign ran here.", color: "#7ef0c1", pips: 4 },
   nearby: { label: "Support nearby", group: "New regions · support nearby", note: "New region: an independent source confirms the key property close to this point.", color: "#5ee6ff", pips: 3 },
@@ -250,6 +253,9 @@ export const NEXT_MISSIONS: { name: string; who: string; what: string; url: stri
   { name: "AMADEE", who: "Austrian Space Forum", what: "Full Mars surface simulations with suits, rovers and a habitat (Oman 2018, Israel 2021, Armenia 2024).", url: "https://oewf.org/en/" },
 ];
 
+/** Shorter names of some conditions, for the dial legend (the full label is shown in the Why tab). */
+export const SHORT_LABEL: Record<string, string> = { low_sun_months: "Low-Sun months (noon Sun 0–12°)", polar_night_months: "Polar-night months", volcanic: "Volcanic rock nearby" };
+
 /** Declared thresholds of the list filters (team choices). None of them is part of the analog index. */
 export const FILTERS = { reachH: 6, remoteH: 48, flatDeg: 5 } as const;
 export type Reach = "any" | "near" | "remote";
@@ -270,6 +276,7 @@ export function byEvidence(sites: Site[]): Site[] {
   return [...sites].sort((a, b) => EVIDENCE_ORDER.indexOf(a.evidence) - EVIDENCE_ORDER.indexOf(b.evidence) || (a.kind === "known" ? (b.match ?? -1) - (a.match ?? -1) : (a.rank ?? 99) - (b.rank ?? 99)));
 }
 /** Short name for the globe: the place before the comma or the first part of "region · province", made unique within the mission. */
+export const travelText = (h: number | null) => (h === null ? "no travel-time data" : `${h < 10 ? h.toFixed(1) : Math.round(h)} h to a city`);
 export function sceneLabel(s: Site, all: Site[]): string {
   if (s.kind === "known") return s.name.split(",")[0];
   const parts = s.name.split(" · "), head = (x: Site) => { const p = x.name.split(" · "); return p[0] === x.country && p.length > 1 ? p[p.length - 1] : p[0]; };
@@ -285,6 +292,7 @@ export const TOP_NOTE = "New regions are picked because they sit at the top of t
 
 export const fmt = (x: number | null, unit = "") => {
   if (x === null || Number.isNaN(x)) return "–";
+  if (unit === "months/yr") return `${Number.isInteger(x) ? x : x.toFixed(1)} ${x === 1 ? "month" : "months"}`;
   const a = Math.abs(x), s = a >= 100 ? x.toFixed(0) : a >= 10 ? x.toFixed(1) : a >= 1 ? x.toFixed(1) : x.toFixed(2);
   const u = unit === "degC" ? " °C" : unit === "deg" ? "°" : unit === "%" ? " %" : unit === "mm/yr" ? " mm/yr" : "";
   return s + u;

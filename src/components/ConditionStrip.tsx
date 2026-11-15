@@ -1,11 +1,11 @@
-// AI-assisted (Claude), reviewed by team Logos. Design by the team's «Orbit v2» art direction.
+// AI-assisted (Claude), reviewed by team Logos. Design by the team's "Orbit v2" art direction.
 // One mission condition as a range strip: the IDEAL band (solid), the ACCEPTED band (dashed: fit ≥ 0.5),
 // the value here (dot) and, when it exists, the target's value (tick). The fit is measured against the
 // mission range, not against the target value.
 import { acceptance, parseIdeal } from "@/lib/rules";
 import { fmt } from "@/lib/missions";
 
-const AXES: Record<string, [number, number]> = { ndvi: [0, 0.9], albedo: [0, 0.9], precip: [0, 2000], sand: [0, 100], lst_mean: [-80, 40] };
+const AXES: Record<string, [number, number]> = { ndvi: [0, 0.9], albedo: [0, 0.9], precip: [0, 2000], sand: [0, 100], lst_mean: [-80, 40], low_sun_months: [0, 12], polar_night_months: [0, 12] };
 const W = 380, X0 = 8, SPAN = 364;
 
 export const hasStrip = (id: string, ideal: string | null, tol: number | null) => id in AXES && !!ideal && !!tol;

@@ -7,9 +7,9 @@ for (const m of d.missions) { const vd = new Map(m.variables.filter((v) => v.inM
   for (const s of m.sites) for (const [k, p] of Object.entries(s.perVariable)) { const v = vd.get(k); if (!v || !p || p.value == null || p.similarity == null) continue;
     const e = Math.abs(similarity(p.value, v.ideal, v.tolerance) - p.similarity); worst = Math.max(worst, e); n++;
     if (typeof p.meetsRule === "boolean") { const [lo, hi] = acceptance(v.ideal, v.tolerance); if ((p.value >= lo && p.value <= hi) !== p.meetsRule && Math.abs(p.similarity - 0.5) > 0.01) flips++; } } }
-assert.ok(n >= 100 && worst < 0.01, `similitud: ${n} casos, error máx ${worst}`); assert.equal(flips, 0, "la banda de aceptación no coincide con meetsRule");
+assert.ok(n >= 100 && worst < 0.01, `similarity: ${n} cases, max error ${worst}`); assert.equal(flips, 0, "the acceptance band does not match meetsRule");
 assert.deepEqual(parseIdeal("<= 0.05"), [-Infinity, 0.05]); assert.deepEqual(parseIdeal("0.07-0.20"), [0.07, 0.2]); assert.deepEqual(parseIdeal("1"), [1, 1]); assert.deepEqual(parseIdeal("<= -5"), [-Infinity, -5]); assert.deepEqual(parseIdeal(">= 50"), [50, Infinity]); assert.throws(() => parseIdeal("abc"));
-console.log(`ok · ${n} similitudes reales reproducidas (error máx ${worst.toFixed(4)}); banda de aceptación = meetsRule en todos los casos no fronterizos`);
+console.log(`ok · ${n} real similarities reproduced (max error ${worst.toFixed(4)}); acceptance band = meetsRule in all non-borderline cases`);
 
 // The label shown next to each condition must match the threshold shown ("mission needs …"):
 assert.equal(conditionStatus(0.04, "<= 0.05", 0.1), "in range");

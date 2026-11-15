@@ -13,7 +13,7 @@ import { GLOBE_TEX } from "@/lib/globe-tex";
 import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/label-layout";
 import { EARTH_R, FOV, NAME_ROOM, ORBIT, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
 
-export interface SceneMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number }
+export interface SceneMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number; primary?: boolean } // primary: the sites the Earth turns to show
 interface Props {
   mode: Mode;
   markers: SceneMarker[];
@@ -22,7 +22,6 @@ interface Props {
   onSelect?: (id: string) => void;
   onHover?: (id: string | null) => void;
   paused?: boolean;
-  primaryCount?: number; // the first N candidate markers (the new regions) are the ones the Earth turns to show
   onError?: (e: unknown) => void;
   className?: string;
 }
@@ -35,16 +34,16 @@ const ATMO_FRAG = "uniform vec3 c; uniform float k; varying vec3 n; void main(){
 const JOURNEY_S = 2.8, BACK_S = 1.3, IDLE_MS = 30000, COMPACT_W = 620, COMPACT_NAMES = 3, ROOM_W = 560;
 const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
 
-export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, primaryCount, onError, className = "" }: Props) {
+export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, onError, className = "" }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const names = useRef(new Map<string, HTMLSpanElement>());
   const labs = useRef(new Map<string, HTMLSpanElement>());
   const lines = useRef(new Map<string, SVGLineElement>());
-  const latest = useRef({ mode, markers, selectedId, highlightId, paused, primaryCount, onError });
+  const latest = useRef({ mode, markers, selectedId, highlightId, paused, onError });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, primaryCount, onError }; }, [mode, markers, selectedId, highlightId, paused, primaryCount, onError]);
+  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, onError }; }, [mode, markers, selectedId, highlightId, paused, onError]);
 
   useEffect(() => {
     const el = host.current;
@@ -109,7 +108,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     let tScene = 0, k = 0, back = false, last = performance.now(), raf = 0, onScreen = true, dirty = true, lastKey = "", first = true;
     let compBody: "moon" | "mars" | null = null, compAlpha = 0;
     const earthQ = new THREE.Quaternion(), tmpQ = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0), camPos = new THREE.Vector3();
-    let drag: { x: number; y: number; pid: number } | null = null, userTurned = false, lastMission = "";
+    let drag: { x: number; y: number; pid: number } | null = null, userTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null;
     // names: measured sizes, the position each one had in the last frame, and what is on top of the scene (kept clear)
     const sizeOf = new Map<string, { w: number; h: number }>(), slotOf = new Map<string, number>();
     const camRight = new THREE.Vector3(), camUp = new THREE.Vector3(), v = new THREE.Vector3();
@@ -176,8 +175,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       camera.position.copy(pose.pos); camera.lookAt(pose.look); camera.updateMatrixWorld(true); camPos.copy(pose.pos);
 
       // the Earth: slow spin, or turn the opened site to its facing direction
-      const mKey = ms[0]?.id ?? ""; if (mKey !== lastMission) { lastMission = mKey; userTurned = false; }
-      const nNew = latest.current.primaryCount ?? 99;
+      if (ms !== lastMarkers) { lastMarkers = ms; userTurned = false; } // a new mission or a new filter: show its sites again
       const selSite = sel ? ms.find((m) => m.id === sel) : undefined, target = ms.find((m) => m.kind === "target");
       const open = selSite && selSite.body === "earth" && compBody ? selSite : null;
       if (open && compBody) {
@@ -185,7 +183,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         if (earthQ.angleTo(tmpQ) > 1e-3) { if (jump) earthQ.copy(tmpQ); else earthQ.slerp(tmpQ, 1 - Math.exp(-dt * 3.2)); moving = true; }
       } else if (focus && k > 0.5 && !userTurned) {
         // close-up with no site open: the middle of the mission's new regions faces the camera, so names fit all around
-        const cs = ms.filter((m) => m.body === "earth" && (m.rank ?? 99) <= nNew), c = cs.reduce((acc, m) => acc.add(latLonToVec3(m.lat, m.lon)), new THREE.Vector3());
+        const prim = ms.filter((m) => m.body === "earth" && m.primary), cs = prim.length ? prim : ms.filter((m) => m.body === "earth"), c = cs.reduce((acc, m) => acc.add(latLonToVec3(m.lat, m.lon)), new THREE.Vector3());
         if (c.lengthSq() > 1e-6) { tmpQ.copy(orientToFace(c.normalize(), closeFrame(E).dir)); if (earthQ.angleTo(tmpQ) > 1e-3) { if (jump) earthQ.copy(tmpQ); else earthQ.slerp(tmpQ, 1 - Math.exp(-dt * 2.4)); moving = true; } }
       } else if (!rest && !drag && !focus) { earthQ.premultiply(tmpQ.setFromAxisAngle(yAxis, dt * 0.07)); moving = true; }
       mesh.earth.quaternion.copy(earthQ);
@@ -294,7 +292,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       raf = requestAnimationFrame(frame);
       if (document.hidden || !onScreen) { last = now; return; }
       const c = latest.current, sig = `${c.selectedId}|${c.highlightId}|${c.paused}|${c.markers.length}|${c.markers[0]?.id}|${JSON.stringify(c.mode)}`;
-      if (sig !== lastKey) { lastKey = sig; readAvoid(); dirty = true; window.setTimeout(() => { if (!disposed) { readAvoid(); dirty = true; } }, 900); }
+      if (sig !== lastKey || c.markers !== seen) { lastKey = sig; seen = c.markers; readAvoid(); dirty = true; window.setTimeout(() => { if (!disposed) { readAvoid(); dirty = true; } }, 900); }
       const moving = step(now);
       if (moving || dirty) { place(); renderer.render(scene, camera); dirty = false; }
     };

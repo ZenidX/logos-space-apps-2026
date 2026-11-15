@@ -4,10 +4,11 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import type { SceneMarker } from "@/components/SolarScene";
-import SitePanel, { AccessBars, KindChip } from "@/components/SitePanel";
+import SitePanel, { AccessBars } from "@/components/SitePanel";
+import EvidenceBadge from "@/components/Evidence";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
-import { MISSIONS, NEXT_MISSIONS, sceneLabel, topNote, type Mission, type MissionId } from "@/lib/missions";
+import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/missions";
 
 const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
 const DEMO_MS = 7000;
@@ -20,11 +21,12 @@ const STATS: [string, string][] = [
 ];
 const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
 
-function sceneFor(m: Mission) {
+/** Markers of the scene: the target and the sites of the list, in the order of the list (filtered-out sites are not drawn). */
+function sceneFor(m: Mission, list: Site[]) {
   const tId = `t-${m.id}`;
   const markers: SceneMarker[] = [
     { id: tId, body: m.target.body, lat: m.target.lat, lon: m.target.lon, kind: "target", label: m.target.name.split(" (")[0] },
-    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: sceneLabel(s, m.sites), rank: i + 1 })),
+    ...list.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: sceneLabel(s, m.sites), rank: i + 1, primary: s.kind === "new" })),
   ];
   return { markers };
 }
@@ -37,9 +39,14 @@ export default function Home() {
   const [method, setMethod] = useState(false);
   const [glFailed, setGlFailed] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
+  const [filter, setFilter] = useState<ListFilter>(NO_FILTER);
 
   const shown = missionId ? MISSIONS.find((m) => m.id === missionId)! : MISSIONS[demoIdx % MISSIONS.length];
-  const scene = useMemo(() => sceneFor(shown), [shown]);
+  // The list: ordered by independent evidence (the index does not tell the new regions apart), then filtered.
+  const list = useMemo(() => byEvidence(shown.sites).filter((s) => passes(s, filter)), [shown, filter]);
+  const scene = useMemo(() => sceneFor(shown, list), [shown, list]);
+  const groups = EVIDENCE_ORDER.map((e) => ({ e, items: list.filter((s) => s.evidence === e) })).filter((g) => g.items.length);
+  const filtered = filter.reach !== "any" || filter.ground !== "any" || filter.lowAccess;
   const site = sel ? shown.sites.find((s) => s.id === sel) ?? null : null;
   const t = shown.target;
 
@@ -78,15 +85,14 @@ export default function Home() {
 
   const pick = (id: MissionId) => { setMissionId(id); setSel(null); };
   const home = () => { setMissionId(null); setSel(null); };
-  const known = shown.sites.filter((s) => s.kind === "known");
-  const fresh = shown.sites.filter((s) => s.kind === "new");
+  const chip = (on: boolean, label: string, onClick: () => void) => <button key={label} type="button" className="fchip" aria-pressed={on} onClick={onClick}>{label}</button>;
 
   // A plain function (not a component defined during render): rows keep their identity, so keyboard focus is not lost.
   const row = (s: Mission["sites"][number], n: number) => (
     <li key={s.id}>
       <button onClick={() => { setSel(s.id); setHover(null); }} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
-        <span className="mono text-[12px]" style={{ color: BODY_COLOR[t.body] }}>{String(n).padStart(2, "0")}</span>
-        <span className="min-w-0"><span className="place block text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : s.country}</span></span>
+        <span className="mono text-[12px]" style={{ color: EVIDENCE[s.evidence].color }}>{String(n).padStart(2, "0")}</span>
+        <span className="min-w-0"><span className="place block text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : `${s.country ?? ""} · ${travelText(s.travelH)}${s.slopeDeg !== null ? ` · slope ${s.slopeDeg.toFixed(1)}°` : ""}`}</span></span>
         <span className="flex flex-col items-end gap-1"><span className="mono text-[13px]"><Count value={s.match} decimals={3} /></span><AccessBars site={s} /></span>
       </button>
     </li>
@@ -95,7 +101,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[396px]") : "md:left-[36%] md:right-0"}`}>
+      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[436px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
           <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
         ) : (
@@ -107,7 +113,6 @@ export default function Home() {
             onHover={setHover}
             onSelect={(id) => { if (!missionId) pick(shown.id); setSel(id.startsWith("t-") ? null : id); }}
             paused={paused}
-            primaryCount={shown.sites.filter((x) => x.kind === "new").length}
             onError={() => setGlFailed(true)}
           />
         )}
@@ -123,7 +128,7 @@ export default function Home() {
       </header>
 
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
-      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? `md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-396px)]"}` : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
+      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? `md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}` : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
         {!missionId && (
           <div className="fade-in pt-1 md:pt-0">
             <p className="label">NASA Space Apps Challenge 2026</p>
@@ -158,7 +163,7 @@ export default function Home() {
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-8" : "md:w-[380px] md:p-6"}`} aria-label={shown.title}>
+        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-8" : "md:w-[420px] md:p-6"}`} aria-label={shown.title}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (
@@ -166,28 +171,49 @@ export default function Home() {
               <p className="text-[14px]" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body === "moon" ? "Moon" : "Mars"} · <span className="place">{t.name}</span></p>
               <h2 className="display mt-1 text-[30px] leading-[1]">{shown.short}</h2>
               <p className="mt-1 text-[13.5px] text-[var(--mut)]">{shown.blurb}</p>
-              <dl className="mt-3 grid gap-2 text-[13px]">
-                <div><dt className="label">What is rehearsed</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.rehearse}</dd></div>
-                <div><dt className="label">Why it matters</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.matters}</dd></div>
-              </dl>
-              {t.description && <p className="mt-2 text-[12px] text-[var(--dim)]">About the target: {t.description}</p>}
-              <p className="mt-3 border-l-2 pl-3 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>{shown.keyLimit}</p>
+              <p className="mt-2 border-l-2 pl-3 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>{shown.keyLimit}</p>
 
-              <h3 className="label mt-4">Rehearsed for real by</h3>
-              <ul className="mt-2 grid gap-1 text-[13px]">
-                {shown.campaigns.map((c) => <li key={c.name}><a href={c.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{c.name}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></li>)}
-              </ul>
+              <p className="mt-3 text-[12.5px] leading-snug text-[var(--mut)]"><span className="label mr-1.5">Hardware rehearsed</span>
+                {HARDWARE[shown.id].map((h, i) => <span key={h.text}>{i > 0 && " · "}<a href={h.url} target="_blank" rel="noopener noreferrer" title={`${h.text} (${h.by})`} className="text-[var(--ink)] underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{h.short}</a></span>)}
+              </p>
 
-              <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
-              <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">{topNote(shown)}</p>
-              <ul className="stagger mt-1 grid gap-0.5">{fresh.map((s, i) => row(s, i + 1))}</ul>
+              <div className="mt-4 flex items-baseline justify-between"><h3 className="label">Sites · {filtered ? `${list.length} of ${shown.sites.length}` : shown.sites.length}</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
+              <div className="mt-2 flex flex-wrap gap-1" role="group" aria-label="Filter the sites by logistics">
+                {chip(filter.reach === "near", `Reachable in < ${FILTERS.reachH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "near" ? "any" : "near" })))}
+                {chip(filter.reach === "remote", `Remote > ${FILTERS.remoteH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "remote" ? "any" : "remote" })))}
+                {chip(filter.lowAccess, "Low access complexity", () => setFilter((f) => ({ ...f, lowAccess: !f.lowAccess })))}
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-1" role="group" aria-label="Filter the sites by terrain">
+                <span className="label mr-1">Terrain</span>
+                {(["any", "flat", "steep"] as const).map((g) => chip(filter.ground === g, g === "any" ? "Any" : g === "flat" ? `Flat ≤ ${FILTERS.flatDeg}°` : `Steep > ${FILTERS.flatDeg}°`, () => setFilter((f) => ({ ...f, ground: g }))))}
+              </div>
+              <p className="mt-1.5 text-[11px] leading-snug text-[var(--dim)]">Travel time to a city, mean slope and access are not part of the index. Remote can be wanted: some missions rehearse isolation.</p>
 
-              <h3 className="label mt-4">{shown.validated ? "Known analogs · used to validate" : "Known analog · for reference, not a rehearsal of this task"}</h3>
-              <ul className="stagger mt-1 grid gap-0.5">{known.map((s, i) => row(s, fresh.length + i + 1))}</ul>
+              {groups.map((g) => (
+                <section key={g.e} aria-label={EVIDENCE[g.e].group}>
+                  <h4 className="mt-3 flex items-center justify-between gap-2 text-[11px] font-normal uppercase tracking-[.08em]" style={{ color: EVIDENCE[g.e].color }} title={EVIDENCE[g.e].note}><span>{EVIDENCE[g.e].group}</span><EvidenceBadge level={g.e} compact /></h4>
+                  <ul className="stagger mt-0.5 grid gap-0.5">{g.items.map((s) => row(s, list.indexOf(s) + 1))}</ul>
+                </section>
+              ))}
+              {!list.length && <p className="mt-3 text-[13px] text-[var(--mut)]">No site of this mission passes these filters. <button className="underline" onClick={() => setFilter(NO_FILTER)}>Clear filters</button></p>}
+              {filtered && list.length > 0 && <p className="mt-2 text-[12px] text-[var(--mut)]">{shown.sites.length - list.length} hidden by the filters. <button className="underline" onClick={() => setFilter(NO_FILTER)}>Clear filters</button></p>}
+              <p className="mt-3 text-[11.5px] leading-snug text-[var(--dim)]">Ordered by independent evidence (a campaign ran there, or what a literature check found near a new region), not by the index. {topNote(shown)}</p>
 
-              <p className="mt-4 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">{shown.validated ? "Validation." : "Not validated."}</b> {shown.validation.result}</p>
-              <p className="mt-2 text-[11.5px] text-[var(--dim)]">Access complexity: Low · Medium · High (team-defined, neutral). Not travel advice.</p>
-              <div className="mt-3 flex flex-wrap gap-1.5"><KindChip kind="new" /><KindChip kind="known" /></div>
+              <details className="about mt-4">
+                <summary>About this mission</summary>
+                <dl className="mt-2 grid gap-2 text-[13px]">
+                  <div><dt className="label">What is rehearsed</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.rehearse}</dd></div>
+                  <div><dt className="label">Hardware rehearsed</dt><dd className="mt-0.5 text-[var(--mut)]"><ul className="grid gap-0.5">{HARDWARE[shown.id].map((h) => <li key={h.text}><a href={h.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{h.text}</a> <span className="text-[var(--dim)]">· {h.by}</span></li>)}</ul></dd></div>
+                  <div><dt className="label">Why it matters</dt><dd className="mt-0.5 text-[var(--mut)]">{shown.matters}</dd></div>
+                  {t.description && <div><dt className="label">About the target</dt><dd className="mt-0.5 text-[var(--mut)]">{t.description} {t.descriptionSources?.map((d, i) => <a key={d.url} href={d.url} target="_blank" rel="noopener noreferrer" className="underline" title={d.name}>[{i + 1}]</a>)}</dd></div>}
+                </dl>
+                <h3 className="label mt-3">Rehearsed for real by</h3>
+                <ul className="mt-1 grid gap-1 text-[13px]">
+                  {shown.campaigns.map((c) => <li key={c.name}><a href={c.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{c.name}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></li>)}
+                </ul>
+                <p className="mt-3 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">{shown.validated ? "Validation." : "Not validated."}</b> {shown.validation.result}</p>
+                <p className="mt-2 text-[11.5px] text-[var(--dim)]">Access complexity: Low · Medium · High (team-defined, neutral). Not travel advice.</p>
+              </details>
             </div>
           )}
         </aside>

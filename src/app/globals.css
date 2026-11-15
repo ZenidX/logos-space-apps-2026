@@ -4,14 +4,14 @@
 :root {
   --bg: #04060c; --bg2: #090d18; --bg3: #101627;
   --line: rgba(150, 175, 230, .16); --line2: rgba(150, 175, 230, .32);
-  --ink: #eef2f9;   /* 18,0:1 */
-  --mut: #a3b0c6;   /*  9,2:1 */
-  --dim: #8392ac;   /*  6,4:1 (mín. 5,7:1 sobre --bg3) */
-  --earth: #5db4ff; /*  9,1:1 */
-  --moon: #d7dce6;  /* 14,7:1 */
-  --mars: #ff8d5e;  /*  8,9:1 */
-  --amber: #ffb454; /* 11,5:1 — «la analogía se rompe aquí» */
-  --sand: #e9c98a;  /* 12,7:1 — access risk (una sola tinta, nunca rojo) */
+  --ink: #eef2f9;   /* 18.0:1 */
+  --mut: #a3b0c6;   /*  9.2:1 */
+  --dim: #8392ac;   /*  6.4:1 (min. 5.7:1 on --bg3) */
+  --earth: #5db4ff; /*  9.1:1 */
+  --moon: #d7dce6;  /* 14.7:1 */
+  --mars: #ff8d5e;  /*  8.9:1 */
+  --amber: #ffb454; /* 11.5:1 — "the analogy breaks here" */
+  --sand: #e9c98a;  /* 12.7:1 — access complexity (one ink, never red) */
   --focus: #fff;
   --r1: 6px; --r2: 12px; --r3: 20px;
   --tap: 44px; --ease: cubic-bezier(.05, .7, .1, 1); /* Material 3 emphasized-decelerate */
@@ -93,7 +93,7 @@ b, strong { font-weight: 600; }
 /* Figures: a big number and a small label, no box (no boxes inside boxes) */
 .glass-inset { background: none; border: 0; }
 
-/* A site marker pulses once when its arc lands */
+/* A site marker pulses once when it appears */
 .mk.cand i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1.5px solid var(--earth); opacity: 0; animation: land 900ms var(--ease) var(--land, 900ms) 1 both; }
 @keyframes land { 0% { transform: scale(.4); opacity: 0; } 30% { opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .mk.cand i::after { animation: none; } }
@@ -101,17 +101,17 @@ b, strong { font-weight: 600; }
 /* ===== Liquid-glass HUD (art direction v3) ===== */
 /* In the components layer so Tailwind utilities (position, radius) can override it. */
 @layer components {
-/* ===== «Liquid glass» para HUD sobre la escena 3D a pantalla completa · Logos v3 =====
-   2 capas de panel + chip + pestaña. Contraste AA calculado en el PEOR caso (panel sobre blanco puro / Luna clara / nieve):
-     .glass-chip   α .62 → SOLO texto --ink (≥ 4.9:1)
-     .glass        α .78 → --ink (8.9:1) y --mut (4.6:1). NUNCA --dim
-     .glass-strong α .90 → --ink, --mut y --dim (4.9:1)
-   Regla de oro: el texto pequeño y los datos van en .glass-strong; los chips y pestañas solo llevan texto --ink. */
+/* ===== "Liquid glass" for the HUD over the full-screen 3D scene · Logos v3 =====
+   Two panel layers + chip + tab. AA contrast computed for the WORST case (panel over pure white / bright Moon / snow):
+     .glass-chip   α .62 → ONLY --ink text (≥ 4.9:1)
+     .glass        α .78 → --ink (8.9:1) and --mut (4.6:1). NEVER --dim
+     .glass-strong α .90 → --ink, --mut and --dim (4.9:1)
+   Rule: small text and data go in .glass-strong; chips and tabs carry --ink text only. */
 :root {
-  --glass-tint: 9 13 24;                 /* rgb del fondo (--bg2) */
+  --glass-tint: 9 13 24;                 /* rgb of the background (--bg2) */
   --glass-blur: 30px; --glass-sat: 180%; --glass-dim: .5;
   --glass-edge: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.07) 36%, rgba(93,180,255,.12) 64%, rgba(255,255,255,.30));
-  --glass-solid: #0b1020;                /* reserva sin transparencia (≥ 15:1 con --ink) */
+  --glass-solid: #0b1020;                /* fallback without transparency (≥ 15:1 with --ink) */
 }
 .glass, .glass-strong, .glass-chip, .glass-tab {
   position: relative; isolation: isolate; color: var(--ink);
@@ -119,28 +119,28 @@ b, strong { font-weight: 600; }
   /* brightness() dims whatever is behind, so text keeps AA contrast even over the bright side of a planet */
   -webkit-backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim)); backdrop-filter: blur(var(--b)) saturate(var(--glass-sat)) brightness(var(--glass-dim));
 }
-/* borde luminoso fino (gradiente de 1 px) y reflejo superior; van DETRÁS del contenido (z-index -1 dentro del contexto aislado) */
+/* thin bright edge (1 px gradient) and top highlight; both sit BEHIND the content (z-index -1 inside the isolated context) */
 .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before {
   content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 1px; pointer-events: none;
   background: var(--glass-edge);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
 }
-.glass::after, .glass-strong::after { /* reflejo especular: luz suave desde arriba */
+.glass::after, .glass-strong::after { /* specular highlight: soft light from above */
   content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
   background: radial-gradient(120% 70% at 50% -12%, rgba(255,255,255,.13), rgba(255,255,255,0) 62%);
 }
 
-/* Capa 1: panel principal (texto corrido, listas, tarjetas) */
+/* Layer 1: main panel (running text, lists, cards) */
 .glass { --a: .46; --b: var(--glass-blur); border-radius: 28px;
   box-shadow: 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(0,0,0,.35) inset, 0 2px 6px rgba(0,0,0,.35), 0 14px 34px -10px rgba(0,0,0,.6); }
-/* Capa 2: encima de un .glass o sobre zonas muy claras (dossier, datos pequeños, avisos) */
+/* Layer 2: on top of a .glass or over very bright areas (dossier, small data, notices) */
 .glass-strong { --a: .90; --b: 26px; border-radius: 18px;
   box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 -1px 0 rgba(0,0,0,.45) inset, 0 4px 10px rgba(0,0,0,.4), 0 24px 56px -14px rgba(0,0,0,.7); }
-/* Chip: botones pequeños flotantes (solo texto --ink) */
+/* Chip: small floating buttons (--ink text only) */
 .glass-chip { --a: .62; --b: 14px; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; font: 500 14px/1 var(--sans);
   box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 6px 16px -6px rgba(0,0,0,.6); transition: background-color .12s ease, transform .08s ease; }
 .glass-chip:hover { --a: .72; } .glass-chip:active { transform: scale(.97); }
-/* Pestaña: .glass-tab normal, y seleccionada = píldora clara con texto oscuro (18:1) */
+/* Tab: .glass-tab by default; selected = light pill with dark text (18:1) */
 .glass-tab { --a: .62; --b: 14px; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; font: 500 14px/1 var(--sans); cursor: pointer;
   transition: background-color .24s var(--ease), color .24s var(--ease); }
 .glass-tab:hover { --a: .74; }
@@ -148,20 +148,20 @@ b, strong { font-weight: 600; }
 .glass-tab[aria-selected="true"]::before, .glass-tab[aria-pressed="true"]::before { display: none; }
 :is(.glass-chip, .glass-tab):focus-visible { outline: 2px solid var(--focus, #fff); outline-offset: 2px; }
 
-/* móvil / puntero táctil: desenfoque más barato (el canvas se repinta cada fotograma y el navegador re-desenfoca debajo) */
+/* phones / touch pointers: cheaper blur (the canvas repaints every frame and the browser blurs again underneath) */
 @media (pointer: coarse), (max-width: 640px) { :root { --glass-blur: 12px; } .glass-strong { --b: 16px; } .glass-chip, .glass-tab { --b: 8px; } }
 
-/* sin backdrop-filter (Firefox antiguo, modos de ahorro): fondo SÓLIDO, mismo contraste o mejor */
+/* no backdrop-filter (old Firefox, power-saving modes): SOLID background, same contrast or better */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass, .glass-strong { background: var(--glass-solid); }
   .glass-chip, .glass-tab { background: #121a2e; }
 }
-/* preferencia del sistema: menos transparencia (macOS/iOS «Reducir transparencia») */
+/* system preference: reduced transparency (macOS/iOS "Reduce transparency") */
 @media (prefers-reduced-transparency: reduce) {
   .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-solid); }
   .glass::after, .glass-strong::after { display: none; }
 }
-/* alto contraste: borde visible y fondo sólido */
+/* high contrast: visible border and solid background */
 @media (prefers-contrast: more) {
   .glass, .glass-strong, .glass-chip, .glass-tab:not([aria-selected="true"]):not([aria-pressed="true"]) { -webkit-backdrop-filter: none; backdrop-filter: none; background: #050810; border: 1px solid rgba(255,255,255,.6); }
   .glass::before, .glass-strong::before, .glass-chip::before, .glass-tab::before { display: none; }
@@ -201,8 +201,26 @@ b, strong { font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .mk.cand.sel i::after { animation: none; transform: scale(1.1); opacity: .5; } .mk.cand .mk-l, .lead { transition: none; } }
 @media (max-width: 700px) { .mk.cand .mk-l { max-width: 136px; padding: 3px 6px; font-size: 11px; } }
 
+/* Evidence level: four pips and a name, in the colour of the level (never colour alone) */
+.ev { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--sans); color: var(--ev); white-space: nowrap; }
+.ev-pips { display: inline-flex; gap: 3px; }
+.ev-pips i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--ev); }
+.ev-pips i.f { background: var(--ev); }
+/* List filters: small toggle chips */
+.fchip { padding: 4px 8px; border: 1px solid var(--line2); border-radius: 999px; font: 500 11.5px/1.2 var(--sans); color: var(--mut); white-space: nowrap; transition: background-color 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease); }
+.fchip:hover { border-color: var(--ink); color: var(--ink); }
+.fchip[aria-pressed="true"] { background: rgb(238 242 249 / .94); border-color: transparent; color: #04060c; }
+@media (pointer: coarse) { .fchip { min-height: 40px; padding: 0 14px; } }
+@media (prefers-reduced-motion: reduce) { .fchip { transition: none; } }
+/* "About this mission": detail on demand */
+.about > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line2); border-radius: 999px; font: 600 13px/1.2 var(--sans); }
+.about > summary::-webkit-details-marker { display: none; }
+.about > summary::before { content: "+"; font-family: var(--mono); color: var(--mut); }
+.about[open] > summary::before { content: "–"; }
+.about > summary:hover { border-color: var(--ink); }
+
 /* ===== Radial dial (art direction v4) ===== */
-/* RadialDial · pegar en globals.css. Colores: cian #5ee6ff (12,8:1 sobre #0b1020), gris #b9c2d3 (10,6:1), ámbar #ffb454 (11,5:1 sobre --bg). */
+/* RadialDial. Colours: cyan #5ee6ff (12.8:1 on #0b1020), grey #b9c2d3 (10.6:1), amber #ffb454 (11.5:1 on --bg). */
 .dial { display: block; width: 100%; height: auto; }
 .dial-arc { stroke-dashoffset: 0; animation: dial-draw 900ms cubic-bezier(.2, .7, .2, 1) both; }
 @keyframes dial-draw { from { stroke-dashoffset: var(--len); } }

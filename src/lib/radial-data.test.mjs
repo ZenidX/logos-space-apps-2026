@@ -9,14 +9,14 @@ for (const m of d.missions) { const vs = m.variables.filter((v) => v.inMatch);
     const rings = buildRings(conds, T[s.id]?.stats ?? null, T["target-" + m.id]?.stats ?? null, { score: s.accessRisk?.score ?? null, level: s.accessRisk?.level ?? "Not assessed" });
     assert.equal(rings.length, vs.length + 3); n++;
     for (const r of rings) { assert.ok(r.value === null || (r.value >= 0 && r.value <= 1), `${s.id} ${r.id} ${r.value}`); assert.ok(r.text.length > 0); counts[r.status]++; }
-    // el estado del anillo coincide con meetsRule del JSON (in range/accepted = cumple; out of range = no cumple), salvo en la frontera
+    // the ring status matches meetsRule in the JSON (in range/accepted = met; out of range = not met), except in borderline cases
     for (const v of vs) { const p = s.perVariable[v.id], r = rings.find((x) => x.id === v.id); if (p && typeof p.meetsRule === "boolean" && p.similarity !== null && Math.abs(p.similarity - 0.5) > 0.01) assert.equal(r.status !== "out of range", p.meetsRule, `${s.id} ${v.id}`); }
     const g = dialGeometry(rings); minInner = Math.min(minInner, g.at(-1).r - DIAL.stroke / 2);
     for (const x of g) assert.ok(Math.abs(Math.hypot(x.x - 130, x.y - 130) - x.r) < 1e-6);
     assert.ok(dialLabel("0.969", rings).includes("Access complexity"));
   } }
 assert.equal(shapeRatio(541, 735.5).toFixed(3), "0.736"); assert.equal(shapeRatio(735.5, 541).toFixed(3), "0.736"); assert.equal(shapeRatio(0, 0), 1);
-console.log(`ok · ${n} sitios reales · estados`, counts, `· radio libre interior mínimo ${minInner} px (viewBox 260)`);
+console.log(`ok · ${n} real sites · statuses`, counts, `· minimum free inner radius ${minInner} px (viewBox 260)`);
 const m = d.missions[0], s = m.sites.find((x) => x.id === "sp_crater_az"), vs = m.variables.filter((v) => v.inMatch);
 console.log(JSON.stringify(buildRings(vs.map((v) => ({ id: v.id, label: v.label, unit: v.unit, ideal: v.ideal ?? null, tolerance: v.tolerance ?? null, value: s.perVariable[v.id]?.value ?? null, similarity: s.perVariable[v.id]?.similarity ?? null })), T[s.id].stats, T["target-" + m.id].stats, { score: s.accessRisk.score, level: s.accessRisk.level }), null, 0));
 
