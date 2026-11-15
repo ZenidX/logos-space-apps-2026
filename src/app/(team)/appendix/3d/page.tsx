@@ -8,7 +8,7 @@ import { PageIntro } from "@/components/HowItWorks";
 export default function ThreeDPage() {
   return (
     <div className="pt-12">
-      <PageIntro step={4} title="See the terrain side by side.">
+      <PageIntro kicker="Appendix · A3 · Earlier prototype" title="See the terrain side by side.">
         Each view is a real 11 × 11 km patch of terrain from satellite height data: an Earth candidate next to the Moon or
         Mars site. Drag to turn it and move the Sun to see the shadows.
       </PageIntro>

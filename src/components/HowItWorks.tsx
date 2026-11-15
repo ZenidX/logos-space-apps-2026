@@ -66,17 +66,10 @@ export function HowItWorks() {
 }
 
 // Cabecera de cada página interior: paso N de 5, título (h1) y una frase de qué hacer aquí.
-export function PageIntro({ step, title, children }: { step: number; title: ReactNode; children: ReactNode }) {
+export function PageIntro({ kicker, title, children }: { kicker?: string; step?: number; title: ReactNode; children: ReactNode }) {
   return (
     <header className="mx-auto w-full max-w-6xl px-5 pt-16 md:pt-20">
-      <p className="font-mono text-xs uppercase tracking-[.16em] text-[var(--acc)]">
-        Step {step} of 7
-        <span aria-hidden className="ml-3 inline-flex gap-1 align-middle">
-          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-            <i key={i} className={`inline-block h-[3px] w-5 ${i <= step ? "bg-[var(--acc)]" : "bg-[var(--line2)]"}`} />
-          ))}
-        </span>
-      </p>
+      {kicker && <p className="font-mono text-xs uppercase tracking-[.16em] text-[var(--acc)]">{kicker}</p>}
       <h1 className="mt-4 max-w-[20ch] text-[clamp(34px,5.5vw,72px)] font-medium leading-[1.02] tracking-[-0.02em]">{title}</h1>
       <p className="mt-5 max-w-[56ch] text-[clamp(16px,1.5vw,19px)] text-[var(--mut)]">{children}</p>
     </header>

@@ -8,12 +8,8 @@ import { asset } from "@/lib/logos/asset";
 
 export const PAGES = [
   { href: "/", label: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
-  { href: "/story/", label: "Story" },
-  { href: "/discover/", label: "Discover" },
-  { href: "/3d/", label: "3D" },
-  { href: "/base/", label: "Base" },
-  { href: "/method/", label: "Method" },
-  { href: "/data/", label: "Data" },
+  { href: "/base/", label: "Plan a base" },
+  { href: "/appendix/", label: "Appendix" }, // prototipo anterior: Story, Discover, 3D, Method, Data
 ] as const;
 
 const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
@@ -30,7 +26,7 @@ export default function SiteNav() {
         </Link>
         <ul className="-mr-1 flex items-center gap-1 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
-            const on = path === norm(p.href);
+            const on = p.href === "/appendix/" ? path.startsWith("/appendix/") : path === norm(p.href);
             return (
               <li key={p.href} className="shrink-0">
                 <Link

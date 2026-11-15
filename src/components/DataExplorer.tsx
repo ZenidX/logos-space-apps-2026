@@ -56,7 +56,7 @@ export default function DataExplorer() {
           </div>
         </div>
         <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[.12em] text-[var(--dim)]">
-          Step 7 of 7 · NASA Space Apps 2026 · Team Logos
+          Appendix · A5 · Earlier prototype · NASA Space Apps 2026 · Team Logos
         </p>
         <p className="mt-3 text-[15px] text-[var(--mut)]">
           The full ranking, the score of each variable and the NASA datasets behind them. This page is for checking our work.

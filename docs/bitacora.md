@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 16) · La web anterior pasa a un apéndice
+
+- Pedido de zexu: quitar de primer plano lo que quedaba de la web anterior (la de antes de que la app de SpaceApp-Logos fuera la principal) y llevarlo a un apéndice.
+- Story, Discover, 3D, Method y Data se mueven a `/appendix/story/`, `/appendix/discover/`, `/appendix/3d/`, `/appendix/method/` y `/appendix/data/`. Hay una página índice nueva, `/appendix/`, que explica que son el prototipo anterior (búsqueda global con Earth Engine) y que sus datos siguen alimentando los sitios de ensayo de Plan a base.
+- **Barra:** Missions (portada) · Plan a base · Appendix (resaltado en cualquier página del apéndice).
+- Los rótulos «Step n of 7» pasan a «Appendix · A1–A5 · Earlier prototype» y a «Plan a base».
+- La portada de Logos enlaza solo a «Plan a base» y al apéndice.
+- `/demo-video/` (vídeo de Alexis) no cambia de sitio.
+
 ## 2026-11-15 (tarde, 15) · Modelos 3D de verdad, escala real y bases en cada candidato de la Tierra
 
 - `src/lib/base-models.ts`: modelos **en metros reales** con piezas y materiales PBR, con texturas generadas (aislante dorado arrugado, tela blanca acolchada, células solares, regolito sinterizado, neumático de malla):

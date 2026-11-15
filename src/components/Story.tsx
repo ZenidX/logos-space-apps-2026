@@ -377,10 +377,10 @@ export default function Story({ sections }: { sections: Section[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.35, duration: 0.7 }}
           >
-            <Link href="/discover/" className="btn-cut bg-[var(--acc)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] text-[var(--bg)]">
+            <Link href="/appendix/discover/" className="btn-cut bg-[var(--acc)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] text-[var(--bg)]">
               Start the search →
             </Link>
-            <Link href="/data/" className="btn-cut border border-[var(--line2)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] hover:text-[var(--acc)]">
+            <Link href="/appendix/data/" className="btn-cut border border-[var(--line2)] px-5 py-3.5 font-mono text-[13px] uppercase tracking-[.06em] hover:text-[var(--acc)]">
               Explore the data
             </Link>
           </motion.div>
@@ -716,7 +716,7 @@ export default function Story({ sections }: { sections: Section[] }) {
                 The full method, all 20 candidates per target, the layers behind each score and the Moon/Mars maps.
               </p>
             </div>
-            <Link href="/data/" className="btn-cut shrink-0 bg-[var(--acc)] px-6 py-4 font-mono text-[13px] uppercase tracking-[.08em] text-[var(--bg)]">
+            <Link href="/appendix/data/" className="btn-cut shrink-0 bg-[var(--acc)] px-6 py-4 font-mono text-[13px] uppercase tracking-[.08em] text-[var(--bg)]">
               Explore the data ▸
             </Link>
           </div>
