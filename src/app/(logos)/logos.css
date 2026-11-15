@@ -189,6 +189,10 @@ b, strong { font-weight: 600; }
 @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
 .scroll-cue.gone { opacity: 0; }
 .scroll-cue.still i { animation: none; }
+/* story: every scroll comes to rest on a whole step (no half-empty screen between two missions). Sections taller than
+   the screen (the last one) still scroll freely inside; the mission view, without .story, scrolls as usual */
+html:has(.story) { scroll-snap-type: y mandatory; }
+.story-hero, .story-step { scroll-snap-align: start; }
 /* the story layer sits over the fixed 3D scene: only its text takes the pointer, so the globes can be dragged in between */
 .story { pointer-events: none; }
 .story-copy { pointer-events: auto; }

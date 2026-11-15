@@ -158,7 +158,8 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     let introT = -1, tScene = 0, k = 0, back = false, last = performance.now(), raf = 0, onScreen = true, dirty = true, lastKey = "", first = true;
     let compBody: "moon" | "mars" | null = null, compAlpha = 0, fx = 0, fy = 0; // fx, fy: frame offsets, eased towards the prop
     const earthQ = new THREE.Quaternion(), tmpQ = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0), camPos = new THREE.Vector3();
-    let drag: { x: number; y: number; pid: number } | null = null, userTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null;
+    let drag: { body: BodyId; grip: THREE.Vector3; pid: number } | null = null, userTurned = false, compTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null; // grip: the grabbed point, in the body's own frame
+    const compQ = new THREE.Quaternion(); // the reader's turn of the companion world, on top of its automatic facing
     // names: measured sizes, the position each one had in the last frame, and what is on top of the scene (kept clear)
     const sizeOf = new Map<string, { w: number; h: number }>(), slotOf = new Map<string, number>();
     const camRight = new THREE.Vector3(), camUp = new THREE.Vector3(), v = new THREE.Vector3();
@@ -252,7 +253,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       glow.quaternion.copy(camera.quaternion);
 
       // the Earth: slow spin, or turn the opened site to its facing direction
-      if (ms !== lastMarkers) { lastMarkers = ms; userTurned = false; } // a new mission or a new filter: show its sites again
+      if (ms !== lastMarkers) { lastMarkers = ms; userTurned = false; compTurned = false; compQ.identity(); } // a new mission or a new filter: show its sites again
       const selSite = sel ? ms.find((m) => m.id === sel) : undefined, target = ms.find((m) => m.kind === "target");
       const open = selSite && selSite.body === "earth" && compBody ? selSite : null;
       if (open && compBody) {
@@ -272,9 +273,10 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         const tilt = -THREE.MathUtils.degToRad(target.lat) * 0.72, upW = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
         const face = base.multiplyScalar(Math.cos(tilt)).addScaledVector(upW, -Math.sin(tilt)).normalize();
         mesh[compBody].quaternion.copy(orientToFace(latLonToVec3(target.lat, target.lon), face));
+        if (compTurned) mesh[compBody].quaternion.premultiply(compQ);
       }
 
-      const cur = k >= 0.9 && !sel ? (drag ? "grabbing" : "grab") : ""; // the Earth can be turned by hand in the close-up
+      const cur = drag ? "grabbing" : overGlobe && k >= 0.9 && !sel ? "grab" : ""; // the globes can be turned by hand in the close-up
       if (el.style.cursor !== cur) el.style.cursor = cur;
       first = false;
       return moving || drag !== null;
@@ -365,14 +367,44 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       }
     };
 
-    // drag the Earth to turn it (close-up, while no site is open)
-    const down = (e: PointerEvent) => { if ((e.target as HTMLElement).closest("button") || latest.current.selectedId || k < 0.9) return; drag = { x: e.clientX, y: e.clientY, pid: e.pointerId }; el.setPointerCapture(e.pointerId); };
-    const move = (e: PointerEvent) => {
-      if (!drag || e.pointerId !== drag.pid) return;
-      const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; userTurned = true;
-      earthQ.premultiply(tmpQ.setFromAxisAngle(yAxis, dx * 0.006)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), dy * 0.006)); dirty = true;
+    // drag a globe to turn it (close-up, while no site is open): the grabbed point stays under the pointer, like a real globe
+    let overGlobe = false;
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), oc = new THREE.Vector3(), hitDir = new THREE.Vector3(), dq = new THREE.Quaternion();
+    // direction from the body's centre to where the pointer meets its sphere; off the disc, the nearest point on its limb
+    const sphereDir = (e: PointerEvent, id: BodyId, out: THREE.Vector3) => {
+      const r = el.getBoundingClientRect();
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      const C = mesh[id].position, R = mesh[id].scale.x, o = ray.ray.origin, d = ray.ray.direction;
+      oc.copy(o).sub(C);
+      const b = oc.dot(d), disc = b * b - (oc.lengthSq() - R * R);
+      const t = disc >= 0 ? -b - Math.sqrt(disc) : -b; // front hit, or the point of the ray closest to the centre
+      return out.copy(o).addScaledVector(d, t).sub(C).normalize();
     };
-    const up = (e: PointerEvent) => { if (drag && e.pointerId === drag.pid) drag = null; };
+    const hits = (e: PointerEvent, id: BodyId) => {
+      if (!mesh[id].visible) return false;
+      const r = el.getBoundingClientRect(), dsk = discOf(mesh[id].position, mesh[id].scale.x);
+      return Math.hypot(e.clientX - r.left - dsk.x, e.clientY - r.top - dsk.y) <= dsk.r * 1.08;
+    };
+    const down = (e: PointerEvent) => {
+      if (e.button !== 0 || (e.target as HTMLElement).closest("button") || latest.current.selectedId || k < 0.9) return;
+      const body: BodyId | null = compBody && compAlpha > 0.5 && hits(e, compBody) ? compBody : hits(e, "earth") ? "earth" : null;
+      if (!body) return;
+      sphereDir(e, body, hitDir);
+      drag = { body, grip: hitDir.clone().applyQuaternion(mesh[body].quaternion.clone().invert()), pid: e.pointerId };
+      el.setPointerCapture(e.pointerId); e.preventDefault(); dirty = true;
+    };
+    const move = (e: PointerEvent) => {
+      if (!drag) { const o = e.pointerType === "mouse" && k >= 0.9 && !latest.current.selectedId && (hits(e, "earth") || (!!compBody && compAlpha > 0.5 && hits(e, compBody))); if (o !== overGlobe) { overGlobe = o; dirty = true; } return; }
+      if (e.pointerId !== drag.pid) return;
+      const now = drag.grip.clone().applyQuaternion(mesh[drag.body].quaternion); // where the grabbed point is now
+      sphereDir(e, drag.body, hitDir);
+      dq.setFromUnitVectors(now, hitDir);
+      if (drag.body === "earth") { earthQ.premultiply(dq); mesh.earth.quaternion.copy(earthQ); userTurned = true; }
+      else { compQ.premultiply(dq); mesh[drag.body].quaternion.premultiply(dq); compTurned = true; }
+      dirty = true;
+    };
+    const up = (e: PointerEvent) => { if (drag && e.pointerId === drag.pid) { drag = null; dirty = true; } };
     el.addEventListener("pointerdown", down); el.addEventListener("pointermove", move); el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
 
     const frame = (now: number) => {

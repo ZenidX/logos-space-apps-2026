@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 21) · Portada: scroll con imán y giro fiel de los globos
+
+- **Scroll con imán (sin puntos muertos):** en la historia, cada sección ocupa una pantalla y se podía dejar la página a medias entre dos misiones, con la pantalla casi vacía. Ahora `html:has(.story) { scroll-snap-type: y mandatory }` y cada `.story-hero` / `.story-step` encaja por arriba (`src/app/(logos)/logos.css`). La última sección, más alta que la pantalla, sigue desplazándose libremente. En la vista de misión no hay imán (no existe `.story`). Comprobado en Chrome sin interfaz: un scroll a 700 px se queda en 513 (inicio de la sección) y uno a 1300 en 1539.
+- **Giro fiel al ratón:** el arrastre giraba la Tierra a un ritmo fijo (0,006 rad/px) sobre los ejes del mundo y no sobre los de la pantalla, así que la superficie no seguía al cursor y parecía tener «velocidad». Ahora es un giro de «agarrar el punto»: se lanza un rayo desde el cursor a la esfera y se rota para que el punto agarrado quede siempre bajo el cursor (fuera del disco, el punto más cercano del borde). Comprobado aparte con three.js (cámara descentrada como en la web): 0 px de error entre el punto agarrado y el cursor.
+- También se puede girar el astro de al lado (Luna o Marte); su giro se suma a su orientación automática y se reinicia al cambiar de misión. El cursor solo pasa a «grab» encima de un globo (`SolarScene.tsx`).
+
 ## 2026-11-15 (tarde, 20) · Portada: los globos se pueden girar en las misiones 1–4
 
 - Problema: en la historia de la portada, en las secciones «Mission 1–4», el globo de la Tierra (con la Luna o Marte al lado) no se podía girar con el ratón.
