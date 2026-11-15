@@ -1,33 +1,92 @@
+<div align="center">
+
+<img src="public/logo-symbol.svg" width="56" alt="" />
+
 # Logos · Mission Analogs
 
-**NASA Space Apps Challenge 2026** · Challenge: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* · Team **Logos**.
+**Where on Earth can we rehearse a specific Moon or Mars mission?**
 
-**Live demo: https://spaceapp-logos.vercel.app** · try a site: https://spaceapp-logos.vercel.app/?m=m1-eva-basalt&s=sp_crater_az
+NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* · team **Logos**
 
-> Prototype built during the hackathon (14–15 November 2026).
+**[Open the live demo →](https://spaceapp-logos.vercel.app)** &nbsp;·&nbsp; [a site, straight away](https://spaceapp-logos.vercel.app/?m=m1-eva-basalt&s=sp_crater_az) &nbsp;·&nbsp; [method](docs/method.md) &nbsp;·&nbsp; [every source](docs/sources.md)
 
-## Idea
-Instead of asking "which place on Earth looks like the Moon?", we ask **"where on Earth can we rehearse this specific mission?"** — and we add a neutral **access complexity** layer (how much coordination would a field team need to work there?).
+<img src="docs/img/opening.jpg" alt="Opening shot: the Sun rising behind the night side of the Earth, with city lights, and the line 'Before the Moon and Mars, there is Earth.'" width="880" />
 
-The prototype covers four missions, each taken from real analog field campaigns: a suited EVA on bare volcanic terrain (target: Mons Mouton, a lunar south-pole region NASA listed among its Artemis III landing candidates in 2024), rover driving on loose sand (target: Jezero crater), drilling shallow ground ice for water (target: Arcadia Planitia) and low-Sun operations and solar power (target: Mons Mouton; this one is **computed, not validated**, because no campaign has rehearsed it under a real low Sun). For each one it proposes new regions on Earth to investigate, shows how they compare with the target condition by condition, and states where the analogy breaks. The Sun angle is shown for the lunar mission because low-Sun lighting drives south-pole operations.
+</div>
 
-The idea is our team's own. See [Use of SI / AI](#use-of-super-intelligence-si--ai).
+> Prototype built during the hackathon (14–15 November 2026). Not endorsed by NASA or any organisation named here.
 
-## Run locally
-```bash
-npm install
-npm run dev     # http://localhost:3000
-npm test        # scene, label layout, data and rule tests
-npm run build   # static export to out/
-npm run test:data                       # index formula: hand-computed cases + every published site
-LOGOS_IN=/path/to/inputs npm run data   # rebuild src/data/sites.json from the public datasets (Python; see scripts/data/README.md)
-```
+## The idea in one line
+
+Most analog maps ask *"which place on Earth looks like the Moon?"*. We ask **"where on Earth can we rehearse *this* mission?"**, score all land on Earth against that one target, condition by condition, say **where the analogy breaks**, and add a neutral **access complexity** layer (how much coordination a field team would need). The idea is our team's own; see [Use of AI](#use-of-super-intelligence-si--ai).
+
+## Four missions, from real field campaigns
+
+| Mission | Target | Rehearsed for real at | Status |
+|---|---|---|---|
+| Suited EVA on volcanic terrain | Moon · Mons Mouton (south pole) | SP Crater (NASA JETT), Timanfaya (ESA PANGAEA), Craters of the Moon, Kīlauea Iki | validated |
+| Rover on sand | Mars · Jezero crater | Dumont Dunes (JPL Scarecrow), Mars Desert Research Station, Yungay | validated |
+| Water from ground ice | Mars · Arcadia Planitia | Haughton crater (NASA TRIDENT), McMurdo Dry Valleys | validated |
+| Low-Sun operations and solar power | Moon · Mons Mouton | no campaign under a real low Sun (JETT3/JETT5 simulated it at night) | **computed, not validated** |
+
+For each mission the app proposes **new regions to investigate** (19 in total), checked against satellite land cover, terrain and an independent literature review.
+
+## What you can do in the app
+
+<table>
+<tr>
+<td width="50%"><img src="docs/img/story-mission.jpg" alt="Story mode: the camera has flown to the Earth with the Moon beside it; numbered sites with their names, and the mission text on the left" /></td>
+<td width="50%"><img src="docs/img/site-panel.jpg" alt="Site panel: analog index dial, conditions with values, 3D terrain of the site next to the target, sun height slider" /></td>
+</tr>
+<tr>
+<td><b>Follow the story.</b> The first screen is only the scene; scrolling tells the idea one screen at a time, and each mission flies the camera to its target world. Hover a mission for a preview; click to open it.</td>
+<td><b>Open a site.</b> Analog index, every condition against the range the mission needs, 3D terrain next to the target, the Sun's height, logistics, access complexity and <b>where it breaks</b>. Browse sites with ‹ › or the arrow keys.</td>
+</tr>
+</table>
+
+- **Every number says where it comes from**: the dataset under each condition (Why tab) and on hover in the dial legend; the target's value with its own source.
+- **Honest ordering**: lists are ordered by independent evidence (a campaign ran there, or what a literature check found nearby), not by the index, which cannot separate the top regions.
+- **Filters** by travel time to a city, mean slope and access level (none of them is part of the index).
+- **Real light**: the Sun, Earth, Moon and Mars are lit from the Sun's actual direction; orbit radii and periods are in real proportion.
+- **Works on phones**: thumb bar to move between sites, mission cards with their figures, a scene that fills the screen.
+
+<p align="center"><img src="docs/img/mobile.jpg" alt="The app on a phone: opening shot and a site panel with the bottom navigation bar" width="520" /></p>
 
 ## How it works (no server, no database)
-- `scripts/data/` (Python) scores every 0.1° land cell on Earth for each mission from public datasets and writes one small file, `src/data/sites.json`. Inputs, versions, checksums and commands are in `scripts/data/README.md`; the method is in `docs/method.md`; every claim and its source is in `docs/sources.md`.
-- The web app (Next.js static export + three.js) only reads that file. One WebGL scene shows the Sun with the Earth and Mars on their orbits (radii and periods in real proportion) and, for a mission, a close-up of the Earth with the target world beside it. Each visible site is joined to its name, outside the globe, by a thin dashed line; no line is drawn to the target world.
-- Each mission's list is ordered by independent evidence (a real campaign ran there, or what a literature check found near each new region), not by the index, and can be filtered by travel time to a city, mean slope and access level. None of these filters is part of the index; thresholds are stated in the app.
-- Deep links: `?m=m1-eva-basalt`, `?m=m2-rover-sand`, `?m=m3-ground-ice`, `?m=m4-low-sun`; add `&s=<site id>` to open a site and `capture=1` for screen recording.
+
+```
+public datasets ──► scripts/data/ (Python) ──► src/data/sites.json ──► Next.js static site + three.js
+ MODIS · GPM ·       scores every 0.1° land       one small file         story, explorer, site panel
+ SoilGrids · GLiM    cell per mission, screens                            (reads the file, nothing else)
+ WGI · UCDP · DEMs   new regions, validates
+```
+
+1. **Score.** Each mission is a few surface conditions open data can measure (vegetation, albedo, rainfall, sand, volcanic rock, temperature, Sun height). Every 0.1° land cell gets an **analog index 0–1** per mission ([formula](docs/method.md)).
+2. **Validate.** The known campaign sites must come out near the top (e.g. 3 of 3 rover analogs in the top 2.1 % of land cells); a rainforest control must come out near the bottom.
+3. **Screen.** Candidate regions are kept only if their 11 × 11 km window passes slope, water, ice and land-cover tests ([every candidate tried](docs/region-screening.json)), and each is checked against the literature ([independent check](docs/independent-check.md)).
+4. **Show.** The web app only reads `sites.json`. Deep links: `?m=m1-eva-basalt | m2-rover-sand | m3-ground-ice | m4-low-sun`, plus `&s=<site id>`; `capture=1` for screen recording.
+
+## Run it
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm test           # scene maths, label layout, dial data and rule tests
+npm run test:data  # index formula: hand-computed cases + every published site
+npm run build      # static export to out/
+LOGOS_IN=/path/to/inputs npm run data   # rebuild sites.json from the public datasets (Python; see scripts/data/README.md)
+```
+
+## Repository map
+
+| Path | What |
+|---|---|
+| `src/app/page.tsx` | Story and explorer |
+| `src/components/` | 3D scene (`SolarScene`), site panel, dial, terrain comparison, mission preview, method sheet |
+| `src/lib/` | Mission model, rules, scene maths, label layout (with tests) |
+| `src/data/` | `sites.json` and derived terrain and climate files |
+| `scripts/data/` | Data pipeline (inputs, versions and checksums in its README) |
+| `docs/` | [method](docs/method.md), [sources](docs/sources.md), [missions](docs/missions.md), [independent check](docs/independent-check.md), [design rationale](docs/design-rationale.md); team notes in Spanish in `docs/es/` |
 
 ## Use of Super Intelligence (SI) / AI
 The idea and the approach of this project are our team's own: finding Earth analog sites **per mission** and adding an **access-complexity index** — a team-defined coordination proxy shown next to each site, not part of the analog index and not a feasibility or safety assessment. No AI tool was used to come up with the idea or the problem framing.
@@ -58,6 +117,7 @@ AI-assisted outputs are reviewed by the team before submission. AI-assisted code
 - Ground screening of new regions: ESA WorldCover 2021 v200 (© ESA WorldCover project 2021 / contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium, CC BY 4.0) and Natural Earth glaciated areas. Results: `docs/region-screening.md` (every candidate tried: `docs/region-screening.json`); independent check of each new region against literature and agency sources: `docs/independent-check.md` and `docs/independent-check-v8.md`.
 - Place names: Natural Earth (public domain) and © OpenStreetMap contributors (ODbL, openstreetmap.org/copyright). Target constants: NASA NSSDC Moon, Mars and Earth fact sheets (D. R. Williams, NASA GSFC). Volcanic rock: GLiM, Hartmann & Moosdorf 2012, doi:10.1594/PANGAEA.788537 (CC BY 3.0, creativecommons.org/licenses/by/3.0/; modified: basic-volcanic class aggregated in a 3×3 window).
 - Front-end design proposal "Orbit" drafted with AI assistance; fonts (SIL Open Font License 1.1): Bricolage Grotesque © 2022 The Bricolage Grotesque Project Authors (github.com/ateliertriay/bricolage); Martian Mono © 2021 The Martian Mono Project Authors (github.com/evilmartians/mono).
+- Screenshots in `docs/img/` are captures of this app (NASA imagery as credited above); they are not AI-generated.
 
 ## Licence
 Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences (see `docs/sources.md`).

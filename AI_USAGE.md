@@ -6,7 +6,7 @@ Files are reviewed by team Logos before submission; files still marked "to be re
 | Path | What the AI did |
 |---|---|
 | `src/lib/globe-math.ts`, `src/lib/globe-math.test.mjs`, `src/lib/globe-tex.ts` | Code written with AI assistance in the team's earlier prototype, reused here |
-| `src/app/*`, `src/components/*` (site panel, method sheet, evidence badge, condition strip, locator map…), `src/lib/*` (mission model, rules) | Pages, panels, mission model and rule checks |
+| `src/app/*`, `src/components/*` (site panel, method sheet, evidence badge, condition strip, locator map, mission preview…), `src/lib/*` (mission model, rules) | Pages, panels, mission model and rule checks |
 | `docs/independent-check*.md`, `docs/region-screening.*` | Literature check of each new region and ground screening, done by AI agents with the sources listed; verdicts reviewed by the team |
 | `src/components/SolarScene.tsx`, `src/lib/solar-math.ts` (+ test), `src/lib/label-layout.ts` (+ test), `src/components/RadialDial.tsx`, `src/lib/radial-data.ts` (+ test) | 3D scene (Sun, Earth and Mars on their orbits; Earth close-up with the target world), the layout of site names with dashed leader lines, and the radial dial, written with AI assistance from the concepts the team chose |
 | `src/components/TerrainCompare.tsx`, `src/components/Count.tsx` | 3D terrain comparison and count-up number |
