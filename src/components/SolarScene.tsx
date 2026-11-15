@@ -12,7 +12,7 @@ import { latLonToVec3 } from "@/lib/globe-math";
 import { EARTH_EXTRA, GLOBE_TEX, NORMAL_TEX } from "@/lib/globe-tex";
 import { ATMO_FRAG, ATMO_VERT, EARTH_FRAG, GLOBE_VERT, GLOW_FRAG, GLOW_VERT, ROCKY_FRAG, STAR_FRAG, STAR_VERT, SUN_FRAG, SUN_VERT } from "@/lib/scene-shaders";
 import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/label-layout";
-import { EARTH_R, FOV, NAME_ROOM, ORBIT, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
+import { EARTH_R, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
 
 export interface SceneMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number; primary?: boolean } // primary: the sites the Earth turns to show
 interface Props {
@@ -23,9 +23,12 @@ interface Props {
   onSelect?: (id: string) => void;
   onHover?: (id: string | null) => void;
   paused?: boolean;
+  /** Part of the canvas kept for page text: x = left share, y = bottom share. The subject is framed in the rest (the stars still fill it all). */
+  frame?: { x: number; y: number };
   onError?: (e: unknown) => void;
   className?: string;
 }
+const FULL = { x: 0, y: 0 };
 
 const BODIES: BodyId[] = ["earth", "moon", "mars"];
 const COLOR: Record<BodyId, number> = { earth: 0x5db4ff, moon: 0xd7dce6, mars: 0xff8d5e };
@@ -37,16 +40,16 @@ const ROCK = { moon: { ls: 0.75, gain: 1.9, relief: 0.9, haze: [0, 0, 0] }, mars
 const JOURNEY_S = 2.8, BACK_S = 1.3, IDLE_MS = 30000, COMPACT_W = 620, COMPACT_NAMES = 3, ROOM_W = 560;
 const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
 
-export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, onError, className = "" }: Props) {
+export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, frame = FULL, onError, className = "" }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const names = useRef(new Map<string, HTMLSpanElement>());
   const labs = useRef(new Map<string, HTMLSpanElement>());
   const lines = useRef(new Map<string, SVGLineElement>());
-  const latest = useRef({ mode, markers, selectedId, highlightId, paused, onError });
+  const latest = useRef({ mode, markers, selectedId, highlightId, paused, frame, onError });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, onError }; }, [mode, markers, selectedId, highlightId, paused, onError]);
+  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, frame, onError }; }, [mode, markers, selectedId, highlightId, paused, frame, onError]);
 
   useEffect(() => {
     const el = host.current;
@@ -150,7 +153,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     // ---------- state ----------
     const started = performance.now();
     let tScene = 0, k = 0, back = false, last = performance.now(), raf = 0, onScreen = true, dirty = true, lastKey = "", first = true;
-    let compBody: "moon" | "mars" | null = null, compAlpha = 0;
+    let compBody: "moon" | "mars" | null = null, compAlpha = 0, fx = 0, fy = 0; // fx, fy: frame offsets, eased towards the prop
     const earthQ = new THREE.Quaternion(), tmpQ = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0), camPos = new THREE.Vector3();
     let drag: { x: number; y: number; pid: number } | null = null, userTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null;
     // names: measured sizes, the position each one had in the last frame, and what is on top of the scene (kept clear)
@@ -178,8 +181,20 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       const { markers: ms, selectedId: sel, paused: isPaused, mode: md } = latest.current;
       // the overview stops after a while without any input (nothing is drawn then) and goes on at the next one
-      const still = isPaused || reduce, jump = still || first, rest = still || now - idleAt > IDLE_MS, focus = md.kind === "focus" ? md.body : null, aspect = width / height;
+      const still = isPaused || reduce, jump = still || first, rest = still || now - idleAt > IDLE_MS, focus = md.kind === "focus" ? md.body : null;
       let moving = false;
+      // framing: the subject sits in a virtual view (the canvas minus the part kept for text); the rest of the canvas still shows stars
+      const fr = latest.current.frame;
+      if (fx !== fr.x || fy !== fr.y) {
+        const a = jump || reduce ? 1 : 1 - Math.exp(-dt * 3.2);
+        fx += (fr.x - fx) * a; fy += (fr.y - fy) * a;
+        if (Math.abs(fx - fr.x) < 1e-3) fx = fr.x; if (Math.abs(fy - fr.y) < 1e-3) fy = fr.y;
+        moving = true;
+      }
+      const vw = width * (1 - fx), vh = height * (1 - fy), aspect = vw / vh;
+      camera.aspect = aspect;
+      if (fx || fy) camera.setViewOffset(vw, vh, -fx * width, 0, width, height); else camera.clearViewOffset();
+      camera.updateProjectionMatrix();
 
       // journey: 0 = overview, 1 = close-up of the Earth (via the target world on the way in)
       const goal = focus ? 1 : 0;
@@ -201,20 +216,21 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       else if (compAlpha > 0) { compAlpha = Math.max(0, compAlpha - dt * 4.5); moving = true; }
       else { compBody = want; moving = true; }
       const far = 1 - smooth((k - 0.5) / 0.14); // how much of the overview is left
-      mesh.earth.position.copy(E);
+      const grow = 1 + (OVERVIEW_SCALE - 1) * far; // bodies are larger in the overview, true to each other in the close-up
+      mesh.earth.position.copy(E); mesh.earth.scale.setScalar(RADIUS.earth * grow);
       for (const id of ["moon", "mars"] as const) {
-        if (compBody === id) { mesh[id].position.copy(companionPos(E, id)); setAlpha(id, compAlpha); }
-        else { mesh[id].position.copy(P[id]); setAlpha(id, far); }
+        if (compBody === id) { mesh[id].position.copy(companionPos(E, id)); mesh[id].scale.setScalar(RADIUS[id]); setAlpha(id, compAlpha); }
+        else { mesh[id].position.copy(id === "moon" ? P.moon.clone().sub(E).multiplyScalar(grow).add(E) : P[id]); mesh[id].scale.setScalar(RADIUS[id] * grow); setAlpha(id, far); }
       }
       sun.visible = glow.visible = far > 0.01; sunMat.uniforms.uOpacity.value = far; glowMat.uniforms.uOpacity.value = far;
       if (sunMat.transparent !== far < 0.999) { sunMat.transparent = far < 0.999; sunMat.needsUpdate = true; }
       sunMat.uniforms.uTime.value = glowMat.uniforms.uTime.value = tScene; mat.earth.uniforms.uCloudShift.value = (tScene * 0.0008) % 1;
       if (compBody) detail(compBody);
       for (const [line, o] of [[orbitEarth, 0.5], [orbitMars, 0.5], [orbitMoon, 0.38]] as const) { line.visible = far > 0.01; (line.material as THREE.LineDashedMaterial).opacity = o * far; }
-      orbitMoon.position.copy(E);
+      orbitMoon.position.copy(E); orbitMoon.scale.setScalar(grow);
 
       // camera
-      const room = width >= ROOM_W ? NAME_ROOM : 0; // wide scenes keep room for names on the left of the Earth
+      const room = vw >= ROOM_W ? NAME_ROOM : 0; // wide scenes keep room for names on the left of the Earth
       const over = overviewPose(aspect), pose = !focus && k === 0 ? over
         : back || !focus ? lerpPose(over, closePose(E, (focus ?? compBody ?? "mars") as "moon" | "mars", aspect, room), ease(k))
         : k <= 0.5 ? lerpPose(over, targetPose(P[focus], focus), ease(k / 0.5))
@@ -314,16 +330,20 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       }
       // names of the bodies in the overview
       const fade = 1 - smooth(k / 0.35);
+      let earthAt: [number, number] | null = null;
       for (const [id] of NAMES) {
         const s = names.current.get(id);
         if (!s) continue;
         if (id === "moon" && width < COMPACT_W) { s.style.visibility = "hidden"; continue; } // small scenes: the Moon's name would sit on the Earth's
-        const p = id === "sun" ? sun.position : mesh[id as BodyId].position, r = id === "sun" ? SUN_R : RADIUS[id as BodyId];
+        const p = id === "sun" ? sun.position : mesh[id as BodyId].position, r = id === "sun" ? SUN_R : mesh[id as BodyId].scale.x;
         v.copy(p).project(camera);
         const below = new THREE.Vector3().copy(p).addScaledVector(camera.up, -r * (id === "sun" ? 1.55 : 1.25)).project(camera); // the Sun's glow needs more room
-        s.style.opacity = String(fade); s.style.visibility = fade > 0.02 ? "visible" : "hidden";
+        const nx = (v.x * 0.5 + 0.5) * width, ny = (-below.y * 0.5 + 0.5) * height + 6;
+        if (id === "earth") earthAt = [nx, ny];
+        const clash = id === "moon" && earthAt !== null && Math.hypot(nx - earthAt[0], ny - earthAt[1]) < 72; // the Moon's name would sit on the Earth's
+        s.style.opacity = String(fade); s.style.visibility = fade > 0.02 && !clash ? "visible" : "hidden";
         s.classList.toggle("is-target", id === ms[0]?.body && ms[0]?.kind === "target"); // the world of the mission being shown
-        s.style.transform = `translate(${((v.x * 0.5 + 0.5) * width).toFixed(1)}px, ${((-below.y * 0.5 + 0.5) * height + 6).toFixed(1)}px) translate(-50%, 0)`;
+        s.style.transform = `translate(${nx.toFixed(1)}px, ${ny.toFixed(1)}px) translate(-50%, 0)`;
       }
     };
 
@@ -346,6 +366,9 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       if (moving || dirty) { place(); renderer.render(scene, camera); dirty = false; }
     };
     const wake = () => { idleAt = performance.now(); };
+    let avoidDue = false; // the page text moves when it scrolls: read its place again before the next frame
+    const onScroll = () => { if (!avoidDue) { avoidDue = true; requestAnimationFrame(() => { avoidDue = false; if (!disposed) { readAvoid(); dirty = true; } }); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
     const WAKE = ["pointermove", "pointerdown", "keydown", "wheel", "scroll", "touchstart"] as const;
     for (const e of WAKE) window.addEventListener(e, wake, { passive: true });
     document.fonts?.ready.then(() => { if (!disposed) { sizeOf.clear(); dirty = true; } }).catch(() => {});
@@ -356,6 +379,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     return () => {
       disposed = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); timers.forEach((t) => window.clearTimeout(t));
       for (const e of WAKE) window.removeEventListener(e, wake);
+      window.removeEventListener("scroll", onScroll);
       el.removeEventListener("pointerdown", down); el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up); el.removeEventListener("pointercancel", up);
       for (const id of BODIES) for (const u of Object.values(mat[id].uniforms)) if (u.value instanceof THREE.Texture) u.value.dispose();
       disposables.forEach((d) => d.dispose());

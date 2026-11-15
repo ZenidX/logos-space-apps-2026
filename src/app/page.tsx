@@ -1,5 +1,8 @@
 "use client";
 // AI-assisted (Claude), reviewed by team Logos
+// Two modes on one page. Story (no mission chosen): the first screen is the 3D scene alone; scrolling tells the idea one
+// screen at a time while the scene follows (each mission step flies to its target world) and ends in the mission picker.
+// Explorer (a mission chosen, or a link with ?m=): the scene, the mission's list with filters, and the site panel.
 
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -11,7 +14,6 @@ import Count from "@/components/Count";
 import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/missions";
 
 const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
-const DEMO_MS = 7000;
 // Project in numbers, computed from the data file (nothing typed by hand).
 const STATS: [string, string][] = [
   [String(MISSIONS.length), "missions from real field campaigns"],
@@ -20,6 +22,8 @@ const STATS: [string, string][] = [
   [String(MISSIONS.filter((m) => m.validated).reduce((n, m) => n + m.sites.filter((s) => s.kind === "known").length, 0)), "known analogs used to validate"],
 ];
 const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
+const NO_MARKERS: SceneMarker[] = [];
+type Step = "hero" | "intro" | "idea" | MissionId | "figures" | "explore";
 
 /** Markers of the scene: the target and the sites of the list, in the order of the list (filtered-out sites are not drawn). */
 function sceneFor(m: Mission, list: Site[]) {
@@ -30,18 +34,21 @@ function sceneFor(m: Mission, list: Site[]) {
   ];
   return { markers };
 }
+const STORY_SCENES = Object.fromEntries(MISSIONS.map((m) => [m.id, sceneFor(m, byEvidence(m.sites)).markers])) as Record<MissionId, SceneMarker[]>;
 
 export default function Home() {
   const [missionId, setMissionId] = useState<MissionId | null>(null);
-  const [demoIdx, setDemoIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [sel, setSel] = useState<string | null>(null);
   const [method, setMethod] = useState(false);
   const [glFailed, setGlFailed] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
   const [filter, setFilter] = useState<ListFilter>(NO_FILTER);
+  const [step, setStep] = useState<Step>("hero");
+  const [wide, setWide] = useState(true);
+  const [armed, setArmed] = useState(false);
 
-  const shown = missionId ? MISSIONS.find((m) => m.id === missionId)! : MISSIONS[demoIdx % MISSIONS.length];
+  const shown = missionId ? MISSIONS.find((m) => m.id === missionId)! : MISSIONS[0];
   // The list: ordered by independent evidence (the index does not tell the new regions apart), then filtered.
   const list = useMemo(() => byEvidence(shown.sites).filter((s) => passes(s, filter)), [shown, filter]);
   const scene = useMemo(() => sceneFor(shown, list), [shown, list]);
@@ -49,6 +56,12 @@ export default function Home() {
   const filtered = filter.reach !== "any" || filter.ground !== "any" || filter.lowAccess;
   const site = sel ? shown.sites.find((s) => s.id === sel) ?? null : null;
   const t = shown.target;
+  const storyMission = !missionId ? MISSIONS.find((m) => m.id === step) ?? null : null;
+  const calm = !missionId && step === "hero"; // first screen: the scene alone
+
+  // Story ⇄ explorer: the explorer starts at the top; coming back puts the reader where they left the story.
+  const storyScroll = useRef(0), back = useRef(false);
+  const leaveStory = () => { storyScroll.current = window.scrollY; };
 
   // The address says which mission and site are open (?m=<mission id>&s=<site id>): it can be shared, and Back / Forward work.
   const cur = useRef({ m: missionId, s: sel }), fromUrl = useRef(false), firstSync = useRef(true), quietFocus = useRef(false);
@@ -60,6 +73,8 @@ export default function Home() {
       if (m === cur.current.m && st === cur.current.s) return;
       fromUrl.current = true; // this change comes from the address: do not add a history entry for it
       quietFocus.current = first && !!st; // a page opened directly on a site does not take the keyboard focus
+      if (!m && cur.current.m) back.current = true; // Back to the story: return to where the reader left it
+      if (m && !cur.current.m && !first) storyScroll.current = window.scrollY;
       setMissionId(m); setSel(st);
     };
     apply(true);
@@ -69,11 +84,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (missionId || paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setDemoIdx((i) => i + 1), DEMO_MS);
-    return () => window.clearInterval(id);
-  }, [missionId, paused]);
+    const q = window.matchMedia("(min-width: 768px)"), on = () => setWide(q.matches);
+    on(); q.addEventListener("change", on);
+    return () => q.removeEventListener("change", on);
+  }, []);
 
   // Keep the address in step with what is open. A choice made on the page adds a history entry, so Back undoes it.
   useEffect(() => {
@@ -90,6 +104,26 @@ export default function Home() {
     if (sel && window.innerWidth < 768) window.scrollTo({ top: 0 }); // phones: the site panel sits right under the small scene, so start from the top
   }, [missionId, sel]);
 
+  useEffect(() => { window.history.scrollRestoration = "manual"; }, []); // the page restores the story position itself
+  useLayoutEffect(() => {
+    if (missionId) { window.scrollTo({ top: 0 }); return; }
+    if (back.current) { back.current = false; const y = storyScroll.current; window.scrollTo({ top: y }); requestAnimationFrame(() => window.scrollTo({ top: y })); }
+  }, [missionId]);
+
+  // Story: which step is in the middle of the screen (the scene follows it), and the text that fades in as it arrives.
+  const storyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (missionId) return;
+    const root = storyRef.current;
+    if (!root) return;
+    const steps = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setStep((e.target as HTMLElement).dataset.step as Step); }, { rootMargin: "-50% 0px -50% 0px" });
+    root.querySelectorAll<HTMLElement>("[data-step]").forEach((n) => steps.observe(n));
+    const reveal = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { e.target.classList.add("in"); reveal.unobserve(e.target); } }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
+    root.querySelectorAll<HTMLElement>(".reveal").forEach((n) => reveal.observe(n));
+    setArmed(true); // from now on, text below the fold waits to fade in (without JavaScript everything stays visible)
+    return () => { steps.disconnect(); reveal.disconnect(); };
+  }, [missionId]);
+
   // The panel: a site opens at its top; going back returns to the place in the list, with the keyboard focus on that site.
   const scroller = useRef<HTMLDivElement>(null), methodBtn = useRef<HTMLButtonElement>(null), listScroll = useRef(0), lastSite = useRef<string | null>(null), mounted = useRef(false);
   useLayoutEffect(() => { const el = scroller.current; if (el) el.scrollTop = sel ? 0 : listScroll.current; }, [sel, missionId]);
@@ -101,17 +135,17 @@ export default function Home() {
   }, [sel]);
   const openSite = (id: string) => { listScroll.current = scroller.current?.scrollTop ?? 0; setSel(id); setHover(null); };
 
+  const pick = (id: MissionId) => { if (!missionId) leaveStory(); listScroll.current = 0; lastSite.current = null; setMissionId(id); setSel(null); setFilter(NO_FILTER); }; // filters start clean in each mission
+  const home = () => { if (missionId) back.current = true; listScroll.current = 0; lastSite.current = null; setMissionId(null); setSel(null); };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
-      if (method) setMethod(false); else if (sel) setSel(null); else setMissionId(null);
+      if (method) setMethod(false); else if (sel) setSel(null); else if (missionId) { back.current = true; setMissionId(null); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [method, sel]);
-
-  const pick = (id: MissionId) => { listScroll.current = 0; lastSite.current = null; setMissionId(id); setSel(null); setFilter(NO_FILTER); }; // filters start clean in each mission
-  const home = () => { listScroll.current = 0; lastSite.current = null; setMissionId(null); setSel(null); };
+  }, [method, sel, missionId]);
   const chip = (on: boolean, label: string, onClick: () => void) => <button key={label} type="button" className="fchip" aria-pressed={on} onClick={onClick}>{label}</button>;
 
   // A plain function (not a component defined during render): rows keep their identity, so keyboard focus is not lost.
@@ -125,69 +159,145 @@ export default function Home() {
     </li>
   );
 
+  // Scene: in the story it fills the screen and frames its subject beside the text (right part on computers, top part on phones).
+  const frame = useMemo(() => (missionId || calm ? { x: 0, y: 0 } : wide ? { x: 0.42, y: 0 } : { x: 0, y: 0.44 }), [missionId, calm, wide]);
+  const sceneMode = useMemo(() => (missionId ? { kind: "focus" as const, body: t.body as "moon" | "mars" } : storyMission ? { kind: "focus" as const, body: storyMission.target.body as "moon" | "mars" } : { kind: "overview" as const }), [missionId, t.body, storyMission]);
+  const sceneMarkers = missionId ? scene.markers : storyMission ? STORY_SCENES[storyMission.id] : NO_MARKERS;
+  const footer = (
+    <footer data-scene-avoid className={`relative z-10 text-[11.5px] leading-relaxed text-[var(--dim)] ${missionId ? "px-4 pb-4 md:fixed md:bottom-3 md:left-0 md:max-w-[34%] md:px-8 md:pb-0" : "mt-12"}`}>
+      Imagery: NASA Blue Marble, Black Marble, LROC WAC and LOLA, Viking MDIM 2.1 and MOLA (credits in Method &amp; sources); the Sun is drawn by code. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
+    </footer>
+  );
+
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-[var(--bg)] px-4 py-2 md:bg-transparent md:p-4 md:px-8">
-        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
+      {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
+      <header className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : ""}`}>
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Logos, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
-          <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
-          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
-          <button ref={methodBtn} className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method &amp; sources</button>
+          <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
+          <button ref={methodBtn} className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`} onClick={() => setMethod(true)}>Method &amp; sources</button>
+          <button className="chip icon-btn hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} title={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span></button>
         </div>
       </header>
 
       {/* 3D scene */}
-      <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[436px]") : "md:left-[36%] md:right-0"}`}>
+      <div className={missionId
+        ? `sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : "h-[40dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[436px]"}`
+        : `fixed inset-x-0 top-0 z-0 h-lvh ${calm ? "hide-names" : ""}`}>
         {glFailed ? (
-          <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The lists below have all the information.</div>
+          <div className="flex h-full items-center justify-center p-6 text-center text-[var(--mut)]">The 3D view needs WebGL. The text and lists on this page have all the information.</div>
         ) : (
           <SolarScene
-            mode={missionId ? { kind: "focus", body: t.body as "moon" | "mars" } : { kind: "overview" }}
-            markers={scene.markers}
-            selectedId={sel}
+            mode={sceneMode}
+            markers={sceneMarkers}
+            selectedId={missionId ? sel : null}
             highlightId={hover}
             onHover={setHover}
-            onSelect={(id) => { if (!missionId) pick(shown.id); if (id.startsWith("t-")) setSel(null); else openSite(id); }}
+            onSelect={(id) => { const m = missionId ?? storyMission?.id; if (!m) return; if (!missionId) pick(m); if (id.startsWith("t-")) setSel(null); else openSite(id); }}
             paused={paused}
+            frame={frame}
             onError={() => setGlFailed(true)}
           />
         )}
       </div>
 
+      {!missionId && (
+        <div ref={storyRef} className={`story relative z-10 ${armed ? "armed" : ""} ${calm ? "calm" : ""}`}>
+          <section data-step="hero" className="story-hero" aria-label="The Sun, the Earth with the Moon, and Mars on their orbits">
+            <p className={`scroll-cue ${calm ? "" : "gone"} ${paused ? "still" : ""}`} aria-hidden><span>Scroll</span><i /></p>
+          </section>
 
-      {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
-      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? `md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}` : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
-        {!missionId && (
-          <div className="fade-in pt-1 md:pt-0">
-            <p className="label">NASA Space Apps Challenge 2026</p>
-            <h1 className="display mt-3 text-[length:var(--t-hero)] leading-[.92] tracking-[-.045em]">Rehearse the Moon and Mars on Earth.</h1>
-            <p className="mt-3 max-w-[440px] text-[15.5px] leading-snug text-[var(--mut)]">Pick a mission to see where on Earth it could be rehearsed, how each region compares with the target, and where the comparison breaks.</p>
-          </div>
-        )}
-        <div className={missionId ? "flex flex-wrap gap-2" : "stagger mt-4 grid gap-2"} role="group" aria-label="Choose a mission" data-scene-avoid>
-          {MISSIONS.map((m) => {
-            const active = m.id === missionId || (!missionId && m.id === shown.id);
-            const c = BODY_COLOR[m.target.body];
-            return missionId ? (
-              <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={active ? { borderColor: c, color: c } : undefined}>{m.short}</button>
-            ) : (
-              <button key={m.id} onClick={() => pick(m.id)} title={m.blurb} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ...(active ? { borderColor: c } : {}), ["--glow" as string]: c }}>
-                <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <b className="display text-[19px] leading-tight">{m.short}</b>
-                  <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
-                </span>
-                <small className="mt-0.5 hidden text-[13px] text-[var(--mut)] md:block md:[@media(max-height:900px)]:hidden">{m.blurb}</small>
-              </button>
-            );
-          })}
+          <section data-step="intro" className="story-step">
+            <div className="story-copy" data-scene-avoid>
+              <p className="reveal label">NASA Space Apps Challenge 2026 · team Logos</p>
+              <h1 className="reveal display story-title" style={{ ["--d" as string]: "80ms" }}>Rehearse the Moon and Mars on Earth.</h1>
+              <p className="reveal story-lead" style={{ ["--d" as string]: "220ms" }}>Before crews walk on the Moon or drive on Mars, they practise here: on lava fields, sand, frozen ground and under a low polar Sun.</p>
+            </div>
+          </section>
+
+          <section data-step="idea" className="story-step">
+            <div className="story-copy" data-scene-avoid>
+              <p className="reveal label">The idea</p>
+              <h2 className="reveal display story-h2" style={{ ["--d" as string]: "80ms" }}>Start from the mission, not the planet.</h2>
+              <p className="reveal story-lead" style={{ ["--d" as string]: "220ms" }}>For each field task we score all land on Earth against one target, condition by condition, and say where the comparison breaks.</p>
+            </div>
+          </section>
+
+          {MISSIONS.map((m, i) => (
+            <section key={m.id} data-step={m.id} className="story-step" aria-labelledby={`story-${m.id}`}>
+              <div className="story-copy" data-scene-avoid>
+                <p className="reveal label">Mission {i + 1} of {MISSIONS.length} · <span style={{ color: BODY_COLOR[m.target.body] }}>{m.target.body === "moon" ? "Moon" : "Mars"} · {m.target.name.split(" (")[0]}</span></p>
+                <h2 id={`story-${m.id}`} className="reveal display story-h2" style={{ ["--d" as string]: "80ms" }}>{m.short}</h2>
+                <p className="reveal story-lead" style={{ ["--d" as string]: "200ms" }}>{m.blurb}</p>
+                <p className="reveal story-limit" style={{ ["--d" as string]: "320ms" }}>{m.keyLimit}</p>
+                <button type="button" className="reveal chip story-go" style={{ ["--d" as string]: "420ms" }} onClick={() => pick(m.id)}>Explore this mission <span aria-hidden>→</span></button>
+              </div>
+            </section>
+          ))}
+
+          <section data-step="figures" className="story-step">
+            <div className="story-copy" data-scene-avoid>
+              <h2 className="reveal label">The project in numbers</h2>
+              <dl className="story-figures" aria-label="Project in numbers">
+                {STATS.map(([n, l], i) => <div key={l} className="reveal" style={{ ["--d" as string]: `${100 + i * 110}ms` }}><dt>{l}</dt><dd className="mono">{n}</dd></div>)}
+              </dl>
+            </div>
+          </section>
+
+          <section id="explore" data-step="explore" className="story-step story-explore" aria-labelledby="explore-h">
+            <div className="story-copy" data-scene-avoid>
+              <h2 id="explore-h" className="reveal display story-h2">Choose a mission</h2>
+              <p className="reveal story-lead" style={{ ["--d" as string]: "100ms" }}>See where on Earth it could be rehearsed, how each region compares with the target, and where the comparison breaks.</p>
+              <div className="reveal mt-5 grid gap-2" role="group" aria-label="Choose a mission" style={{ ["--d" as string]: "180ms" }}>
+                {MISSIONS.map((m) => {
+                  const c = BODY_COLOR[m.target.body];
+                  return (
+                    <button key={m.id} onClick={() => pick(m.id)} title={m.blurb} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ["--glow" as string]: c }}>
+                      <span className="flex flex-wrap items-baseline justify-between gap-x-3">
+                        <b className="display text-[19px] leading-tight">{m.short}</b>
+                        <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="reveal mt-4 text-[13px] text-[var(--mut)]" style={{ ["--d" as string]: "240ms" }}>For EVA and rover field teams: a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
+              <div className="reveal mt-4 flex flex-wrap gap-2" style={{ ["--d" as string]: "300ms" }}>
+                <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
+                <span className="sm:hidden"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
+              </div>
+              <details className="about reveal mt-5" style={{ ["--d" as string]: "340ms" }}>
+                <summary>How it works</summary>
+                <ol className="mt-3 grid gap-3">
+                  <li className="grid grid-cols-[30px_1fr] gap-2"><span className="step-n">1</span><div><b className="title-sm text-[15px]">Start from a real mission</b><p className="text-[13.5px] text-[var(--mut)]">We read what NASA, ESA and Mars Society field campaigns actually rehearsed, and turned each task into a few surface conditions that open data can measure.</p></div></li>
+                  <li className="grid grid-cols-[30px_1fr] gap-2"><span className="step-n">2</span><div><b className="title-sm text-[15px]">Score all land on Earth</b><p className="text-[13.5px] text-[var(--mut)]">NASA MODIS and GPM grids, soil and rock maps: every 0.1° cell gets an analog index per mission. Known analog sites are used to check that the index finds them; where no campaign site exists, the mission says “computed, not validated”.</p></div></li>
+                  <li className="grid grid-cols-[30px_1fr] gap-2"><span className="step-n">3</span><div><b className="title-sm text-[15px]">Show new regions — and their limits</b><p className="text-[13.5px] text-[var(--mut)]">Each mission gets new regions to investigate, compared with its target condition by condition, with where the analogy breaks and how complex access is.</p></div></li>
+                </ol>
+              </details>
+              <details className="about reveal mt-3" style={{ ["--d" as string]: "380ms" }}>
+                <summary>Other real campaigns</summary>
+                <p className="mt-2 text-[13px] text-[var(--mut)]">Analog campaigns that have already run and that we have not scored: they are not driven by terrain, or there is no global data to compare. Listed for context.</p>
+                <ul className="mt-2 grid gap-2">
+                  {NEXT_MISSIONS.map((n) => <li key={n.name} className="text-[13.5px]"><a href={n.url} target="_blank" rel="noopener noreferrer" className="title-sm underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{n.name}</a> <span className="text-[11.5px] text-[var(--dim)]">· {n.who} · not scored</span><br /><span className="text-[var(--mut)]">{n.what}</span></li>)}
+                </ul>
+              </details>
+              {footer}
+            </div>
+          </section>
         </div>
-        {!missionId && (<>
-          <dl className="mt-4 grid grid-cols-4 gap-3" aria-label="Project in numbers">
-            {STATS.map(([n, l]) => <div key={l} className="flex flex-col"><dt className="order-2 mt-1 text-[11px] leading-tight text-[var(--dim)]">{l}</dt><dd className="mono order-1 text-[20px] leading-none tracking-[-.03em]">{n}</dd></div>)}
-          </dl>
-          <p className="mt-3 text-[12px] text-[var(--dim)]" aria-live="polite">Showing: {shown.short} → {t.name.split(" (")[0]}</p>
-        </>)}
-      </section>
+      )}
+
+      {missionId && (
+        <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}`}>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Choose a mission" data-scene-avoid>
+            {MISSIONS.map((m) => {
+              const c = BODY_COLOR[m.target.body];
+              return <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={m.id === missionId ? { borderColor: c, color: c } : undefined}>{m.short}</button>;
+            })}
+          </div>
+        </section>
+      )}
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
@@ -250,27 +360,7 @@ export default function Home() {
         </aside>
       )}
 
-      {!missionId && (
-        <section className="relative z-10 px-4 pb-10 md:w-[36%] md:max-w-[560px] md:px-8" aria-labelledby="how">
-          <h2 id="how" className="display text-[28px]">How it works</h2>
-          <ol className="stagger mt-4 grid gap-4">
-            <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">1</span><div><b className="title-sm text-[15px]">Start from a real mission</b><p className="text-[13.5px] text-[var(--mut)]">We read what NASA, ESA and Mars Society field campaigns actually rehearsed, and turned each task into a few surface conditions that open data can measure.</p></div></li>
-            <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">2</span><div><b className="title-sm text-[15px]">Score all land on Earth</b><p className="text-[13.5px] text-[var(--mut)]">NASA MODIS and GPM grids, soil and rock maps: every 0.1° cell gets an analog index per mission. Known analog sites are used to check that the index finds them; where no campaign site exists, the mission says “computed, not validated”.</p></div></li>
-            <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">3</span><div><b className="title-sm text-[15px]">Show new regions — and their limits</b><p className="text-[13.5px] text-[var(--mut)]">Each mission gets new regions to investigate, compared with its target condition by condition, with where the analogy breaks and how complex access is.</p></div></li>
-          </ol>
-          <p className="mt-4 text-[13px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
-          <button className="chip mt-5 hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
-          <h2 className="display mt-10 text-[28px]">Other real campaigns</h2>
-          <p className="mt-1 text-[13px] text-[var(--mut)]">Analog campaigns that have already run and that we have not scored: they are not driven by terrain, or there is no global data to compare. Listed for context.</p>
-          <ul className="mt-3 grid gap-2">
-            {NEXT_MISSIONS.map((n) => <li key={n.name} className="text-[13.5px]"><a href={n.url} target="_blank" rel="noopener noreferrer" className="title-sm underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{n.name}</a> <span className="text-[11.5px] text-[var(--dim)]">· {n.who} · not scored</span><br /><span className="text-[var(--mut)]">{n.what}</span></li>)}
-          </ul>
-        </section>
-      )}
-
-      <footer data-scene-avoid className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
-        Imagery: NASA Blue Marble, Black Marble, LROC WAC and LOLA, Viking MDIM 2.1 and MOLA (credits in Method &amp; sources); the Sun is drawn by code. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
-      </footer>
+      {missionId && footer}
 
       {method && <MethodSheet onClose={() => { setMethod(false); window.requestAnimationFrame(() => methodBtn.current?.focus()); }} />}
     </main>

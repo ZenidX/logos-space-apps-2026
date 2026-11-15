@@ -19,6 +19,9 @@ export const EARTH_R = 1; // scene unit = one Earth radius
 export const RADIUS: Record<BodyId, number> = { earth: EARTH_R, mars: FACTS.marsKm / FACTS.earthKm, moon: FACTS.moonKm / FACTS.earthKm };
 export const AU = 8.6; // scene units per astronomical unit (bodies are enlarged against the orbits)
 export const ORBIT = { earth: AU, mars: AU * FACTS.marsAU, moon: 1.9 } as const; // the Moon's distance is enlarged
+/** Bodies are drawn this much larger in the overview than in the close-up. Their size against the orbits is not to scale
+ * anyway (said in the footer); their sizes against each other stay in proportion, and the Moon's enlarged orbit grows with them. */
+export const OVERVIEW_SCALE = 1.7;
 export const SUN_R = 1.5; // not to scale (the real Sun is 109 Earth radii); drawn larger than the Earth so its surface reads
 export const YEAR_S = 60; // one Earth year of the overview lasts this many seconds
 export const PERIOD_S = { earth: YEAR_S, mars: (YEAR_S * FACTS.marsDays) / FACTS.earthDays, moon: (YEAR_S * FACTS.moonDays) / FACTS.earthDays } as const;
@@ -50,7 +53,7 @@ const ring = (c: THREE.Vector3, r: number, right: THREE.Vector3, up: THREE.Vecto
 /** Everything the overview must show: the whole orbit of Mars (with Mars on it), which contains the Earth's orbit, the Moon and the Sun. */
 export function overviewExtent(): THREE.Vector3[] {
   const pts: THREE.Vector3[] = [];
-  for (let i = 0; i < 48; i++) { const a = (i / 48) * Math.PI * 2; pts.push(...ring(new THREE.Vector3(ORBIT.mars * Math.cos(a), 0, ORBIT.mars * Math.sin(a)), RADIUS.mars * 1.3, new THREE.Vector3(1, 0, 0), UP)); }
+  for (let i = 0; i < 48; i++) { const a = (i / 48) * Math.PI * 2; pts.push(...ring(new THREE.Vector3(ORBIT.mars * Math.cos(a), 0, ORBIT.mars * Math.sin(a)), RADIUS.mars * 1.3 * OVERVIEW_SCALE, new THREE.Vector3(1, 0, 0), UP)); }
   return pts;
 }
 export const OVERVIEW_ELEV = 0.86; // radians above the ecliptic

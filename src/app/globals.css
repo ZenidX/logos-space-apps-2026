@@ -177,8 +177,45 @@ b, strong { font-weight: 600; }
 
 }
 
-/* Phones: system font for the hero title (performance over ornament: the web font delayed the largest paint) */
-@media (max-width: 700px) { h1.display { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: -.03em; } }
+/* ===== Story: the first screen is the scene alone; one idea per screen fades in as it is scrolled to ===== */
+.skip { position: absolute; left: 12px; top: -60px; z-index: 40; padding: 10px 16px; border-radius: 999px; background: var(--ink); color: var(--bg); font: 600 14px/1.2 var(--sans); transition: top 160ms var(--ease); }
+.skip:focus { top: 12px; }
+.icon-btn { width: 36px; height: 36px; padding: 0; justify-content: center; font-size: 11px; }
+@media (pointer: coarse), (max-width: 700px) { .icon-btn { width: 44px; height: 44px; } }
+.hide-names .body-name { visibility: hidden !important; }
+.story-hero { position: relative; height: 100svh; }
+.scroll-cue { position: absolute; left: 50%; bottom: max(26px, 4svh); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; margin: 0; font: 400 10.5px/1 var(--mono); letter-spacing: .24em; text-transform: uppercase; color: var(--mut); transition: opacity 500ms var(--ease); }
+.scroll-cue i { display: block; width: 1px; height: 44px; background: linear-gradient(var(--mut), transparent); transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
+@keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+.scroll-cue.gone { opacity: 0; }
+.scroll-cue.still i { animation: none; }
+.story-step { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 96px clamp(20px, 5vw, 72px); }
+.story-copy { width: min(500px, 38vw); }
+.story-title { margin-top: 14px; font-size: clamp(40px, min(5.4vw, 9vh), 92px); line-height: .94; letter-spacing: -.045em; }
+.story-h2 { margin-top: 12px; font-size: clamp(32px, min(3.9vw, 7vh), 60px); line-height: 1.02; letter-spacing: -.04em; }
+.story-lead { margin-top: 16px; max-width: 44ch; font-size: 17px; line-height: 1.5; color: var(--mut); }
+.story-limit { margin-top: 14px; max-width: 46ch; padding-left: 12px; border-left: 2px solid var(--amber); font-size: 14px; line-height: 1.45; color: var(--amber); }
+.story-go { margin-top: 22px; }
+.story-figures { margin: 18px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 24px; }
+.story-figures div { display: flex; flex-direction: column; }
+.story-figures dd { order: 1; margin: 0; font-size: clamp(40px, 4.4vw, 66px); line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+.story-figures dt { order: 2; margin-top: 8px; max-width: 18ch; font-size: 13px; line-height: 1.35; color: var(--mut); }
+.story-explore { align-items: flex-start; padding-top: 16svh; }
+/* a soft dark veil on the text side (no box behind the text); none on the first screen */
+.story::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, rgba(4, 6, 12, .84) 0%, rgba(4, 6, 12, .6) 34%, rgba(4, 6, 12, 0) 54%); transition: opacity 700ms var(--ease); }
+.story.calm::before { opacity: 0; }
+.reveal { transition: opacity 900ms var(--ease), transform 900ms var(--ease); transition-delay: var(--d, 0ms); }
+@media (prefers-reduced-motion: no-preference) { .armed .reveal:not(.in) { opacity: 0; transform: translateY(28px); } }
+@media (prefers-reduced-motion: reduce) { .scroll-cue i { animation: none; } .reveal, .skip { transition: none; } }
+@media (max-width: 767px) {
+  .story-step { align-items: flex-end; padding: 0 20px 9svh; }
+  .story-copy { width: 100%; }
+  .story-title { font-size: clamp(38px, 11vw, 56px); }
+  .story-h2 { font-size: clamp(30px, 8.6vw, 44px); }
+  .story-lead { font-size: 16px; }
+  .story-explore { align-items: flex-start; padding-top: 50svh; }
+  .story::before { background: linear-gradient(0deg, rgba(4, 6, 12, .94) 0%, rgba(4, 6, 12, .72) 40%, rgba(4, 6, 12, 0) 60%); }
+}
 
 /* Target label near a screen edge: keep it inside the frame */
 .mk.target.edge-r .mk-l { left: auto; right: 50%; transform: none; }

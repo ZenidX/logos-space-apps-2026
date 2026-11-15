@@ -2,7 +2,7 @@
 // Tests of the scene maths (heliocentric overview + Earth close-up). Run with `npm test`.
 import assert from "node:assert/strict";
 import * as THREE from "three";
-import { AU, EARTH_R, FACTS, FOV, NAME_ROOM, ORBIT, PERIOD_S, RADIUS, YEAR_S, closeFrame, closePose, companionPos, facesCamera, FACING_MIN, SITE_TILT, orientToFace, overviewExtent, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose } from "./solar-math.ts";
+import { AU, EARTH_R, FACTS, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, PERIOD_S, RADIUS, YEAR_S, closeFrame, closePose, companionPos, facesCamera, FACING_MIN, SITE_TILT, orientToFace, overviewExtent, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose } from "./solar-math.ts";
 import { latLonToVec3 } from "./globe-math.ts";
 const V = (...a) => new THREE.Vector3(...a), near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
 const camFor = (pose, aspect) => { const c = new THREE.PerspectiveCamera(FOV, aspect, 0.05, 400); c.position.copy(pose.pos); c.lookAt(pose.look); c.updateMatrixWorld(true); c.updateProjectionMatrix(); return c; };
@@ -17,10 +17,13 @@ for (const t of [0, 7.3, 31, 59.9, 200]) { // bodies stay on their circles; afte
   assert.ok(positions(t + PERIOD_S.mars).mars.distanceTo(p.mars) < 1e-6 && positions(t + YEAR_S).earth.distanceTo(p.earth) < 1e-6);
 }
 assert.ok(ORBIT.moon > EARTH_R + RADIUS.moon + 0.3, "the enlarged Moon orbit clears the Earth");
+assert.ok(OVERVIEW_SCALE >= 1 && ORBIT.moon * OVERVIEW_SCALE > (EARTH_R + RADIUS.moon) * OVERVIEW_SCALE + 0.3, "in the overview (bodies and the Moon's orbit grown together) the Moon still clears the Earth");
+assert.ok(ORBIT.earth - EARTH_R * OVERVIEW_SCALE > 1.5 + 2, "grown bodies stay well clear of the Sun");
 console.log("1 ok · orbit radii 1 : 1.524, periods 1 : 1.881, Moon 27.32 d, sizes 1 : 0.532 : 0.273 — as stated in the footer");
 
 // 2) Overview: both orbits, with their bodies, fit the frame at every scene size the app uses.
-const sizes = { "1366x768 landing": [874, 768], "1920x1080 landing": [1229, 1080], "390x844 landing": [390, 270], "1366x768 mission": [970, 768], "390x844 mission": [390, 338], "390x844 site": [390, 186], "1366x768 site": [590, 768] };
+// scene sizes the app uses; the story frames its subject in a virtual view (the canvas minus the part kept for text)
+const sizes = { "1366x768 story, first screen": [1366, 768], "1366x768 story, beside the text": [792, 768], "1920x1080 story, beside the text": [1114, 1080], "390x844 story, first screen": [390, 844], "390x844 story, above the text": [390, 473], "1366x768 mission": [970, 768], "390x844 mission": [390, 338], "390x844 site": [390, 186], "1366x768 site": [590, 768] };
 let worst = 0;
 for (const [name, [w, h]] of Object.entries(sizes)) {
   const cam = camFor(overviewPose(w / h), w / h);
