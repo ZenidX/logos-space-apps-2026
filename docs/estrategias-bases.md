@@ -4,6 +4,8 @@
 >
 > Etiquetas: **[fuente]** = dato publicado (ver §8); **[suposición]** = propuesta nuestra, razonada pero sin fuente que la respalde tal cual; **[proxy]** = variable aproximada a partir de otra.
 
+> **En la web:** la página `/base/` aplica estas reglas a cualquier punto de la Luna o de Marte sobre el relieve real (ver `src/lib/base-plan.ts`, constante `RULES`).
+
 ## 0. Resumen
 
 | Objetivo | Dónde poner la base | Energía | Recurso clave | Lo que más hay que ensayar en la Tierra |

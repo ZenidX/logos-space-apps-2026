@@ -290,6 +290,44 @@ export async function loadMoonSouthPole(lat: number, lon: number, sizeM = 11000,
   };
 }
 
+// Luna, cualquier punto (página Base). El mejor DEM de Trek que cubra el sitio:
+//  · |lat| ≥ 87,5°: LOLA polar 5 m (estereográfica) · |lat| ≥ 75°: LOLA polar 30 m (estereográfica, misma fórmula)
+//  · resto: LOLA global 256 px/grado (~118 m/px), en lat/lon.
+// Comprobado el 15-11: los tres devuelven F32 con exportImage + format=bsq (alturas en m).
+const MOON_DEM_SP30 = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_SPole75_30mp_v04/ImageServer";
+const MOON_DEM_NP30 = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_NPole75_30mp_v04/ImageServer";
+const MOON_DEM_NP5 = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_NPole875_5mp_v04/ImageServer";
+const MOON_DEM_GLOBAL = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_LOLA_DEM_Global_256ppd_v06/ImageServer";
+const MOON_WAC_NP = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_WAC_Mosaic_NPole60_100m_v02/ImageServer";
+const MOON_WAC_GLOBAL = "https://trek.nasa.gov/moon/trekarcgis/rest/services/LRO_WAC_Mosaic_Global_303ppd_v02/ImageServer";
+
+export async function loadMoonAny(lat: number, lon: number, sizeM = 10000, n = 160): Promise<TerrainData> {
+  const hs = sizeM / 2;
+  if (Math.abs(lat) >= 75) {
+    const south = lat < 0;
+    const rho = 2 * MOON_R * Math.tan(((90 - Math.abs(lat)) * Math.PI) / 360);
+    const x = rho * Math.sin((lon * Math.PI) / 180);
+    const y = (south ? 1 : -1) * rho * Math.cos((lon * Math.PI) / 180);
+    const box = `${x - hs},${y - hs},${x + hs},${y + hs}`;
+    const fine = Math.abs(lat) >= 87.5;
+    const dem = south ? (fine ? MOON_SP : MOON_DEM_SP30) : fine ? MOON_DEM_NP5 : MOON_DEM_NP30;
+    const h = await trekExport(dem, box, n);
+    const res = fine ? 5 : 30;
+    return {
+      ...finish(h, n, sizeM, sizeM, res, `Elevation: NASA LRO LOLA ${south ? "south" : "north"} pole DEM ${res} m/px · Imagery: LRO WAC polar mosaic 100 m/px (Moon Trek)`),
+      loadImagery: () => trekImage(south ? MOON_WAC_SP : MOON_WAC_NP, box, 512),
+    };
+  }
+  const dLat = (sizeM / MOON_R) * (180 / Math.PI);
+  const dLon = dLat / Math.cos((lat * Math.PI) / 180);
+  const box = `${lon - dLon / 2},${lat - dLat / 2},${lon + dLon / 2},${lat + dLat / 2}`;
+  const h = await trekExport(MOON_DEM_GLOBAL, box, n);
+  return {
+    ...finish(h, n, sizeM, sizeM, 118, "Elevation: NASA LRO LOLA global DEM ~118 m/px · Imagery: LRO WAC global mosaic ~100 m/px (Moon Trek)"),
+    loadImagery: () => trekImage(MOON_WAC_GLOBAL, box, 512),
+  };
+}
+
 // Marte: mezcla HRSC + MOLA (~200 m/px), coordenadas lat/lon.
 export async function loadMarsBlend(lat: number, lon: number, sizeM = 11000, n = 96): Promise<TerrainData> {
   const dLat = (sizeM / MARS_R) * (180 / Math.PI);

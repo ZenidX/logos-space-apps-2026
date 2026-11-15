@@ -27,27 +27,31 @@ interface Props {
   className?: string;
   // false: la rueda del ratón hace scroll de la página en lugar de zoom (portada).
   zoom?: boolean;
+  // Toque/clic en la esfera (sin arrastrar): lat/lon de ese punto (página Base).
+  onPick?: (lat: number, lon: number) => void;
 }
 
 
 const ATMO_VERT = "varying vec3 n; void main(){ n = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
 const ATMO_FRAG = "uniform vec3 c; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0); }";
 
-export default function Globe({ body, markers, selectedId = null, onSelect, onError, className = "", zoom = true }: Props) {
+export default function Globe({ body, markers, selectedId = null, onSelect, onError, className = "", zoom = true, onPick }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const markersRef = useRef(markers);
   const selectedRef = useRef(selectedId);
   const api = useRef<{ flyTo: (lat: number, lon: number) => void; invalidate: () => void } | null>(null);
   const onErrorRef = useRef(onError); // ref: un onError en línea no debe reiniciar la escena
+  const onPickRef = useRef(onPick);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     onErrorRef.current = onError;
+    onPickRef.current = onPick;
     markersRef.current = markers;
     selectedRef.current = selectedId;
     api.current?.invalidate();
-  }, [markers, selectedId, onError]);
+  }, [markers, selectedId, onError, onPick]);
 
   // Escena: se monta una vez por cuerpo
   useEffect(() => {
@@ -78,7 +82,30 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
 
     const material = new THREE.MeshStandardMaterial({ roughness: 1, metalness: 0 });
     const geometry = new THREE.SphereGeometry(1, 64, 48);
-    scene.add(new THREE.Mesh(geometry, material));
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    // Elegir un punto cualquiera: clic sin arrastre (< 6 px) → rayo contra la esfera → lat/lon
+    let down: { x: number; y: number } | null = null;
+    const ray = new THREE.Raycaster();
+    const onDown = (e: PointerEvent) => (down = { x: e.clientX, y: e.clientY });
+    const onUp = (e: PointerEvent) => {
+      if (!down || !onPickRef.current) return;
+      const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+      down = null;
+      if (moved > 6) return;
+      const r = renderer.domElement.getBoundingClientRect();
+      ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+      const hit = ray.intersectObject(sphere)[0];
+      if (!hit) return;
+      const p = hit.point.clone().normalize();
+      const lat = 90 - (Math.acos(Math.max(-1, Math.min(1, p.y))) * 180) / Math.PI;
+      let lon = (Math.atan2(p.z, -p.x) * 180) / Math.PI - 180; // inversa de latLonToVec3
+      if (lon < -180) lon += 360;
+      onPickRef.current(lat, lon);
+    };
+    renderer.domElement.addEventListener("pointerdown", onDown);
+    renderer.domElement.addEventListener("pointerup", onUp);
     let atmo: THREE.Mesh | null = null;
     if (def.atmosphere !== null) {
       atmo = new THREE.Mesh(
@@ -192,6 +219,8 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
       material.map?.dispose(); material.dispose(); geometry.dispose();
       if (atmo) { atmo.geometry.dispose(); (atmo.material as THREE.Material).dispose(); }
       reduce.removeEventListener("change", onReduce);
+      renderer.domElement.removeEventListener("pointerdown", onDown);
+      renderer.domElement.removeEventListener("pointerup", onUp);
       renderer.dispose(); renderer.forceContextLoss();
       renderer.domElement.remove();
       api.current = null;

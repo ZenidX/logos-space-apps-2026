@@ -9,6 +9,7 @@ export const PAGES = [
   { href: "/", label: "Home" },
   { href: "/discover/", label: "Discover" },
   { href: "/3d/", label: "3D" },
+  { href: "/base/", label: "Base" },
   { href: "/method/", label: "Method" },
   { href: "/data/", label: "Data" },
 ] as const;

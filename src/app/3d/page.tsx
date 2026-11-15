@@ -13,7 +13,7 @@ export default function ThreeDPage() {
         Mars site. Drag to turn it and move the Sun to see the shadows.
       </PageIntro>
       <Story sections={["step3d"]} />
-      <NextPage href="/method/" label="Does it work?" />
+      <NextPage href="/base/" label="Build a base there" />
     </div>
   );
 }

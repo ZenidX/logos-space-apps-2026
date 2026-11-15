@@ -374,3 +374,6 @@ h1, h2, h3 {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
+
+/* Página Base: etiquetas de las piezas sobre la escena 3D */
+.base-tag { position: absolute; left: 0; top: 0; display: none; white-space: nowrap; padding: 3px 6px; font: 500 var(--t-xs)/1 var(--font-jetbrains), monospace; letter-spacing: .04em; color: var(--ink); background: rgba(4, 8, 15, .8); border: 1px solid var(--line2); border-left: 2px solid var(--acc); }

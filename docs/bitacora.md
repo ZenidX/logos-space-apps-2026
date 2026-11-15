@@ -2,6 +2,27 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 6) · Página Base: una base en cualquier punto de la Luna o de Marte (rama `zexu/base-mode`)
+
+- Pedido del equipo: la intro impresiona, pero el cierre con datos se queda corto. Queremos ver cómo sería la base y cómo se harían las misiones en el sitio elegido.
+- Nueva página **`/base/`** (paso 4 de 6; Method pasa a 5 y Data a 6). Tocas cualquier punto del globo, eliges un sitio sugerido (Shackleton, Mons Mouton, Tranquility Base, Jezero, Arcadia) o escribes las coordenadas.
+- **Terreno real** (`loadMoonAny` en `src/lib/terrain.ts`):
+  - Luna: LOLA a 5 m (|lat| ≥ 87,5°), a 30 m (≥ 75°) o global de 118 m. Zona de 10 km.
+  - Marte: MOLA + HRSC a ~200 m; en Jezero, CTX a 20 m. Zona de 14 km.
+  - Comprobado el 15-11 que `LRO_LOLA_DEM_Global_256ppd_v06` devuelve F32.
+- **Planificador** (`src/lib/base-plan.ts`, lógica pura). Las reglas salen de `docs/estrategias-bases.md`:
+  - Hábitat en llano (en el polo lunar, en alto) y pista a 1,5–3 km.
+  - Energía: mástiles solares verticales en los altos (polo lunar); campo solar y reactor a ~1 km (resto).
+  - Recursos: hielo en lo más hondo (polo lunar, proxy, no es un mapa de sombra), hielo somero en Marte a ≥ 35° (regla por latitud) u oxígeno.
+  - Parada científica en el máximo relieve local, ruta del rover con A* que evita pendientes de más de 20° y radio de paseo de 2 km.
+  - Las distancias y los límites son **suposiciones nuestras** y la web lo dice.
+- **Escena** (`src/components/BaseScene.tsx`): misión en 6 pasos animados (aterrizaje, hábitat, energía, recursos, rover, paseo), con capas de relieve, foto y pendiente (verde = < 10°, la misma regla que la viabilidad v3). Las piezas se dibujan entre 23 y 33 veces su tamaño real, y la web muestra el factor.
+- **Unión con la Tierra:** cada paso enseña dónde ensayarlo con `operations.json` (el mejor sitio nuevo y uno accesible).
+- **Condiciones del sitio**, cada una etiquetada como medida, física o regla aproximada: % edificable, pendiente, relieve, Sol máximo, gravedad, día y noche, enlace con la Tierra (cara visible u oculta), y presión y hielo en Marte.
+- `Globe.tsx`: nueva propiedad opcional `onPick(lat, lon)` (clic sin arrastre → rayo → lat/lon; la inversa se comprobó con 5 puntos).
+- Comprobado: `tsc`, `eslint` (solo los 2 avisos de antes), `next build`; prueba en Node con terreno real (Shackleton, Tranquilidad, Jezero, Arcadia: planificar tarda < 0,2 s); capturas en Chromium sin pantalla a 1280 px (Shackleton, Jezero, Arcadia) y 390 px (Tranquilidad), sin errores en la consola. **Sin probar:** móvil real y táctil.
+- Sin unir a `main` ni publicar.
+
 ## 2026-11-15 (tarde, 5) · Nombre: quedaban restos de «Terra Analog»
 
 - El cambio a **TerraVista** (`6ab5252`) no llegó a las pantallas añadidas después: logo de la barra (`SiteNav.tsx`, ahora «Terra**Vista**» con «Vista» en color de acento), texto de «How it works» (`HowItWorks.tsx`), texto de la escena de límites (`Story.tsx`) y documentos internos (`valor-anadido.md`, `estrategias-bases.md`, HANDOFF*).

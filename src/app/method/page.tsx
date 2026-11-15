@@ -8,7 +8,7 @@ import { PageIntro } from "@/components/HowItWorks";
 export default function MethodPage() {
   return (
     <div className="pt-12">
-      <PageIntro step={4} title="Can you trust the ranking?">
+      <PageIntro step={5} title="Can you trust the ranking?">
         We tested it on 25 analog sites that space agencies already use: if the method is right, they should score high.
         Here is how they score, and where no place on Earth can match the Moon or Mars.
       </PageIntro>
