@@ -417,7 +417,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
             key={m.id}
             ref={(n) => { if (n) buttons.current.set(m.id, n); else buttons.current.delete(m.id); }}
             type="button"
-            className={`mk ${m.kind === "target" ? "target" : "cand"} ${m.id === selectedId ? "sel" : m.id === highlightId ? "hi" : ""} pointer-events-auto`}
+            className={`mk ${m.kind === "target" ? "target" : "cand"} b-${m.body} ${m.id === selectedId ? "sel" : m.id === highlightId ? "hi" : ""} pointer-events-auto`}
             style={{ left: 0, top: 0, visibility: "hidden", ["--c" as string]: `#${COLOR[m.body].toString(16).padStart(6, "0")}` }}
             aria-label={`${m.label}${m.rank ? `, number ${m.rank}` : ""}`}
             aria-pressed={m.id === selectedId}
