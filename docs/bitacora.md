@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 8) · Vídeo v4: grabado sobre la web real del equipo
+
+- La web que se entrega es la del repo del equipo (`zexuguo/SpaceApp-Logos`, https://spaceapp-logos.vercel.app), no la de este repo. El vídeo se ha grabado de nuevo entero sobre esa web y ya no tiene tramos en negro: apertura de la portada → «Rehearse the Moon and Mars on Earth» → la idea → misión EVA (vuelo a la Luna) → hielo en el suelo (vuelo a Marte) → ficha de SP Crater con «Where the analogy breaks» → acceso de Haughton (licencia de Nunavut) y de Nueva Siberia (High) → cierre. Plano a plano en `docs/guion-video.md`.
+- Voz nueva del equipo (29,5 s). El vídeo se corta a 29,5 s. La línea de los avisos pasa a *«and flags where access needs permits, or extra care»*, porque el indicador de acceso de la web dice que no es una evaluación de seguridad (Validity).
+- Nombre escrito **«Terra Vista»** (dos palabras, como la cabecera de la web) en los subtítulos y en el cierre.
+- Captura (`video/scripts/capture.cjs`) desde la web pública con `?capture=1`, sin tocar el repo del equipo. Lecciones: las animaciones CSS también hay que llevarlas con el reloj virtual (si no, saltan entre capturas). Durante la carga hay que dar pocos pasos de reloj, porque si no el WebGL por software acumula fotogramas y la primera captura tarda minutos. La escena 3D a pantalla completa va a ~0,25 fps: el plano de 18 s tarda ~39 min, y los de la ficha ~1,3 fps.
+- Rehacer: `video/scripts/make.sh` (todo) o `SKIP_CAPTURE=1 video/scripts/make.sh` (~85 s). Publicar: `video/scripts/publish-demo.sh` + push a `main` (el workflow publica solo).
+
 ## 2026-11-15 (tarde, 7) · Publicación automática con GitHub Actions
 
 - Nuevo `.github/workflows/deploy.yml`: en cada push a `main` (o a mano desde la pestaña Actions) construye la web con `NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026` y sube `out/` a `gh-pages`, igual que `npm run deploy`. Si llegan varios push seguidos, solo se publica el último.
