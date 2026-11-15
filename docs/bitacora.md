@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 2) · Vídeo publicado en una página oculta de la web
+
+- Página `/demo-video/` (sin enlace en el menú y con `noindex`): https://zenidx.github.io/logos-space-apps-2026/demo-video/ · enlace directo al MP4: https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo.mp4
+- Reproductor: el `<video>` nativo del navegador, con MP4 (H.264 + AAC) y copia WebM de respaldo, más una imagen de portada (el cierre). Archivos en `public/demo/` y página en `src/app/demo-video/page.tsx`.
+- Commit `aa278ed`, directo en `main` (encima de `6044abb`, sin tocar nada más), y publicado con `npm run deploy` desde un worktree de `origin/main`. Desde la rama `video` no se puede publicar: lleva una versión vieja de la web.
+- Prueba de punta a punta: la página da 200, el MP4 se sirve como `video/mp4` con peticiones por rangos (206), y en Chrome se reproduce en escritorio (1440 px) y en móvil (390 px): dura 29,9 s, es 1920×1080 y tiene audio.
+- **Para cambiar el vídeo:** sustituir los tres archivos de `public/demo/` en `main`, hacer commit y volver a publicar. Ahora está el montaje de prueba v2 (con planos en negro).
+
 ## 2026-11-15 (tarde) · Vídeo: voz de ElevenLabs montada
 
 - `video/audio/voice.wav` (44,1 kHz mono, 30,08 s; fuera de git). La voz termina en el s 29,6, así que el corte a 29,9 s no se come nada. Las pausas entre frases caen en 5,9 · 12,2 · 18,2 · 21,6 · 26,2 · 28,1 s, de acuerdo con `docs/timestamps.txt`.
