@@ -88,6 +88,8 @@ const loadSite = (body: PlanetBody, lat: number, lon: number) =>
 const coord = (lat: number, lon: number) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
 
+const WORLD_COLOR = { moon: "#d7dce6", mars: "#ff8d5e" } as const; // = BODY_COLOR of the home page
+
 const LEVEL: Record<Level, { label: string; color: string }> = {
   good: { label: "Works here", color: "var(--ok)" },
   limited: { label: "With limits", color: "var(--acc)" },
@@ -140,7 +142,7 @@ function WhyChips({ sub, site }: { sub: SubMission; site: EarthSite }) {
   if (!t || !id) return null;
   const rows = whyRows(t.criteria as Criterion[], site.byTask[id], Math.abs(site.lat));
   return (
-    <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[12px] text-[var(--mut)]">
+    <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11.5px] text-[var(--mut)]">
       {rows.map((r) => (
         <span key={r.label}>
           <span aria-hidden style={{ color: r.score == null ? "var(--dim)" : r.score >= 0.75 ? "var(--ok)" : r.score > 0 ? "var(--acc)" : "var(--warn)" }}>
@@ -201,49 +203,49 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
   const pending = sites.filter((s) => match[s.key] === undefined).length;
   return (
     <div>
-      <p className="text-sm text-[var(--mut)]">
+      <p className="text-[12.5px] text-[var(--mut)]">
         {sub.tasks.map((id) => TASKS.get(id)?.name).filter(Boolean).join(" · ")}
-        {pending > 0 && <span className="vivo ml-2 font-mono text-xs text-[var(--acc)]">comparing terrain… {sites.length - pending}/{sites.length}</span>}
+        {pending > 0 && <span className="vivo mono ml-2 text-[11px] text-[var(--earth)]">comparing terrain… {sites.length - pending}/{sites.length}</span>}
       </p>
       {ranked[0] && (
-        <button type="button" onClick={() => onCompare(ranked[0], ranked)} className="glass-chip mt-3 w-full justify-center !min-h-[48px] text-[15.5px] font-semibold">
-          Compare side by side with the best Earth site <span aria-hidden>▶</span>
+        <button type="button" onClick={() => onCompare(ranked[0], ranked)} className="chip mt-2 inline-flex hover:border-[var(--ink)]">
+          Compare with the best Earth site <span aria-hidden>→</span>
         </button>
       )}
-      <ol className="mt-3 flex flex-col gap-2">
+      <ol className="mt-2 grid gap-0.5">
         {ranked.map((s, i) => {
           const m = match[s.key];
           const t = total(s);
           return (
-            <li key={s.key} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border border-[var(--line)] bg-[var(--bg2)] px-4 py-3">
-              <span className="font-mono text-xs text-[var(--dim)]">{String(i + 1).padStart(2, "0")}</span>
+            <li key={s.key} className="row grid grid-cols-[22px_1fr_auto] items-start gap-2 rounded-xl border border-transparent p-2 hover:border-[var(--line2)]">
+              <span className="mono pt-0.5 text-[12px] text-[var(--earth)]">{String(i + 1).padStart(2, "0")}</span>
               <span className="min-w-0">
-                <span className="block truncate text-[15px] text-[var(--ink)]">{s.place}</span>
-                <span className="block font-mono text-[11px] text-[var(--dim)]">
+                <span className="place block truncate text-[14.5px] leading-snug">{s.place}</span>
+                <span className="mono block text-[10.5px] text-[var(--dim)]">
                   {coord(s.lat, s.lon)} · conditions {Math.round(s.taskScore * 100)}% · terrain{" "}
                   {typeof m === "number" ? `${Math.round(m * 100)}%` : m === "error" ? "n/a" : "…"}
                   {s.easy && s.accessH !== null ? ` · ${s.accessH.toFixed(0)} h from a city` : ""}
                 </span>
                 <WhyChips sub={sub} site={s} />
                 {t >= 0 && (
-                  <span className="mt-1.5 block h-[4px] w-full overflow-hidden rounded-full bg-[var(--line)]">
-                    <span className="block h-full rounded-full bg-[var(--acc)]" style={{ width: `${Math.round(t * 100)}%` }} />
+                  <span className="mt-1.5 block h-[3px] w-full overflow-hidden rounded-full bg-[var(--line)]">
+                    <span className="block h-full rounded-full bg-[var(--earth)]" style={{ width: `${Math.round(t * 100)}%` }} />
                   </span>
                 )}
               </span>
               <button
                 type="button"
                 onClick={() => onCompare(s, ranked)}
-                className="glass-tab text-[15.5px]"
+                className="fchip self-center"
               >
-                Rehearse <span aria-hidden>▶</span>
+                Rehearse <span aria-hidden>→</span>
                 <span className="sr-only"> {sub.name} at {s.place}, side by side with the base site</span>
               </button>
             </li>
           );
         })}
       </ol>
-      <p className="mt-2 text-xs text-[var(--dim)]">
+      <p className="mt-2 text-[11px] leading-snug text-[var(--dim)]">
         Conditions: how well the place meets this sub-mission&apos;s needs (cold, thin air, dust, ice, access…), from our global search of
         Earth&apos;s 0.1° grid with NASA data in Google Earth Engine, known analog sites excluded. Terrain: how close its 11 × 11 km slope mix
         and relief are to your base site, computed now from elevation data. Rank = half each.
@@ -496,12 +498,12 @@ export default function BasePlanner() {
   const primary = "inline-flex min-h-[var(--tap)] items-center rounded-full bg-[var(--ink)] px-5 text-[14px] font-semibold text-[var(--bg)] hover:bg-white";
 
   return (
-    <div className="pt-[4.25rem] md:grid md:h-dvh md:grid-cols-[minmax(0,1fr)_minmax(360px,440px)] md:gap-4 md:px-4 md:pb-4 md:pt-[5rem]">
+    <div className="pt-[4.25rem] md:h-dvh md:pt-0">
       {/* Escena: el globo para elegir sitio; después, la base sobre su terreno real. Fija mientras se lee el panel. */}
-      <section ref={sceneRef} aria-label="3D view" className="sticky top-[4rem] z-20 h-[44dvh] bg-[var(--bg)] px-3 pb-2 md:static md:h-full md:bg-transparent md:px-0 md:pb-0">
+      <section ref={sceneRef} aria-label="3D view" className="sticky top-[4rem] z-20 h-[44dvh] bg-[var(--bg)] md:fixed md:inset-y-0 md:left-0 md:right-[436px] md:top-0 md:h-dvh md:bg-transparent">
         <div className="relative h-full">
           <Visor
-            className={`h-full ${showGlobe || !data ? "globo" : ""}`}
+            className={`bleed h-full ${showGlobe || !data ? "globo" : ""}`}
             reticle={false}
             glitchKey={body}
             tl={
@@ -546,7 +548,7 @@ export default function BasePlanner() {
           </Visor>
           {/* Controles de vista, sobre la escena y recogidos */}
           {!showGlobe && data && (
-            <div className="pointer-events-none absolute inset-x-2 bottom-2 z-[700] flex items-end justify-between gap-2 md:inset-x-3 md:bottom-3">
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-[700] flex items-end justify-between gap-2 md:inset-x-8 md:bottom-4">
               <div className="pointer-events-auto flex min-w-0 gap-1.5 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="Ground layer">
                 {(["relief", "photo", "slope", "sun", ...(plan?.ice ? (["ice"] as Layer[]) : [])] as Layer[]).map((l) => (
                   <button key={l} type="button" className="glass-tab !min-h-[42px] shrink-0 !px-4 text-[15px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
@@ -589,24 +591,22 @@ export default function BasePlanner() {
             </div>
           )}
         </div>
-        {!showGlobe && data && LEGEND[layer] && <p className="mt-1.5 hidden text-[11px] text-[var(--mut)] md:block">{LEGEND[layer]!(plan!)}</p>}
+        {!showGlobe && data && LEGEND[layer] && <p className="pointer-events-none absolute inset-x-8 bottom-[4.25rem] z-[600] hidden text-[11px] text-[var(--mut)] [text-shadow:0_1px_6px_rgba(4,6,12,.95)] md:block">{LEGEND[layer]!(plan!)}</p>}
       </section>
 
       {/* Panel: el flujo en orden */}
-      <aside aria-label="Plan a base" className="glass mx-3 mb-24 mt-3 rounded-[20px] px-4 pb-6 pt-4 md:mx-0 md:mb-0 md:mt-0 md:overflow-y-auto md:p-5 [scrollbar-width:thin]">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="label">Moon &amp; Mars · base concept</p>
-            <h1 className="display mt-1 text-[32px] leading-[1.02]">Plan a base</h1>
-            <p className="mt-1 text-sm text-[var(--mut)]">Pick a site, watch the base run on its real terrain, then see where on Earth to rehearse each job.</p>
-          </div>
-          <div className="flex shrink-0 gap-1.5" role="group" aria-label="World">
-            <button type="button" className="glass-tab !min-h-[44px] text-[15.5px]" aria-pressed={body === "moon"} onClick={() => switchBody("moon")}>
-              Moon
-            </button>
-            <button type="button" className="glass-tab !min-h-[44px] text-[15.5px]" aria-pressed={body === "mars"} onClick={() => switchBody("mars")}>
-              Mars
-            </button>
+      <aside aria-label="Plan a base" className="mx-4 mb-24 mt-3 md:fixed md:bottom-4 md:right-4 md:top-16 md:z-30 md:m-0 md:w-[420px]">
+        <div className="slide-in glass rounded-[20px] p-5 md:h-full md:overflow-y-auto md:p-6 [scrollbar-width:thin]">
+        <div className="fade-in" key={body}>
+          <p className="text-[14px]" style={{ color: WORLD_COLOR[body] }}>Base concept · {body === "moon" ? "Moon" : "Mars"}{site && !showGlobe ? <> · <span className="place">{site.name.replace(/^★ /, "").replace(/ · .*/, "")}</span></> : null}</p>
+          <h1 className="display mt-1 text-[30px] leading-[1]">Plan a base</h1>
+          <p className="mt-1 text-[13.5px] text-[var(--mut)]">Pick a site, watch the base run on its real terrain, then see where on Earth to rehearse each job.</p>
+          <div className="mt-3 flex gap-2" role="group" aria-label="World">
+            {(["moon", "mars"] as const).map((b) => (
+              <button key={b} type="button" aria-pressed={body === b} onClick={() => switchBody(b)} className="chip glass !py-1.5" style={body === b ? { borderColor: WORLD_COLOR[b], color: WORLD_COLOR[b] } : undefined}>
+                {b === "moon" ? "Moon" : "Mars"}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -614,38 +614,38 @@ export default function BasePlanner() {
         {showGlobe || !site ? (
           <section aria-labelledby="pick-h" className="mt-5">
             <div className="flex items-center justify-between">
-              <h2 id="pick-h" className="display text-[22px] leading-tight"><span className="step-k mr-2 align-middle">1</span>Choose a site</h2>
+              <h2 id="pick-h" className="label">1 · Choose a site</h2>
               {data && site && (
-                <button type="button" className="glass-chip !min-h-[42px] text-[15px]" onClick={() => openGlobe(false)}>
+                <button type="button" className="chip hover:border-[var(--ink)]" onClick={() => openGlobe(false)}>
                   Back to {site.name.replace(/^★ /, "").replace(/ · .*/, "")}
                 </button>
               )}
             </div>
-            <p className="mt-1 text-[13px] text-[var(--mut)]">Tap the globe, or start from a site our search recommends.</p>
-            <p className="mt-4 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)]">★ Recommended by our search</p>
-            <ul className="mt-2 flex flex-col gap-2">
-              {BEST[body].map((p) => (
+            <p className="mt-1 text-[12.5px] text-[var(--mut)]">Tap the globe, or start from a site our search recommends.</p>
+            <h3 className="label mt-3 flex items-center justify-between" style={{ color: "var(--earth)" }}><span>★ Recommended by our search</span><span className="mono text-[var(--dim)]">{BEST[body].length}</span></h3>
+            <ul className="stagger mt-0.5 grid gap-0.5">
+              {BEST[body].map((p, i) => (
                 <li key={p.id}>
-                  <button type="button" onClick={() => choose(p)} className="w-full rounded-2xl border border-[var(--line2)] bg-[var(--bg2)] px-4 py-3 text-left transition-colors hover:border-[var(--acc)]">
-                    <span className="block text-[15px] font-semibold text-[var(--ink)]">{p.name.replace(/^★ /, "")}</span>
-                    <span className="mt-0.5 block text-[12.5px] leading-snug text-[var(--mut)]">{p.why}</span>
+                  <button type="button" onClick={() => choose(p)} className="row grid w-full grid-cols-[22px_1fr] items-start gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
+                    <span className="mono pt-0.5 text-[12px]" style={{ color: "var(--earth)" }}>{String(i + 1).padStart(2, "0")}</span>
+                    <span className="min-w-0"><span className="place block text-[15px] leading-snug">{p.name.replace(/^★ /, "")}</span><span className="block text-[11.5px] leading-snug text-[var(--dim)]">{p.why}</span></span>
                   </button>
                 </li>
               ))}
             </ul>
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--dim)]">Well-known sites</p>
-            <ul className="mt-2 flex flex-col gap-2">
-              {PRESETS[body].map((p) => (
+            <h3 className="label mt-3 flex items-center justify-between" style={{ color: "var(--mut)" }}><span>Well-known sites</span><span className="mono text-[var(--dim)]">{PRESETS[body].length}</span></h3>
+            <ul className="stagger mt-0.5 grid gap-0.5">
+              {PRESETS[body].map((p, i) => (
                 <li key={p.id}>
-                  <button type="button" onClick={() => choose(p)} className="w-full rounded-2xl border border-[var(--line)] bg-[var(--bg2)] px-4 py-2.5 text-left transition-colors hover:border-[var(--acc)]">
-                    <span className="block text-[14.5px] text-[var(--ink)]">{p.name}</span>
-                    <span className="block text-[12px] text-[var(--mut)]">{p.why}</span>
+                  <button type="button" onClick={() => choose(p)} className="row grid w-full grid-cols-[22px_1fr] items-start gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
+                    <span className="mono pt-0.5 text-[12px] text-[var(--mut)]">{String(BEST[body].length + i + 1).padStart(2, "0")}</span>
+                    <span className="min-w-0"><span className="place block text-[15px] leading-snug">{p.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{p.why}</span></span>
                   </button>
                 </li>
               ))}
             </ul>
-            <details className="mt-4 rounded-2xl border border-[var(--line)] px-4 py-3">
-              <summary className="cursor-pointer text-[14px] text-[var(--mut)]">Enter coordinates</summary>
+            <details className="about mt-4">
+              <summary>Enter coordinates</summary>
               <form onSubmit={submit} className="mt-3 flex flex-wrap items-end gap-2">
                 <label className="flex flex-col text-[12px] text-[var(--mut)]">
                   Latitude (°)
@@ -664,21 +664,21 @@ export default function BasePlanner() {
           </section>
         ) : (
           <>
-            <section aria-labelledby="site-h" className="mt-5 rounded-2xl border border-[var(--line2)] bg-[var(--bg2)] p-4">
+            <section aria-labelledby="site-h" className="mt-5 border-t border-[var(--line)] pt-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)]">1 · Site</p>
-                  <h2 id="site-h" className="display mt-1 text-[22px] leading-tight">{site.name.replace(/^★ /, "")}</h2>
-                  <p className="font-mono text-[12px] text-[var(--dim)]">{coord(site.lat, site.lon)} · {body === "moon" ? "Moon" : "Mars"}</p>
+                  <p className="label">1 · Site</p>
+                  <h2 id="site-h" className="place mt-1 text-[24px] leading-[1.05] tracking-[-.03em]">{site.name.replace(/^★ /, "")}</h2>
+                  <p className="mono text-[11.5px] text-[var(--dim)]">{coord(site.lat, site.lon)} · {body === "moon" ? "Moon" : "Mars"}</p>
                 </div>
-                <button type="button" className="glass-chip !min-h-[42px] shrink-0 text-[15px]" onClick={() => openGlobe(true)}>
+                <button type="button" className="chip shrink-0 hover:border-[var(--ink)]" onClick={() => openGlobe(true)}>
                   Change site
                 </button>
               </div>
               {status === "loading" && <p role="status" className="vivo mt-3 text-sm text-[var(--mut)]">Downloading NASA elevation data and laying out the base…</p>}
               {status === "error" && <p role="alert" className="mt-3 text-sm" style={{ color: "var(--warn)" }}>Could not load this site: {err}</p>}
               {plan && (
-                <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
+                <dl className="mt-3 grid grid-cols-3 gap-2">
                   {[
                     ["Buildable", `${Math.round(plan.stats.flatPct)} %`],
                     ["Sun at habitat", `${Math.round(plan.habitatLit * 100)} %`],
@@ -686,56 +686,58 @@ export default function BasePlanner() {
                       ? ["Ice at surface", plan.ice.surfPct > 0 ? `${plan.ice.surfPct.toFixed(1)} %` : "none"]
                       : ["Air", `${Math.round(marsPressurePa(plan.habitat.h))} Pa`],
                   ].map(([k, v]) => (
-                    <div key={k} className="rounded-xl bg-[var(--bg3)] px-2 py-2">
-                      <dt className="text-[11px] text-[var(--mut)]">{k}</dt>
-                      <dd className="text-[16px] font-semibold text-[var(--ink)]">{v}</dd>
+                    <div key={k} className="ltile">
+                      <dt>{k}</dt>
+                      <dd>{v}</dd>
                     </div>
                   ))}
                 </dl>
               )}
               {plan && subs.some((x) => x.tasks.length) && (
-                <button type="button" onClick={compareFromCard} className="glass-chip mt-3 w-full justify-center !min-h-[48px] text-[15.5px] font-semibold">
-                  Compare this base with an Earth site <span aria-hidden>▶</span>
+                <button type="button" onClick={compareFromCard} className="chip mt-3 inline-flex hover:border-[var(--ink)]">
+                  Compare this base with an Earth site <span aria-hidden>→</span>
                 </button>
               )}
             </section>
 
             {plan && (
               <section aria-labelledby="subs-h" className="mt-5">
-                <h2 id="subs-h" className="display text-[22px] leading-tight"><span className="step-k mr-2 align-middle">2</span>What the base must keep doing</h2>
-                <p className="mt-1 text-[13px] text-[var(--mut)]">Open a job to see it in 3D, how well this site supports it and where on Earth to rehearse it.</p>
-                <ul className="mt-3 flex flex-col gap-2">
-                  {subs.map((s) => {
+                <h2 id="subs-h" className="label">2 · What the base must keep doing · {subs.length}</h2>
+                <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">Open a job to see it in 3D, how well this site supports it and where on Earth to rehearse it.</p>
+                <ul className="stagger mt-1.5 grid gap-0.5">
+                  {subs.map((s, i) => {
                     const open = subId === s.id;
                     return (
-                      <li key={s.id} className={`rounded-2xl border bg-[var(--bg2)] transition-colors ${open ? "border-[var(--acc)]" : "border-[var(--line)]"}`}>
+                      <li key={s.id} className={`rounded-xl border transition-colors ${open ? "border-[var(--line2)] bg-[rgba(150,175,230,.05)]" : "border-transparent"}`}>
                         <button
                           type="button"
                           aria-expanded={open}
                           onClick={() => (open ? closeSub() : pickSub(s.id))}
-                          className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                          className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl p-2 text-left"
                         >
+                          <span className="mono text-[12px]" style={{ color: LEVEL[s.level].color }}>{String(i + 1).padStart(2, "0")}</span>
                           <span className="min-w-0">
-                            <span className="block text-[15px] font-semibold text-[var(--ink)]">{s.name}</span>
-                            <span className="block text-[12px] text-[var(--dim)]">{s.cadence}</span>
+                            <span className="place block text-[15px] leading-snug">{s.name}</span>
+                            <span className="block truncate text-[11.5px] text-[var(--dim)]">{s.cadence}</span>
                           </span>
                           <span className="flex shrink-0 items-center gap-2">
-                            <span className="rounded-full px-2 py-0.5 text-[11.5px] font-semibold" style={{ color: LEVEL[s.level].color, boxShadow: `inset 0 0 0 1px ${LEVEL[s.level].color}` }}>
+                            <span className="inline-flex items-center gap-1.5 text-[11.5px]" style={{ color: LEVEL[s.level].color }}>
+                              <i aria-hidden className="inline-block h-[7px] w-[7px] rounded-full" style={{ background: LEVEL[s.level].color, boxShadow: `0 0 8px ${LEVEL[s.level].color}` }} />
                               {LEVEL[s.level].label}
                             </span>
-                            <span aria-hidden className={`text-[var(--mut)] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
+                            <span aria-hidden className={`text-[var(--mut)] transition-transform ${open ? "rotate-180" : ""}`}>⌄</span>
                           </span>
                         </button>
                         {open && (
-                          <div className="border-t border-[var(--line)] px-4 pb-4 pt-3">
-                            <p className="text-[14px] text-[var(--ink)]">{s.verdict}</p>
-                            <p className="mt-1.5 text-[12.5px] text-[var(--mut)]">
-                              <span className="text-[var(--ink)]">Needs: </span>
+                          <div className="fade-in px-2 pb-3 pl-[38px]">
+                            <p className="text-[13.5px] text-[var(--ink)]">{s.verdict}</p>
+                            <p className="mt-1.5 border-l-2 pl-3 text-[12.5px] text-[var(--mut)]" style={{ borderColor: LEVEL[s.level].color }}>
+                              <span className="label mr-1.5">Needs</span>
                               {s.needs}
                             </p>
                             {siteSig && (
                               <div className="mt-4">
-                                <p className="font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)]">3 · Rehearse it on Earth</p>
+                                <p className="label">3 · Rehearse it on Earth</p>
                                 <div className="mt-2">
                                   <EarthSim key={`${data?.key}:${s.id}`} sub={s} siteSig={siteSig} onCompare={compare} />
                                 </div>
@@ -752,25 +754,25 @@ export default function BasePlanner() {
 
             {plan && (
               <>
-                <details className="mt-5 rounded-2xl border border-[var(--line)] px-4 py-3">
-                  <summary className="cursor-pointer text-[15px] font-semibold">What this site is like</summary>
+                <details className="about mt-5">
+                  <summary>What this site is like</summary>
                   <dl className="mt-3 grid gap-2 sm:grid-cols-2">
                     {plan.conditions.map((c) => (
-                      <div key={c.label} className="rounded-xl bg-[var(--bg2)] p-3">
-                        <dt className="flex items-center justify-between gap-2 text-[12px] text-[var(--mut)]">
+                      <div key={c.label} className="ltile">
+                        <dt className="flex items-center justify-between gap-2">
                           {c.label}
                           <span className={`text-[10.5px] ${c.kind === "data" ? "text-[var(--ok)]" : c.kind === "physics" ? "text-[var(--acc2-t)]" : "text-[var(--warn)]"}`}>
                             {c.kind === "data" ? "computed" : c.kind === "physics" ? "physics" : "rough rule"}
                           </span>
                         </dt>
-                        <dd className="mt-0.5 text-[16px] font-semibold text-[var(--ink)]">{c.value}</dd>
-                        <dd className="text-[11.5px] text-[var(--dim)]">{c.note}</dd>
+                        <dd>{c.value}</dd>
+                        <dd className="!text-[11.5px] !font-normal !tracking-normal text-[var(--dim)]" style={{ color: "var(--dim)" }}>{c.note}</dd>
                       </div>
                     ))}
                   </dl>
                 </details>
-                <details className="mt-3 rounded-2xl border border-[var(--line)] px-4 py-3">
-                  <summary className="cursor-pointer text-[15px] font-semibold">About this simulation</summary>
+                <details className="about mt-3">
+                  <summary>About this simulation</summary>
                   <div className="mt-2 text-[13px] text-[var(--mut)]">
                     <p className="text-[var(--ink)]">A concept, not a NASA design.</p>
                     <p className="mt-1">
@@ -789,6 +791,7 @@ export default function BasePlanner() {
             )}
           </>
         )}
+        </div>
       </aside>
 
       {rehearse && data && site && sub && siteSig && (

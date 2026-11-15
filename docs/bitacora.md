@@ -2,6 +2,16 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (noche, 23) · «Plan a base» con el mismo estilo que la vista de misión
+
+- Pedido: que `/base/` use los estilos y la tipografía de la vista de una misión (tras «Explore this mission», p. ej. `/?m=m1-eva-basalt&s=…`).
+- **Maquetación igual:** la escena 3D ocupa la página sin marco (`.visor.bleed`) y el panel es de cristal, fijo a la derecha, de 420 px y 20 px de radio, como el de la misión. Ojo: en el CSS del equipo `.glass` lleva `position: relative` sin capa y gana a `md:fixed`; por eso la posición va en el `aside` y el cristal en un `div` interior. En móvil, la escena sigue arriba y el panel debajo.
+- **Cabecera del panel como la de la misión:** línea de color del mundo («Base concept · Moon · {sitio}»), título display de 30 px, texto de 13,5 px y botones Moon/Mars como las píldoras de misión (borde y texto del color del mundo).
+- **Listas como «Sites»:** los sitios recomendados, los conocidos, las submisiones y los sitios de ensayo en la Tierra pasan de tarjetas con borde a filas (número en mono de color, nombre en `place`, línea secundaria pequeña, realce al pasar). Las submisiones llevan su estado con un punto de color, y al abrirse muestran «Needs» con borde lateral, como «Where it breaks».
+- **Cifras y desplegables:** «Buildable / Sun / Ice» y «What this site is like» usan los recuadros `.ltile` de la ficha del sitio. «Enter coordinates», «What this site is like» y «About this simulation» usan el desplegable `.about` («About this mission»). Las acciones son `.chip` («Compare … →», «Change site») y `.fchip` («Rehearse →»).
+- La barra superior queda a la misma altura que la de la portada. Las clases copiadas de `logos.css` están al final de `src/app/(team)/globals.css`.
+- Comprobado con capturas en Chrome sin interfaz (escritorio 1440 px y móvil 390 px). El aviso de hidratación que sale al emular «movimiento reducido» viene de la transición de página del equipo (`template.tsx`, framer-motion) y ya existía.
+
 ## 2026-11-15 (tarde, 23) · Vídeo de demo v5: voz masculina
 
 - Pedido del usuario: rehacer el vídeo con la voz masculina (`video/audio/male_voice.wav`, 28,85 s) reutilizando las capturas (el plano `a` tarda ~40 min). Mismo guion; cambian la entonación y los tiempos.

@@ -469,3 +469,31 @@ body { --mono-f: var(--font-jetbrains), ui-monospace, Menlo, monospace; }
 .head-veil { background: linear-gradient(rgba(4, 6, 12, .92), rgba(4, 6, 12, .55) 70%, transparent); backdrop-filter: blur(6px); }
 /* Plan a base: step numbers as on the home page */
 .step-k { font: 400 10.5px/1.3 var(--mono-f); letter-spacing: .08em; text-transform: uppercase; color: var(--acc); }
+
+/* ===== Plan a base = the mission panel of the home page (15-11, night): classes copied from (logos)/logos.css ===== */
+.place { font-family: var(--font-plex), system-ui, sans-serif; font-style: normal; font-weight: 700; letter-spacing: -.02em; }
+@keyframes tv-fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes tv-slidein { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: tv-fadein 380ms var(--ease) both; }
+.slide-in { animation: tv-slidein 520ms var(--ease) both; }
+.stagger > * { animation: tv-fadein 420ms var(--ease) both; }
+.stagger > *:nth-child(1) { animation-delay: 40ms; } .stagger > *:nth-child(2) { animation-delay: 90ms; } .stagger > *:nth-child(3) { animation-delay: 140ms; }
+.stagger > *:nth-child(4) { animation-delay: 190ms; } .stagger > *:nth-child(5) { animation-delay: 240ms; } .stagger > *:nth-child(n+6) { animation-delay: 290ms; }
+.row { transition: background-color 180ms var(--ease), border-color 180ms var(--ease), transform 180ms var(--ease); }
+.row:hover { background: rgba(150, 175, 230, .07); transform: translateX(2px); }
+.row:active { transform: translateX(0) scale(.995); }
+.fchip { padding: 4px 10px; border: 1px solid var(--line2); border-radius: 999px; font: 500 11.5px/1.2 var(--font-plex), sans-serif; color: var(--mut); white-space: nowrap; transition: color 160ms var(--ease), border-color 160ms var(--ease); }
+.fchip:hover { border-color: var(--ink); color: var(--ink); }
+.about > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line2); border-radius: 999px; font: 600 13px/1.2 var(--font-plex), sans-serif; }
+.about > summary::-webkit-details-marker { display: none; }
+.about > summary::before { content: "+"; font-family: var(--mono-f); color: var(--mut); }
+.about[open] > summary::before { content: "–"; }
+.about > summary:hover { border-color: var(--ink); }
+.ltile { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: rgb(255 255 255 / .02); min-width: 0; }
+.ltile dt { font: 400 9.5px/1.2 var(--mono-f); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.ltile dd { margin: 0; font: 600 17px/1.15 var(--font-plex), sans-serif; letter-spacing: -.02em; color: var(--ink); overflow-wrap: anywhere; }
+/* the scene fills the page behind the panel, as on the home page: no frame */
+.visor.bleed { border-radius: 0; box-shadow: none; background: transparent; }
+.visor.bleed > .vineta { display: none; }
+@media (min-width: 768px) { .visor.bleed .hud.tl, .visor.bleed .hud.tr { top: 76px; } .visor.bleed .hud.tl { left: 32px; } .visor.bleed .hud.tr { right: 32px; } }
+@media (prefers-reduced-motion: reduce) { .fade-in, .slide-in, .stagger > * { animation: none; } }

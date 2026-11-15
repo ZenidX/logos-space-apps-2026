@@ -20,7 +20,7 @@ export default function SiteNav() {
   return (
     <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className="head-veil fixed inset-x-0 top-0 z-[1000] bg-[var(--bg)] md:bg-transparent">
       {/* Same header as the home page (Logos): full width, Back + logo on the left, outlined pill links on the right */}
-      <nav aria-label="Pages" className="flex items-center justify-between gap-2 px-4 pb-2 md:px-8 md:pb-3 md:pt-2">
+      <nav aria-label="Pages" className="flex items-center justify-between gap-2 px-4 py-2 md:px-8 md:pb-4 md:pt-0">
         <div className="flex shrink-0 items-center gap-2">
           <BackButton className="chip gap-1.5" />
           <Link href="/" className="title-sm flex shrink-0 items-center gap-2 whitespace-nowrap text-[16px]" aria-label="Terra Vista, home">
@@ -28,7 +28,7 @@ export default function SiteNav() {
             <span className="hidden sm:inline">Terra Vista</span>
           </Link>
         </div>
-        <ul className="-mr-1 flex items-center gap-2 overflow-x-auto py-1 [scrollbar-width:none]">
+        <ul className="-my-1 -mr-1 flex items-center gap-2 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
             const on = p.href === "/appendix/" ? path.startsWith("/appendix/") : path === norm(p.href);
             return (
