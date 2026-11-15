@@ -2,7 +2,7 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
-## 2026-11-15 (tarde, 24) · Vídeo de demo v6: grabado de nuevo, con *Plan a base*
+## 2026-11-15 (noche, 26) · Vídeo de demo v6: grabado de nuevo, con *Plan a base*
 
 - Pedido del usuario: vídeo nuevo porque la web cambió; centrado en el problema (emparejar la Tierra con cada misión, con sus valores y atributos, incluidos permisos y política) y con *Plan a base* como lo que nos diferencia. Voz nueva `video/audio/final-voice.wav` (29,59 s); el usuario cambió el texto al grabar y no tocó `docs/timestamps.txt`: lo rehice yo con la transcripción de Vosk y las pausas medidas.
 - Todos los planos se graban sobre https://zenidx.github.io/logos-space-apps-2026/ (Vercel no tiene *Plan a base*): a apertura → misiones 1 y 3 · s ficha de Haughton → licencia de Nunavut · b base montándose en Best site A · r ensayo de Water & oxygen lado a lado (Badakhshan ↔ Luna) → «Where it breaks» · cierre. Guion y planos en `docs/guion-video.md`.
