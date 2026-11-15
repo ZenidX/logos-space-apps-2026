@@ -7,7 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "bash scripts/deploy-pages.sh"
+    "deploy": "bash scripts/deploy-pages.sh",
+    "test": "node --experimental-strip-types src/lib/logos/globe-math.test.mjs && node --experimental-strip-types src/lib/logos/solar-math.test.mjs && node --experimental-strip-types src/lib/logos/label-layout.test.mjs && node src/data/sites.test.mjs && node --experimental-strip-types src/lib/logos/rules.test.mjs && node --experimental-strip-types src/lib/logos/radial-data.test.mjs",
+    "data:logos": "bash scripts/data/run.sh",
+    "test:data": "LOGOS_SITES=src/data/sites.json python3 -I scripts/data/test_index.py"
   },
   "dependencies": {
     "framer-motion": "^11.18.2",

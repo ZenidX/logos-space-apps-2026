@@ -6,6 +6,7 @@
 
 import { asset } from "@/lib/logos/asset";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SceneMarker } from "@/components/logos/SolarScene";
 import SitePanel, { AccessBars } from "@/components/logos/SitePanel";
@@ -182,6 +183,14 @@ export default function Home() {
   ) : null;
   const footer = (
     <footer data-scene-avoid className={`relative z-10 text-[11.5px] leading-relaxed text-[var(--dim)] ${missionId ? "px-4 pb-4 md:fixed md:bottom-3 md:left-0 md:max-w-[34%] md:px-8 md:pb-0" : "mt-12"}`}>
+      {!missionId && (
+        // Las páginas del equipo (antes un repo aparte): otra raíz de la web, con su propia barra
+        <nav aria-label="More in Terra Vista" className="mb-8 flex flex-wrap gap-2 text-[13.5px]">
+          {[["/base/", "Plan a base anywhere"], ["/story/", "Story"], ["/discover/", "Discover analogs"], ["/3d/", "3D terrain"], ["/method/", "Method"], ["/data/", "Data"]].map(([href, label]) => (
+            <Link key={href} href={href} className="chip hover:border-[var(--ink)]">{label}</Link>
+          ))}
+        </nav>
+      )}
       Imagery: NASA Blue Marble, Black Marble, LROC WAC and LOLA, Viking MDIM 2.1 and MOLA (credits in Method &amp; sources); the Sun is drawn by code. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
     </footer>
   );
@@ -192,6 +201,7 @@ export default function Home() {
       <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
         <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />Terra Vista <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
+          <Link href="/base/" className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`}>Plan a base <span aria-hidden>→</span></Link>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           {!missionId && !calm && step !== "explore" && <span className="md:hidden"><button type="button" className="chip" onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}>Missions <span aria-hidden>↓</span></button></span>}
           <button ref={methodBtn} className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`} onClick={() => setMethod(true)}><span className="sm:hidden">Sources</span><span className="hidden sm:inline">Method &amp; sources</span></button>

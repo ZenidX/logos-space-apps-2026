@@ -342,7 +342,7 @@ b, strong { font-weight: 600; }
 .mk.target .mk-l { bottom: calc(50% + 13px); }
 /* Loading: the starfield with the mark breathing, never a grey disc */
 .boot { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; z-index: 2; pointer-events: none; animation: boot-in 600ms var(--ease) both; }
-.boot-logo { width: 44px; height: 44px; background: url(/logo-symbol.svg) center / contain no-repeat; animation: breathe 2.2s ease-in-out infinite; }
+.boot-logo { width: 44px; height: 44px; background: var(--logo-url) center / contain no-repeat; /* --logo-url lo pone SolarScene con el basePath */ animation: breathe 2.2s ease-in-out infinite; }
 .boot-t { font: 400 10px/1 var(--mono); letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
 @keyframes breathe { 0%, 100% { opacity: .35; transform: scale(.94); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes boot-in { from { opacity: 0; } }

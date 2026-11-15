@@ -6,6 +6,7 @@
 // world and then to the Earth. Every visible site has a thin dashed line (the visual language of the orbits) from its
 // dot to its name, which is placed outside the globe (src/lib/label-layout.ts): names never overlap, hide with their site
 // on the far side and come back when the Earth is turned. No line is drawn to the target world.
+import { asset } from "@/lib/logos/asset";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { latLonToVec3 } from "@/lib/logos/globe-math";
@@ -404,7 +405,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
 
   return (
     <div ref={host} className={`relative h-full w-full overflow-hidden ${paused ? "is-paused" : ""} ${className}`} style={{ touchAction: "pan-y" }} role="group" aria-roledescription="3D scene" aria-label="The Sun with the Earth and Mars on their orbits, and the Moon around the Earth. Choosing a mission moves to a close-up of the Earth with the target world beside it. Sizes are not to scale. The list has the same places as text.">
-      {loading && <div role="status" className="boot"><span aria-hidden className="boot-logo" /><span className="boot-t">Loading NASA imagery</span></div>}
+      {loading && <div role="status" className="boot"><span aria-hidden className="boot-logo" style={{ ["--logo-url" as string]: `url(${asset("/logo-symbol.svg")})` }} /><span className="boot-t">Loading NASA imagery</span></div>}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {NAMES.map(([id, label]) => <span key={id} ref={(n) => { if (n) names.current.set(id, n); else names.current.delete(id); }} className="body-name absolute left-0 top-0" style={{ visibility: "hidden" }}>{label}</span>)}
       </div>

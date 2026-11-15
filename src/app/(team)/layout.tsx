@@ -5,7 +5,8 @@ import SiteNav from "@/components/SiteNav";
 import { AppStateProvider } from "@/components/AppState";
 
 const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["300", "400", "500"] });
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], weight: ["400", "500"] });
+// Variable (sin lista de pesos): con pesos fijos Google sirve a veces URLs /l/font?kit= sin extensión y next/font falla.
+const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
