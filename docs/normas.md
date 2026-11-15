@@ -26,3 +26,13 @@ Fuentes: Project Submission Guide y Judging & Awards Guide de spaceappschallenge
 
 ## Jurado
 Cinco criterios, cada uno de 1 a 5: **Impact, Creativity, Validity, Relevance, Presentation**.
+
+## Vídeo de demo: decisiones del equipo (15-11-2026)
+Comprobado de nuevo el 15-11. La página de la guía no se pudo volver a abrir (fallo de certificado en la red), pero las búsquedas confirman los límites: 30 s o menos, subtítulos en inglés, enlace público.
+- **Duración:** menos de 30 s, con margen. Objetivo: 27–28 s en total, voz incluida.
+- **Audio y subtítulos en inglés.** Subtítulos quemados en la imagen, idénticos a la locución (el jurado puede verlo sin sonido).
+- **Marca de agua de SI** pequeña y visible durante todo el vídeo, que diga que la edición se hizo con ayuda de IA y que la voz está generada con **ElevenLabs** (nombrado explícitamente).
+- Sin logos ni marcas de NASA en nada generado con IA. Las imágenes de datos de NASA dentro de la web (GIBS, Trek) sí pueden salir.
+- ElevenLabs y cualquier música van en «Space Agency Partner Data and Other References» y en «Use of SI».
+- **Cada plano tiene que servir a algún criterio del jurado** (Impact, Creativity, Validity, Relevance, Presentation). Ver el mapa de criterios en `docs/guion-video.md`.
+- Pendiente de confirmar a mano: la sección «Use of SI» de la guía (por si dice algo del audio) y si el evento de Barcelona tiene normas locales.
