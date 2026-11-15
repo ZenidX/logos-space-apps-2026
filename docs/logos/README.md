@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo-symbol.svg" width="56" alt="" />
+<img src="../../public/logo-symbol.svg" width="56" alt="" />
 
 # Terra Vista · Mission Analogs
 
@@ -8,9 +8,9 @@
 
 NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* · team **Logos**
 
-**[Open the live demo →](https://spaceapp-logos.vercel.app)** &nbsp;·&nbsp; [a site, straight away](https://spaceapp-logos.vercel.app/?m=m1-eva-basalt&s=sp_crater_az) &nbsp;·&nbsp; [method](docs/method.md) &nbsp;·&nbsp; [every source](docs/sources.md)
+**[Open the live demo →](https://zenidx.github.io/logos-space-apps-2026/)** &nbsp;·&nbsp; [a site, straight away](https://zenidx.github.io/logos-space-apps-2026/?m=m1-eva-basalt&s=sp_crater_az) &nbsp;·&nbsp; [method](method.md) &nbsp;·&nbsp; [every source](sources.md)
 
-<img src="docs/img/opening.jpg" alt="Opening shot: the Sun rising behind the night side of the Earth, with city lights, and the line 'Before the Moon and Mars, there is Earth.'" width="880" />
+<img src="img/opening.jpg" alt="Opening shot: the Sun rising behind the night side of the Earth, with city lights, and the line 'Before the Moon and Mars, there is Earth.'" width="880" />
 
 </div>
 
@@ -35,8 +35,8 @@ For each mission the app proposes **new regions to investigate** (19 in total), 
 
 <table>
 <tr>
-<td width="50%"><img src="docs/img/story-mission.jpg" alt="Story mode: the camera has flown to the Earth with the Moon beside it; numbered sites with their names, and the mission text on the left" /></td>
-<td width="50%"><img src="docs/img/site-panel.jpg" alt="Site panel: analog index dial, conditions with values, 3D terrain of the site next to the target, sun height slider" /></td>
+<td width="50%"><img src="img/story-mission.jpg" alt="Story mode: the camera has flown to the Earth with the Moon beside it; numbered sites with their names, and the mission text on the left" /></td>
+<td width="50%"><img src="img/site-panel.jpg" alt="Site panel: analog index dial, conditions with values, 3D terrain of the site next to the target, sun height slider" /></td>
 </tr>
 <tr>
 <td><b>Follow the story.</b> The first screen is only the scene; scrolling tells the idea one screen at a time, and each mission flies the camera to its target world. Hover a mission for a preview; click to open it.</td>
@@ -50,7 +50,7 @@ For each mission the app proposes **new regions to investigate** (19 in total), 
 - **Real light**: the Sun, Earth, Moon and Mars are lit from the Sun's actual direction; orbit radii and periods are in real proportion.
 - **Works on phones**: thumb bar to move between sites, mission cards with their figures, a scene that fills the screen.
 
-<p align="center"><img src="docs/img/mobile.jpg" alt="The app on a phone: opening shot and a site panel with the bottom navigation bar" width="520" /></p>
+<p align="center"><img src="img/mobile.jpg" alt="The app on a phone: opening shot and a site panel with the bottom navigation bar" width="520" /></p>
 
 ## How it works (no server, no database)
 
@@ -61,9 +61,9 @@ public datasets ──► scripts/data/ (Python) ──► src/data/sites.json �
  WGI · UCDP · DEMs   new regions, validates
 ```
 
-1. **Score.** Each mission is a few surface conditions open data can measure (vegetation, albedo, rainfall, sand, volcanic rock, temperature, Sun height). Every 0.1° land cell gets an **analog index 0–1** per mission ([formula](docs/method.md)).
+1. **Score.** Each mission is a few surface conditions open data can measure (vegetation, albedo, rainfall, sand, volcanic rock, temperature, Sun height). Every 0.1° land cell gets an **analog index 0–1** per mission ([formula](method.md)).
 2. **Validate.** The known campaign sites must come out near the top (e.g. 3 of 3 rover analogs in the top 2.1 % of land cells); a rainforest control must come out near the bottom.
-3. **Screen.** Candidate regions are kept only if their 11 × 11 km window passes slope, water, ice and land-cover tests ([every candidate tried](docs/region-screening.json)), and each is checked against the literature ([independent check](docs/independent-check.md)).
+3. **Screen.** Candidate regions are kept only if their 11 × 11 km window passes slope, water, ice and land-cover tests ([every candidate tried](region-screening.json)), and each is checked against the literature ([independent check](independent-check.md)).
 4. **Show.** The web app only reads `sites.json`. Deep links: `?m=m1-eva-basalt | m2-rover-sand | m3-ground-ice | m4-low-sun`, plus `&s=<site id>`; `capture=1` for screen recording.
 
 ## Run it
@@ -86,7 +86,7 @@ LOGOS_IN=/path/to/inputs npm run data   # rebuild sites.json from the public dat
 | `src/lib/` | Mission model, rules, scene maths, label layout (with tests) |
 | `src/data/` | `sites.json` and derived terrain and climate files |
 | `scripts/data/` | Data pipeline (inputs, versions and checksums in its README) |
-| `docs/` | [method](docs/method.md), [sources](docs/sources.md), [missions](docs/missions.md), [independent check](docs/independent-check.md), [design rationale](docs/design-rationale.md); the original Spanish idea note is in [`docs/es/origen-idea.md`](docs/es/origen-idea.md) |
+| `docs/` | [method](method.md), [sources](sources.md), [missions](missions.md), [independent check](independent-check.md), [design rationale](design-rationale.md); the original Spanish idea note is in [`docs/es/origen-idea.md`](es/origen-idea.md) |
 
 ## Use of Super Intelligence (SI) / AI
 The idea and the approach of this project are our team's own: finding Earth analog sites **per mission** and adding an **access-complexity index** — a team-defined coordination proxy shown next to each site, not part of the analog index and not a feasibility or safety assessment. No AI tool was used to come up with the idea or the problem framing.
@@ -98,7 +98,7 @@ We used AI (Claude agents by Anthropic, via Claude Code) as a tool, under the te
 - **Design and writing:** a front-end design proposal, and drafting and editing documentation and texts in English.
 - **Logo:** the Terra Vista logo (a lens holding Earth's horizon, with the Moon and Mars rising) was written by the AI as SVG vector code, from proposals the team chose between and asked to combine. No image-generation model was used.
 
-AI-assisted outputs are reviewed by the team before submission. AI-assisted code and data files are listed in [`AI_USAGE.md`](AI_USAGE.md) and marked in their headers and metadata. We did not use image-, video- or audio-generation models. The only AI-assisted graphics are the logo files (`public/logo-symbol.svg`, `src/app/icon.svg`, `public/apple-touch-icon.png`) and the logo and name placed on the social preview image (`public/og.png`). No AI-generated content contains NASA logos, insignia or other NASA marks.
+AI-assisted outputs are reviewed by the team before submission. AI-assisted code and data files are listed in [`AI_USAGE.md`](../../AI_USAGE.md) and marked in their headers and metadata. We did not use image-, video- or audio-generation models. The only AI-assisted graphics are the logo files (`public/logo-symbol.svg`, `src/app/icon.svg`, `public/apple-touch-icon.png`) and the logo and name placed on the social preview image (`public/og.png`). No AI-generated content contains NASA logos, insignia or other NASA marks.
 
 ## Data and credits
 - Earth: NASA Blue Marble via NASA GIBS.

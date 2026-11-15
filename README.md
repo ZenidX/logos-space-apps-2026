@@ -6,7 +6,19 @@ Project of team **Logos** for the NASA Space Apps Challenge 2026 (Barcelona loca
 
 **Challenge:** [Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)
 
-## TerraVista
+## One site, two parts
+
+**Live:** https://zenidx.github.io/logos-space-apps-2026/ (published automatically on every push to `main`).
+
+| Path | What it is | Code |
+|---|---|---|
+| `/` **Missions** (home) | *Where on Earth can we rehearse a specific Moon or Mars mission?* Story-driven 3D solar-system scene, four missions from real field campaigns, an analog index per site, where the analogy breaks and access complexity. Full description: [docs/logos/README.md](docs/logos/README.md). | `src/app/(logos)/`, `src/components/logos/`, `src/lib/logos/`, `src/data/sites.json`, `scripts/data/` |
+| `/base/` **Plan a base** | Pick any point on the Moon or Mars, a base is laid out on NASA's real elevation data, its recurring sub-missions are judged for that site, and each one gets ranked Earth sites to rehearse it (conditions + live terrain-shape match), with a side-by-side 3D view. | `src/app/(team)/base/`, `src/lib/base-plan.ts`, `src/lib/submissions.ts` |
+| `/story/`, `/discover/`, `/3d/`, `/method/`, `/data/` | The Earth Engine global search described below. | `src/app/(team)/` |
+
+The two parts were built as separate prototypes during the hackathon and merged into this repository (with their full git history) on 15 November. Each keeps its own root layout and stylesheet (`src/app/(logos)/layout.tsx`, `src/app/(team)/layout.tsx`), so moving between them reloads the page. Use of AI: [AI_USAGE.md](AI_USAGE.md).
+
+## TerraVista · global search (Earth Engine)
 
 A mobile-first web app that searches all land between 85°N and 85°S for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
 

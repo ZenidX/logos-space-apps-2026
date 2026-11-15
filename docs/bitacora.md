@@ -2,6 +2,25 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 9) · Todo junto en ZenidX: SpaceApp-Logos es la portada (rama `zexu/converge`)
+
+- zexu aclara que lo que comentaba (la intro con el movimiento galáctico) era la app de **`zexuguo/SpaceApp-Logos`** (Vercel: spaceapp-logos.vercel.app), no este repo. Pide traerla aquí y juntarlo todo en `ZenidX/logos-space-apps-2026`. Decide: **Logos en la portada (`/`)** y la portada del equipo pasa a **`/story/`**.
+- **Con historia:** clon de `~/Logos` con el commit sin subir de las 09:29 (`25120e6`); encima, un commit que reubica los archivos; luego `git merge --allow-unrelated-histories`. Se conservan sus 55 commits y sus autores. `~/Logos` no se ha tocado.
+- **Dónde está cada cosa:**
+  - `src/app/(logos)/`: página, layout, `logos.css` e `icon.svg`.
+  - `src/components/logos/` y `src/lib/logos/`.
+  - Datos sin cambiar de sitio: `src/data/sites.json`, `site-details.json` y `terrain-index.json`; `public/heightmaps/`; `public/tex/` (las 6 texturas comunes eran idénticas); `scripts/data/` y `scripts/tex/`.
+  - Documentación en inglés en `docs/logos/`; `AI_USAGE.md` y `LICENSE` en la raíz.
+- **Dos layouts raíz** (grupos de rutas `(logos)` y `(team)`): los dos `globals.css` usan las mismas clases (`.mk`, `.chip`, `.skel`, `:root`…) con valores distintos y se pisarían. Así cada parte carga solo su CSS y sus fuentes, y al pasar de una a otra se recarga la página.
+- **basePath:** Logos pedía `/tex/…`, `/heightmaps/…` y `/logo-symbol.svg` con rutas absolutas, que darían 404 en GitHub Pages. Ahora pasa por `asset()` (`src/lib/logos/asset.ts`). En el CSS de carga se usa la variable `--logo-url`.
+- **Navegación:**
+  - Barra del equipo: 01 Missions (`/`) · 02 Story · 03 Discover · 04 3D · 05 Base · 06 Method · 07 Data; los pasos van ahora «de 7».
+  - En Logos: botón «Plan a base →» en la cabecera y bloque «More in Terra Vista» antes del pie.
+- **Arreglo de build:** `next/font` fallaba con JetBrains Mono, porque Google la servía con URLs `/l/font?kit=…` sin extensión. Ahora se carga como fuente variable. Funcionaba antes solo porque `.next/cache` tenía las fuentes guardadas, así que **también podía romper el deploy automático**.
+- `tsconfig`: `allowImportingTsExtensions` (Logos importa con `.ts`). `npm test` = los 6 tests de Logos; `npm run data:logos` y `npm run test:data` para su flujo de datos en Python.
+- **Comprobado:** `tsc`, `eslint` (solo los 2 avisos de antes), `npm test` (6/6), build con `NEXT_PUBLIC_BASE_PATH=/logos-space-apps-2026` (11 rutas) y prueba servida en `/logos-space-apps-2026/` con Chromium: portada, ficha de SP Crater con terreno 3D, Story, Discover y Base; navegación en los dos sentidos; **ningún 404**.
+- Pendiente: el proyecto de Vercel `spaceapp-logos` sigue publicando el repo de zexuguo. Hay que decidir si se archiva o si se redirige a la web de Pages.
+
 ## 2026-11-15 (tarde, 8) · Base: misión global → submisiones → simular en la Tierra (rama `zexu/base-mode`)
 
 - Corrección de zexu: la misión es **una**, montar y mantener la base en el sitio elegido. De ella cuelgan **submisiones que se repiten**, y el objetivo del reto es saber **dónde simular cada una en la Tierra** para esa base concreta.
