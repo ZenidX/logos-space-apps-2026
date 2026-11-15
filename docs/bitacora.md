@@ -2,6 +2,16 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (noche, 24) · «Plan a base»: la base en la Tierra nada más elegir el sitio
+
+- Pedido: al encontrar o elegir un sitio en la Luna o en Marte, dar enseguida su equivalente en la Tierra; si no, la práctica no tiene sentido. Antes solo aparecía al abrir una submisión.
+- **Nuevo bloque «This base on Earth»** justo debajo de la ficha del sitio (`EarthTwin` en `BasePlanner.tsx`). Se calcula al cargar el terreno:
+  - **Most alike ground:** el sitio de la Tierra con el relieve 11 × 11 km más parecido al elegido (mezcla de pendientes y relieve, `shapeMatch`), entre los 3 mejores candidatos por condiciones de cada trabajo. Muestra el % de parecido, para qué trabajos sirve y «See the base side by side with it →».
+  - **Where to practise each job:** para cada trabajo de la base, su mejor sitio (mitad condiciones, mitad relieve, como dentro de cada submisión), con «Compare →».
+- Por qué dos respuestas: con los datos actuales cada sitio de la Tierra sirve para un solo trabajo (las listas de cada tarea no se solapan), así que un «gemelo» único salía con «1 of 7». Cada ensayo se hace donde se cumplen las condiciones de esa tarea (`docs/estrategias-bases.md`).
+- Comprobado en Chrome sin interfaz con Jezero (Marte): relieve más parecido en Dakhlet Nouadhibou (Mauritania, 94 %), y un sitio por trabajo. Con Mons Mouton (Luna) salió Atacama (87 %, bueno para travesías) en una prueba; en otra Trek devolvió 500 (fallo del servidor de NASA, no del código).
+- Arreglos: el borde de cristal del panel ya no se desplaza con el contenido (cristal y desplazamiento en elementos distintos, como en la portada). «0 h from a city» pasa a «< 1 h».
+
 ## 2026-11-15 (noche, 23) · «Plan a base» con el mismo estilo que la vista de misión
 
 - Pedido: que `/base/` use los estilos y la tipografía de la vista de una misión (tras «Explore this mission», p. ej. `/?m=m1-eva-basalt&s=…`).

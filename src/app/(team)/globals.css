@@ -497,3 +497,7 @@ body { --mono-f: var(--font-jetbrains), ui-monospace, Menlo, monospace; }
 .visor.bleed > .vineta { display: none; }
 @media (min-width: 768px) { .visor.bleed .hud.tl, .visor.bleed .hud.tr { top: 76px; } .visor.bleed .hud.tl { left: 32px; } .visor.bleed .hud.tr { right: 32px; } }
 @media (prefers-reduced-motion: reduce) { .fade-in, .slide-in, .stagger > * { animation: none; } }
+.cpill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 4px; border: 1px solid var(--line2); border-radius: 999px; font-size: 12px; line-height: 1.2; color: var(--ink); }
+.cpill i { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; font: 700 10px/1 var(--mono-f); font-style: normal; color: #04060c; }
+.cpill-ok { border-color: color-mix(in srgb, var(--earth) 55%, transparent); } .cpill-ok i { background: var(--earth); }
+.cpill-none { color: var(--dim); } .cpill-none i { background: var(--line2); color: var(--ink); }

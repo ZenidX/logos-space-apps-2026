@@ -85,6 +85,7 @@ const loadSite = (body: PlanetBody, lat: number, lon: number) =>
       ? loadJezeroCTX(lat, lon, SIZE_M, N).catch(() => loadMarsBlend(lat, lon, SIZE_M, N))
       : loadMarsBlend(lat, lon, SIZE_M, N);
 
+const hoursText = (h: number) => (h < 1 ? "< 1 h" : `${Math.round(h)} h`);
 const coord = (lat: number, lon: number) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
 
@@ -224,7 +225,7 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
                 <span className="mono block text-[10.5px] text-[var(--dim)]">
                   {coord(s.lat, s.lon)} · conditions {Math.round(s.taskScore * 100)}% · terrain{" "}
                   {typeof m === "number" ? `${Math.round(m * 100)}%` : m === "error" ? "n/a" : "…"}
-                  {s.easy && s.accessH !== null ? ` · ${s.accessH.toFixed(0)} h from a city` : ""}
+                  {s.easy && s.accessH !== null ? ` · ${hoursText(s.accessH)} from a city` : ""}
                 </span>
                 <WhyChips sub={sub} site={s} />
                 {t >= 0 && (
@@ -251,6 +252,94 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
         and relief are to your base site, computed now from elevation data. Rank = half each.
       </p>
     </div>
+  );
+}
+
+// La base en la Tierra, nada más elegir el sitio. Dos respuestas:
+// 1) el sitio de la Tierra con el relieve más parecido (su «gemelo»), entre los candidatos de ensayo de todos los trabajos;
+// 2) dónde practicar cada trabajo: el mejor sitio para cada uno (mitad condiciones, mitad relieve, como en cada submisión).
+// Cada ensayo se hace donde se cumplen las condiciones de esa tarea, así que suelen ser sitios distintos.
+const TWIN_PER_JOB = 3; // candidatos por trabajo a los que se les compara el relieve (cada uno descarga su terreno)
+
+function EarthTwin({ subs, siteSig, onCompare }: { subs: SubMission[]; siteSig: ShapeSig; onCompare: (s: EarthSite, ranked: EarthSite[], sub: SubMission) => void }) {
+  const jobs = useMemo(() => subs.filter((x) => x.tasks.length), [subs]);
+  const perJob = useMemo(() => jobs.map((sub) => ({ sub, list: byTaskScore(sub) })), [jobs]);
+  const pool = useMemo(() => {
+    const m = new Map<string, EarthSite>();
+    for (const j of perJob) for (const e of j.list.slice(0, TWIN_PER_JOB)) if (!m.has(e.key)) m.set(e.key, e);
+    return [...m.values()];
+  }, [perJob]);
+  const [match, setMatch] = useState<Record<string, number | "error">>({});
+  useEffect(() => {
+    let cancel = false;
+    setMatch({});
+    const queue = [...pool];
+    const worker = async () => {
+      for (let s = queue.shift(); s; s = queue.shift()) {
+        const site = s;
+        try {
+          const sig = await earthSig(site);
+          if (!cancel) setMatch((m) => ({ ...m, [site.key]: shapeMatch(siteSig, sig) }));
+        } catch {
+          if (!cancel) setMatch((m) => ({ ...m, [site.key]: "error" }));
+        }
+      }
+    };
+    void Promise.all([worker(), worker(), worker()]);
+    return () => {
+      cancel = true;
+    };
+  }, [pool, siteSig]);
+
+  if (!pool.length) return null;
+  const terrain = (e: EarthSite) => { const m = match[e.key]; return typeof m === "number" ? m : null; };
+  const pending = pool.filter((e) => match[e.key] === undefined).length;
+  const pct = (x: number | null) => (x === null ? "…" : `${Math.round(x * 100)} %`);
+  // trabajos que cada sitio puede ensayar (está entre los candidatos de ese trabajo)
+  const jobsAt = (e: EarthSite) => perJob.filter((j) => j.list.slice(0, TWIN_PER_JOB).some((x) => x.key === e.key)).map((j) => j.sub);
+  const twin = [...pool].sort((a, b) => (terrain(b) ?? -1) - (terrain(a) ?? -1))[0];
+  const twinJob = jobsAt(twin)[0] ?? jobs[0];
+  const bestFor = perJob.map(({ sub, list }) => {
+    const cands = list.slice(0, TWIN_PER_JOB);
+    const score = (e: EarthSite) => 0.5 * e.taskScore + 0.5 * (terrain(e) ?? 0);
+    const top = [...cands].sort((a, b) => score(b) - score(a))[0];
+    return { sub, top, list, score: top ? score(top) : 0 };
+  });
+  const go = (e: EarthSite, sub: SubMission, list: EarthSite[]) => onCompare(e, [e, ...list.filter((x) => x.key !== e.key)], sub);
+  return (
+    <section aria-labelledby="twin-h" className="mt-5 border-t border-[var(--line)] pt-4">
+      <h2 id="twin-h" className="label" style={{ color: "var(--earth)" }}>This base on Earth</h2>
+      {pending > 0 && <p className="vivo mono mt-1 text-[11px] text-[var(--earth)]">comparing its terrain with {pool.length} Earth sites… {pool.length - pending}/{pool.length}</p>}
+
+      <div className="fade-in mt-2 rounded-xl border border-[var(--line2)] p-3" key={twin.key} style={{ background: "rgba(93,180,255,.05)" }}>
+        <p className="label">Most alike ground</p>
+        <p className="place mt-1 text-[22px] leading-[1.05] tracking-[-.03em]">{twin.place}</p>
+        <p className="mono text-[11.5px] text-[var(--dim)]">{coord(twin.lat, twin.lon)}{twin.accessH !== null ? ` · ${hoursText(twin.accessH)} from a city` : ""}</p>
+        <div className="mt-2 flex items-end gap-3">
+          <p className="mono whitespace-nowrap text-[34px] leading-none tracking-[-.04em]" style={{ color: "var(--earth)" }}>{pct(terrain(twin))}</p>
+          <p className="pb-0.5 text-[12px] leading-snug text-[var(--mut)]">terrain alike (slope mix and relief over 11 × 11 km)<br />good for: <b className="text-[var(--ink)]">{jobsAt(twin).map((j) => j.name).join(", ")}</b></p>
+        </div>
+        {twinJob && <button type="button" onClick={() => go(twin, twinJob, byTaskScore(twinJob))} className="chip mt-3 inline-flex hover:border-[var(--ink)]">See the base side by side with it <span aria-hidden>→</span></button>}
+      </div>
+
+      <h3 className="label mt-4" style={{ color: "var(--mut)" }}>Where to practise each job</h3>
+      <ol className="mt-0.5 grid gap-0.5">
+        {bestFor.map(({ sub, top, list }, i) => top && (
+          <li key={sub.id}>
+            <button type="button" onClick={() => go(top, sub, list)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)]">
+              <span className="mono text-[12px]" style={{ color: LEVEL[sub.level].color }}>{String(i + 1).padStart(2, "0")}</span>
+              <span className="min-w-0">
+                <span className="block truncate text-[12px] text-[var(--mut)]">{sub.name}</span>
+                <span className="place block truncate text-[14.5px] leading-snug">{top.place}</span>
+                <span className="mono block text-[10.5px] text-[var(--dim)]">conditions {Math.round(top.taskScore * 100)} % · terrain {pct(terrain(top))}{top.easy && top.accessH !== null ? ` · ${hoursText(top.accessH)} from a city` : ""}</span>
+              </span>
+              <span className="fchip">Compare <span aria-hidden>→</span></span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-2 text-[11px] leading-snug text-[var(--dim)]">Each job is rehearsed where its own conditions are met (cold, thin air, dust, ice, access…), so the places differ. Conditions: our global search of Earth with NASA data. Terrain: computed now against this base site. Rank = half each; every job&apos;s full list is inside it below.</p>
+    </section>
   );
 }
 
@@ -596,7 +685,8 @@ export default function BasePlanner() {
 
       {/* Panel: el flujo en orden */}
       <aside aria-label="Plan a base" className="mx-4 mb-24 mt-3 md:fixed md:bottom-4 md:right-4 md:top-16 md:z-30 md:m-0 md:w-[420px]">
-        <div className="slide-in glass rounded-[20px] p-5 md:h-full md:overflow-y-auto md:p-6 [scrollbar-width:thin]">
+        <div className="slide-in glass rounded-[20px] md:h-full md:overflow-hidden">
+        <div className="p-5 md:h-full md:overflow-y-auto md:p-6 [scrollbar-width:thin]">
         <div className="fade-in" key={body}>
           <p className="text-[14px]" style={{ color: WORLD_COLOR[body] }}>Base concept · {body === "moon" ? "Moon" : "Mars"}{site && !showGlobe ? <> · <span className="place">{site.name.replace(/^★ /, "").replace(/ · .*/, "")}</span></> : null}</p>
           <h1 className="display mt-1 text-[30px] leading-[1]">Plan a base</h1>
@@ -700,6 +790,18 @@ export default function BasePlanner() {
               )}
             </section>
 
+            {plan && siteSig && subs.some((x) => x.tasks.length) && (
+              <EarthTwin
+                key={data?.key}
+                subs={subs}
+                siteSig={siteSig}
+                onCompare={(s, list, forSub) => {
+                  if (forSub.id !== subId) pickSub(forSub.id, false);
+                  compare(s, list, forSub);
+                }}
+              />
+            )}
+
             {plan && (
               <section aria-labelledby="subs-h" className="mt-5">
                 <h2 id="subs-h" className="label">2 · What the base must keep doing · {subs.length}</h2>
@@ -791,6 +893,7 @@ export default function BasePlanner() {
             )}
           </>
         )}
+        </div>
         </div>
       </aside>
 
