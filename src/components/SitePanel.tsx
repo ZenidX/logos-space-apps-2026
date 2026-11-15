@@ -84,6 +84,9 @@ export function AccessBars({ site }: { site: Site }) {
 
 export const pct = idx;
 
+/** Short names for the small rings on phones. */
+const MINI_LABEL: Record<string, string> = { ndvi: "Vegetation", albedo: "Albedo", precip: "Rain", sand: "Sand", volcanic: "Volcanic rock", lst_mean: "Temperature", low_sun_months: "Low-Sun months", polar_night_months: "Polar night", relief: "Relief", slope: "Slope", access: "Access" };
+
 const TerrainCompare = dynamic(() => import("@/components/TerrainCompare"), { ssr: false, loading: () => <div className="skel relative h-[240px] rounded-xl md:h-[280px]" role="status" aria-label="Loading terrain" /> });
 
 const MONTHS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
@@ -109,7 +112,8 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
             <text x={i * bw + bw / 2} y={H + 12} textAnchor="middle" fontSize="9" fill="var(--dim)" fontFamily="var(--mono)">{MONTHS[i]}</text>
           </g>
         ))}
-        {targetMax !== null && <><line x1={0} x2={W} y1={y(targetMax)} y2={y(targetMax)} stroke="var(--moon)" strokeDasharray="4 3" strokeWidth={1} /><text x={W - 2} y={y(targetMax) - 3} textAnchor="end" fontSize="9" fill="var(--moon)" fontFamily="var(--mono)">{targetName} max {targetMax.toFixed(0)}°</text></>}
+        {[45, 90].map((d) => <g key={d}><line x1={0} x2={W} y1={y(d)} y2={y(d)} stroke="var(--line)" strokeWidth={1} /><text x={2} y={y(d) + 9} fontSize="8" fill="var(--dim)" fontFamily="var(--mono)">{d}°</text></g>)}
+        {targetMax !== null && <><line x1={0} x2={W} y1={y(targetMax)} y2={y(targetMax)} stroke="var(--moon)" strokeDasharray="4 3" strokeWidth={1} /><text x={W - 2} y={9} textAnchor="end" fontSize="9" fill="var(--moon)" fontFamily="var(--mono)">- - {targetName} max {targetMax.toFixed(0)}°</text></>}
       </svg>
       <p className="mt-1 text-[12.5px] text-[var(--mut)]">
         {v.some((d) => d <= 0)
@@ -140,21 +144,22 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
       <div className="stagger">
         <div className="flex items-center justify-between gap-2">
           <button onClick={onBack} className="back-btn label -ml-1 px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
-          <span className="flex items-center gap-2">{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">{site.campaign}</span>}<span className="chip" style={{ borderColor: EVIDENCE[site.evidence].color }}><EvidenceBadge level={site.evidence} /></span></span>
+          <span className="flex items-center gap-2">{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">{site.campaign}</span>}<span className="chip" style={{ borderColor: EVIDENCE[site.evidence].color }}><EvidenceBadge level={site.evidence} />{!mission.validated && <span className="text-[11.5px] font-normal text-[var(--mut)]">{site.kind === "new" ? "· ground only" : "· another task"}</span>}</span></span>
         </div>
         <header className="mt-1">
           <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
-          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? `new region, not a surveyed site${mission.validated ? ` · index rank ${site.rank} of ${site.of}` : ""}` : "known analog · 0.1° cell around the site"}</span></p>
+          <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "new region to investigate, not a surveyed site" : "known analog · 0.1° cell around the site"}</span></p>
         </header>
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
           <div style={{ width: "clamp(170px, 27vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
-          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Grey rings: 1 = same as the target. Amber: fuller = more complex access.</p></div>
+          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Rings from the outside in follow this list. Grey: 1 = same as the target. Amber: fuller = more complex access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
           <p className="flex items-baseline gap-3"><span className="label">Analog index</span><span className="mono text-[40px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></span><span className="text-[11px] text-[var(--dim)]">0–1, not suitability</span></p>
-          <RadialMini rings={rings} />
+          <RadialMini rings={rings.map((r) => ({ ...r, label: MINI_LABEL[r.id] ?? r.label }))} />
+          <p className="mt-1 text-[11px] text-[var(--dim)]">Grey and amber numbers are percentages: shape against the target (100 = the same) and access complexity (100 = most complex).</p>
         </div>
 
         <div className="mt-3 grid items-end gap-3 lg:grid-cols-[1fr_auto]">
@@ -167,18 +172,23 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
         <p className="mt-2 text-[12px] text-[var(--mut)]" title={`Travel time: modelled, to the nearest city (2015). Slope: mean over the 11 × 11 km window; flat means ${FILTERS.flatDeg}° or less. Neither is part of the index or of the access ring.`}><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"})`} · not part of the index.</p>
 
-        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.glanceLimit ?? `${mission.keyLimit} ${mission.always[0]?.text.split(";")[0]}.`}</span></p>
+        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.glanceLimit ?? `${mission.keyLimit} ${(mission.always[0]?.text.split(";")[0] ?? "").replace(/\.$/, "")}.`}</span></p>
 
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (
-            <button key={id} role="tab" aria-selected={tab === id} aria-controls="site-detail" onClick={() => { setTab(tab === id ? null : id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
+            <button key={id} role="tab" id={`tab-${id}`} aria-selected={tab === id} tabIndex={tab === id ? 0 : -1} aria-controls="site-detail" onKeyDown={(e) => {
+              // arrow keys move between tabs, as in any tab list
+              const i = TABS.findIndex(([t]) => t === id), j = e.key === "ArrowRight" ? (i + 1) % TABS.length : e.key === "ArrowLeft" ? (i + TABS.length - 1) % TABS.length : e.key === "Home" ? 0 : e.key === "End" ? TABS.length - 1 : -1;
+              if (j < 0) return;
+              e.preventDefault(); setTab(TABS[j][0]); window.setTimeout(() => document.getElementById(`tab-${TABS[j][0]}`)?.focus(), 0);
+            }} onClick={() => { setTab(id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
           ))}
         </div>
       </div>
 
       {/* ---- Detail on demand ---- */}
       {tab && (
-        <section id="site-detail" role="tabpanel" className="fade-in mt-4 scroll-mt-4 border-t border-[var(--line)] pt-4" key={tab}>
+        <section id="site-detail" role="tabpanel" aria-labelledby={`tab-${tab}`} className="fade-in mt-4 scroll-mt-4 border-t border-[var(--line)] pt-4" key={tab}>
           {tab === "why" && <>
           <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? topNote(mission) : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
@@ -206,7 +216,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             {mission.notScored.map((n) => <li key={n} className="flex gap-2 px-2 text-[12.5px] text-[var(--dim)]"><span aria-hidden>◌</span>Not scored: {n}</li>)}
           </ul>
         </>}
-          {tab === "shape" && <><p className="mb-2 text-[13px] text-[var(--mut)]">Numbers behind the 3D view above: the ground here next to <span className="place">{targetShort}</span>: 11 × 11 km each, same horizontal and vertical scale.</p><TerrainStats siteId={site.id} targetId={`target-${mission.id}`} /></>}
+          {tab === "shape" && <><p className="mb-2 text-[13px] text-[var(--mut)]">Numbers behind the 3D view above: the ground here next to <span className="place">{targetShort}</span>: 11 × 11 km each, drawn at the same scale (heights doubled on both).</p><TerrainStats siteId={site.id} targetId={`target-${mission.id}`} /></>}
           {tab === "when" && <>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Noon Sun height through the year, computed from latitude only (terrain ignored).</p>
           <SunChart lat={site.lat} targetMax={t.body === "moon" ? tSun : null} targetName={targetShort} />

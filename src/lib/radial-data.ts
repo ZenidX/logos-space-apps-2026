@@ -14,6 +14,7 @@ export interface AccessIn { score: number | null; level: string }
 const num = (x: number, unit: string) => {
   const a = Math.abs(x), s = a === 0 ? "0" : a >= 100 ? x.toFixed(0) : a >= 10 ? x.toFixed(1) : a >= 1 ? x.toFixed(2) : x.toFixed(3);
   const u = unit === "index" || unit === "0-1" || unit === "0/1" ? "" : unit === "degC" ? " °C" : unit === "deg" ? "°" : unit === "%" ? " %" : ` ${unit}`;
+  if (unit === "deg") return `${x.toFixed(a < 1 ? 2 : 1)}°`; // slopes: two decimals only below 1°, as in the Shape tab
   if (unit === "months/yr") return `${Number.isInteger(x) ? x : x.toFixed(1)} ${x === 1 ? "month" : "months"}`;
   return unit === "0/1" ? (x >= 0.5 ? "yes" : "no") : s + u;
 };

@@ -2,7 +2,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SceneMarker } from "@/components/SolarScene";
 import SitePanel, { AccessBars } from "@/components/SitePanel";
 import EvidenceBadge from "@/components/Evidence";
@@ -50,11 +50,22 @@ export default function Home() {
   const site = sel ? shown.sites.find((s) => s.id === sel) ?? null : null;
   const t = shown.target;
 
-  // Deep link: ?m=<mission id> opens a mission directly (useful for sharing and for recording).
+  // The address says which mission and site are open (?m=<mission id>&s=<site id>): it can be shared, and Back / Forward work.
+  const cur = useRef({ m: missionId, s: sel }), fromUrl = useRef(false), firstSync = useRef(true), quietFocus = useRef(false);
+  useEffect(() => { cur.current = { m: missionId, s: sel }; }, [missionId, sel]);
   useEffect(() => {
-    const m = new URLSearchParams(window.location.search).get("m");
-    const q = new URLSearchParams(window.location.search), mm = MISSIONS.find((x) => x.id === m);
-    if (mm) { setMissionId(mm.id); const sid = q.get("s"); if (sid && mm.sites.some((x) => x.id === sid)) setSel(sid); }
+    const apply = (first = false) => {
+      const q = new URLSearchParams(window.location.search), mm = MISSIONS.find((x) => x.id === q.get("m")), sid = q.get("s");
+      const m = mm ? mm.id : null, st = mm && sid && mm.sites.some((x) => x.id === sid) ? sid : null;
+      if (m === cur.current.m && st === cur.current.s) return;
+      fromUrl.current = true; // this change comes from the address: do not add a history entry for it
+      quietFocus.current = first && !!st; // a page opened directly on a site does not take the keyboard focus
+      setMissionId(m); setSel(st);
+    };
+    apply(true);
+    const onPop = () => apply();
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   useEffect(() => {
@@ -64,15 +75,31 @@ export default function Home() {
     return () => window.clearInterval(id);
   }, [missionId, paused]);
 
-  // Keep the address bar in sync so any mission or site can be linked and shared.
+  // Keep the address in step with what is open. A choice made on the page adds a history entry, so Back undoes it.
   useEffect(() => {
+    if (firstSync.current) { firstSync.current = false; return; } // first render: the address has not been read yet
     const q = new URLSearchParams(window.location.search);
     if (missionId) q.set("m", missionId); else q.delete("m");
     if (missionId && sel) q.set("s", sel); else q.delete("s");
-    const qs = q.toString();
-    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+    const qs = q.toString(), search = qs ? `?${qs}` : "";
+    if (search !== window.location.search) {
+      const url = search || window.location.pathname;
+      if (fromUrl.current) window.history.replaceState(null, "", url); else window.history.pushState(null, "", url);
+    }
+    fromUrl.current = false;
     if (sel && window.innerWidth < 768) window.scrollTo({ top: 0 }); // phones: the site panel sits right under the small scene, so start from the top
   }, [missionId, sel]);
+
+  // The panel: a site opens at its top; going back returns to the place in the list, with the keyboard focus on that site.
+  const scroller = useRef<HTMLDivElement>(null), methodBtn = useRef<HTMLButtonElement>(null), listScroll = useRef(0), lastSite = useRef<string | null>(null), mounted = useRef(false);
+  useLayoutEffect(() => { const el = scroller.current; if (el) el.scrollTop = sel ? 0 : listScroll.current; }, [sel, missionId]);
+  useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
+    if (quietFocus.current) { quietFocus.current = false; lastSite.current = sel; return; }
+    if (sel) { lastSite.current = sel; document.querySelector<HTMLElement>("#panel .back-btn")?.focus({ preventScroll: true }); }
+    else if (lastSite.current) document.querySelector<HTMLElement>(`#panel [data-site="${lastSite.current}"]`)?.focus({ preventScroll: true });
+  }, [sel]);
+  const openSite = (id: string) => { listScroll.current = scroller.current?.scrollTop ?? 0; setSel(id); setHover(null); };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -83,14 +110,14 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [method, sel]);
 
-  const pick = (id: MissionId) => { setMissionId(id); setSel(null); };
-  const home = () => { setMissionId(null); setSel(null); };
+  const pick = (id: MissionId) => { listScroll.current = 0; lastSite.current = null; setMissionId(id); setSel(null); setFilter(NO_FILTER); }; // filters start clean in each mission
+  const home = () => { listScroll.current = 0; lastSite.current = null; setMissionId(null); setSel(null); };
   const chip = (on: boolean, label: string, onClick: () => void) => <button key={label} type="button" className="fchip" aria-pressed={on} onClick={onClick}>{label}</button>;
 
   // A plain function (not a component defined during render): rows keep their identity, so keyboard focus is not lost.
   const row = (s: Mission["sites"][number], n: number) => (
     <li key={s.id}>
-      <button onClick={() => { setSel(s.id); setHover(null); }} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
+      <button data-site={s.id} onClick={() => openSite(s.id)} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(s.id)} onBlur={() => setHover(null)} className="row grid w-full grid-cols-[22px_1fr_auto] items-center gap-2 rounded-xl border border-transparent p-2 text-left hover:border-[var(--line2)] focus-visible:border-[var(--ink)]">
         <span className="mono text-[12px]" style={{ color: EVIDENCE[s.evidence].color }}>{String(n).padStart(2, "0")}</span>
         <span className="min-w-0"><span className="place block text-[15px] leading-snug">{s.name}</span><span className="block truncate text-[11.5px] text-[var(--dim)]">{s.campaign ? `${s.country ?? ""} · ${s.campaign}` : `${s.country ?? ""} · ${travelText(s.travelH)}${s.slopeDeg !== null ? ` · slope ${s.slopeDeg.toFixed(1)}°` : ""}`}</span></span>
         <span className="flex flex-col items-end gap-1"><span className="mono text-[13px]"><Count value={s.match} decimals={3} /></span><AccessBars site={s} /></span>
@@ -100,6 +127,15 @@ export default function Home() {
 
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-[var(--bg)] px-4 py-2 md:bg-transparent md:p-4 md:px-8">
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
+        <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
+          <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
+          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
+          <button ref={methodBtn} className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method &amp; sources</button>
+        </div>
+      </header>
+
       {/* 3D scene */}
       <div className={`sticky top-0 z-0 w-full pt-12 md:pt-0 ${site ? "h-[22dvh]" : missionId ? "h-[40dvh]" : "h-[32dvh]"} transition-[left,right] duration-700 md:fixed md:inset-y-0 md:h-dvh md:w-auto ${missionId ? (site ? "md:left-0 md:right-[calc(min(760px,60vw)+16px)]" : "md:left-0 md:right-[436px]") : "md:left-[36%] md:right-0"}`}>
         {glFailed ? (
@@ -111,21 +147,13 @@ export default function Home() {
             selectedId={sel}
             highlightId={hover}
             onHover={setHover}
-            onSelect={(id) => { if (!missionId) pick(shown.id); setSel(id.startsWith("t-") ? null : id); }}
+            onSelect={(id) => { if (!missionId) pick(shown.id); if (id.startsWith("t-")) setSel(null); else openSite(id); }}
             paused={paused}
             onError={() => setGlFailed(true)}
           />
         )}
       </div>
 
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-[var(--bg)] px-4 py-2 md:bg-transparent md:p-4 md:px-8">
-        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
-        <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
-          <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
-          <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
-          <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method &amp; sources</button>
-        </div>
-      </header>
 
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
       <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? `md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}` : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
@@ -143,7 +171,7 @@ export default function Home() {
             return missionId ? (
               <button key={m.id} aria-pressed={m.id === missionId} onClick={() => pick(m.id)} className="chip glass !py-1.5" style={active ? { borderColor: c, color: c } : undefined}>{m.short}</button>
             ) : (
-              <button key={m.id} onClick={() => pick(m.id)} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ...(active ? { borderColor: c } : {}), ["--glow" as string]: c }}>
+              <button key={m.id} onClick={() => pick(m.id)} title={m.blurb} className="card glass rounded-xl px-3 py-2.5 text-left hover:border-[var(--ink)]" style={{ ...(active ? { borderColor: c } : {}), ["--glow" as string]: c }}>
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                   <b className="display text-[19px] leading-tight">{m.short}</b>
                   <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
@@ -163,7 +191,8 @@ export default function Home() {
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] p-5 transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-y-auto ${site ? "md:w-[min(760px,60vw)] md:p-8" : "md:w-[420px] md:p-6"}`} aria-label={shown.title}>
+        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-hidden ${site ? "md:w-[min(760px,60vw)]" : "md:w-[420px]"}`} aria-label={shown.title}>
+          <div ref={scroller} className={`p-5 md:h-full md:overflow-y-auto ${site ? "md:p-8" : "md:p-6"}`}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
           ) : (
@@ -178,6 +207,7 @@ export default function Home() {
               </p>
 
               <div className="mt-4 flex items-baseline justify-between"><h3 className="label">Sites · {filtered ? `${list.length} of ${shown.sites.length}` : shown.sites.length}</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
+              <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-snug text-[var(--dim)]"><span className="ev-pips" style={{ ["--ev" as string]: "var(--mut)" }} aria-hidden><i className="f" /><i className="f" /><i className="f" /><i /></span>dots: independent evidence, more is stronger<span aria-hidden>·</span><span className="inline-flex items-center gap-0.5" aria-hidden><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--sand)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /></span>bars: access complexity, low to high</p>
               <div className="mt-2 flex flex-wrap gap-1" role="group" aria-label="Filter the sites by logistics">
                 {chip(filter.reach === "near", `Reachable in < ${FILTERS.reachH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "near" ? "any" : "near" })))}
                 {chip(filter.reach === "remote", `Remote > ${FILTERS.remoteH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "remote" ? "any" : "remote" })))}
@@ -191,7 +221,7 @@ export default function Home() {
 
               {groups.map((g) => (
                 <section key={g.e} aria-label={EVIDENCE[g.e].group}>
-                  <h4 className="mt-3 flex items-center justify-between gap-2 text-[11px] font-normal uppercase tracking-[.08em]" style={{ color: EVIDENCE[g.e].color }} title={EVIDENCE[g.e].note}><span>{EVIDENCE[g.e].group}</span><EvidenceBadge level={g.e} compact /></h4>
+                  <h4 className="mt-3 flex items-center justify-between gap-2 text-[11px] font-normal uppercase tracking-[.08em]" style={{ color: EVIDENCE[g.e].color }} title={EVIDENCE[g.e].note}><span>{shown.validated ? EVIDENCE[g.e].group : g.e === "agency" ? "Known analog · campaign for another task" : `${EVIDENCE[g.e].group} · ground only`}</span><EvidenceBadge level={g.e} compact /></h4>
                   <ul className="stagger mt-0.5 grid gap-0.5">{g.items.map((s) => row(s, list.indexOf(s) + 1))}</ul>
                 </section>
               ))}
@@ -216,6 +246,7 @@ export default function Home() {
               </details>
             </div>
           )}
+          </div>
         </aside>
       )}
 
@@ -229,8 +260,8 @@ export default function Home() {
           </ol>
           <p className="mt-4 text-[13px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
           <button className="chip mt-5 hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
-          <h2 className="display mt-10 text-[28px]">Next missions</h2>
-          <p className="mt-1 text-[13px] text-[var(--mut)]">Real analog campaigns we have not scored: they are not driven by terrain, or there is no global data to compare. Listed for context.</p>
+          <h2 className="display mt-10 text-[28px]">Other real campaigns</h2>
+          <p className="mt-1 text-[13px] text-[var(--mut)]">Analog campaigns that have already run and that we have not scored: they are not driven by terrain, or there is no global data to compare. Listed for context.</p>
           <ul className="mt-3 grid gap-2">
             {NEXT_MISSIONS.map((n) => <li key={n.name} className="text-[13.5px]"><a href={n.url} target="_blank" rel="noopener noreferrer" className="title-sm underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{n.name}</a> <span className="text-[11.5px] text-[var(--dim)]">· {n.who} · not scored</span><br /><span className="text-[var(--mut)]">{n.what}</span></li>)}
           </ul>
@@ -241,7 +272,7 @@ export default function Home() {
         Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
       </footer>
 
-      {method && <MethodSheet onClose={() => setMethod(false)} />}
+      {method && <MethodSheet onClose={() => { setMethod(false); window.requestAnimationFrame(() => methodBtn.current?.focus()); }} />}
     </main>
   );
 }

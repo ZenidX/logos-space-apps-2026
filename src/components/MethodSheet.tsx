@@ -1,12 +1,27 @@
 // AI-assisted (Claude), reviewed by team Logos
+import type { KeyboardEvent } from "react";
 import { DATA_DATE, DATA_VERSION, EVIDENCE, EVIDENCE_ORDER, FILTERS, MISSIONS, REMOVED } from "@/lib/missions";
 import EvidenceBadge from "@/components/Evidence";
 
+const REPO = "https://github.com/zexuguo/SpaceApp-Logos/blob/main/";
+/** A file of the public repository, as a link. */
+const Doc = ({ path }: { path: string }) => <a className="underline" href={REPO + path} target="_blank" rel="noopener noreferrer">{path}</a>;
+
 export default function MethodSheet({ onClose }: { onClose: () => void }) {
   const accessSources = Array.from(new Set(MISSIONS.flatMap((m) => m.sites.flatMap((s) => s.access.sources))));
-  const varSources = Array.from(new Set(MISSIONS.flatMap((m) => m.sites.flatMap((s) => s.vars.map((v) => v.source)))));
+  const varSources = Array.from(new Set(MISSIONS.flatMap((m) => m.sites.flatMap((s) => s.vars.map((v) => v.source))))).filter((v) => v && v !== "no data");
+  const targets = MISSIONS.filter((m, i) => MISSIONS.findIndex((x) => x.target.name === m.target.name) === i); // two missions share Mons Mouton
+  const count = (e: (typeof EVIDENCE_ORDER)[number]) => MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.evidence === e).length, 0);
+  // Keyboard: Tab stays inside the sheet while it is open.
+  const trap = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab") return;
+    const f = Array.from(e.currentTarget.querySelectorAll<HTMLElement>("a[href], button")), first = f[0], last = f[f.length - 1];
+    if (!first) return;
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="dialog" aria-modal="true" aria-label="Method and sources" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="dialog" aria-modal="true" aria-label="Method and sources" onClick={onClose} onKeyDown={trap}>
       <div className="glass fade-in h-full w-full max-w-[600px] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between"><h2 className="display text-[30px]">Method & sources</h2><button onClick={onClose} className="chip" autoFocus>Close ✕</button></div>
 
@@ -25,8 +40,8 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <p className="mt-2 text-[12.5px] text-[var(--dim)]">Negative control (central Amazonia), percentile among land cells: {MISSIONS.map((m) => `${m.short} ${m.validation.controlPercentile ?? "–"}`).join(" · ")}. Partly circular: the known analogs also set the median used in D, so their high rank is partly by construction; the independent checks are the condition fraction F and the control. Few known sites per mission (two for ground ice). The low-Sun mission is computed, not validated: its control and its one known analog are sanity checks only. This is a screening hypothesis: independent field validation is still needed.</p>
 
         <h3 className="label mt-6">4 · New regions to investigate</h3>
-        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Only cells meeting every available condition are eligible (missing variables are skipped, with at least 66 % of the total condition weight required); regions under 4 cells dropped; each represented by its best cell and picked at least 800 km apart. They are regions to investigate, not surveyed sites. Because they are picked from the top of the index, they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability. An independent check against literature and agency sources found no source naming any of these points as an established analog; the property is confirmed nearby for {MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.evidence === "nearby").length, 0)} of them, {MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.evidence === "unchecked").length, 0)} have not been checked yet, and each site says what was found (How tab; docs/independent-check.md and docs/independent-check-v8.md).</p>
-        <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Removed after screening the ground or after the independent check</b> (11 × 11 km window: mean slope above 10°, more than 10 % snow or ice, or more than 20 % water; the low-Sun mission also needs at least 50 % bare ground, moss or lichen; Copernicus DEM and ESA WorldCover 2021, CC BY 4.0; every candidate tried is logged in docs/region-screening.json): {Object.values(REMOVED).map((r) => `${r.name} — ${r.reason}`).join("; ")}. Key limits: suited EVA — volcanic rock within ~80 km, not confirmed basalt; ground ice — inferred from temperature, not detected.</p>
+        <p className="mt-2 text-[14px] text-[var(--mut)]">Contiguous high-scoring cells grouped into regions, at least 300 km from every known analog. Only cells meeting every available condition are eligible (missing variables are skipped, with at least 66 % of the total condition weight required); regions under 4 cells dropped; each represented by its best cell and picked at least 800 km apart. They are regions to investigate, not surveyed sites. Because they are picked from the top of the index, they score above the known analogs and within a few thousandths of each other: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability. An independent check against literature and agency sources found no source naming any of these points as an established analog; the property is confirmed nearby for {count("nearby")} of them{count("unchecked") > 0 && `, ${count("unchecked")} have not been checked yet`}, and each site says what was found (How tab; <Doc path="docs/independent-check.md" /> and <Doc path="docs/independent-check-v8.md" />).</p>
+        <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Removed after the terrain and land-cover screen (elevation and satellite data, no fieldwork) or after the independent check</b> (11 × 11 km window: mean slope above 10°, more than 10 % snow or ice, or more than 20 % water; the low-Sun mission also needs at least 50 % bare ground, moss or lichen; Copernicus DEM and ESA WorldCover 2021, CC BY 4.0; every candidate tried is logged in <Doc path="docs/region-screening.json" />): {Object.values(REMOVED).map((r) => `${r.name} — ${r.reason}`).join("; ")}. Key limits: suited EVA — volcanic rock within ~80 km, not confirmed basalt; ground ice — inferred from temperature, not detected.</p>
 
         <h3 className="label mt-6">5 · Where the analogy breaks</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each site lists what was not scored and what Earth cannot reproduce (gravity, vacuum or thin air, lighting, cold). In the scene, the overview shows the Sun with the Earth and Mars on their orbits (radii 1 : 1.52 and periods 1 : 1.88, in proportion; NASA NSSDC fact sheets) and the Moon around the Earth; body sizes against the orbits, the Sun and the Moon’s distance are not in proportion. In the close-up the target world is shown beside the Earth for comparison, not at its real distance; each visible site is joined to its name by a thin dashed line, and no line is drawn to the target world.</p>
@@ -37,10 +52,10 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         <h3 className="label mt-6">7 · Evidence levels, filters and hardware</h3>
         <p className="mt-2 text-[14px] text-[var(--mut)]">Each mission&apos;s list is ordered by independent evidence, not by the index, because the index does not tell the new regions apart. No source names any new region as an established analog; the levels say what was found:</p>
         <ul className="mt-2 grid gap-1.5 text-[13px] text-[var(--mut)]">
-          {EVIDENCE_ORDER.map((e) => <li key={e} className="grid grid-cols-[150px_1fr] items-baseline gap-2"><EvidenceBadge level={e} /><span>{e === "nearby" ? "A source confirms the key property, or analog use, within about 100 km or for the island or lava field the point lies on." : e === "partial" ? "The source is farther away, regional in scale, or covers only part of the property." : EVIDENCE[e].note.replace(/^New region: /, "").replace(/^./, (c) => c.toUpperCase())} <span className="text-[var(--dim)]">({MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.evidence === e).length, 0)} sites)</span></span></li>)}
+          {EVIDENCE_ORDER.filter((e) => count(e) > 0).map((e) => <li key={e} className="grid grid-cols-[150px_1fr] items-baseline gap-2"><EvidenceBadge level={e} /><span>{e === "nearby" ? "A source confirms the key property, or analog use, within about 100 km or for the island or lava field the point lies on." : e === "partial" ? "The source is farther away, regional in scale, or covers only part of the property." : EVIDENCE[e].note.replace(/^New region: /, "").replace(/^./, (c) => c.toUpperCase())} <span className="text-[var(--dim)]">({count(e)} sites)</span></span></li>)}
         </ul>
         <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Filters</b> (thresholds chosen by the team; none is part of the index). “Reachable in &lt; {FILTERS.reachH} h” and “Remote &gt; {FILTERS.remoteH} h” use the modelled travel time to the nearest city (Weiss et al. 2018, year 2015; mean of the 0.1° cell; no data for Antarctica). Remote is offered as a choice because isolation is itself part of some analog missions (for example NEEMO, under “Next missions”). “Flat” and “Steep” split the sites at a mean slope of {FILTERS.flatDeg}° over the 11 × 11 km window (115 m grid). “Low access complexity” keeps sites with access level Low and no special permit noted.</p>
-        <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Hardware rehearsed.</b> Each item is taken from the agency page or report linked next to it (checks in docs/sources.md, rows C3, C6, C7, C8a, C10, C12a and L15–L17). Equipment that was only announced or planned is left out.</p>
+        <p className="mt-2 text-[13px] text-[var(--mut)]"><b className="text-[var(--ink)]">Hardware rehearsed.</b> Each item is taken from the agency page or report linked next to it (checks in <Doc path="docs/sources.md" />, rows C3, C6, C7, C8a, C10, C12a and L15–L17). Equipment that was only announced or planned is left out.</p>
 
         <h3 className="label mt-6">Mission campaigns</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
@@ -48,7 +63,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         </ul>
         <h3 className="label mt-6">Targets</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">
-          {MISSIONS.map((m) => <li key={m.id}>• {m.target.name}: {m.target.coordSource}. {m.target.body === "moon" ? "Albedo 0.15 is an estimate: broadband ≈ 0.49 × LOLA 1064 nm normal albedo (Hayne et al. 2017; Lucey et al. 2014)." : "Surface values from published maps and models (MGS TES albedo, Christensen et al. 2001; Mars Climate Database for temperature)."} Target values informed the ideal ranges and are shown for context. Details in docs/sources.md.</li>)}
+          {targets.map((m) => <li key={m.id}>• {m.target.name}: shown at {Math.abs(m.target.lat).toFixed(1)}° {m.target.lat < 0 ? "S" : "N"}, {Math.abs(m.target.lon).toFixed(1)}° {m.target.lon < 0 ? "W" : "E"}. {m.target.coordSource}. {m.target.body === "moon" ? "Albedo 0.15 is an estimate: broadband ≈ 0.49 × LOLA 1064 nm normal albedo (Hayne et al. 2017; Lucey et al. 2014)." : "Surface values from published maps and models (MGS TES albedo, Christensen et al. 2001; Mars Climate Database for temperature)."} Target values informed the ideal ranges and are shown for context. Details in <Doc path="docs/sources.md" />.</li>)}
         </ul>
         <h3 className="label mt-6">Earth data</h3>
         <ul className="mt-2 grid gap-1 text-[12.5px] text-[var(--mut)]">{varSources.map((v) => <li key={v}>• {v}</li>)}<li>• Sand fraction: ISRIC SoilGrids 2.0 (CC BY 4.0), model prediction.</li>

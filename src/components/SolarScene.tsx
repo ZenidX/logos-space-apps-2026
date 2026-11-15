@@ -274,6 +274,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         v.copy(p).project(camera);
         const below = new THREE.Vector3().copy(p).addScaledVector(camera.up, -r * 1.25).project(camera);
         s.style.opacity = String(fade); s.style.visibility = fade > 0.02 ? "visible" : "hidden";
+        s.classList.toggle("is-target", id === ms[0]?.body && ms[0]?.kind === "target"); // the world of the mission being shown
         s.style.transform = `translate(${((v.x * 0.5 + 0.5) * width).toFixed(1)}px, ${((-below.y * 0.5 + 0.5) * height + 6).toFixed(1)}px) translate(-50%, 0)`;
       }
     };
@@ -333,6 +334,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
             style={{ left: 0, top: 0, visibility: "hidden", ["--c" as string]: `#${COLOR[m.body].toString(16).padStart(6, "0")}` }}
             aria-label={`${m.label}${m.rank ? `, number ${m.rank}` : ""}`}
             aria-pressed={m.id === selectedId}
+            tabIndex={-1} /* keyboard users reach the same places through the list, in reading order */
             onClick={() => onSelect?.(m.id)}
             onMouseEnter={m.kind === "candidate" ? () => onHover?.(m.id) : undefined}
             onMouseLeave={m.kind === "candidate" ? () => onHover?.(null) : undefined}

@@ -54,7 +54,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Suited traverses, sampling and field geology over bare volcanic ground, as in NASA's JETT and Desert RATS tests and ESA's PANGAEA training.",
     matters: "Crews rehearse surface operations on Earth before they fly. Where a test runs decides what it can teach.",
     keyLimit: "Volcanic rock is mapped within ~80 km (0.5° geological map); basalt at the site itself is not confirmed.",
-    notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Walkable slope — needs a 30 m elevation model"],
+    notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Slope along a real traverse route — the mean slope of the 11 km window is shown, but it is not part of the index"],
     always: ["Gravity: 1.62 m/s² on the Moon vs 9.80 on Earth."],
   },
   "m2-rover-sand": {
@@ -63,7 +63,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Driving a rover over loose sand and dune slopes, as JPL did with its Scarecrow test rover at Dumont Dunes (2012).",
     matters: "Soft sand can stop a rover. Mobility tests on Earth help set driving limits before landing.",
     keyLimit: "Sand fraction is a soil-model estimate with a wide uncertainty; it indicates sandy soil, not dunes.",
-    notScored: ["Dune slopes — needs a 30 m elevation model", "Jezero sand fraction — no comparable value yet"],
+    notScored: ["Dune slopes — the mean slope of the 11 km window is shown, but dunes are smaller than the 115 m grid used for it", "Jezero sand fraction — no comparable value yet"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },
   "m3-ground-ice": {
@@ -168,7 +168,7 @@ export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly
   "m2-rover-sand-new2": { verdict: "None found", text: "No verifiable source found for this region." },
   "m2-rover-sand-new3": { verdict: "Partly", text: "Oman hosted a full Mars analog mission (AMADEE-18), but in Dhofar, about 500 km to the south; nothing describes sand at this point." },
   "m2-rover-sand-new4": { verdict: "None found", text: "No source found for this region." },
-  "m2-rover-sand-new6": { verdict: "Partly", text: "The Médanos Grandes dune field is nearby, but it is described as largely inactive, which weakens it as a test of loose, moving sand.", image: { label: "Satellite image of Médanos Grandes (CC BY-SA 2.0; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:M%C3%A9danos_Grandes,_Argentina.jpg" } },
+  "m2-rover-sand-new6": { verdict: "Partly", text: "The Médanos Grandes dune field is nearby, but it is described as largely inactive, which weakens it as a test of loose, moving sand.", image: { label: "Satellite image of the nearby Médanos Grandes dune field, not of this point (CC BY-SA 2.0; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:M%C3%A9danos_Grandes,_Argentina.jpg" } },
   "m2-rover-sand-new7": { verdict: "Partly", text: "A land-cover study of the whole Qiangtang Plateau, which contains this point, reports 26 % bare land and sand-covered ground in a cold, dry, windy climate (Bian et al. 2023, Frontiers in Environmental Science). It does not map dunes or name this county.", url: "https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2023.1217225/full" },
   "m3-ground-ice-new1": { verdict: "Partly", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature, but the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (contains modified Copernicus Sentinel data 2022; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
   "m3-ground-ice-new2": { verdict: "Supported nearby", text: "Banks Island has ice-rich continuous permafrost (Lewkowicz & Way 2019, Nature Communications). No analog study was found." },
@@ -197,6 +197,18 @@ export const EVIDENCE_ORDER: Evidence[] = ["agency", "nearby", "partial", "none"
 
 
 const lon180 = (l: number) => (l > 180 ? l - 360 : l);
+/** Typography of texts that come from the data file: units and ordinals written the way the rest of the app writes them. */
+export const tidy = (t: string) => t
+  .replace(/\bm\/s2\b/g, "m/s²")
+  .replace(/(\d) deg\b/g, "$1°")
+  .replace(/~?3e-15 bar/g, "about 3 × 10⁻¹⁵ bar")
+  .replace(/(-?\d+(?:\.\d+)?) C\b/g, "$1 °C")
+  .replace(/(\d)x\b/g, "$1×")
+  .replace(/(?:at )?the (\d+(?:\.\d+)?)th percentile/g, "at percentile $1")
+  .replace(/: (\d+(?:\.\d+)?)th percentile/g, ": percentile $1")
+  .replace("(it fails the snow-free rule)", "(its yearly albedo is above the limit set to leave out ground that is snow-covered all year)");
+/** Links of the data file replaced by a better page of the same source (the record page instead of a file download). */
+const CAMPAIGN_URL: Record<string, string> = { "https://ntrs.nasa.gov/api/citations/20250004164/downloads/LSIC25-Glass_abst2.docx": "https://ntrs.nasa.gov/citations/20250004164" };
 
 export const MISSIONS: Mission[] = data.missions.map((m) => {
   const vars: Variable[] = m.variables.map((v) => ({ id: v.id, label: v.label, unit: v.unit, why: v.why, inMatch: v.inMatch, ideal: v.ideal ?? null, tolerance: v.tolerance ?? null }));
@@ -214,7 +226,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
     match: s.match,
     percentile: s.matchPercentile ?? null,
     vars: Object.entries(s.perVariable).map(([id, p]) => ({ id, label: byId.get(id)?.label ?? id, unit: byId.get(id)?.unit ?? "", value: p?.value ?? null, similarity: p?.similarity ?? null, source: p?.source ?? "no data", inMatch: p?.inMatch ?? byId.get(id)?.inMatch ?? true })),
-    breaks: s.breaks,
+    breaks: s.breaks.map(tidy),
     access: accessOf(s.accessRisk, s.id),
     campaign: s.campaign ?? null,
     travelH: HOW[s.id]?.how?.travelTimeToCityHours ?? null,
@@ -224,18 +236,18 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
   // New candidates keep the order Logos Datos ranked them in; known analogs by match.
   sites.sort((a, b) => Number(b.kind === "new") - Number(a.kind === "new") || (a.kind === "new" ? 0 : (b.match ?? -1) - (a.match ?? -1)));
   const fresh = sites.filter((x) => x.kind === "new");
-  fresh.forEach((x, i) => { x.rank = i + 1; x.of = fresh.length; });
+  [...fresh].sort((a, b) => (b.match ?? -1) - (a.match ?? -1)).forEach((x, i) => { x.rank = i + 1; x.of = fresh.length; }); // rank = place by index among the new regions (ties keep the data order)
   return {
     id: m.id,
     title: m.title,
     ...COPY[m.id],
-    always: m.breaks?.length ? m.breaks : COPY[m.id].always.map((text) => ({ text, source: "NASA NSSDC planetary fact sheets", url: "https://nssdc.gsfc.nasa.gov/planetary/factsheet/" })),
+    always: m.breaks?.length ? m.breaks.map((b) => ({ ...b, text: tidy(b.text) })) : COPY[m.id].always.map((text) => ({ text, source: "NASA NSSDC planetary fact sheets", url: "https://nssdc.gsfc.nasa.gov/planetary/factsheet/" })),
     target: { ...m.target, lon: lon180(m.target.lon), coordSource: m.target.coordSource.replace(/(https?:\/\/[^\s;]+);/g, "$1 ·") }, // a ";" glued to a link breaks it when copied
-    campaigns: m.campaigns,
+    campaigns: m.campaigns.map((c) => ({ ...c, url: CAMPAIGN_URL[c.url] ?? c.url })),
     variables: vars,
     sites,
     landCells: m.validation.landCells ?? null,
-    validation: { method: m.validation.method, result: m.validation.result, controlPercentile: m.validation.control?.matchPercentile ?? null },
+    validation: { method: m.validation.method, result: tidy(m.validation.result), controlPercentile: m.validation.control?.matchPercentile ?? null },
     validated: m.validation.validated !== false,
   };
 });
@@ -288,7 +300,7 @@ export function sceneLabel(s: Site, all: Site[]): string {
 
 export const idx = (x: number | null) => (x === null ? "–" : x.toFixed(3));
 /** Why the index does not rank the new regions of a mission. */
-export const topNote = (m: Mission) => (m.validated ? TOP_NOTE : "For this mission the index is the plain mean of the condition similarities. All its new regions meet every condition, so they all read 1.000 and the index cannot rank them: 238 candidates were screened on the ground to find these four. It is computed, not validated; the independent check is about the ground nearby, not about low-Sun work.");
+export const topNote = (m: Mission) => (m.validated ? TOP_NOTE : "For this mission the index is the plain mean of the condition similarities. All its new regions meet every condition, so they all read 1.000 and the index cannot rank them: 238 candidates were screened with elevation and land-cover data (no fieldwork) to find these four. It is computed, not validated; the independent check is about the ground nearby, not about low-Sun work.");
 export const TOP_NOTE = "New regions are picked because they sit at the top of the index, so they score above the known analogs and within a few thousandths of each other, less than the uncertainty of the data: read them as a shortlist, not a ranking. The index compares surface conditions; it is not a measure of suitability.";
 
 export const fmt = (x: number | null, unit = "") => {
