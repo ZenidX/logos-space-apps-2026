@@ -19,7 +19,7 @@ and flags the places you can't safely, or legally, go.
 TerraVista. Down to Earth.
 ```
 
-Unos 25 s de voz; con la entrada y el cierre, 27–28 s en total.
+La voz ocupa los 30 s (tiempos en `docs/timestamps.txt`); el archivo se corta a 29,9 s.
 
 ## Plano a plano
 
@@ -32,7 +32,7 @@ Unos 25 s de voz; con la entrada y el cierre, 27–28 s en total.
 | 0:20–0:24 | *and flags the places you can't safely, or legally, go.* | Un candidato con aviso ⚠ (zona en conflicto o protegida, p. ej. North Sentinel Island). | «⚠ Conflict zone · ⚠ Protected area» | Validity, Impact |
 | 0:24–0:28 | *TerraVista. Down to Earth.* | Cierre: logotipo TerraVista, «Down to Earth», URL y «Team Logos · Space Apps 2026». | — | Presentation |
 
-Durante todo el vídeo: subtítulos quemados, idénticos a la voz, y la marca de agua `AI-assisted editing · AI voice: ElevenLabs`.
+Durante todo el vídeo: subtítulos quemados, idénticos a la voz, y la marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
 
 ## Bloqueos: la web todavía no enseña dos cosas que dice la voz
 Comprobado en `origin/main` el 15-11:
@@ -60,4 +60,4 @@ Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio
 - **Atención:** la web pública todavía dice **«Terra Analog»**, no TerraVista. El cambio de nombre solo está en la rama `video`, sin publicar. Hay que avisar a quien publique o taparlo en el montaje.
 - **Atención:** con 430 px de ancho, en el visor 3D se solapan los textos del HUD de la Luna. Hay que capturar más ancho o recortar.
 - **Sin pantalla todavía:** selector de misión y avisos de conflicto o zonas protegidas (plano provisional: el ranking del visor 3D, donde sale Kapisa, Afganistán, en el #5 de Shackleton).
-- **Falta:** el audio de ElevenLabs con los tiempos de cada frase y saber si el formato es horizontal (16:9) o vertical.
+- **Formato decidido:** horizontal 16:9 (1920×1080), pantalla tal cual. Los tiempos están en `docs/timestamps.txt`. Falta el archivo de audio (`video/audio/voice.mp3`).

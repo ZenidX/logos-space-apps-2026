@@ -7,8 +7,8 @@ const { chromium } = require(path.join(__dirname, "../tools/node_modules/playwri
 const BASE = "https://zenidx.github.io/logos-space-apps-2026/";
 const OUT = path.join(__dirname, "../build/frames");
 const FPS = 30;
-// 720x1280 CSS px at 1.5x = 1080x1920 output, so the text reads well on a vertical video.
-const VIEW = { width: 720, height: 1280 };
+// 1280x720 CSS px at 1.5x = 1920x1080 output (16:9), so the text reads well.
+const VIEW = { width: 1280, height: 720 };
 const DSF = 1.5;
 
 // Virtual clock: requestAnimationFrame, performance.now and Date.now only advance when __step(ms) is called.
@@ -56,8 +56,9 @@ const shots = {
   async s2(page) {
     await page.goto(BASE + "discover/", { waitUntil: "networkidle" });
     await page.evaluate(() => {
-      const h = [...document.querySelectorAll("h2")].find((e) => /Pick a destination/.test(e.textContent));
-      window.scrollTo(0, h.getBoundingClientRect().top + window.scrollY - 150);
+      // target cards just under the nav, globe and match list below them
+      const b = [...document.querySelectorAll("button")].find((e) => /Shackleton/.test(e.textContent));
+      window.scrollTo(0, b.getBoundingClientRect().top + window.scrollY - 68);
     });
     await page.waitForTimeout(6000);
     await page.evaluate(() => (window.__manual = true));
@@ -74,14 +75,20 @@ const shots = {
     await page.goto(BASE + "method/", { waitUntil: "networkidle" });
     const y = await page.evaluate(() => {
       const h = [...document.querySelectorAll("h2")].find((e) => /analogy breaks/.test(e.textContent));
-      return h.getBoundingClientRect().top + window.scrollY - 170;
+      return h.getBoundingClientRect().top + window.scrollY - 95;
+    });
+    await page.evaluate(() => {
+      // hide the "Every number, every source." card so it doesn't compete with the caption
+      const h = [...document.querySelectorAll("h2,h3,p")].find((e) => /Every number, every source/.test(e.textContent));
+      let el = h; while (el && el.parentElement && el.parentElement.offsetHeight < 400) el = el.parentElement;
+      if (el) el.style.visibility = "hidden";
     });
     await page.evaluate((y) => window.scrollTo(0, y), y);
     await page.waitForTimeout(4000);
     await page.evaluate(() => (window.__manual = true));
     const n = 4 * FPS;
     await frames(page, path.join(OUT, "s4"), n, 1000 / FPS, async (i) => {
-      await page.evaluate((yy) => window.scrollTo(0, yy), y + (120 * i) / n); // slow drift down
+      await page.evaluate((yy) => window.scrollTo(0, yy), y - (40 * i) / n); // slow drift up, heading stays in frame
     });
   },
 };

@@ -2,6 +2,15 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (mediodía, 2) · Vídeo: montaje de prueba v2, horizontal
+
+- Formato **horizontal 16:9** (1920×1080; captura a 1280×720 ×1,5). Duración **29,9 s**: la voz ocupa los 30 s y se recortan 0,1 s del cierre.
+- Subtítulos **amarillos sin caja**, con contorno oscuro, sombra y una entrada con un ligero «pop» (del 90 al 100 % en 0,2 s). Un degradado oscuro suave en la franja inferior hace que se lean sobre cualquier pantalla.
+- Marca de agua: `SI-assisted editing · SI voice: ElevenLabs`.
+- Plano 18–22: se oculta la tarjeta «Every number, every source» para que no compita con el subtítulo, y el título entra entero.
+- `build.sh` genera también una copia WebM (VP9), porque el ordenador del evento no tiene decodificador H.264.
+- Registro actualizado en `docs/normas.md`, `docs/guion-video.md` y en la memoria.
+
 ## 2026-11-15 (mediodía) · Vídeo: primer montaje de prueba (v1)
 
 - `video/scripts/capture.cjs`: captura la web pública fotograma a fotograma con un reloj virtual (sin GPU solo salen ~2 capturas/s, así que el tiempo de la página avanza 1/30 s por captura y el movimiento queda fluido). `overlays.cjs`: subtítulos desde `docs/timestamps.txt`, marca de agua de SI y cierre. `build.sh`: montaje con ffmpeg.
