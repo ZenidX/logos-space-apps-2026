@@ -31,7 +31,7 @@ Cinco criterios, cada uno de 1 a 5: **Impact, Creativity, Validity, Relevance, P
 Comprobado de nuevo el 15-11. La página de la guía no se pudo volver a abrir (fallo de certificado en la red), pero las búsquedas confirman los límites: 30 s o menos, subtítulos en inglés, enlace público.
 - **Duración:** menos de 30 s. La voz ocupa los 30 s (`docs/timestamps.txt`), así que el archivo se corta a **29,9 s** para que ningún reproductor lo redondee por encima de 30.
 - **Formato:** horizontal, 16:9 (1920×1080). Se enseña la pantalla tal cual, sin marco de móvil.
-- **Audio y subtítulos en inglés.** Subtítulos quemados en la imagen, idénticos a la locución (el jurado puede verlo sin sonido). Estilo: amarillo, sin caja, con contorno oscuro y una entrada con un ligero «pop».
+- **Audio y subtítulos en inglés.** Subtítulos quemados en la imagen, idénticos a la locución (el jurado puede verlo sin sonido). Estilo: **palabra a palabra, acumulándose** (cada palabra aparece cuando se dice, con un ligero «pop», y la frase se queda hasta el final de su tramo); amarillo, sin caja, contorno oscuro, **Nimbus Sans** (clon de Helvetica) en negrita a 44 px. Tiempos de cada palabra sacados de la voz con Vosk (`video/audio/word-timings.json`).
 - **Marca de agua de SI** pequeña y visible durante todo el vídeo, que diga que la edición se hizo con ayuda de SI y que la voz está generada con **ElevenLabs** (nombrado explícitamente). Texto: `SI-assisted editing · SI voice: ElevenLabs` (se usa «SI», el término de las normas, no «AI»).
 - Sin logos ni marcas de NASA en nada generado con IA. Las imágenes de datos de NASA dentro de la web (GIBS, Trek) sí pueden salir.
 - ElevenLabs y cualquier música van en «Space Agency Partner Data and Other References» y en «Use of SI».

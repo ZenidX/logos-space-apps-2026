@@ -2,6 +2,14 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 3) · Vídeo: subtítulos palabra a palabra (prototipo v3)
+
+- **Tiempos de cada palabra:** `video/scripts/align.py` pasa la voz por Vosk (modelo pequeño de inglés, instalado fuera del repo) y la alinea con el guion. 54 de 64 palabras salen tal cual; «TerraVista» (Vosk oye «terror beast») y «spacesuit? An ice drill?» se reparten en el tramo que ocupa ese sonido. Resultado en `video/audio/word-timings.json`.
+- **Estilo:** las palabras van apareciendo una a una (aparecen del 85 al 100 % en 0,12 s), en amarillo, Nimbus Sans negrita a 44 px y sin caja. La frase se compone entera desde el principio, así que la línea no se mueve al ir llegando palabras.
+- **El PC del evento se colgó** con la primera versión: un solo ffmpeg con 64 entradas (una imagen por palabra) agotó la memoria. Ahora `video/scripts/captions.cjs` dibuja los subtítulos con Chrome como una sola secuencia PNG transparente (897 fotogramas, ~35 s) y ffmpeg solo superpone esa secuencia: pico de 1,25 GB y 33 s de montaje.
+- Orden: `capture.cjs` → `overlays.cjs` → `captions.cjs` → `build.sh`. Salida: `video/build/terravista-test-v3.mp4` + `.webm` (29,9 s, 1920×1080, con voz).
+- Sigue faltando: en `origin/main` todavía no están el selector de misión ni los avisos de zonas en conflicto o protegidas, así que los tramos 13–18 y 22–27 siguen en negro. La web publicada sigue con la v2.
+
 ## 2026-11-15 (tarde, 2) · Vídeo publicado en una página oculta de la web
 
 - Página `/demo-video/` (sin enlace en el menú y con `noindex`): https://zenidx.github.io/logos-space-apps-2026/demo-video/ · enlace directo al MP4: https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo.mp4

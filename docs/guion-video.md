@@ -32,7 +32,7 @@ La voz ocupa los 30 s (tiempos en `docs/timestamps.txt`); el archivo se corta a 
 | 0:20–0:24 | *and flags the places you can't safely, or legally, go.* | Un candidato con aviso ⚠ (zona en conflicto o protegida, p. ej. North Sentinel Island). | «⚠ Conflict zone · ⚠ Protected area» | Validity, Impact |
 | 0:24–0:28 | *TerraVista. Down to Earth.* | Cierre: logotipo TerraVista, «Down to Earth», URL y «Team Logos · Space Apps 2026». | — | Presentation |
 
-Durante todo el vídeo: subtítulos quemados, idénticos a la voz, y la marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
+Durante todo el vídeo: subtítulos quemados palabra a palabra, idénticos a la voz y sincronizados con ella, y la marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
 
 ## Bloqueos: la web todavía no enseña dos cosas que dice la voz
 Comprobado en `origin/main` el 15-11:

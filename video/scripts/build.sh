@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Assembles the test cut (1920x1080, 30 fps, 29.9 s) from video/build/frames and video/build/overlays.
+# Assembles the test cut (1920x1080, 30 fps, 29.9 s) from video/build/frames, video/build/overlays and video/build/captions.
+# Order: capture.cjs → overlays.cjs → captions.cjs → build.sh
 # Usage: video/scripts/build.sh [output-name]     Optional audio: video/audio/voice.wav or voice.mp3 (muxed if present)
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -23,21 +24,10 @@ in=(
 fc="[0:v]$N[a];[1:v]$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N[e];[5:v]$N,fade=in:st=0:d=0.4[f];"
 fc+="[a][b][c][d][e][f]concat=n=6:v=1:a=0[v0];[v0][6:v]overlay=0:0[w0];"
 
-# Captions, word by word: each word pops in (85 % → 100 % in 0.12 s about its own centre, 0.08 s fade)
-# when it is spoken (video/audio/word-timings.json) and stays until its phrase ends.
-mapfile -t WORDS < <(node -e '
-  const { strip, words } = require("./'"$O"'/words.json");
-  const top = '"$CAP_Y"' - strip.h / 2;
-  for (const w of words) console.log([w.file, w.x, top + w.y, w.w, w.h, w.start, w.end].join(" "));')
-n=${#WORDS[@]}
-for i in $(seq 0 $((n - 1))); do
-  read -r f x y w h s e <<< "${WORDS[$i]}"
-  in+=(-loop 1 -framerate 30 -t $DUR -i $O/$f)
-  k="(0.85+0.15*min(1,max(0,(t-$s)/0.12)))"
-  fc+="[$((7 + i)):v]format=rgba,scale=w='trunc(iw*$k/2)*2':h='trunc(ih*$k/2)*2':eval=frame,fade=in:st=$s:d=0.08:alpha=1[k$i];"
-  fc+="[w$i][k$i]overlay=x='$x+($w-w)/2':y='$y+($h-h)/2':enable='between(t,$s,$e-0.001)'[w$((i + 1))];"
-done
-fc+="[w$n]null[v]"
+# Captions, word by word: one transparent PNG sequence rendered by captions.cjs (1920x240 strip), centred on CAP_Y
+in+=(-framerate 30 -i $B/captions/%04d.png)
+fc+="[w0][7:v]overlay=0:$((CAP_Y - 120)):eof_action=pass[v]"
+n=1
 
 # Voice: starts at 0, cut at $DUR with a 0.1 s fade so the cut doesn't click
 VOICE=$(ls audio/voice.wav audio/voice.mp3 2>/dev/null | head -1 || true)
@@ -49,7 +39,7 @@ if [ -n "$VOICE" ]; then
 fi
 
 $FF -hide_banner -loglevel error -y "${in[@]}" -filter_complex "$fc" -map "[v]" "${audio[@]}" \
-  -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 -t $DUR -movflags +faststart "$B/$NAME.mp4"
+  -threads 4 -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 -t $DUR -movflags +faststart "$B/$NAME.mp4"
 # VP9 copy for reviewing on machines without an H.264 decoder
 $FF -hide_banner -loglevel error -y -i "$B/$NAME.mp4" -c:v libvpx-vp9 -crf 30 -b:v 0 -row-mt 1 -cpu-used 4 -c:a libopus "$B/$NAME.webm"
 echo "$B/$NAME.mp4"; echo "$B/$NAME.webm"
