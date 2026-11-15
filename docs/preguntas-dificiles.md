@@ -20,9 +20,20 @@ Todo sale de la web actual (portada de misiones + «Plan a base») y de `docs/lo
 ## A. Método y validez (Validity)
 
 ### 1. «Your known analogs set the median you compare against. Isn't the validation circular?»
-> Partly, yes, and we say so on the page. The D term uses the known sites, so their high rank is partly built in. That's why we added two checks that don't depend on it: the rule fraction F, whose ranges come from the task and the target, and a negative control: central Amazonia ranks at the 31st percentile or lower in all three validated missions. What we really claim is narrower: the index reproduces where agencies actually trained, and points to places with the same surface conditions that nobody has used yet.
+Cómo puede llegar: *"How do you know your index works?"* · *"Did you just tune it until it found the places you already knew?"* · *"3 of 4 in the top 2 % — impressive. But is that a fair test?"* (invita a presumir: no piquéis).
 
-*Trampa:* no digáis «we validated the method» sin matizar. Decid «it finds the places agencies already chose».
+> "Partly, yes — and we say it on the page. Half of the index measures how close a place is to the median of the known training sites, so their high rank is partly built in.
+> That's why we don't rely on it alone. We use a negative control: central Amazonia, which shares nothing with these sites, falls to the 31st percentile or lower in all three validated missions. And the result isn't perfect: Kīlauea Iki only reaches the 86th percentile, because its 11-kilometre cell is mostly rainforest. A tuned score would have put it on top.
+> So our claim is narrow: the index reproduces where agencies actually trained, and it points to new places with the same surface conditions, at least 300 km away from any known site, each checked against the literature."
+
+Corta: *"Partly, yes. Half the score uses the known sites, so we added a negative control — Amazonia drops to the 31st percentile or lower — and we only claim that it reproduces where agencies actually trained."*
+
+Repreguntas:
+- *"What would a proper test look like?"* → *"Leave-one-out: remove one known site, rebuild the median from the others, and see if it still ranks high. That's the first thing we'd run next."* (**No está hecho**: no digáis que sí.)
+- *"Why only 2 to 4 known sites?"* → *"That's how many places hosted a documented campaign for that exact task, with an official source. Mission 4 has none, so it's labelled 'computed, not validated'."*
+- *"Then how do you know the new regions are good?"* → *"We don't, until someone goes there. Each shows an evidence level from an independent literature check; it's a shortlist to verify."*
+
+*Trampa:* no digáis «it's not circular» ni «we validated the method»; decid «it finds the places agencies already chose». No uséis «nobody has used these places» (no se puede demostrar): «as far as we found». La fuerza no está en «3 de 4 en el top 2 %» (eso es lo circular), sino en el control y en Kīlauea Iki. F es independiente solo en parte: sus rangos se fijaron conociendo los sitios.
 
 ### 2. «Why do all your new regions score 0.98 or more? How do you rank them?»
 > We don't rank them by the index, and the page says so. They come from the very top of Earth's ranking, so differences in the third decimal mean nothing. We read them as a shortlist. To compare them we use the site view: the 3D terrain against the target, the Sun through the year, how far the nearest city is and how complex access is. And we sort them by independent evidence, like a literature check of each region.
