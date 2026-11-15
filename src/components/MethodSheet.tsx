@@ -90,7 +90,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
           <li>• three.js, Next.js, React (MIT). Fonts (SIL Open Font License 1.1): Bricolage Grotesque © 2022 The Bricolage Grotesque Project Authors; Martian Mono © 2021 The Martian Mono Project Authors.</li>
         </ul>
         <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>
-        <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and the problem framing are our team&apos;s own. AI assistants (Claude) were used as tools, under the team&apos;s direction, for code, data search, drafting the scoring method, design proposals and texts; outputs are reviewed by the team before submission. No AI-generated images or video.</p>
+        <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and the problem framing are our team&apos;s own. AI assistants (Claude) were used as tools, under the team&apos;s direction, for code, data search, drafting the scoring method, design proposals and texts; outputs are reviewed by the team before submission. No image or video generation models; the Terra Vista logo was written by AI as vector code from proposals the team chose.</p>
         <p className="mt-6 text-[12px] text-[var(--dim)]">Data {DATA_VERSION}, prepared {DATA_DATE}. NASA Space Apps Challenge 2026 · team Logos. Globes not to scale. This project is not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.</p>
       </div>
     </div>

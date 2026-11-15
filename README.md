@@ -96,8 +96,9 @@ We used AI (Claude agents by Anthropic, via Claude Code) as a tool, under the te
 - **Data search:** finding and summarising field campaigns, public datasets and their licences, including the independent literature check of each new region. Source and licence checks, including unresolved items, are tracked in `docs/sources.md`.
 - **Method drafting:** the scoring formula, thresholds and weights were drafted with AI assistance from the team's idea; they are documented as team choices in `docs/method.md`.
 - **Design and writing:** a front-end design proposal, and drafting and editing documentation and texts in English.
+- **Logo:** the Terra Vista logo (a lens holding Earth's horizon, with the Moon and Mars rising) was written by the AI as SVG vector code, from proposals the team chose between and asked to combine. No image-generation model was used.
 
-AI-assisted outputs are reviewed by the team before submission. AI-assisted code and data files are listed in [`AI_USAGE.md`](AI_USAGE.md) and marked in their headers and metadata. We did not use AI to generate images or video. No AI-generated content contains NASA logos, insignia or other NASA marks.
+AI-assisted outputs are reviewed by the team before submission. AI-assisted code and data files are listed in [`AI_USAGE.md`](AI_USAGE.md) and marked in their headers and metadata. We did not use image-, video- or audio-generation models. The only AI-assisted graphics are the logo files (`public/logo-symbol.svg`, `src/app/icon.svg`, `public/apple-touch-icon.png`) and the logo and name placed on the social preview image (`public/og.png`). No AI-generated content contains NASA logos, insignia or other NASA marks.
 
 ## Data and credits
 - Earth: NASA Blue Marble via NASA GIBS.

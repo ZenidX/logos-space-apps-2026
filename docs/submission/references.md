@@ -108,7 +108,7 @@ SI-assisted outputs are reviewed by the team before submission. Where SI was use
 - Code: every SI-assisted source file starts with the header "AI-assisted (Claude), reviewed by team Logos".
 - Data: generated data files carry the metadata field "generatedWith".
 - AI_USAGE.md in the repository lists each file and what SI did in it.
-- No SI-generated images, video or audio are used in the app. [If the demo video uses any SI-generated image, voice or music, it carries a visible "AI-generated" watermark and is stated in the video description.]
+- No image-, video- or audio-generation models were used. The only SI-assisted graphics are the Terra Vista logo, written by SI as SVG vector code from proposals the team chose, and that logo placed on the social preview image (og.png). [If the demo video uses any SI-generated image, voice or music, it carries a visible "AI-generated" watermark and is stated in the video description.]
 - No SI-generated content uses, contains or modifies any NASA logo, flag, insignia or mission identifier.
 ```
 

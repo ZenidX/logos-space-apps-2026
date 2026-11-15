@@ -15,4 +15,6 @@ Files are reviewed by team Logos before submission; files still marked "to be re
 | `scripts/data/*` | Data pipeline scripts (Python), written with AI assistance; each carries the header |
 | `next.config.ts`, `package.json`, `vercel.json` | Project configuration |
 | `README.md`, `docs/*` (incl. `method.md`, `missions.md`, `sources.md`; the Spanish idea note in `docs/es/`) | Research summaries and drafting of texts |
+| `public/logo-symbol.svg`, `src/app/icon.svg`, `public/apple-touch-icon.png` | Terra Vista logo written as SVG vector code (no image-generation model) from proposals chosen by the team; the PNG icon is rendered from the same SVG |
+| `public/og.png` | Social preview image: the old logo and name were replaced by the Terra Vista logo and name (AI-assisted edit); the rest of the image is unchanged |
 | `public/tex/*.jpg` | Not AI-generated: NASA imagery, only resized and recompressed |
