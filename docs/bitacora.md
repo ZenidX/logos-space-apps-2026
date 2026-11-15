@@ -2,6 +2,21 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 18) · Experiencia de usuario: «Plan a base» como espacio de trabajo
+
+- Pedido de zexu: mejorar mucho la experiencia de usuario. Problemas de «Plan a base»:
+  - La escena, las submisiones, la Tierra y las condiciones iban una debajo de otra, así que al elegir algo se perdía la escena de vista.
+  - Mucho scroll antes de empezar.
+  - Demasiados controles al mismo nivel.
+  - La barra superior tapaba la escena.
+- **Ahora es un espacio de trabajo como la portada de misiones:**
+  - **Escena fija a la izquierda** (en móvil, arriba): el globo hasta elegir sitio y después la base.
+  - Controles de vista recogidos sobre la escena: capas en una fila, «Real scale» (en móvil «1:1») y «View ▾» con altura, Sol y repetir montaje.
+  - **Panel a la derecha:** Luna o Marte → 1 · sitio (★ recomendados por nuestra búsqueda, sitios conocidos, coordenadas plegadas) → ficha del sitio con 3 datos clave y «Change site» → **2 · submisiones en acordeón**: al abrir una, la escena va a ella y dentro aparecen el veredicto, lo que necesita y **3 · dónde ensayarla en la Tierra** con «Rehearse ▶».
+  - «What this site is like» y «About this simulation», plegados.
+- Barra superior opaca en móvil; en pantallas estrechas solo se ve el símbolo del logo.
+- Comprobado con Chromium a 1366 px y 390 px: elegir un sitio recomendado → base en marcha → abrir «Water & oxygen» → lista de la Tierra, sin errores.
+
 ## 2026-11-15 (tarde, 17) · Los mejores sitios para una base en la Luna y en Marte (agua y oxígeno incluidos)
 
 - Pedidos de zexu: un sitio en Marte para conseguir agua y oxígeno, y los sitios de la Luna y de Marte con más facilidades para todos los aspectos de una base, **guardados para poder elegirlos**.

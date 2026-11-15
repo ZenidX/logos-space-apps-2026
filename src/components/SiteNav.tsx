@@ -17,12 +17,12 @@ const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
 export default function SiteNav() {
   const path = norm(usePathname() || "/");
   return (
-    <header className="fixed inset-x-0 top-0 z-[1000] bg-[linear-gradient(rgba(4,6,12,.92),rgba(4,6,12,.55)_70%,transparent)] pb-3">
+    <header className="fixed inset-x-0 top-0 z-[1000] bg-[var(--bg)] pb-2 md:bg-[linear-gradient(rgba(4,6,12,.92),rgba(4,6,12,.55)_70%,transparent)] md:pb-3">
       <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-3 md:px-5">
         {/* Igual que la cabecera de la portada (Logos): símbolo + «Terra Vista» */}
         <Link href="/" className="flex shrink-0 items-center gap-2 text-[16px] font-semibold" aria-label="Terra Vista, home">
           <span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />
-          Terra Vista
+          <span className="hidden sm:inline">Terra Vista</span>
         </Link>
         <ul className="-mr-1 flex items-center gap-1 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
