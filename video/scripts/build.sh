@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 FF=tools/node_modules/ffmpeg-static/ffmpeg
 B=build; O=$B/overlays; F=$B/frames
-NAME=${1:-terravista-test-v2}
+NAME=${1:-terravista-test-v3}
 DUR=29.9          # hard cap: the rules say 30 s or less, so keep a margin
 CAP_Y=905         # vertical centre of the captions
 N="scale=1920:1080,setsar=1,fps=30,format=yuv420p"
@@ -23,14 +23,19 @@ in=(
 fc="[0:v]$N[a];[1:v]$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N[e];[5:v]$N,fade=in:st=0:d=0.4[f];"
 fc+="[a][b][c][d][e][f]concat=n=6:v=1:a=0[v0];[v0][6:v]overlay=0:0[w0];"
 
-# Captions: one strip per cue, shown during its interval, popping in (90 % → 100 % in 0.2 s, with a short fade)
-n=$(node -e "console.log(require('./$O/cues.json').length)")
+# Captions, word by word: each word pops in (85 % → 100 % in 0.12 s about its own centre, 0.08 s fade)
+# when it is spoken (video/audio/word-timings.json) and stays until its phrase ends.
+mapfile -t WORDS < <(node -e '
+  const { strip, words } = require("./'"$O"'/words.json");
+  const top = '"$CAP_Y"' - strip.h / 2;
+  for (const w of words) console.log([w.file, w.x, top + w.y, w.w, w.h, w.start, w.end].join(" "));')
+n=${#WORDS[@]}
 for i in $(seq 0 $((n - 1))); do
-  in+=(-loop 1 -framerate 30 -t $DUR -i $O/cap$i.png)
-  read -r s e < <(node -e "const c=require('./$O/cues.json')[$i];console.log(c.start,c.end)")
-  k="(0.9+0.1*min(1,max(0,(t-$s)/0.2)))"
-  fc+="[$((7 + i)):v]format=rgba,scale=w='trunc(iw*$k/2)*2':h='trunc(ih*$k/2)*2':eval=frame,fade=in:st=$s:d=0.15:alpha=1[k$i];"
-  fc+="[w$i][k$i]overlay=x='(W-w)/2':y='$CAP_Y-h/2':enable='between(t,$s,$e-0.001)'[w$((i + 1))];"
+  read -r f x y w h s e <<< "${WORDS[$i]}"
+  in+=(-loop 1 -framerate 30 -t $DUR -i $O/$f)
+  k="(0.85+0.15*min(1,max(0,(t-$s)/0.12)))"
+  fc+="[$((7 + i)):v]format=rgba,scale=w='trunc(iw*$k/2)*2':h='trunc(ih*$k/2)*2':eval=frame,fade=in:st=$s:d=0.08:alpha=1[k$i];"
+  fc+="[w$i][k$i]overlay=x='$x+($w-w)/2':y='$y+($h-h)/2':enable='between(t,$s,$e-0.001)'[w$((i + 1))];"
 done
 fc+="[w$n]null[v]"
 
