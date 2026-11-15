@@ -1,6 +1,6 @@
 "use client";
 
-// Que la web se explique sola: qué es un análogo y cómo funciona Terra Analog en 3 pasos (portada),
+// Que la web se explique sola: qué es un análogo y cómo funciona TerraVista en 3 pasos (portada),
 // y una introducción por página (dónde estás, qué ves y qué puedes hacer). Lenguaje llano, sin jerga.
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
@@ -35,7 +35,7 @@ export function HowItWorks() {
       </h2>
       <p className="mt-6 max-w-[60ch] text-[clamp(16px,1.5vw,19px)] text-[var(--mut)]">
         An <strong className="font-medium text-[var(--ink)]">analog</strong> is a place on Earth that looks and behaves like
-        the Moon or Mars. Teams use analogs to test rovers, suits and drills before flying them. Terra Analog searches the
+        the Moon or Mars. Teams use analogs to test rovers, suits and drills before flying them. TerraVista searches the
         whole planet for them.
       </p>
       <ol className="mt-12 grid gap-4 md:grid-cols-3">

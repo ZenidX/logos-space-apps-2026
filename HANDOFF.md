@@ -1,9 +1,9 @@
-# HANDOFF · sesión C_0 (datos y puntuación) · Terra Analog
+# HANDOFF · sesión C_0 (datos y puntuación) · TerraVista
 
 Traspaso para continuar desde otro dispositivo. Estado a **14-11-2026, ~18:15 (hora de Barcelona)**. Complementa a `CLAUDE.md` (contexto general y normas del repo) y a `docs/bitacora.md` (historial detallado).
 
 ## Objetivo
-NASA Space Apps Challenge 2026, equipo Logos (Barcelona), reto **«Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars»**. Producto: **Terra Analog**, una web Next.js que busca en toda la Tierra análogos de 3 objetivos (Shackleton en la Luna; Jezero y Arcadia Planitia en Marte) con datos de NASA procesados en Google Earth Engine, y explica en qué se parecen, cuánto y dónde se rompe la analogía.
+NASA Space Apps Challenge 2026, equipo Logos (Barcelona), reto **«Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars»**. Producto: **TerraVista**, una web Next.js que busca en toda la Tierra análogos de 3 objetivos (Shackleton en la Luna; Jezero y Arcadia Planitia en Marte) con datos de NASA procesados en Google Earth Engine, y explica en qué se parecen, cuánto y dónde se rompe la analogía.
 - Web pública: https://zenidx.github.io/logos-space-apps-2026/ (páginas `/`, `/discover/`, `/3d/`, `/method/`, `/data/`).
 - Repo: https://github.com/ZenidX/logos-space-apps-2026 (rama `main`, público).
 - Entrega: domingo 15-11-2026 a las 23:59, hora local. Normas en `docs/normas.md`.

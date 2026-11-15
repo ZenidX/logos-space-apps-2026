@@ -1,4 +1,4 @@
-# Traspaso · sesión C_2 (Terra Analog, NASA Space Apps 2026)
+# Traspaso · sesión C_2 (TerraVista, NASA Space Apps 2026)
 
 Para continuar desde otro dispositivo. Contexto general del proyecto: `CLAUDE.md` y `docs/bitacora.md`.
 Estado a fecha de 2026-11-14, noche (segundo bloque, tras reanudar). Commits de esta sesión en `main`: `2210d6f` (matriz), `eea1eca` (traspaso) y el de «sitios nuevos + MERRA-2».

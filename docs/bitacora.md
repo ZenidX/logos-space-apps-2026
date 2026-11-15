@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 5) · Nombre: quedaban restos de «Terra Analog»
+
+- El cambio a **TerraVista** (`6ab5252`) no llegó a las pantallas añadidas después: logo de la barra (`SiteNav.tsx`, ahora «Terra**Vista**» con «Vista» en color de acento), texto de «How it works» (`HowItWorks.tsx`), texto de la escena de límites (`Story.tsx`) y documentos internos (`valor-anadido.md`, `estrategias-bases.md`, HANDOFF*).
+- Siguen como `terra-analog`, a propósito: el proyecto y los assets de Earth Engine (no se pueden renombrar), los User-Agent de los scripts y las entradas antiguas de esta bitácora.
+- Comprobado: `tsc` y `eslint` limpios. La web pública cambiará con el próximo `npm run deploy`.
+
 ## 2026-11-15 (tarde, 4) · Vídeo: un solo comando y v3 publicada
 
 - `video/scripts/make.sh [nombre] [planos…]` hace todo el proceso (captura → superposiciones → subtítulos → montaje). Con `SKIP_CAPTURE=1` reutiliza los fotogramas ya capturados (~70 s); con captura completa tarda ~4 min. Si llegan pantallas nuevas, basta con añadir el plano en `capture.cjs` y en la línea de tiempo de `build.sh`, y volver a lanzarlo.

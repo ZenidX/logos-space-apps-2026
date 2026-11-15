@@ -57,7 +57,7 @@ Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio
 - **Herramientas:** ffmpeg 7.0.2 estático (con libass, x264 y xfade; sin `drawtext`, así que los textos van como superposición HTML o ASS); Playwright con el Chrome del sistema. WebGL funciona sin GPU (SwiftShader): el globo y el visor 3D se renderizan, aunque más lentos (~20 s por terreno).
 - **Captura:** desde la web pública (https://zenidx.github.io/logos-space-apps-2026/), por fotogramas. Así no se toca la carpeta de trabajo de los otros agentes. `recordVideo` de Playwright no sirve (le falta su propio ffmpeg y la calidad es baja).
 - **Pantallas disponibles:** portada (globo + «Where on Earth is the Moon?»), Discover (selector Shackleton/Jezero/Arcadia, globo con candidatos y deslizador de similitud frente a acceso), 3D (ranking + visor lado a lado con el control del Sol), Method y Data.
-- **Atención:** la web pública todavía dice **«Terra Analog»**, no TerraVista. El cambio de nombre solo está en la rama `video`, sin publicar. Hay que avisar a quien publique o taparlo en el montaje.
+- Resuelto el 15-11: la web ya dice «TerraVista» en todas las pantallas (barra, portada, Cómo funciona). Se verá en la web pública después del próximo `npm run deploy`.
 - **Atención:** con 430 px de ancho, en el visor 3D se solapan los textos del HUD de la Luna. Hay que capturar más ancho o recortar.
 - **Sin pantalla todavía:** selector de misión y avisos de conflicto o zonas protegidas (plano provisional: el ranking del visor 3D, donde sale Kapisa, Afganistán, en el #5 de Shackleton).
 - **Formato decidido:** horizontal 16:9 (1920×1080), pantalla tal cual. Los tiempos están en `docs/timestamps.txt`. Falta el archivo de audio (`video/audio/voice.mp3`).

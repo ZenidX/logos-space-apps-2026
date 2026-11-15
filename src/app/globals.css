@@ -248,7 +248,7 @@ h1, h2, h3 {
 .leaflet-control-attribution a { color: var(--acc) !important; }
 .leaflet-bar a { background: var(--bg2) !important; color: var(--acc) !important; border-color: var(--line2) !important; }
 .leaflet-tooltip { background: var(--bg2); color: var(--ink); border: 1px solid var(--line2); font: 11px var(--font-jetbrains), monospace; border-radius: 0; }
-/* ===== Terra Analog · «Consola v2» — AÑADIR/CAMBIAR en src/app/globals.css (ver PROPUESTA.md) ===== */
+/* ===== TerraVista · «Consola v2» — AÑADIR/CAMBIAR en src/app/globals.css (ver PROPUESTA.md) ===== */
 
 /* 1) :root → sustituir --mut y --dim, añadir el resto (el resto de tokens no cambia) */
 :root {

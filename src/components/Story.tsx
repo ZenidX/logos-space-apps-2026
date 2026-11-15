@@ -696,7 +696,7 @@ export default function Story({ sections }: { sections: Section[] }) {
         </div>
         <Reveal delay={0.2}>
           <p className="mt-6 max-w-[56ch] text-sm text-[var(--mut)]">
-            No place on Earth reproduces these. Terra Analog tells you, for every candidate, what it can rehearse and what it
+            No place on Earth reproduces these. TerraVista tells you, for every candidate, what it can rehearse and what it
             cannot.
           </p>
         </Reveal>

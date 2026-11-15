@@ -1,4 +1,4 @@
-# Traspaso · sesión C_1 (Terra Analog, NASA Space Apps 2026, equipo Logos)
+# Traspaso · sesión C_1 (TerraVista, NASA Space Apps 2026, equipo Logos)
 
 Fecha: 2026-11-14, noche. Repo: `logos-space-apps-2026`, rama `main`. Entrega: domingo 15-11-2026, 23:59 (hora local).
 Este fichero NO está commiteado: falta que el usuario diga dónde subirlo.

@@ -1,6 +1,6 @@
 # Estrategias de base y operaciones análogas
 
-> Encargo del equipo (14-11-2026): para cada objetivo de Terra Analog, cómo sería una base y qué ensayos habría que hacer antes en la Tierra. **Idea clave:** cada ensayo no tiene por qué hacerse en el mismo sitio. Debe hacerse en el lugar de la Tierra que cumpla las condiciones de **esa** tarea.
+> Encargo del equipo (14-11-2026): para cada objetivo de TerraVista, cómo sería una base y qué ensayos habría que hacer antes en la Tierra. **Idea clave:** cada ensayo no tiene por qué hacerse en el mismo sitio. Debe hacerse en el lugar de la Tierra que cumpla las condiciones de **esa** tarea.
 >
 > Etiquetas: **[fuente]** = dato publicado (ver §8); **[suposición]** = propuesta nuestra, razonada pero sin fuente que la respalde tal cual; **[proxy]** = variable aproximada a partir de otra.
 

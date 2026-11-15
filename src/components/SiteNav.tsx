@@ -20,12 +20,12 @@ export default function SiteNav() {
   return (
     <header className="fixed inset-x-0 top-0 z-[1000] border-b border-[var(--line)] bg-[rgba(4,8,15,.78)] backdrop-blur-md">
       <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-1.5">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="Terra Analog, home">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="TerraVista, home">
           <i className="relative inline-block h-4 w-4 rotate-45 border border-[var(--acc)]">
             <span className="absolute inset-[3px] bg-[var(--acc)]" />
           </i>
           <span className="font-[family-name:var(--font-grotesk)] text-xl font-semibold leading-none">
-            Terra <span className="text-[var(--acc)]">Analog</span>
+            Terra<span className="text-[var(--acc)]">Vista</span>
           </span>
         </Link>
         <ul className="-mr-2 flex items-center gap-1 overflow-x-auto font-mono text-[11px] uppercase tracking-[.08em] [scrollbar-width:none]">
