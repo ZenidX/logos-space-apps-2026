@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 9) · Guía para rehacer el vídeo
+
+- `video/GUIA.md`: cómo rehacer y publicar el vídeo desde una sesión nueva (reglas, archivos, recetas, comprobaciones y trampas ya resueltas).
+- `CLAUDE.md` al día: la web se publica sola con cada push a `main`, la web que se entrega es la del repo del equipo y el vídeo ya está publicado.
+- `video/tools/package.json` y su lock pasan a git (`node_modules` sigue fuera), para poder reinstalar ffmpeg y Playwright con `npm ci`.
+
 ## 2026-11-15 (tarde, 8) · Vídeo v4: grabado sobre la web real del equipo
 
 - La web que se entrega es la del repo del equipo (`zexuguo/SpaceApp-Logos`, https://spaceapp-logos.vercel.app), no la de este repo. El vídeo se ha grabado de nuevo entero sobre esa web y ya no tiene tramos en negro: apertura de la portada → «Rehearse the Moon and Mars on Earth» → la idea → misión EVA (vuelo a la Luna) → hielo en el suelo (vuelo a Marte) → ficha de SP Crater con «Where the analogy breaks» → acceso de Haughton (licencia de Nunavut) y de Nueva Siberia (High) → cierre. Plano a plano en `docs/guion-video.md`.

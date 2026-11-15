@@ -44,7 +44,7 @@ Durante todo el vídeo: subtítulos quemados palabra a palabra, idénticos a la 
 ## Cómo se rehace
 - Todo: `video/scripts/make.sh` (~12 min, la escena 3D va a ~1,3 fps sin GPU). Solo montaje: `SKIP_CAPTURE=1 video/scripts/make.sh`. Un plano: `video/scripts/make.sh terravista-demo b`.
 - Voz nueva: dejar `video/audio/voice.wav`, actualizar `docs/timestamps.txt` y lanzar `align.py` (Vosk) antes de `make.sh`.
-- Publicar: `video/scripts/publish-demo.sh`, commit en `main` y `npm run deploy`.
+- Publicar: `video/scripts/publish-demo.sh`, commit y push a `main` (se publica solo). Guía completa: `video/GUIA.md`.
 - La captura usa la web pública con `?capture=1` (modo de grabación de la propia web). No toca el repo del equipo.
 
 ## Por qué así

@@ -14,7 +14,9 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - **Documentar cada avance**: añadir una entrada arriba del todo en `docs/bitacora.md` y actualizar el documento temático que toque (`docs/datos.md`, `docs/metodo.md`, `docs/normas.md`). Los scripts de Earth Engine van en `scripts/ee/`, numerados.
 - Idioma: la documentación interna va en español y el README y la entrega en inglés.
 - Arrancar: `npm install && npm run dev` → http://localhost:3000
-- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · publicar con `npm run deploy` (publica el último commit; construye en un worktree aparte).
+- **Web pública:** https://zenidx.github.io/logos-space-apps-2026/ · se publica sola en cada push a `main` (GitHub Actions, `.github/workflows/deploy.yml`, ~90 s). `npm run deploy` sigue sirviendo para publicar a mano, pero no lo lances justo después de un push: los dos hacen push forzado a `gh-pages`.
+- **La web que se entrega NO es la de este repo:** es la del repo del equipo `zexuguo/SpaceApp-Logos` (https://spaceapp-logos.vercel.app, clon en `/home/event/SpaceApps-v2`). No escribas en ese repo sin permiso. Esta web aloja la página oculta del vídeo (`/demo-video/`).
+- **Vídeo de demo:** para rehacerlo o publicarlo, sigue `video/GUIA.md`.
 
 ## Arquitectura
 - **Web de varias páginas** (App Router, exportación estática): `/` Home (portada + escena Luna→Tierra), `/discover/` (destino + deslizador ciencia↔logística), `/3d/` (comparación 11×11 km), `/method/` (validación + límites + fuentes), `/data/` (pestañas técnicas, `src/components/DataExplorer.tsx`). Barra común `src/components/SiteNav.tsx`; estado compartido (destino y peso) en `src/components/AppState.tsx`; las secciones de la historia están en `src/components/Story.tsx` y cada página elige cuáles pinta con `<Story sections={[…]} />`. `src/app/template.tsx` hace la transición (solo opacidad: un transform rompería los `position:fixed`).
@@ -59,4 +61,4 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
   - Recuperar el NDVI real de los candidatos (necesita la cuenta de Google dueña del proyecto EE `terra-analog`).
   - Ajustar los pesos.
   - Ficha y foto de los 3–5 mejores candidatos (el visor 3D ya cubre en parte el «cómo es por dentro»).
-  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). El vídeo de 30 s se rehace desde cero con requisitos nuevos. Falta ensayar, grabar el vídeo y rellenar la página del proyecto.
+  - Pitch: borrador en `docs/pitch.md` (guion 3 min, campos de la página). Vídeo de 30 s **hecho y publicado** (v4, 29,5 s, grabado sobre la web del equipo): https://zenidx.github.io/logos-space-apps-2026/demo-video/ (cómo rehacerlo: `video/GUIA.md`). Falta ensayar el pitch y rellenar la página del proyecto.
