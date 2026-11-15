@@ -129,6 +129,11 @@ function earthSitesFor(sub: SubMission): EarthSite[] {
 }
 
 // Resumen del «por qué» en la fila: cada criterio con su valor real y si se cumple
+// Sitios de ensayo por puntuación de condiciones (sin esperar al parecido del relieve): para abrir la comparación directamente
+const byTaskScore = (sub: SubMission) => earthSitesFor(sub).sort((a, b) => b.taskScore - a.taskScore);
+// Un sitio de la Tierra que llega en la URL (?elat=..&elon=..&en=..), p. ej. desde una región de la portada de misiones
+const urlEarthSite = (lat: number, lon: number, place: string): EarthSite => ({ key: `${lat},${lon}`, lat, lon, place, taskScore: 0, accessH: null, easy: false, byTask: {} });
+
 function WhyChips({ sub, site }: { sub: SubMission; site: EarthSite }) {
   const id = sub.tasks.find((t) => site.byTask[t]);
   const t = id ? TASKS.get(id) : null;
@@ -200,6 +205,11 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
         {sub.tasks.map((id) => TASKS.get(id)?.name).filter(Boolean).join(" · ")}
         {pending > 0 && <span className="vivo ml-2 font-mono text-xs text-[var(--acc)]">comparing terrain… {sites.length - pending}/{sites.length}</span>}
       </p>
+      {ranked[0] && (
+        <button type="button" onClick={() => onCompare(ranked[0], ranked)} className="glass-chip mt-3 w-full justify-center !min-h-[48px] text-[15.5px] font-semibold">
+          Compare side by side with the best Earth site <span aria-hidden>▶</span>
+        </button>
+      )}
       <ol className="mt-3 flex flex-col gap-2">
         {ranked.map((s, i) => {
           const m = match[s.key];
@@ -268,6 +278,7 @@ export default function BasePlanner() {
   const [showGlobe, setShowGlobe] = useState(true); // escena: globo para elegir sitio / base
   const [viewOpen, setViewOpen] = useState(false);
   const [rehearse, setRehearse] = useState<{ site: EarthSite; list: EarthSite[] } | null>(null);
+  const [cmpTick, setCmpTick] = useState(0);
   const sceneRef = useRef<HTMLDivElement>(null);
   const timer = useRef(0);
 
@@ -275,7 +286,9 @@ export default function BasePlanner() {
   // (la portada de misiones enlaza aquí con el objetivo de cada misión).
   const bodyRef = useRef<PlanetBody>("moon");
   const pendingSub = useRef<string | null>(null);
-  const pushURL = useCallback((q: { b: PlanetBody; site?: Site | null; s?: string | null; pick?: boolean }) => {
+  // comparación pedida en la URL: cmp=best (mejor sitio de la Tierra), cmp=<lat,lon> (uno del catálogo) o cmp=x con elat/elon/en
+  const pendingCmp = useRef<{ cmp: string; earth: EarthSite | null } | null>(null);
+  const pushURL = useCallback((q: { b: PlanetBody; site?: Site | null; s?: string | null; pick?: boolean; cmp?: EarthSite | null }) => {
     const u = new URLSearchParams();
     u.set("b", q.b);
     if (q.site) {
@@ -285,6 +298,14 @@ export default function BasePlanner() {
     }
     if (q.s) u.set("s", q.s);
     if (q.pick) u.set("pick", "1");
+    if (q.cmp) {
+      u.set("cmp", q.cmp.byTask && Object.keys(q.cmp.byTask).length ? q.cmp.key : "x");
+      if (!Object.keys(q.cmp.byTask).length) {
+        u.set("elat", String(q.cmp.lat));
+        u.set("elon", String(q.cmp.lon));
+        u.set("en", q.cmp.place);
+      }
+    }
     const url = `${window.location.pathname}?${u.toString()}`;
     if (url !== window.location.pathname + window.location.search) window.history.pushState(null, "", url);
   }, []);
@@ -360,6 +381,11 @@ export default function BasePlanner() {
       const s = q.get("s");
       pendingSub.current = s;
       setSubId(s);
+      const cmp = q.get("cmp"), elat = Number(q.get("elat")), elon = Number(q.get("elon"));
+      const earth = cmp === "x" && Number.isFinite(elat) && Number.isFinite(elon) && q.has("elat") ? urlEarthSite(elat, elon, q.get("en") || coord(elat, elon)) : null;
+      pendingCmp.current = has && cmp ? { cmp, earth } : null;
+      setCmpTick((t) => t + 1);
+      if (!cmp) setRehearse(null);
     };
     apply();
     window.addEventListener("popstate", apply);
@@ -403,7 +429,38 @@ export default function BasePlanner() {
     pushURL({ b: body, site, pick: v });
   };
 
-  const compare = (s: EarthSite, ranked: EarthSite[]) => setRehearse({ site: s, list: ranked });
+  const compare = (s: EarthSite, ranked: EarthSite[], forSub: SubMission | null = sub) => {
+    setRehearse({ site: s, list: ranked });
+    pushURL({ b: body, site, s: forSub?.id ?? subId, cmp: s });
+  };
+  const closeCompare = () => {
+    setRehearse(null);
+    pushURL({ b: body, site, s: subId });
+  };
+  // Abrir la comparación de la URL en cuanto el terreno de la base está listo
+  useEffect(() => {
+    const want = pendingCmp.current;
+    if (!want || !data || !siteSig) return;
+    const target = subs.find((x) => x.id === subId && x.tasks.length) ?? subs.find((x) => x.tasks.length);
+    if (!target) return;
+    pendingCmp.current = null;
+    const list = byTaskScore(target);
+    const pick = want.earth ?? list.find((x) => x.key === want.cmp) ?? list[0];
+    if (!pick) return;
+    if (target.id !== subId) setSubId(target.id);
+    setStep(STEP_DONE);
+    setStepKey((k) => k + 1);
+    setRehearse({ site: pick, list: want.earth ? [want.earth, ...list] : list });
+  }, [data, siteSig, subs, subId, cmpTick]);
+  // Desde la ficha del sitio: la submisión abierta (o la primera con ensayo en la Tierra) con su mejor sitio
+  const compareFromCard = () => {
+    const target = (sub?.tasks.length ? sub : null) ?? subs.find((x) => x.tasks.length);
+    if (!target) return;
+    const list = byTaskScore(target);
+    if (!list[0]) return;
+    if (target.id !== subId) pickSub(target.id, false);
+    compare(list[0], list, target);
+  };
 
   const markers: GlobeMarker[] = useMemo(
     () => [
@@ -536,10 +593,11 @@ export default function BasePlanner() {
       </section>
 
       {/* Panel: el flujo en orden */}
-      <aside aria-label="Plan a base" className="px-4 pb-24 pt-3 md:overflow-y-auto md:px-1 md:pb-6 md:pt-0 [scrollbar-width:thin]">
+      <aside aria-label="Plan a base" className="glass mx-3 mb-24 mt-3 rounded-[20px] px-4 pb-6 pt-4 md:mx-0 md:mb-0 md:mt-0 md:overflow-y-auto md:p-5 [scrollbar-width:thin]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-[28px] font-bold leading-tight">Plan a base</h1>
+            <p className="label">Moon &amp; Mars · base concept</p>
+            <h1 className="display mt-1 text-[32px] leading-[1.02]">Plan a base</h1>
             <p className="mt-1 text-sm text-[var(--mut)]">Pick a site, watch the base run on its real terrain, then see where on Earth to rehearse each job.</p>
           </div>
           <div className="flex shrink-0 gap-1.5" role="group" aria-label="World">
@@ -556,7 +614,7 @@ export default function BasePlanner() {
         {showGlobe || !site ? (
           <section aria-labelledby="pick-h" className="mt-5">
             <div className="flex items-center justify-between">
-              <h2 id="pick-h" className="text-lg font-semibold">1 · Choose a site</h2>
+              <h2 id="pick-h" className="display text-[22px] leading-tight"><span className="step-k mr-2 align-middle">1</span>Choose a site</h2>
               {data && site && (
                 <button type="button" className="glass-chip !min-h-[42px] text-[15px]" onClick={() => openGlobe(false)}>
                   Back to {site.name.replace(/^★ /, "").replace(/ · .*/, "")}
@@ -610,7 +668,7 @@ export default function BasePlanner() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)]">1 · Site</p>
-                  <h2 id="site-h" className="mt-1 text-[18px] font-semibold leading-snug">{site.name.replace(/^★ /, "")}</h2>
+                  <h2 id="site-h" className="display mt-1 text-[22px] leading-tight">{site.name.replace(/^★ /, "")}</h2>
                   <p className="font-mono text-[12px] text-[var(--dim)]">{coord(site.lat, site.lon)} · {body === "moon" ? "Moon" : "Mars"}</p>
                 </div>
                 <button type="button" className="glass-chip !min-h-[42px] shrink-0 text-[15px]" onClick={() => openGlobe(true)}>
@@ -635,11 +693,16 @@ export default function BasePlanner() {
                   ))}
                 </dl>
               )}
+              {plan && subs.some((x) => x.tasks.length) && (
+                <button type="button" onClick={compareFromCard} className="glass-chip mt-3 w-full justify-center !min-h-[48px] text-[15.5px] font-semibold">
+                  Compare this base with an Earth site <span aria-hidden>▶</span>
+                </button>
+              )}
             </section>
 
             {plan && (
               <section aria-labelledby="subs-h" className="mt-5">
-                <h2 id="subs-h" className="text-lg font-semibold">2 · What the base must keep doing</h2>
+                <h2 id="subs-h" className="display text-[22px] leading-tight"><span className="step-k mr-2 align-middle">2</span>What the base must keep doing</h2>
                 <p className="mt-1 text-[13px] text-[var(--mut)]">Open a job to see it in 3D, how well this site supports it and where on Earth to rehearse it.</p>
                 <ul className="mt-3 flex flex-col gap-2">
                   {subs.map((s) => {
@@ -735,7 +798,7 @@ export default function BasePlanner() {
           sites={rehearse.list}
           onSite={(s) => setRehearse((r) => (r ? { ...r, site: s as EarthSite } : r))}
           base={{ terrain: data.terrain, plan: data.plan, sig: siteSig, name: site.name.replace(/^★ /, ""), sun, layer }}
-          onClose={() => setRehearse(null)}
+          onClose={closeCompare}
         />
       )}
     </div>

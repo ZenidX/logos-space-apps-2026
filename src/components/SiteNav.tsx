@@ -18,26 +18,22 @@ const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
 export default function SiteNav() {
   const path = norm(usePathname() || "/");
   return (
-    <header className="fixed inset-x-0 top-0 z-[1000] bg-[var(--bg)] pb-2 md:bg-[linear-gradient(rgba(4,6,12,.92),rgba(4,6,12,.55)_70%,transparent)] md:pb-3">
-      <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-3 md:px-5">
+    <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className="head-veil fixed inset-x-0 top-0 z-[1000] bg-[var(--bg)] md:bg-transparent">
+      {/* Same header as the home page (Logos): full width, Back + logo on the left, outlined pill links on the right */}
+      <nav aria-label="Pages" className="flex items-center justify-between gap-2 px-4 pb-2 md:px-8 md:pb-3 md:pt-2">
         <div className="flex shrink-0 items-center gap-2">
-        <BackButton className="glass-tab !min-h-[40px] gap-1.5 !px-3 text-[14px] md:!min-h-[44px] md:!px-4 md:text-[15px]" />
-        {/* Igual que la cabecera de la portada (Logos): símbolo + «Terra Vista» */}
-        <Link href="/" className="flex shrink-0 items-center gap-2 text-[16px] font-semibold" aria-label="Terra Vista, home">
-          <span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />
-          <span className="hidden sm:inline">Terra Vista</span>
-        </Link>
+          <BackButton className="chip gap-1.5" />
+          <Link href="/" className="title-sm flex shrink-0 items-center gap-2 whitespace-nowrap text-[16px]" aria-label="Terra Vista, home">
+            <span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />
+            <span className="hidden sm:inline">Terra Vista</span>
+          </Link>
         </div>
-        <ul className="-mr-1 flex items-center gap-1 overflow-x-auto py-1 [scrollbar-width:none]">
+        <ul className="-mr-1 flex items-center gap-2 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
             const on = p.href === "/appendix/" ? path.startsWith("/appendix/") : path === norm(p.href);
             return (
               <li key={p.href} className="shrink-0">
-                <Link
-                  href={p.href}
-                  aria-current={on ? "page" : undefined}
-                  className={`glass-tab !min-h-[40px] !px-3 text-[14px] md:!min-h-[44px] md:!px-4 md:text-[15px] ${on ? "" : "text-[var(--ink)]"}`}
-                >
+                <Link href={p.href} aria-current={on ? "page" : undefined} className="chip">
                   <span className="md:hidden">{p.short}</span>
                   <span className="hidden md:inline">{p.label}</span>
                 </Link>

@@ -23,6 +23,8 @@ interface Props {
   highlightId?: string | null;
   onSelect?: (id: string) => void;
   onHover?: (id: string | null) => void;
+  /** A click on a globe (not a drag): the overview's Earth, Moon or Mars, or a globe of the close-up. */
+  onBody?: (id: BodyId, closeUp: boolean) => void;
   paused?: boolean;
   /** Part of the canvas kept for page text: x = left share, y = bottom share. The subject is framed in the rest (the stars still fill it all). */
   frame?: { x: number; y: number };
@@ -43,16 +45,16 @@ const ROCK = { moon: { ls: 0.75, gain: 1.9, relief: 0.9, haze: [0, 0, 0] }, mars
 const JOURNEY_S = 2.8, BACK_S = 1.3, IDLE_MS = 30000, COMPACT_W = 620, COMPACT_NAMES = 3, ROOM_W = 560;
 const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
 
-export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, frame = FULL, intro = false, onError, className = "" }: Props) {
+export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, onBody, paused = false, frame = FULL, intro = false, onError, className = "" }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const names = useRef(new Map<string, HTMLSpanElement>());
   const labs = useRef(new Map<string, HTMLSpanElement>());
   const lines = useRef(new Map<string, SVGLineElement>());
-  const latest = useRef({ mode, markers, selectedId, highlightId, paused, frame, intro, onError });
+  const latest = useRef({ mode, markers, selectedId, highlightId, paused, frame, intro, onError, onBody });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, frame, intro, onError }; }, [mode, markers, selectedId, highlightId, paused, frame, intro, onError]);
+  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, frame, intro, onError, onBody }; }, [mode, markers, selectedId, highlightId, paused, frame, intro, onError, onBody]);
 
   useEffect(() => {
     const el = host.current;
@@ -159,6 +161,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     let compBody: "moon" | "mars" | null = null, compAlpha = 0, fx = 0, fy = 0; // fx, fy: frame offsets, eased towards the prop
     const earthQ = new THREE.Quaternion(), tmpQ = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0), camPos = new THREE.Vector3();
     let drag: { body: BodyId; grip: THREE.Vector3; pid: number } | null = null, userTurned = false, compTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null; // grip: the grabbed point, in the body's own frame
+    const marsQ = new THREE.Quaternion(); // Mars turns on its axis in the overview (a Mars day is close to an Earth day)
     const compQ = new THREE.Quaternion(); // the reader's turn of the companion world, on top of its automatic facing
     // names: measured sizes, the position each one had in the last frame, and what is on top of the scene (kept clear)
     const sizeOf = new Map<string, { w: number; h: number }>(), slotOf = new Map<string, number>();
@@ -265,6 +268,9 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         if (c.lengthSq() > 1e-6) { tmpQ.copy(orientToFace(c.normalize(), closeFrame(E).dir)); if (earthQ.angleTo(tmpQ) > 1e-3) { if (jump) earthQ.copy(tmpQ); else earthQ.slerp(tmpQ, 1 - Math.exp(-dt * 2.4)); moving = true; } }
       } else if (!rest && !drag && !focus) { earthQ.premultiply(tmpQ.setFromAxisAngle(yAxis, dt * 0.07)); moving = true; }
       mesh.earth.quaternion.copy(earthQ);
+      // the other worlds turn on themselves too: Mars like the Earth; the Moon is tidally locked, its near side faces the Earth
+      if (compBody !== "mars") { if (!rest && !(drag && drag.body === "mars")) { marsQ.premultiply(tmpQ.setFromAxisAngle(yAxis, dt * 0.068)); moving = true; } mesh.mars.quaternion.copy(marsQ); }
+      if (compBody !== "moon") mesh.moon.quaternion.copy(orientToFace(latLonToVec3(0, 0), v.copy(E).sub(mesh.moon.position).normalize()));
       // the companion keeps its marked point turned between the camera and the Earth
       if (compBody && target && target.body === compBody) {
         const C = mesh[compBody].position;
@@ -276,7 +282,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         if (compTurned) mesh[compBody].quaternion.premultiply(compQ);
       }
 
-      const cur = drag ? "grabbing" : overGlobe && k >= 0.9 && !sel ? "grab" : ""; // the globes can be turned by hand in the close-up
+      const cur = drag ? "grabbing" : !overGlobe ? "" : k >= 0.9 && !sel ? "grab" : "pointer"; // the globes can be turned by hand in the close-up
       if (el.style.cursor !== cur) el.style.cursor = cur;
       first = false;
       return moving || drag !== null;
@@ -384,18 +390,27 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     const hits = (e: PointerEvent, id: BodyId) => {
       if (!mesh[id].visible) return false;
       const r = el.getBoundingClientRect(), dsk = discOf(mesh[id].position, mesh[id].scale.x);
-      return Math.hypot(e.clientX - r.left - dsk.x, e.clientY - r.top - dsk.y) <= dsk.r * 1.08;
+      return Math.hypot(e.clientX - r.left - dsk.x, e.clientY - r.top - dsk.y) <= Math.max(dsk.r * 1.08, dsk.r + 14); // small worlds keep a finger-sized target
     };
+    // the globe under the pointer: overview → any world (the small Moon first), close-up → the Earth or the world beside it
+    const bodyAt = (e: PointerEvent): BodyId | null => {
+      if (k < 0.1) return (["moon", "mars", "earth"] as const).find((id) => hits(e, id)) ?? null;
+      if (k < 0.9) return null;
+      return compBody && compAlpha > 0.5 && hits(e, compBody) ? compBody : hits(e, "earth") ? "earth" : null;
+    };
+    let press: { body: BodyId; x: number; y: number; pid: number } | null = null; // a click is a press that hardly moves
     const down = (e: PointerEvent) => {
-      if (e.button !== 0 || (e.target as HTMLElement).closest("button") || latest.current.selectedId || k < 0.9) return;
-      const body: BodyId | null = compBody && compAlpha > 0.5 && hits(e, compBody) ? compBody : hits(e, "earth") ? "earth" : null;
+      if (e.button !== 0 || (e.target as HTMLElement).closest("button")) return;
+      const body = bodyAt(e);
       if (!body) return;
+      press = { body, x: e.clientX, y: e.clientY, pid: e.pointerId };
+      if (latest.current.selectedId || k < 0.9) return; // turning by hand: only in the close-up, with no site open
       sphereDir(e, body, hitDir);
       drag = { body, grip: hitDir.clone().applyQuaternion(mesh[body].quaternion.clone().invert()), pid: e.pointerId };
       el.setPointerCapture(e.pointerId); e.preventDefault(); dirty = true;
     };
     const move = (e: PointerEvent) => {
-      if (!drag) { const o = e.pointerType === "mouse" && k >= 0.9 && !latest.current.selectedId && (hits(e, "earth") || (!!compBody && compAlpha > 0.5 && hits(e, compBody))); if (o !== overGlobe) { overGlobe = o; dirty = true; } return; }
+      if (!drag) { const o = e.pointerType === "mouse" ? bodyAt(e) !== null : false; if (o !== overGlobe) { overGlobe = o; dirty = true; } return; }
       if (e.pointerId !== drag.pid) return;
       const now = drag.grip.clone().applyQuaternion(mesh[drag.body].quaternion); // where the grabbed point is now
       sphereDir(e, drag.body, hitDir);
@@ -404,7 +419,10 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       else { compQ.premultiply(dq); mesh[drag.body].quaternion.premultiply(dq); compTurned = true; }
       dirty = true;
     };
-    const up = (e: PointerEvent) => { if (drag && e.pointerId === drag.pid) { drag = null; dirty = true; } };
+    const up = (e: PointerEvent) => {
+      if (press && e.pointerId === press.pid) { const p = press; press = null; if (e.type === "pointerup" && Math.hypot(e.clientX - p.x, e.clientY - p.y) < 6) latest.current.onBody?.(p.body, k >= 0.9); }
+      if (drag && e.pointerId === drag.pid) { drag = null; dirty = true; }
+    };
     el.addEventListener("pointerdown", down); el.addEventListener("pointermove", move); el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
 
     const frame = (now: number) => {

@@ -40,6 +40,8 @@ function sceneFor(m: Mission, list: Site[]) {
   ];
   return { markers };
 }
+// Team members, first names only (team decision, 15-11-2026)
+const TEAM = ["Alexis", "Fer", "Victor", "Xavi", "Zexu"];
 const STORY_SCENES = Object.fromEntries(MISSIONS.map((m) => [m.id, sceneFor(m, byEvidence(m.sites)).markers])) as Record<MissionId, SceneMarker[]>;
 
 export default function Home() {
@@ -148,6 +150,15 @@ export default function Home() {
   const step1 = (d: number) => { if (navPos < 0) return; const n = navList[(navPos + d + navList.length) % navList.length]; setSel(n.id); setHover(null); };
 
   const pick = (id: MissionId) => { if (!missionId) leaveStory(); listScroll.current = 0; lastSite.current = null; setMissionId(id); setSel(null); setFilter(NO_FILTER); }; // filters start clean in each mission
+  // A click on a globe. Overview: the Moon or Mars goes to its first mission in the story, the Earth to the mission list.
+  // Close-up of a story step: the world beside the Earth opens that mission.
+  const onBody = (id: "earth" | "moon" | "mars", closeUp: boolean) => {
+    if (missionId) return;
+    const go = (sel: string) => document.querySelector(sel)?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    if (closeUp) { if (storyMission && id === storyMission.target.body) pick(storyMission.id); return; }
+    if (id === "earth") go("#explore");
+    else { const m = MISSIONS.find((x) => x.target.body === id); if (m) go(`[data-step="${m.id}"]`); }
+  };
   const home = () => { if (missionId) back.current = true; listScroll.current = 0; lastSite.current = null; setMissionId(null); setSel(null); };
 
   useEffect(() => {
@@ -192,6 +203,12 @@ export default function Home() {
           ))}
         </nav>
       )}
+      <div className="mb-6 grid gap-3 text-[12.5px] text-[var(--mut)] sm:grid-cols-2">
+        <p><span className="label mr-1.5">Team Logos</span>{TEAM.join(" · ")}</p>
+        <p><span className="label mr-1.5">Hackathon</span>Made for the <a href="https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:text-[var(--ink)]">NASA Space Apps Challenge 2026</a>, Barcelona local event, 14–15 November 2026. Challenge: Identify Earth locations that analog the permanent Moon base locations and Mars.</p>
+        <p><span className="label mr-1.5">SI (AI) use</span>An AI coding assistant (Claude Code) was used as a tool to write code, process data and draft texts; the idea, the approach and every decision are the team&apos;s. <a href="https://github.com/ZenidX/logos-space-apps-2026/blob/main/AI_USAGE.md" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--line2)] underline-offset-2 hover:text-[var(--ink)]">What the AI did, file by file</a>.</p>
+        <p><span className="label mr-1.5">Personal data</span>This site collects no personal data: no accounts, no cookies, no analytics. Team members are listed by first name only.</p>
+      </div>
       Imagery: NASA Blue Marble, Black Marble, LROC WAC and LOLA, Viking MDIM 2.1 and MOLA (credits in Method &amp; sources); the Sun is drawn by code. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
     </footer>
   );
@@ -202,11 +219,11 @@ export default function Home() {
       <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
         <div className="pointer-events-auto flex shrink-0 items-center gap-2" data-scene-avoid>
         {missionId && <BackButton className="chip gap-1.5 hover:border-[var(--ink)]" onNoHistory={() => (sel ? setSel(null) : home())} />}
+        {missionId && <button type="button" onClick={home} className="chip gap-1.5 hover:border-[var(--ink)]" aria-label="Exit the mission and go back to the story"><span aria-hidden>✕</span><span>Exit<span className="hidden sm:inline"> mission</span></span></button>}
         <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 whitespace-nowrap text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} /><span className={missionId ? "hidden sm:inline" : ""}>Terra Vista</span> <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         </div>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <Link href="/base/" className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`}>Plan a base <span aria-hidden>→</span></Link>
-          <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           {!missionId && !calm && step !== "explore" && <span className="md:hidden"><button type="button" className="chip" onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}>Missions <span aria-hidden>↓</span></button></span>}
           <button ref={methodBtn} className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`} onClick={() => setMethod(true)}><span className="sm:hidden">Sources</span><span className="hidden sm:inline">Method &amp; sources</span></button>
           <button className="chip icon-btn hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} title={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span></button>
@@ -226,6 +243,7 @@ export default function Home() {
             selectedId={missionId ? sel : null}
             highlightId={hover}
             onHover={setHover}
+            onBody={onBody}
             onSelect={(id) => { const m = missionId ?? storyMission?.id; if (!m) return; if (!missionId) pick(m); if (id.startsWith("t-")) setSel(null); else openSite(id); }}
             paused={paused}
             frame={frame}
@@ -300,7 +318,6 @@ export default function Home() {
               <p className="reveal mt-4 text-[13px] text-[var(--mut)]" style={{ ["--d" as string]: "240ms" }}>For EVA and rover field teams: a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
               <div className="reveal mt-4 flex flex-wrap gap-2" style={{ ["--d" as string]: "300ms" }}>
                 <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Read the method and sources</button>
-                <span className="sm:hidden"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
               </div>
               <details className="about reveal mt-5" style={{ ["--d" as string]: "340ms" }}>
                 <summary>How it works</summary>

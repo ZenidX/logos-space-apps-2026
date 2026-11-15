@@ -2,6 +2,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 import { Doc } from "@/components/logos/MethodSheet";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useState } from "react";
 import Count from "@/components/logos/Count";
 import { EVIDENCE, FILTERS, INDEPENDENT, MISSIONS, SHORT_LABEL, fmt, idx, topNote, travelText, type Mission, type Site } from "@/lib/logos/missions";
@@ -90,6 +91,9 @@ const MINI_LABEL: Record<string, string> = { ndvi: "Vegetation", albedo: "Albedo
 
 const TerrainCompare = dynamic(() => import("@/components/logos/TerrainCompare"), { ssr: false, loading: () => <div className="skel relative h-[240px] rounded-xl md:h-[280px]" role="status" aria-label="Loading terrain" /> });
 
+// the sub-mission of "Plan a base" that each mission rehearses (its id in src/lib/submissions.ts)
+const BASE_SUB: Record<string, string> = { "m1-eva-basalt": "eva", "m2-rover-sand": "exploration", "m3-ground-ice": "water", "m4-low-sun": "power" };
+
 const MONTHS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 /** Noon Sun elevation on day 15 of each month, from latitude only (declination by Cooper's formula). */
 export function noonSunByMonth(lat: number): number[] {
@@ -164,17 +168,21 @@ export default function SitePanel({ site, mission, onBack, nav }: { site: Site; 
         <header className="mt-1">
           <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
           <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "new region to investigate, not a surveyed site" : "known analog · 0.1° cell around the site"}</span></p>
-                  <p className="verdict mt-2">{(() => {
-            const st = matchVars.map((v) => { const d = mission.variables.find((x) => x.id === v.id); return v.value === null || v.similarity === null ? "none" : d?.ideal && d.tolerance != null && hasStrip(v.id, d.ideal, d.tolerance) ? conditionStatus(v.value, d.ideal, d.tolerance) : v.similarity >= 0.5 ? "in range" : "out of range"; });
-            const n = (k: string) => st.filter((x) => x.startsWith(k)).length, parts = [n("in range") && `in range on ${n("in range")}`, n("accepted") && `accepted on ${n("accepted")}`, n("out") && `out of range on ${n("out")}`, n("none") && `no data on ${n("none")}`].filter(Boolean);
-            return <><b>{parts.join(", ").replace(/^./, (c) => c.toUpperCase())}</b> of {st.length} mission conditions · access {site.access.level.toLowerCase()} · {travelText(site.travelH)}.</>;
-          })()}</p>
+          {/* the mission conditions at a glance: one pill each, coloured by how this site does */}
+          <ul className="mt-2.5 flex flex-wrap gap-1.5" aria-label="Mission conditions at this site">
+            {matchVars.map((v) => {
+              const d = mission.variables.find((x) => x.id === v.id);
+              const st = v.value === null || v.similarity === null ? "none" : d?.ideal && d.tolerance != null && hasStrip(v.id, d.ideal, d.tolerance) ? conditionStatus(v.value, d.ideal, d.tolerance) : v.similarity >= 0.5 ? "in range" : "out of range";
+              const k = st.startsWith("in") ? "ok" : st.startsWith("accepted") ? "near" : st.startsWith("out") ? "out" : "none";
+              return <li key={v.id} className={`cpill cpill-${k}`} title={`${v.label}: ${st}${v.value !== null ? ` (${fmt(v.value, v.unit)})` : ""}`}><i aria-hidden>{k === "ok" ? "✓" : k === "near" ? "≈" : k === "out" ? "✕" : "–"}</i>{MINI_LABEL[v.id] ?? SHORT_LABEL[v.id] ?? v.label}<span className="sr-only">: {st}</span></li>;
+            })}
+          </ul>
 </header>
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
           <div style={{ width: "clamp(170px, 25vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
-          <div><RadialLegend rings={rings} sources={sources} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Rings from the outside in follow this list. Grey: 1 = same as the target. Amber: fuller = more complex access.</p></div>
+          <div><RadialLegend rings={rings} sources={sources} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1 (a ranking, not suitability). Grey: 1 = same as the target. Amber: fuller = harder access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
           <p className="flex items-baseline gap-3"><span className="label">Analog index</span><span className="mono text-[40px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></span><span className="text-[11px] text-[var(--dim)]">0–1, not suitability</span></p>
@@ -183,14 +191,23 @@ export default function SitePanel({ site, mission, onBack, nav }: { site: Site; 
         </div>
 
         <div className="mt-3 grid items-end gap-3 lg:grid-cols-[1fr_auto]">
-          <TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact />
+          <div>
+            <TerrainCompare siteId={site.id} targetId={`target-${mission.id}`} targetSunDeg={tSun} compact />
+            {/* the same ground in "Plan a base": the base built on the target and on this Earth site, side by side */}
+            <Link href={`/base/?b=${t.body}&lat=${t.lat}&lon=${t.lon}&n=${encodeURIComponent(targetShort)}&s=${BASE_SUB[mission.id] ?? "eva"}&cmp=x&elat=${site.lat}&elon=${site.lon}&en=${encodeURIComponent(site.name)}`} className="chip mt-2 inline-flex hover:border-[var(--ink)]">Compare with a base at {targetShort} <span aria-hidden>→</span></Link>
+          </div>
           <div className="hidden gap-2 lg:grid [@media(max-height:840px)]:lg:hidden">
             {ts && <LocatorMap body="earth" lat={ts.lat} lon={ts.lon > 180 ? ts.lon - 360 : ts.lon} color="#5db4ff" label={site.name} />}
             {tt && <LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} />}
           </div>
         </div>
         {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
-        <p className="mt-2 text-[12px] text-[var(--mut)]" title={`Travel time: modelled, to the nearest city (2015). Slope: mean over the 11 × 11 km window; flat means ${FILTERS.flatDeg}° or less. Neither is part of the index or of the access ring.`}><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"})`} · not part of the index.</p>
+        {/* logistics: three figures instead of a sentence (none of them is part of the index) */}
+        <dl className="mt-3 grid grid-cols-3 gap-2" title={`Travel time: modelled, to the nearest city (2015). Slope: mean over the 11 × 11 km window; flat means ${FILTERS.flatDeg}° or less. Not part of the index.`}>
+          <div className="ltile"><dt>To a city</dt><dd>{site.travelH !== null ? travelText(site.travelH) : "–"}</dd><span>{site.travelH === null ? "no data" : site.travelH > FILTERS.remoteH ? "remote" : site.travelH < FILTERS.reachH ? "within reach" : "by road / air"}</span></div>
+          <div className="ltile"><dt>Mean slope</dt><dd>{site.slopeDeg !== null ? `${site.slopeDeg.toFixed(1)}°` : "–"}</dd><span>{site.slopeDeg === null ? "no data" : site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"}</span></div>
+          <div className="ltile"><dt>Access</dt><dd style={{ color: "var(--sand)" }}>{site.access.level}</dd><span><AccessBars site={site} /></span></div>
+        </dl>
 
         <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {site.vars.some((v) => v.id === "volcanic" && v.inMatch && v.value === null) ? `The 0.5° rock map has no cell here (island or coast), so volcanic rock is not scored at this site${site.kind === "known" ? "; the field campaign that worked here documents the lava field" : ""}.` : mission.glanceLimit ?? `${mission.keyLimit} ${(mission.always[0]?.text.split(";")[0] ?? "").replace(/\.$/, "")}.`}</span></p>
 
@@ -212,7 +229,7 @@ export default function SitePanel({ site, mission, onBack, nav }: { site: Site; 
         <section id="site-detail" role="tabpanel" aria-labelledby={`tab-${tab}`} className="fade-in mt-4 scroll-mt-4 border-t border-[var(--line)] pt-4" key={tab}>
           {tab === "why" && <>
           <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? topNote(mission) : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
-          <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
+          <p className="mb-2 mt-1 text-[12.5px] text-[var(--mut)]">Band = range the mission needs (dashed: still accepted) · dot = this site · tick = the target.</p>
           <ul className="grid gap-1.5">
             {matchVars.map((v) => {
               const def = mission.variables.find((x) => x.id === v.id), tval = t.values[v.id], tv = tval?.value ?? null, est = /approx|^estimate/i.test(tval?.source ?? "");
@@ -229,11 +246,14 @@ export default function SitePanel({ site, mission, onBack, nav }: { site: Site; 
                   ) : (
                     <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no cell on the 0.5° rock map here (small island or coast), so not scored") : `here ${fmt(v.value, v.unit)}`}</div>
                   )}
+                  <details className="cnote mt-1">
+                  <summary>Why it matters · sources</summary>
                   {def?.why && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">{def.why}</div>}
                   <div className="src mt-1"><span>Data</span>{v.source}</div>
                   {tval?.source && <div className="src"><span>Target</span>{tval.source}{tval.url && <> <a className="underline" href={tval.url} target="_blank" rel="noopener noreferrer">link ↗</a></>}</div>}
                   {v.id === "precip" && <div className="mt-0.5 text-[11.5px] text-[var(--amber)]">Satellite estimate (GPM IMERG, 2024 only, 0.1° cell). On small islands and hyper-arid coasts it can differ a lot from rain gauges; poleward of 60° its coverage is partial, so a 0 there may mean no estimate.</div>}
                   {v.id === "sand" && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">Soil-model estimate (SoilGrids, 0.1° cell mean) with a wide uncertainty. New regions cluster near 54 % because the index favours places like the known analogs, whose median is 54 %.</div>}
+                  </details>
                 </li>
               );
             })}

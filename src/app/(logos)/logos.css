@@ -420,3 +420,18 @@ html:has(.story) { scroll-snap-type: y mandatory; }
 
 /* Móviles estrechos: los chips más grandes (15-11) no caben en la cabecera; un poco menos de relleno */
 @media (max-width: 420px) { .chip { padding: 8px 12px; font-size: 14px; gap: 4px; } }
+
+/* site card at a glance: condition pills and logistics tiles */
+.cpill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 4px; border: 1px solid var(--line2); border-radius: 999px; font-size: 12px; line-height: 1.2; color: var(--ink); }
+.cpill i { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; font: 700 10px/1 var(--mono); font-style: normal; color: #04060c; }
+.cpill-ok { border-color: color-mix(in srgb, var(--earth) 55%, transparent); } .cpill-ok i { background: var(--earth); }
+.cpill-near { border-color: color-mix(in srgb, var(--earth) 30%, transparent); } .cpill-near i { background: color-mix(in srgb, var(--earth) 55%, var(--bg)); color: var(--ink); }
+.cpill-out { border-color: color-mix(in srgb, var(--amber) 55%, transparent); color: var(--amber); } .cpill-out i { background: var(--amber); }
+.cpill-none { color: var(--dim); } .cpill-none i { background: var(--line2); color: var(--ink); }
+.ltile { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: rgb(255 255 255 / .02); min-width: 0; }
+.ltile dt { font: 400 9.5px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.ltile dd { margin: 0; font: 600 17px/1.15 var(--sans); letter-spacing: -.02em; color: var(--ink); overflow-wrap: anywhere; }
+.ltile > span { font-size: 11px; color: var(--mut); }
+.cnote > summary { cursor: pointer; font-size: 11px; color: var(--dim); list-style: none; }
+.cnote > summary::before { content: "+ "; } .cnote[open] > summary::before { content: "– "; }
+.cnote > summary::-webkit-details-marker { display: none; }

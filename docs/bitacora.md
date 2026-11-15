@@ -2,6 +2,17 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 22) · Lista de mejoras 4–11: ficha más gráfica, salir, clic en los astros, giro de los planetas, pie, sin «Prototype», «Plan a base»
+
+- **4 · Ficha del sitio más gráfica y simple** (`SitePanel.tsx`, `logos.css`): la frase del veredicto pasa a píldoras por condición (✓ en rango, ≈ aceptada, ✕ fuera, – sin dato) y el párrafo de logística a tres cifras (tiempo a una ciudad, pendiente media, acceso con sus barras). En «Why», el «por qué importa» y las fuentes de cada condición quedan plegados («Why it matters · sources»), y los textos de ayuda son más cortos.
+- **5 · Botón para salir:** en la vista de misión, junto a «Back», hay «✕ Exit mission», que vuelve a la historia (el logo Terra Vista ya no es la única salida).
+- **6 · Pulsar los astros y los puntos:** en la vista general, la Luna o Marte llevan a su primera misión de la historia y la Tierra a «Choose a mission». En el primer plano de una misión de la historia, el astro de al lado abre esa misión. Los puntos de los sitios ya abrían la misión con su sitio; desde el arreglo de los eventos del ratón (entrada 19) también funcionan en la historia. Un clic es una pulsación que casi no se mueve, así que no choca con el arrastre. El cursor pasa a mano encima de un astro (`SolarScene.tsx`, prop `onBody`).
+- **8 · Los planetas giran sobre sí mismos:** Marte gira en la vista general como la Tierra (un día marciano es casi un día terrestre) y la Luna mira siempre a la Tierra con su cara visible (rotación síncrona). En el primer plano la Tierra no gira sola, para que los sitios se queden a la vista; se puede girar a mano.
+- **9 · Pie de página** (al final de la historia): equipo Logos (Alexis · Fer · Victor · Xavi · Zexu, solo nombres de pila, decisión del equipo), referencia al hackathon con enlace al reto, uso de SI (IA) con enlace a `AI_USAGE.md`, y datos personales (la web no recoge ninguno: ni cuentas, ni cookies, ni analítica; comprobado en `src/`).
+- **10 · Fuera la etiqueta «Prototype»** de la cabecera y de la sección de misiones.
+- **7 · «Plan a base» con el mismo aspecto que la portada** (`SiteNav.tsx`, `src/app/(team)/globals.css`, `BasePlanner.tsx`): cabecera de ancho completo con el mismo velo y botones de píldora con borde (la página actual, clara); panel de cristal redondeado; títulos con la fuente display y pasos numerados en mono.
+- **11 · Comparar terrenos, mejor integrado:** en `/base/`, botón «Compare this base with an Earth site ▶» en la ficha del sitio y «Compare side by side with the best Earth site ▶» en cada submisión. La comparación se guarda en la URL (`cmp=best`, `cmp=<lat>,<lon>` o `cmp=x&elat=..&elon=..&en=..` para cualquier punto de la Tierra). Desde la ficha de cada sitio de la portada, «Compare with a base at {objetivo} →» abre `/base/` con la base en el objetivo de la misión, su submisión (EVA, exploración, agua o energía) y la comparación con ese sitio de la Tierra.
+
 ## 2026-11-15 · README visual con las tres partes (C_1)
 
 - Arriba, «One site, three parts»: miniaturas enlazadas de Missions, Plan a base (GIF) y el apéndice.
