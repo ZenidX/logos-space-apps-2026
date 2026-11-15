@@ -2,6 +2,21 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 15) · Modelos 3D de verdad, escala real y bases en cada candidato de la Tierra
+
+- `src/lib/base-models.ts`: modelos **en metros reales** con piezas y materiales PBR, con texturas generadas (aislante dorado arrugado, tela blanca acolchada, células solares, regolito sinterizado, neumático de malla):
+  - Hábitat de superficie Ø 4,6 × 10 m con cúpulas, anillos, ventanas, patas niveladoras, esclusa con escalera, radiador y antena; berma de regolito.
+  - Módulo de aterrizaje de dos etapas (~12 m) con patas, zapatas, tobera, propulsores de control y escalera.
+  - Rover no presurizado con ruedas de malla que giran al avanzar.
+  - Mástil solar vertical de 18 m con panel de 3,5 × 8 m que sigue al Sol.
+  - Campo solar, reactor de fisión con radiadores, excavadora de tambores contrarrotantes (giran), planta de extracción de agua (tolva, horno, tanques), zona de hielo con escarcha y taladro.
+  - Plataforma sinterizada de Ø 60 m con berma y balizas; astronautas que caminan.
+- `BaseScene.tsx`: todas las piezas son modelos. En la vista general van ×22 (la web lo indica).
+- **Modo «Real scale»:** factor 1, cámara a pie de base, búfer de profundidad logarítmico, sombras centradas en la base, la cámara viaja con el objetivo y nunca baja del suelo.
+- Capa **«Ice»** (trampa fría en superficie, hielo enterrado o nada), con leyenda.
+- **Comparación con la Tierra:** botones ‹ › para pasar de un candidato a otro con **la base montada en cada uno**, y escala real en los dos lados.
+- Comprobado en Chromium: vista general, escala real, capa Ice y comparación (Xinjiang ↔ Shackleton) sin errores.
+
 ## 2026-11-15 (tarde, 14) · Hielo lunar investigado y simulado con temperatura
 
 - Investigación con fuentes en `docs/hielo-lunar.md`:

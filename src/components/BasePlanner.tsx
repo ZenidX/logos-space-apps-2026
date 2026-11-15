@@ -128,7 +128,7 @@ const earthSig = (s: EarthSite) => {
   return p;
 };
 
-function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: ShapeSig; onCompare: (s: EarthSite) => void }) {
+function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: ShapeSig; onCompare: (s: EarthSite, ranked: EarthSite[]) => void }) {
   const sites = useMemo(() => earthSitesFor(sub), [sub]);
   const [match, setMatch] = useState<Record<string, number | "error">>({});
   useEffect(() => {
@@ -191,7 +191,7 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
               </span>
               <button
                 type="button"
-                onClick={() => onCompare(s)}
+                onClick={() => onCompare(s, ranked)}
                 className="glass-tab text-[14px]"
               >
                 Rehearse <span aria-hidden>▶</span>
@@ -229,12 +229,13 @@ export default function BasePlanner() {
   const [stepKey, setStepKey] = useState(0);
   const [subId, setSubId] = useState<string | null>(null);
   const [layer, setLayer] = useState<Layer>("relief");
+  const [realScale, setRealScale] = useState(false);
   const [ex, setEx] = useState(1.5);
   const [sun, setSun] = useState(20);
   const [symbol, setSymbol] = useState<number | null>(null);
   const [imagery, setImagery] = useState<"" | "loading" | "none">("");
   const [form, setForm] = useState({ lat: "", lon: "" });
-  const [rehearse, setRehearse] = useState<EarthSite | null>(null);
+  const [rehearse, setRehearse] = useState<{ site: EarthSite; list: EarthSite[] } | null>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const timer = useRef(0);
 
@@ -310,7 +311,7 @@ export default function BasePlanner() {
     setSubId(id);
   };
 
-  const compare = (s: EarthSite) => setRehearse(s);
+  const compare = (s: EarthSite, ranked: EarthSite[]) => setRehearse({ site: s, list: ranked });
 
   const markers: GlobeMarker[] = useMemo(
     () => [
@@ -430,7 +431,7 @@ export default function BasePlanner() {
             : plan ? <span className="k">Mesh ≈ {Math.round(plan.cellM)} m/px · ×{ex} vertical{imagery === "loading" ? " · loading imagery…" : imagery === "none" ? " · no imagery here" : ""}</span>
             : <span className="k">No site yet</span>
           }
-          br={symbol ? <span className="k">Modules drawn ~{symbol}× real size</span> : undefined}
+          br={symbol ? <span className="k">{symbol === 1 ? "Real scale · drag to orbit, scroll to zoom" : `Modules drawn ${symbol}× real size`}</span> : undefined}
         >
           {data ? (
             <BaseScene
@@ -443,6 +444,7 @@ export default function BasePlanner() {
               exaggeration={ex}
               sunDeg={sun}
               focus={running && subId ? (sub?.focus ?? null) : null}
+              realScale={realScale}
               onStepEnd={onStepEnd}
               onSymbolScale={setSymbol}
               onImagery={setImagery}
@@ -461,10 +463,13 @@ export default function BasePlanner() {
               <button type="button" onClick={replay} className="glass-chip">
                 Replay set-up
               </button>
+              <button type="button" className="glass-tab text-[14px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>
+                Real scale
+              </button>
               <div className="flex gap-1" role="group" aria-label="Ground layer">
-                {(["relief", "photo", "slope", "sun"] as Layer[]).map((l) => (
+                {(["relief", "photo", "slope", "sun", ...(plan.ice ? (["ice"] as Layer[]) : [])] as Layer[]).map((l) => (
                   <button key={l} type="button" className="glass-tab text-[14px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
-                    {l === "relief" ? "Relief" : l === "photo" ? "Photo" : l === "slope" ? "Slope" : "Sunlight"}
+                    {l === "relief" ? "Relief" : l === "photo" ? "Photo" : l === "slope" ? "Slope" : l === "sun" ? "Sunlight" : "Ice"}
                   </button>
                 ))}
               </div>
@@ -477,6 +482,15 @@ export default function BasePlanner() {
                 <input type="range" min={1} max={70} step={0.5} value={sun} onChange={(e) => setSun(Number(e.target.value))} aria-valuetext={`Sun ${sun} degrees above the horizon`} />
               </label>
             </div>
+            {layer === "ice" && plan.ice && (
+              <p className="mt-2 font-mono text-[11px] text-[var(--mut)]">
+                Where water ice can last (radiative model calibrated to LRO Diviner):{" "}
+                <span style={{ color: "#dcf0ff" }}>■</span> surface cold trap, never above 110 K ({plan.ice.surfPct.toFixed(1)} %) ·{" "}
+                <span style={{ color: "#3c82e6" }}>■</span> buried ice possible, cold on average ({plan.ice.buriedPct.toFixed(1)} %) ·{" "}
+                <span style={{ color: "#8a8780" }}>■</span> too warm. Coldest spot {Math.round(plan.ice.coldestK)} K. Shadows smaller than the mesh
+                (micro cold traps, 10–20 % of all cold-trap area) are not resolved.
+              </p>
+            )}
             {layer === "sun" && (
               <p className="mt-2 font-mono text-[11px] text-[var(--mut)]">
                 Share of the time each point sees the Sun (day, night and seasons, computed from the relief):{" "}
@@ -574,7 +588,9 @@ export default function BasePlanner() {
       {rehearse && data && site && sub && siteSig && (
         <MissionCompare
           sub={sub}
-          site={rehearse}
+          site={rehearse.site}
+          sites={rehearse.list}
+          onSite={(s) => setRehearse((r) => (r ? { ...r, site: s as EarthSite } : r))}
           base={{ terrain: data.terrain, plan: data.plan, sig: siteSig, name: site.name, sun, layer }}
           onClose={() => setRehearse(null)}
         />

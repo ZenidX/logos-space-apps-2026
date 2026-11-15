@@ -6,13 +6,14 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as models from "@/lib/base-models";
 import type { TerrainData } from "@/lib/terrain";
 import type { BasePlan, Spot } from "@/lib/base-plan";
 import type { FocusKey } from "@/lib/submissions";
 
 export const STEP_IDS = ["landing", "habitat", "power", "isru", "traverse", "eva"] as const;
 export const STEP_DONE = STEP_IDS.length; // todo colocado
-export type Layer = "relief" | "photo" | "slope" | "sun";
+export type Layer = "relief" | "photo" | "slope" | "sun" | "ice";
 
 interface Props {
   terrain: TerrainData;
@@ -29,6 +30,8 @@ interface Props {
   world?: "moon" | "mars" | "earth";
   // Con la base montada y un foco: repite en bucle solo la operación de esa submisión (comparación Tierra ↔ base).
   loopFocus?: boolean;
+  // Escala real: piezas a tamaño de verdad y cámara a pie de base
+  realScale?: boolean;
   onSymbolScale?: (factor: number) => void;
   onImagery?: (state: "" | "loading" | "none") => void;
 }
@@ -68,6 +71,21 @@ function slopeCanvas(slope: Float32Array, n: number) {
   return c;
 }
 
+// Hielo: trampa fría en superficie (blanco azulado), hielo enterrado posible (azul), sin hielo (gris según la luz).
+function iceCanvas(cls: Uint8Array, lit: Float32Array, n: number) {
+  const c = document.createElement("canvas");
+  c.width = c.height = n;
+  const ctx = c.getContext("2d")!;
+  const img = ctx.createImageData(n, n);
+  for (let i = 0; i < n * n; i++) {
+    const g = 60 + 110 * Math.min(1, lit[i] / 0.6);
+    const rgb = cls[i] === 2 ? [220, 240, 255] : cls[i] === 1 ? [60, 130, 230] : [g, g * 0.97, g * 0.92];
+    img.data.set([rgb[0], rgb[1], rgb[2], 255], i * 4);
+  }
+  ctx.putImageData(img, 0, 0);
+  return c;
+}
+
 // Horas de sol: negro-azulado (nunca) → ámbar → amarillo claro (casi siempre). Sombra permanente en azul hielo.
 function sunCanvas(lit: Float32Array, psr: Uint8Array, n: number) {
   const c = document.createElement("canvas");
@@ -87,7 +105,7 @@ function sunCanvas(lit: Float32Array, psr: Uint8Array, n: number) {
   return c;
 }
 
-export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery, focus = null, world, loopFocus = false }: Props) {
+export default function BaseScene({ terrain, plan, step, stepKey, layer, exaggeration, sunDeg, onStepEnd, onSymbolScale, onImagery, focus = null, world, loopFocus = false, realScale = false }: Props) {
   const loopRef = useRef(loopFocus);
   useEffect(() => {
     loopRef.current = loopFocus;
@@ -118,7 +136,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     if (!el) return;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+      // Profundidad logarítmica: a escala real conviven piezas de 1 m y un terreno de 11 km
+      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, logarithmicDepthBuffer: true });
     } catch {
       queueMicrotask(() => setGlError("WebGL is not available in this browser or device, so the 3D base cannot be drawn. The plan below is still valid."));
       return;
@@ -138,13 +157,13 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     const scene = new THREE.Scene();
     if (mars) scene.fog = new THREE.Fog(0x3a2214, 1.6, 4.2); // aire con polvo; la Luna no tiene niebla
     if (earth) scene.fog = new THREE.Fog(0x1c3552, 1.8, 4.6); // aire de la Tierra
-    const camera = new THREE.PerspectiveCamera(42, el.clientWidth / el.clientHeight, 0.005, 60);
+    const camera = new THREE.PerspectiveCamera(42, el.clientWidth / el.clientHeight, realScale ? 0.00002 : 0.005, 60);
     camera.position.set(0.35, 0.42, 0.62);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.maxPolarAngle = Math.PI / 2.08;
-    controls.minDistance = 0.12;
-    controls.maxDistance = 2.6;
+    controls.minDistance = realScale ? 0.0006 : 0.12; // a escala real, hasta ~7 m
+    controls.maxDistance = realScale ? 0.25 : 2.6;
     controls.autoRotate = !reduce.matches;
     controls.autoRotateSpeed = 0.35;
     controls.addEventListener("start", () => (controls.autoRotate = false));
@@ -169,12 +188,12 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     const sc = sun.shadow.camera;
-    sc.left = sc.bottom = -0.75;
-    sc.right = sc.top = 0.75;
-    sc.near = 0.1;
-    sc.far = 14;
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.002;
+    sc.left = sc.bottom = realScale ? -0.05 : -0.75; // a escala real: ±550 m alrededor de la base
+    sc.right = sc.top = realScale ? 0.05 : 0.75;
+    sc.near = realScale ? 0.01 : 0.1;
+    sc.far = realScale ? 0.6 : 14;
+    sun.shadow.bias = realScale ? -0.00002 : -0.0004;
+    sun.shadow.normalBias = realScale ? 0.00002 : 0.002;
     scene.add(sun);
     scene.add(sun.target);
 
@@ -193,7 +212,8 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     const reliefTex = new THREE.CanvasTexture(terrain.texture);
     const slopeTex = new THREE.CanvasTexture(slopeCanvas(plan.slope, n));
     const sunTex = new THREE.CanvasTexture(sunCanvas(plan.sun.lit, plan.sun.psr, n));
-    for (const t of [reliefTex, slopeTex, sunTex]) {
+    const iceTex = new THREE.CanvasTexture(plan.ice ? iceCanvas(plan.ice.cls, plan.sun.lit, n) : sunCanvas(plan.sun.lit, plan.sun.psr, n));
+    for (const t of [reliefTex, slopeTex, sunTex, iceTex]) {
       t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = 8;
     }
@@ -222,108 +242,69 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     };
     const yAt = (x: number, z: number) => (hAt(x, z) - minH) * s * exRef.current;
 
-    // ---------- Piezas (símbolos a escala U) ----------
-    // U ≈ 1,2 % del lado. Un módulo de hábitat real mide ~10 m: el factor de exageración se enseña en la web.
-    const U = 0.026;
-    const realModuleM = 10;
-    cb.current.onSymbolScale?.(Math.round((U * 0.9) / s / realModuleM));
-    const M = {
-      white: new THREE.MeshStandardMaterial({ color: 0xe9eef5, roughness: 0.45, metalness: 0.25 }),
-      grey: new THREE.MeshStandardMaterial({ color: 0x8c96a3, roughness: 0.7, metalness: 0.4 }),
-      gold: new THREE.MeshStandardMaterial({ color: 0xd8b25c, roughness: 0.35, metalness: 0.8 }),
-      panel: new THREE.MeshStandardMaterial({ color: 0x1d3f7a, roughness: 0.25, metalness: 0.7, side: THREE.DoubleSide, emissive: 0x061a3a }),
-      berm: new THREE.MeshStandardMaterial({ color: earth ? 0x8a7a5e : mars ? 0x9a5a38 : 0x77746e, roughness: 1 }),
-      pad: new THREE.MeshStandardMaterial({ color: 0xb7bdc4, roughness: 0.9 }),
-      accent: new THREE.MeshStandardMaterial({ color: 0x5ee6ff, emissive: 0x2aa8c4, emissiveIntensity: 0.9 }),
-      ice: new THREE.MeshStandardMaterial({ color: 0x9fdcff, emissive: 0x3fa6ff, emissiveIntensity: 1.2, transparent: true, opacity: 0.85 }),
-      plume: new THREE.MeshBasicMaterial({ color: 0xffb066, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }),
-    };
-    const disposables: { dispose: () => void }[] = [...Object.values(M)];
-    const mesh = (g: THREE.BufferGeometry, m: THREE.Material) => {
-      disposables.push(g);
-      const o = new THREE.Mesh(g, m);
-      o.castShadow = true;
-      o.receiveShadow = true;
-      return o;
-    };
+    // ---------- Piezas: modelos en METROS (src/lib/base-models.ts) ----------
+    // Escala real (F = 1) para verlas de cerca; en la vista general se dibujan F veces más grandes para que se vean
+    // sobre 11 km de terreno (la web enseña el factor).
+    const F = realScale ? 1 : 22;
+    const K = s * F; // metros → unidades de escena
+    cb.current.onSymbolScale?.(F);
+    const plumeMat = new THREE.MeshBasicMaterial({ color: 0xffb066, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false });
+    const accentMat = new THREE.MeshStandardMaterial({ color: 0x5db4ff, emissive: 0x2a78c4, emissiveIntensity: 0.9 });
+    const disposables: { dispose: () => void }[] = [plumeMat, accentMat];
+    const bermColor = earth ? 0x8a7a5e : mars ? 0x9a5a38 : 0x77746e;
+    const recolorBerms = (o: THREE.Object3D) =>
+      o.traverse((c) => {
+        const mm = c.userData.recolor as THREE.MeshStandardMaterial | undefined;
+        if (mm) mm.color.set(bermColor);
+      });
 
-    interface Piece { obj: THREE.Object3D; spot: { x: number; z: number }; stepIdx: number; lift?: number; label?: string; anim?: (p: number) => void; loop?: (now: number) => number }
+    interface Piece { obj: THREE.Object3D; spot: { x: number; z: number }; stepIdx: number; label?: string; topM?: number; anim?: (p: number) => void; loop?: (now: number) => number }
     const pieces: Piece[] = [];
     const add = (p: Piece) => {
       p.obj.visible = false;
+      p.obj.scale.setScalar(K);
+      recolorBerms(p.obj);
       scene.add(p.obj);
       pieces.push(p);
       return p;
     };
+    const grow = (o: THREE.Object3D, p: number) => o.scale.setScalar(K * Math.max(0.001, ease(p)));
 
-    // Pista + módulo de aterrizaje (paso 0)
-    const padG = new THREE.Group();
-    padG.add(mesh(new THREE.CylinderGeometry(1.1 * U, 1.2 * U, 0.05 * U, 40), M.pad));
-    const ringPad = mesh(new THREE.TorusGeometry(0.85 * U, 0.03 * U, 6, 48), M.accent);
-    ringPad.rotation.x = Math.PI / 2;
-    ringPad.position.y = 0.04 * U;
-    padG.add(ringPad);
-    add({ obj: padG, spot: plan.pad, stepIdx: 0, label: "Landing pad" });
-
-    const lander = new THREE.Group();
-    const body = mesh(new THREE.CylinderGeometry(0.28 * U, 0.34 * U, 0.55 * U, 16), M.gold);
-    body.position.y = 0.55 * U;
-    lander.add(body);
-    const top = mesh(new THREE.ConeGeometry(0.28 * U, 0.4 * U, 16), M.white);
-    top.position.y = 1.02 * U;
-    lander.add(top);
-    for (let i = 0; i < 4; i++) {
-      const leg = mesh(new THREE.CylinderGeometry(0.02 * U, 0.02 * U, 0.55 * U, 6), M.grey);
-      const a = (i * Math.PI) / 2 + Math.PI / 4;
-      leg.position.set(Math.cos(a) * 0.38 * U, 0.22 * U, Math.sin(a) * 0.38 * U);
-      leg.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5);
-      lander.add(leg);
-    }
-    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.3 * U, 1.1 * U, 16, 1, true), M.plume);
+    // Pista de regolito sinterizado + módulo de aterrizaje (paso 0)
+    add({ obj: models.landingPad(), spot: plan.pad, stepIdx: 0, label: "Landing pad", topM: 2 });
+    const lander = models.lander();
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(2.4, 14, 20, 1, true), plumeMat);
     disposables.push(plume.geometry);
     plume.rotation.x = Math.PI;
-    plume.position.y = -0.2 * U;
+    plume.position.y = -6;
     lander.add(plume);
+    const liftW = realScale ? 160 * s : 0.25; // altura desde la que baja (escena)
     add({
       obj: lander,
       spot: plan.pad,
       stepIdx: 0,
+      label: "Lander",
+      topM: 12,
       // En marcha: llega una nave de carga en cada ciclo (baja en el primer cuarto y se queda)
       loop: (now) => clamp01((now % CARGO_MS) / CARGO_MS / 0.25),
       anim: (p) => {
         const k = ease(p);
-        lander.position.y += (1 - k) * 0.35; // baja desde ~3,5 km de «altura» de escena
+        lander.position.y += (1 - k) * liftW;
         plume.visible = p < 0.97;
-        plume.scale.set(1, 0.6 + (1 - k) * 1.4, 1);
-        M.plume.opacity = 0.85 * (1 - k * 0.6);
+        plume.scale.set(1, 0.5 + (1 - k) * 1.2, 1);
+        plumeMat.opacity = 0.85 * (1 - k * 0.6);
       },
     });
 
-    // Hábitat (paso 1): tres módulos, cúpula y berma de regolito
+    // Hábitat con berma de regolito (paso 1)
     const hab = new THREE.Group();
-    const modG = new THREE.CylinderGeometry(0.2 * U, 0.2 * U, 0.9 * U, 20);
-    disposables.push(modG);
-    for (const [x, z, r] of [[0, 0, 0], [0.75, 0, 0], [0.38, 0.55, Math.PI / 2]] as const) {
-      const m = new THREE.Mesh(modG, M.white);
-      m.castShadow = m.receiveShadow = true;
-      m.rotation.z = Math.PI / 2;
-      m.rotation.y = r;
-      m.position.set((x - 0.38) * U, 0.2 * U, (z - 0.2) * U);
-      hab.add(m);
-    }
-    const dome = mesh(new THREE.SphereGeometry(0.38 * U, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.white);
-    dome.position.set(0, 0.05 * U, 0.15 * U);
-    hab.add(dome);
-    const berm = mesh(new THREE.TorusGeometry(1.0 * U, 0.12 * U, 6, 40), M.berm);
-    berm.rotation.x = Math.PI / 2;
-    berm.scale.set(1, 1, 0.6);
-    hab.add(berm);
-    add({ obj: hab, spot: plan.habitat, stepIdx: 1, label: "Habitat", anim: (p) => hab.scale.setScalar(Math.max(0.001, ease(p))) });
+    hab.add(models.habitat(), models.berm(10));
+    add({ obj: hab, spot: plan.habitat, stepIdx: 1, label: "Habitat", topM: 9, anim: (p) => grow(hab, p) });
 
     // Energía (paso 2)
     const sunAz = (135 * Math.PI) / 180;
     const cable = (a: { x: number; z: number }, b: { x: number; z: number }) => {
-      const N = 40;
+      const N = 60;
       const g = new THREE.BufferGeometry();
       g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(N * 3), 3));
       disposables.push(g);
@@ -334,7 +315,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         for (let i = 0; i < N; i++) {
           const t = i / (N - 1);
           const x = a.x + (b.x - a.x) * t, z = a.z + (b.z - a.z) * t;
-          p.setXYZ(i, x * s, yAt(x, z) + 0.06 * U, z * s);
+          p.setXYZ(i, x * s, yAt(x, z) + 0.4 * K, z * s);
         }
         p.needsUpdate = true;
       };
@@ -344,100 +325,79 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       return { line, update, g, N };
     };
     const cables: ReturnType<typeof cable>[] = [];
+    const trackers: THREE.Object3D[] = [];
     if (plan.power.kind === "solar-masts") {
       plan.power.spots.forEach((sp, i) => {
-        const g = new THREE.Group();
-        const mastH = 2.2 * U;
-        const pole = mesh(new THREE.CylinderGeometry(0.035 * U, 0.05 * U, mastH, 8), M.grey);
-        pole.position.y = mastH / 2;
-        g.add(pole);
-        const panel = mesh(new THREE.PlaneGeometry(0.55 * U, 1.1 * U), M.panel);
-        panel.position.y = mastH - 0.4 * U;
-        panel.rotation.y = sunAz; // panel vertical mirando al Sol rasante
-        g.add(panel);
-        add({ obj: g, spot: sp, stepIdx: 2, label: i === 0 ? "Solar masts" : undefined, anim: (p) => g.scale.set(1, Math.max(0.001, ease(p)), 1) });
+        const g = models.solarMast();
+        g.traverse((c) => {
+          if (c.userData.tracker) trackers.push(c);
+        });
+        add({ obj: g, spot: sp, stepIdx: 2, label: i === 0 ? "Solar masts" : undefined, topM: 19, anim: (p) => g.scale.set(K, K * Math.max(0.001, ease(p)), K) });
         cables.push(cable(sp, plan.habitat));
       });
     } else {
       const [field, reactor] = plan.power.spots;
-      const g = new THREE.Group();
-      const pg = new THREE.PlaneGeometry(0.42 * U, 0.7 * U);
-      disposables.push(pg);
-      for (let i = 0; i < 3; i++)
-        for (let j = 0; j < 3; j++) {
-          const pnl = new THREE.Mesh(pg, M.panel);
-          pnl.castShadow = true;
-          pnl.position.set((i - 1) * 0.55 * U, 0.3 * U, (j - 1) * 0.6 * U);
-          pnl.rotation.x = -Math.PI / 2 + 0.6;
-          g.add(pnl);
-        }
-      add({ obj: g, spot: field, stepIdx: 2, label: "Solar field", anim: (p) => g.scale.setScalar(Math.max(0.001, ease(p))) });
-      const r = new THREE.Group();
-      const core = mesh(new THREE.CylinderGeometry(0.2 * U, 0.24 * U, 0.6 * U, 16), M.grey);
-      core.position.y = 0.3 * U;
-      r.add(core);
-      for (let i = 0; i < 4; i++) {
-        const fin = mesh(new THREE.BoxGeometry(0.03 * U, 0.55 * U, 0.75 * U), M.white);
-        const a = (i * Math.PI) / 2;
-        fin.position.set(Math.cos(a) * 0.55 * U, 0.38 * U, Math.sin(a) * 0.55 * U);
-        fin.rotation.y = -a;
-        r.add(fin);
-      }
-      add({ obj: r, spot: reactor, stepIdx: 2, label: "Reactor", anim: (p) => r.scale.setScalar(Math.max(0.001, ease(p))) });
+      const g = models.solarField();
+      g.rotation.y = sunAz; // filas mirando al Sol
+      add({ obj: g, spot: field, stepIdx: 2, label: "Solar field", topM: 3, anim: (p) => grow(g, p) });
+      const r = models.reactor();
+      add({ obj: r, spot: reactor, stepIdx: 2, label: "Reactor", topM: 8, anim: (p) => grow(r, p) });
       cables.push(cable(field, plan.habitat), cable(reactor, plan.habitat));
     }
 
     // Recursos (paso 3)
-    const isruG = new THREE.Group();
+    const drums: THREE.Object3D[] = [];
     if (plan.isru.kind === "ice-shadow" || plan.isru.kind === "ice-ground") {
-      for (let i = 0; i < 3; i++) {
-        const leg = mesh(new THREE.CylinderGeometry(0.025 * U, 0.025 * U, 1.0 * U, 6), M.grey);
-        const a = (i * 2 * Math.PI) / 3;
-        leg.position.set(Math.cos(a) * 0.18 * U, 0.45 * U, Math.sin(a) * 0.18 * U);
-        leg.rotation.set(Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
-        isruG.add(leg);
+      const site = models.iceSite();
+      add({ obj: site, spot: plan.isru.spot, stepIdx: 3, label: plan.isru.kind === "ice-shadow" ? (earth ? "Ice dig (rehearsal)" : "Ice dig (cold trap)") : "Ice drill", topM: 5, anim: (p) => grow(site, p) });
+      const ex = models.excavator();
+      const exSpot = { x: plan.isru.spot.x + 14, z: plan.isru.spot.z + 6 };
+      (ex.userData.drums as THREE.Group).children.forEach((d) => drums.push(d));
+      add({ obj: ex, spot: exSpot, stepIdx: 3, topM: 2, anim: (p) => grow(ex, p) });
+      if (plan.plant) {
+        const wp = models.waterPlant();
+        add({ obj: wp, spot: plan.plant, stepIdx: 3, label: "Water plant", topM: 6, anim: (p) => grow(wp, p) });
+        cables.push(cable(plan.plant, plan.habitat));
       }
-      const bit = mesh(new THREE.CylinderGeometry(0.04 * U, 0.04 * U, 1.1 * U, 8), M.gold);
-      bit.position.y = 0.3 * U;
-      isruG.add(bit);
-      const ice = mesh(new THREE.OctahedronGeometry(0.22 * U), M.ice);
-      ice.position.y = 1.3 * U;
-      isruG.add(ice);
-      add({ obj: isruG, spot: plan.isru.spot, stepIdx: 3, label: plan.isru.kind === "ice-shadow" ? "Ice in shadow" : "Ice drill", anim: (p) => { isruG.scale.setScalar(Math.max(0.001, ease(p))); ice.rotation.y = p * 6; } });
     } else {
-      const plant = mesh(new THREE.BoxGeometry(0.6 * U, 0.35 * U, 0.4 * U), M.white);
-      plant.position.y = 0.18 * U;
-      isruG.add(plant);
-      for (let i = 0; i < 2; i++) {
-        const tank = mesh(new THREE.SphereGeometry(0.17 * U, 16, 10), M.gold);
-        tank.position.set((i - 0.5) * 0.4 * U + 0.55 * U, 0.17 * U, 0);
-        isruG.add(tank);
-      }
-      add({ obj: isruG, spot: plan.isru.spot, stepIdx: 3, label: "Oxygen plant", anim: (p) => isruG.scale.setScalar(Math.max(0.001, ease(p))) });
+      const op = models.waterPlant();
+      add({ obj: op, spot: plan.isru.spot, stepIdx: 3, label: "Oxygen plant", topM: 6, anim: (p) => grow(op, p) });
     }
 
-    // Ciencia: baliza (paso 4, destino de la travesía si no hay hielo en sombra)
+    // Ciencia: estación con baliza (paso 4)
     const beacon = new THREE.Group();
-    const gem = mesh(new THREE.OctahedronGeometry(0.2 * U), M.accent);
-    gem.position.y = 1.1 * U;
+    const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.7), accentMat);
+    gem.position.y = 4.6;
     beacon.add(gem);
-    const stick = mesh(new THREE.CylinderGeometry(0.015 * U, 0.015 * U, 1.0 * U, 6), M.accent);
-    stick.position.y = 0.5 * U;
+    const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4.2, 8), accentMat);
+    stick.position.y = 2.1;
     beacon.add(stick);
-    add({ obj: beacon, spot: plan.science, stepIdx: 4, label: "Science stop", anim: (p) => { beacon.scale.setScalar(Math.max(0.001, ease(Math.min(1, p * 2)))); gem.rotation.y = p * 4; } });
+    disposables.push(gem.geometry, stick.geometry);
+    add({
+      obj: beacon,
+      spot: plan.science,
+      stepIdx: 4,
+      label: "Science stop",
+      topM: 6,
+      anim: (p) => {
+        grow(beacon, Math.min(1, p * 2));
+        gem.rotation.y = p * 4;
+      },
+    });
 
-    // Ruta del rover + rover (paso 4): tubo visible (las líneas WebGL miden 1 px)
+    // Ruta del rover + rover (paso 4): tubo visible
     const routePts = plan.route.length;
-    const routeMat = new THREE.MeshStandardMaterial({ color: 0x5ee6ff, emissive: 0x2aa8c4, emissiveIntensity: 0.8 });
+    const routeMat = new THREE.MeshStandardMaterial({ color: 0x5db4ff, emissive: 0x2a78c4, emissiveIntensity: 0.8, transparent: true, opacity: realScale ? 0.55 : 1 });
     disposables.push(routeMat);
     const routeLine = new THREE.Mesh(new THREE.BufferGeometry(), routeMat);
     routeLine.visible = false;
     scene.add(routeLine);
     let routeIdx = 0;
+    const tubeR = (realScale ? 0.5 : 0.8) * K; // camino: ~1 m de ancho a escala real
     const updateRoute = () => {
-      const pts = plan.route.map((r) => new THREE.Vector3(r.x * s, yAt(r.x, r.z) + 0.12 * U, r.z * s));
+      const pts = plan.route.map((r) => new THREE.Vector3(r.x * s, yAt(r.x, r.z) + tubeR, r.z * s));
       if (pts.length < 2) pts.push(pts[0].clone().add(new THREE.Vector3(0.001, 0, 0)));
-      const g = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), Math.max(16, pts.length * 3), 0.07 * U, 6, false);
+      const g = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), Math.max(16, pts.length * 3), tubeR, 6, false);
       routeLine.geometry.dispose();
       routeLine.geometry = g;
       routeIdx = g.index ? g.index.count : 0;
@@ -455,40 +415,33 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       const t = clamp01((d - cum[i - 1]) / seg);
       return { x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, i };
     };
-    const rover = new THREE.Group();
-    const chassis = mesh(new THREE.BoxGeometry(0.5 * U, 0.14 * U, 0.32 * U), M.white);
-    chassis.position.y = 0.2 * U;
-    rover.add(chassis);
-    const mastR = mesh(new THREE.CylinderGeometry(0.02 * U, 0.02 * U, 0.3 * U, 6), M.grey);
-    mastR.position.set(0.15 * U, 0.4 * U, 0);
-    rover.add(mastR);
-    const wheelG = new THREE.CylinderGeometry(0.09 * U, 0.09 * U, 0.06 * U, 12);
-    disposables.push(wheelG);
-    for (const [x, z] of [[-0.18, -0.19], [0.18, -0.19], [-0.18, 0.19], [0.18, 0.19]]) {
-      const w = new THREE.Mesh(wheelG, M.grey);
-      w.rotation.x = Math.PI / 2;
-      w.position.set(x * U, 0.09 * U, z * U);
-      rover.add(w);
-    }
-    rover.scale.setScalar(1.3);
-    const roverSpot = { x: plan.habitat.x, z: plan.habitat.z };
+    const rover = models.rover();
+    const wheels: THREE.Object3D[] = [];
+    rover.traverse((c) => {
+      if (c.userData.wheel) wheels.push(c);
+    });
+    const roverSpot = { x: plan.route[0]?.x ?? plan.habitat.x, z: plan.route[0]?.z ?? plan.habitat.z };
+    let lastK = 0;
     add({
       obj: rover,
       spot: roverSpot,
       stepIdx: 4,
-      label: "Rover",
+      label: plan.plant ? "Rover (hauling icy soil)" : "Rover",
+      topM: 3,
       // En marcha: ida y vuelta continua por la ruta
       loop: (now) => {
         const u = (now % ROVER_MS) / ROVER_MS;
         return u < 0.5 ? u * 2 : 2 - u * 2;
       },
       anim: (p) => {
-        const k = p; // velocidad constante
-        const a = along(k), b = along(Math.min(1, k + 0.01));
+        const a = along(p), b = along(Math.min(1, p + 0.01));
         roverSpot.x = a.x;
         roverSpot.z = a.z;
         rover.position.set(a.x * s, yAt(a.x, a.z), a.z * s);
-        if (Math.hypot(b.x - a.x, b.z - a.z) > 1e-6) rover.rotation.y = Math.atan2(-(b.z - a.z), b.x - a.x);
+        if (Math.hypot(b.x - a.x, b.z - a.z) > 1e-6) rover.rotation.y = Math.atan2(-(b.z - a.z), b.x - a.x) + (p < lastK ? Math.PI : 0);
+        const spin = ((p - lastK) * cum[cum.length - 1]) / 0.53; // vueltas de rueda (radio 0,53 m)
+        wheels.forEach((w) => (w.rotation.z -= spin));
+        lastK = p;
         routeG.setDrawRange(0, Math.max(2, a.i + 1));
       },
     });
@@ -509,21 +462,21 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         const a = (i / RING) * Math.PI * 2;
         const x = plan.habitat.x + Math.cos(a) * plan.evaRadiusM * scale;
         const z = plan.habitat.z + Math.sin(a) * plan.evaRadiusM * scale;
-        p.setXYZ(i, x * s, yAt(x, z) + 0.05 * U, z * s);
+        p.setXYZ(i, x * s, yAt(x, z) + 0.3 * K, z * s);
       }
       p.needsUpdate = true;
       evaRing.computeLineDistances();
     };
     updateRing();
-    const astros: THREE.Mesh[] = [];
-    const astroG = new THREE.CapsuleGeometry(0.06 * U, 0.16 * U, 4, 8);
-    disposables.push(astroG);
-    for (let i = 0; i < 2; i++) {
-      const a = mesh(astroG, M.white);
+    const astros: THREE.Object3D[] = [];
+    for (let i = 0; i < (realScale ? 3 : 2); i++) {
+      const a = models.astronaut();
+      a.scale.setScalar(K);
       a.visible = false;
       scene.add(a);
       astros.push(a);
     }
+    const walkR = realScale ? 28 : 600; // metros: a escala real, alrededor del hábitat
 
     // ---------- Etiquetas HTML proyectadas ----------
     const host = labelsHost.current!;
@@ -550,6 +503,13 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
     const focusOf = (st: number): Spot | { x: number; z: number } =>
       [plan.pad, plan.habitat, plan.power.spots[plan.power.spots.length - 1], plan.isru.spot, mid, plan.habitat][st] ?? plan.habitat;
     const focus = new THREE.Vector3();
+    if (realScale) {
+      // Cámara a pie de base: a ~70 m del hábitat, mirando hacia él
+      const hx = plan.habitat.x * s, hz = plan.habitat.z * s, hy = yAt(plan.habitat.x, plan.habitat.z);
+      controls.target.set(hx, hy, hz);
+      camera.position.set(hx + 55 * s, hy + 30 * s, hz + 55 * s);
+      controls.autoRotateSpeed = 0.25;
+    }
 
     // ---------- Bucle ----------
     let raf = 0, onScreen = true;
@@ -588,16 +548,33 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         a.visible = st.step >= 5;
         if (!a.visible) return;
         const k = st.step === 5 ? ease(p) : lk === 5 ? ease(lp) : 1;
-        const ang = i * 2.1 + now * 0.00008 * (reduce.matches ? 0 : 1);
-        const x = plan.habitat.x + Math.cos(ang) * 600 * k;
-        const z = plan.habitat.z + Math.sin(ang) * 600 * k;
-        a.position.set(x * s, yAt(x, z) + 0.12 * U, z * s);
+        const ang = i * 2.1 + now * (realScale ? 0.00006 : 0.00008) * (reduce.matches ? 0 : 1);
+        const x = plan.habitat.x + Math.cos(ang) * walkR * k;
+        const z = plan.habitat.z + Math.sin(ang) * walkR * k;
+        a.position.set(x * s, yAt(x, z), z * s);
+        a.rotation.y = -ang; // mira hacia donde anda
+        if (!reduce.matches) models.walk(a, now / 1000 + i);
       });
+      // Tambores de la excavadora y paneles que siguen al Sol
+      if (!reduce.matches) {
+        drums.forEach((d) => (d.rotation.z += 0.05 * (d.userData.spin ?? 1)));
+        trackers.forEach((tr) => (tr.rotation.y = sunAz + Math.sin(now / 9000) * 0.25));
+      }
       // Cámara: el objetivo se desliza hacia lo que se está montando
       const fk = st.step >= STEP_DONE ? focusRef.current : null;
       const f = fk ? focusSpot[fk] : focusOf(Math.min(st.step, STEP_IDS.length - 1));
       focus.set(f.x * s, yAt(f.x, f.z), f.z * s);
-      controls.target.lerp(focus, reduce.matches ? 1 : 0.04);
+      if (realScale) {
+        // a escala real, la cámara viaja con el objetivo (si no, una pieza a 2 km se vería desde demasiado lejos)
+        const dv = focus.clone().sub(controls.target).multiplyScalar(reduce.matches ? 1 : 0.05);
+        controls.target.add(dv);
+        camera.position.add(dv);
+        // nunca por debajo del suelo (las piezas están a distintas alturas: crestas, fondos de cráter)
+        const ground = yAt(camera.position.x / s, camera.position.z / s) + 30 * s;
+        if (camera.position.y < ground) camera.position.y = ground;
+        const tg = yAt(controls.target.x / s, controls.target.z / s);
+        if (controls.target.y < tg) controls.target.y = tg;
+      } else controls.target.lerp(focus, reduce.matches ? 1 : 0.04);
       controls.update();
       renderer.render(scene, camera);
       // Etiquetas
@@ -608,7 +585,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
         if (!d) return;
         if (!pc.obj.visible) { d.style.display = "none"; return; }
         tmp.copy(pc.obj.position);
-        tmp.y += 1.6 * U;
+        tmp.y += (pc.topM ?? 6) * K * 1.1;
         tmp.project(camera);
         if (tmp.z > 1) { d.style.display = "none"; return; }
         const px = (tmp.x * 0.5 + 0.5) * w, py = (-tmp.y * 0.5 + 0.5) * h;
@@ -637,6 +614,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       wantLayer = l;
       if (l === "slope") { terrainMat.map = slopeTex; terrainMat.color.set(0xffffff); }
       else if (l === "sun") { terrainMat.map = sunTex; terrainMat.color.set(0xffffff); }
+      else if (l === "ice") { terrainMat.map = iceTex; terrainMat.color.set(0xffffff); }
       else if (l === "photo" && photo) { terrainMat.map = photo; terrainMat.color.set(0xffffff); }
       else { terrainMat.map = reliefTex; terrainMat.color.set(earth ? 0xc9bfa6 : mars ? 0xe0a27a : 0xffffff); }
       terrainMat.needsUpdate = true;
@@ -664,8 +642,13 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       },
       setSun: (deg) => {
         const el2 = (deg * Math.PI) / 180;
-        sun.position.set(Math.cos(el2) * Math.sin(sunAz) * 5, Math.sin(el2) * 5, Math.cos(el2) * Math.cos(sunAz) * 5);
-        sun.target.position.set(0, 0, 0);
+        // A escala real, el Sol (y su mapa de sombras) se centra en la base: si no, una pieza de 10 m ocuparía
+        // menos de un texel de sombra sobre 11 km.
+        const c = realScale ? new THREE.Vector3(plan.habitat.x * s, yAt(plan.habitat.x, plan.habitat.z), plan.habitat.z * s) : new THREE.Vector3();
+        const d = realScale ? 0.2 : 5;
+        sun.position.set(c.x + Math.cos(el2) * Math.sin(sunAz) * d, c.y + Math.sin(el2) * d, c.z + Math.cos(el2) * Math.cos(sunAz) * d);
+        sun.target.position.copy(c);
+        sun.target.updateMatrixWorld();
       },
       setLayer: applyLayer,
     };
@@ -682,6 +665,7 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       reliefTex.dispose();
       slopeTex.dispose();
       sunTex.dispose();
+      iceTex.dispose();
       photo?.dispose();
       if (stars) { stars.geometry.dispose(); (stars.material as THREE.Material).dispose(); }
       renderer.dispose();
@@ -690,11 +674,11 @@ export default function BaseScene({ terrain, plan, step, stepKey, layer, exagger
       host.replaceChildren();
       api.current = null;
     };
-  }, [terrain, plan, world]);
+  }, [terrain, plan, world, realScale]);
 
-  useEffect(() => api.current?.setEx(exaggeration), [exaggeration, terrain, plan]);
-  useEffect(() => api.current?.setSun(sunDeg), [sunDeg, terrain, plan]);
-  useEffect(() => api.current?.setLayer(layer), [layer, terrain, plan]);
+  useEffect(() => api.current?.setEx(exaggeration), [exaggeration, terrain, plan, realScale]);
+  useEffect(() => api.current?.setSun(sunDeg), [sunDeg, terrain, plan, realScale]);
+  useEffect(() => api.current?.setLayer(layer), [layer, terrain, plan, realScale]);
 
   return (
     <div className="relative h-full w-full overflow-hidden">

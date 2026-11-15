@@ -41,7 +41,13 @@ const coord = (lat: number, lon: number) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? "E" : "W"}`;
 const mark = (s: number | null) => (s == null ? { t: "–", c: "var(--dim)" } : s >= 0.75 ? { t: "✓", c: "var(--ok)" } : s > 0 ? { t: "~", c: "var(--acc)" } : { t: "✕", c: "var(--warn)" });
 
-export default function MissionCompare({ sub, site, base, onClose }: { sub: SubMission; site: RehearsalSite; base: Base; onClose: () => void }) {
+export default function MissionCompare({ sub, site, sites = [], onSite, base, onClose }: { sub: SubMission; site: RehearsalSite; sites?: RehearsalSite[]; onSite?: (s: RehearsalSite) => void; base: Base; onClose: () => void }) {
+  const [realScale, setRealScale] = useState(false);
+  const idx = sites.findIndex((x) => x.key === site.key);
+  const go = (d: number) => {
+    if (!onSite || sites.length < 2) return;
+    onSite(sites[(idx + d + sites.length) % sites.length]);
+  };
   const [earth, setEarth] = useState<{ terrain: TerrainData; plan: BasePlan; sig: ShapeSig } | null>(null);
   const [err, setErr] = useState("");
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -53,6 +59,8 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
   // El mismo plan (reglas de la base en la Luna o Marte) sobre el terreno real del sitio de la Tierra
   useEffect(() => {
     let cancel = false;
+    setEarth(null);
+    setErr("");
     loadEarthTerrain(site.lat, site.lon, base.terrain.n, base.terrain.widthM)
       .then((terrain) => {
         if (cancel) return;
@@ -101,6 +109,15 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
             {site.place} <span className="text-[var(--dim)]">↔</span> {base.name}
           </h2>
         </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {sites.length > 1 && (
+            <>
+              <button type="button" className="glass-tab text-[14px]" onClick={() => go(-1)} aria-label="Previous Earth site">‹</button>
+              <span className="font-mono text-[11px] text-[var(--mut)]">{idx + 1} / {sites.length}</span>
+              <button type="button" className="glass-tab text-[14px]" onClick={() => go(1)} aria-label="Next Earth site">›</button>
+            </>
+          )}
+          <button type="button" className="glass-tab text-[14px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>Real scale</button>
         <button
           ref={closeBtn}
           onClick={onClose}
@@ -108,6 +125,7 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
         >
           Close <span aria-hidden>✕</span>
         </button>
+        </div>
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
@@ -120,7 +138,7 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
             bl={<span className="k">{err ? `Error: ${err}` : earth ? coord(site.lat, site.lon) : "Downloading terrain…"}</span>}
           >
             {earth ? (
-              <BaseScene terrain={earth.terrain} plan={earth.plan} world="earth" step={STEP_DONE} stepKey={0} layer="photo" exaggeration={1.5} sunDeg={35} focus={sub.focus} loopFocus />
+              <BaseScene key={site.key} terrain={earth.terrain} plan={earth.plan} world="earth" step={STEP_DONE} stepKey={0} layer="photo" exaggeration={realScale ? 1 : 1.5} sunDeg={35} focus={sub.focus} loopFocus realScale={realScale} />
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-[var(--mut)]">{err || "Loading the Earth site…"}</div>
             )}
@@ -132,7 +150,7 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
             tr={<><span className="k">Buildable</span> {Math.round(base.plan.stats.flatPct)} %<br /><span className="k">Relief</span> {Math.round(base.plan.stats.reliefM)} m</>}
             bl={<span className="k">{coord(base.plan.lat, base.plan.lon)}</span>}
           >
-            <BaseScene terrain={base.terrain} plan={base.plan} step={STEP_DONE} stepKey={0} layer={base.layer} exaggeration={1.5} sunDeg={base.sun} focus={sub.focus} loopFocus />
+            <BaseScene terrain={base.terrain} plan={base.plan} step={STEP_DONE} stepKey={0} layer={base.layer} exaggeration={realScale ? 1 : 1.5} sunDeg={base.sun} focus={sub.focus} loopFocus realScale={realScale} />
           </Visor>
         </div>
         <p className="mt-1 font-mono text-[10px] text-[var(--dim)]">
