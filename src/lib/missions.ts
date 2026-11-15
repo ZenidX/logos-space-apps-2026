@@ -72,6 +72,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Drilling through dry soil into ice-cemented ground, as NASA's TRIDENT drill did at Haughton crater (2024).",
     matters: "Ice near the surface could supply water for crews. Drills must be proven on frozen ground first.",
     keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
+    glanceLimit: "Ground ice is inferred from temperature and dryness, not detected. At the 6.36 mb of Mars, drilled ice sublimes instead of melting and refreezing on the bit.",
     notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — not included in this prototype"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },

@@ -153,7 +153,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
-          <div style={{ width: "clamp(170px, 27vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
+          <div style={{ width: "clamp(170px, 25vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
           <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Rings from the outside in follow this list. Grey: 1 = same as the target. Amber: fuller = more complex access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
