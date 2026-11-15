@@ -41,7 +41,7 @@ function sceneFor(m: Mission, list: Site[]) {
   return { markers };
 }
 // Team members, first names only (team decision, 15-11-2026)
-const TEAM = ["Alexis", "Fer", "Victor", "Xavi", "Zexu"];
+const TEAM = ["Alexis", "Fer", "Leo", "Victor", "Xavi", "Zexu"];
 const STORY_SCENES = Object.fromEntries(MISSIONS.map((m) => [m.id, sceneFor(m, byEvidence(m.sites)).markers])) as Record<MissionId, SceneMarker[]>;
 
 export default function Home() {
