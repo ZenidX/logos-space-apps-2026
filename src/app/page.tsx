@@ -47,6 +47,8 @@ export default function Home() {
   const [step, setStep] = useState<Step>("hero");
   const [wide, setWide] = useState(true);
   const [armed, setArmed] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => { const on = () => setScrolled(window.scrollY > 40); on(); window.addEventListener("scroll", on, { passive: true }); return () => window.removeEventListener("scroll", on); }, []);
 
   const shown = missionId ? MISSIONS.find((m) => m.id === missionId)! : MISSIONS[0];
   // The list: ordered by independent evidence (the index does not tell the new regions apart), then filtered.
@@ -163,6 +165,11 @@ export default function Home() {
   const frame = useMemo(() => (missionId || calm ? { x: 0, y: 0 } : wide ? { x: 0.42, y: 0 } : { x: 0, y: 0.44 }), [missionId, calm, wide]);
   const sceneMode = useMemo(() => (missionId ? { kind: "focus" as const, body: t.body as "moon" | "mars" } : storyMission ? { kind: "focus" as const, body: storyMission.target.body as "moon" | "mars" } : { kind: "overview" as const }), [missionId, t.body, storyMission]);
   const sceneMarkers = missionId ? scene.markers : storyMission ? STORY_SCENES[storyMission.id] : NO_MARKERS;
+  const credits = missionId ? (
+    <footer data-scene-avoid className={`relative z-10 px-4 pb-4 text-[11px] text-[var(--dim)] md:fixed md:bottom-3 md:left-0 md:truncate md:px-8 md:pb-0 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-24px)]" : "md:max-w-[calc(100vw-444px)]"}`}>
+      Imagery NASA (LRO, Viking, MOLA, Blue &amp; Black Marble) · sizes and distances not to scale · not endorsed by NASA · <button className="underline decoration-[var(--line2)] underline-offset-2 hover:text-[var(--ink)]" onClick={() => setMethod(true)}>credits &amp; scale</button>
+    </footer>
+  ) : null;
   const footer = (
     <footer data-scene-avoid className={`relative z-10 text-[11.5px] leading-relaxed text-[var(--dim)] ${missionId ? "px-4 pb-4 md:fixed md:bottom-3 md:left-0 md:max-w-[34%] md:px-8 md:pb-0" : "mt-12"}`}>
       Imagery: NASA Blue Marble, Black Marble, LROC WAC and LOLA, Viking MDIM 2.1 and MOLA (credits in Method &amp; sources); the Sun is drawn by code. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
@@ -172,7 +179,7 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
-      <header className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : ""}`}>
+      <header className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
         <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Logos, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
@@ -197,6 +204,7 @@ export default function Home() {
             onSelect={(id) => { const m = missionId ?? storyMission?.id; if (!m) return; if (!missionId) pick(m); if (id.startsWith("t-")) setSel(null); else openSite(id); }}
             paused={paused}
             frame={frame}
+            intro={calm}
             onError={() => setGlFailed(true)}
           />
         )}
@@ -205,6 +213,7 @@ export default function Home() {
       {!missionId && (
         <div ref={storyRef} className={`story relative z-10 ${armed ? "armed" : ""} ${calm ? "calm" : ""}`}>
           <section data-step="hero" className="story-hero" aria-label="The Sun, the Earth with the Moon, and Mars on their orbits">
+            <p className={`hero-line ${calm ? "" : "gone"}`}><span>Before the Moon and Mars,</span> <span>there is Earth.</span></p>
             <p className={`scroll-cue ${calm ? "" : "gone"} ${paused ? "still" : ""}`} aria-hidden><span>Scroll</span><i /></p>
           </section>
 
@@ -360,7 +369,7 @@ export default function Home() {
         </aside>
       )}
 
-      {missionId && footer}
+      {credits}
 
       {method && <MethodSheet onClose={() => { setMethod(false); window.requestAnimationFrame(() => methodBtn.current?.focus()); }} />}
     </main>

@@ -272,15 +272,31 @@ b, strong { font-weight: 600; }
 .dial-legend ul { margin: 0; padding: 0; list-style: none; }
 .dial-legend li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 24px; font-size: 13.5px; color: var(--ink); }
 .dial-legend li svg { width: 12px; height: 12px; }
-.dial-legend .l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dial-legend .l { line-height: 1.2; overflow-wrap: anywhere; } /* full label, wraps if needed (never cut) */
 .dial-legend .v { font: 400 12px var(--mono); color: var(--mut); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .dial-mini { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 6px; }
 .dial-mini li { display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
 .dial-mini svg { width: 48px; height: 48px; }
-.dial-mini .l { font-size: 11px; line-height: 1.2; color: var(--ink); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dial-mini .l { font-size: 11px; line-height: 1.2; color: var(--ink); max-width: 100%; overflow-wrap: anywhere; }
 .dial-mini .v { font: 400 10.5px var(--mono); color: var(--mut); white-space: nowrap; }
 .dial-mini-n { font: 400 13px var(--mono); fill: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .dial-arc, .dial-cap { animation: none; } }
 
 .dial-mini .v { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 @media (max-height: 840px) and (min-width: 768px) { .dial-legend { gap: 3px; } .dial-legend li { min-height: 19px; font-size: 12.5px; } .dial-legend h4 { margin: 0; } }
+
+/* Provenance under each number (Why tab): small, quiet, always there */
+.src { font: 400 11px/1.4 var(--mono); color: var(--dim); overflow-wrap: anywhere; }
+.src > span:first-child { display: inline-block; min-width: 4.6em; margin-right: 6px; color: var(--mut); letter-spacing: .06em; text-transform: uppercase; font-size: 9.5px; }
+
+/* First screen: one quiet line arrives with the sunrise, then leaves as soon as the reader scrolls */
+.hero-line { position: absolute; left: 50%; bottom: calc(max(26px, 4svh) + 84px); transform: translateX(-50%); margin: 0; width: max-content; max-width: calc(100vw - 40px); text-align: center;
+  font: 600 clamp(22px, 2.5vw, 36px)/1.12 var(--display, var(--sans)); letter-spacing: -.035em; color: var(--ink); text-shadow: 0 2px 30px rgba(0, 0, 0, .7); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+.hero-line span { display: inline-block; opacity: 0; transform: translateY(14px); filter: blur(6px); animation: hero-in 1.6s var(--ease) forwards; animation-delay: 3.1s; }
+.hero-line span + span { color: var(--earth); animation-delay: 4.2s; }
+@keyframes hero-in { to { opacity: 1; transform: none; filter: none; } }
+.hero-line.gone { opacity: 0; transform: translate(-50%, -12px); }
+@media (max-width: 700px) { .hero-line span { display: block; } }
+@media (prefers-reduced-motion: reduce) { .hero-line span { animation: none; opacity: 1; transform: none; filter: none; } }
+/* Header over scrolled text: a soft veil so the title never sits on the copy */
+.head-veil { background: linear-gradient(rgba(4, 6, 12, .92), rgba(4, 6, 12, .55) 70%, transparent); backdrop-filter: blur(6px); }

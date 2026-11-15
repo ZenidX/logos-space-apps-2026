@@ -92,14 +92,14 @@ void main() {
 }`;
 
 export const EARTH_FRAG = /* glsl */ `
-uniform sampler2D uDay; uniform sampler2D uNight; uniform sampler2D uClouds; uniform sampler2D uOcean;
+uniform sampler2D uDay; uniform sampler2D uNight; uniform sampler2D uClouds; uniform sampler2D uOcean; uniform float uCloudK;
 uniform float uExtra; uniform float uCloudShift; uniform float uOpacity;
 varying vec2 vUv; varying vec3 vW; varying vec3 vNg; varying vec3 vE; varying vec3 vNo;
 void main() {
   vec3 N = normalize(vNg), L = normalize(-vW), V = normalize(cameraPosition - vW);
   float NdL = dot(N, L), diff = max(NdL, 0.0), mu = max(dot(N, V), 0.0);
   vec3 day = texture2D(uDay, vUv).rgb;
-  float clouds = uExtra * smoothstep(0.1, 0.92, texture2D(uClouds, vec2(vUv.x + uCloudShift, vUv.y)).r) * 0.88;
+  float clouds = uExtra * smoothstep(0.1, 0.92, texture2D(uClouds, vec2(vUv.x + uCloudShift, vUv.y)).r) * 0.88 * uCloudK;
   float water = uExtra * texture2D(uOcean, vUv).r;
   float lights = uExtra * texture2D(uNight, vUv).r;
   vec3 sun = vec3(1.0, 0.97, 0.92) * 2.3;

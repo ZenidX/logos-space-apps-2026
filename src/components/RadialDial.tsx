@@ -37,18 +37,18 @@ export default function RadialDial({ index, caption = "analog index", rings, cla
 }
 
 /** Legend: group, colour swatch, label, actual value and status in words. Goes to the right of the dial (desktop). */
-export function RadialLegend({ rings }: { rings: Ring[] }) {
+export function RadialLegend({ rings, sources = {} }: { rings: Ring[]; sources?: Record<string, string> }) {
   const groups: RingGroup[] = ["mission", "shape", "access"];
   return (
     <div className="dial-legend">
       {groups.map((g) => (
         <section key={g}>
-          <h4 style={{ color: GROUP_COLOR[g] }}>{GROUP_NAME[g]}</h4>
+          <h4 style={{ color: GROUP_COLOR[g] }}>{GROUP_NAME[g]}{g === "shape" && <span className="text-[var(--dim)]"> · here / target</span>}</h4>
           <ul>
             {rings.filter((r) => r.group === g).map((r) => (
-              <li key={r.id}>
+              <li key={r.id} title={sources[r.id] ? `${r.label}: ${r.text}\nSource: ${sources[r.id]}` : `${r.label}: ${r.text}`}>
                 <svg viewBox="-6 -6 12 12" aria-hidden="true">{r.group === "mission" && r.value !== null ? <Glyph status={r.status} color={GROUP_COLOR[g]} /> : <rect x="-4" y="-1.5" width="8" height="3" rx="1.5" fill={GROUP_COLOR[g]} />}</svg>
-                <span className="l">{r.label}</span><span className="v">{r.text}</span>
+                <span className="l">{r.label}</span><span className="v">{g === "shape" ? r.text.replace(/ vs (.*) target$/, " / $1") : r.text}</span>
               </li>
             ))}
           </ul>

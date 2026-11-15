@@ -1,5 +1,6 @@
 "use client";
 // AI-assisted (Claude), reviewed by team Logos
+import { Doc } from "@/components/MethodSheet";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
@@ -137,6 +138,13 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const rings = buildRings(
     mission.variables.filter((v) => v.inMatch).map((v) => { const p = site.vars.find((x) => x.id === v.id); return { id: v.id, label: SHORT_LABEL[v.id] ?? v.label, unit: v.unit, ideal: v.ideal, tolerance: v.tolerance, value: p?.value ?? null, similarity: p?.similarity ?? null }; }),
     ts?.stats ?? null, tt?.stats ?? null, { score: site.access.score, level: site.access.level });
+  // where every number on the dial comes from (shown on hover in the legend, and in full in the Why tab)
+  const sources: Record<string, string> = {
+    ...Object.fromEntries(site.vars.map((v) => [v.id, v.source])),
+    relief: `11 × 11 km DEM: Copernicus GLO-30 here; ${t.body === "moon" ? "NASA LRO LOLA 30 m" : "USGS HRSC–MOLA blended 200 m"} at the target`,
+    slope: `11 × 11 km DEM: Copernicus GLO-30 here; ${t.body === "moon" ? "NASA LRO LOLA 30 m" : "USGS HRSC–MOLA blended 200 m"} at the target`,
+    access: "Team-defined proxy: World Bank WGI governance, UCDP GED organised violence within 200 km, US and UK travel advice",
+  };
   const TABS = [["why", "Why"], ["shape", "Shape"], ["when", "When"], ["how", "How"], ["limits", "Limits & sources"]] as const;
   return (
     <div>
@@ -154,7 +162,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
           <div style={{ width: "clamp(170px, 25vh, 260px)" }}><RadialDial index={idx(site.match)} rings={rings} /></div>{/* the wrapper sets the size: the dial fills it (.dial is width 100 %) */}
-          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Rings from the outside in follow this list. Grey: 1 = same as the target. Amber: fuller = more complex access.</p></div>
+          <div><RadialLegend rings={rings} sources={sources} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Rings from the outside in follow this list. Grey: 1 = same as the target. Amber: fuller = more complex access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
           <p className="flex items-baseline gap-3"><span className="label">Analog index</span><span className="mono text-[40px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></span><span className="text-[11px] text-[var(--dim)]">0–1, not suitability</span></p>
@@ -172,7 +180,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
         <p className="mt-2 text-[12px] text-[var(--mut)]" title={`Travel time: modelled, to the nearest city (2015). Slope: mean over the 11 × 11 km window; flat means ${FILTERS.flatDeg}° or less. Neither is part of the index or of the access ring.`}><b className="text-[var(--ink)]">Logistics:</b> {site.travelH !== null ? `about ${travelText(site.travelH)}${site.travelH > FILTERS.remoteH ? " (remote)" : site.travelH < FILTERS.reachH ? " (within reach)" : ""}` : "no travel-time data here"}{site.slopeDeg !== null && ` · mean slope ${site.slopeDeg.toFixed(1)}° (${site.slopeDeg <= FILTERS.flatDeg ? "flat" : "steep"})`} · not part of the index.</p>
 
-        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.glanceLimit ?? `${mission.keyLimit} ${(mission.always[0]?.text.split(";")[0] ?? "").replace(/\.$/, "")}.`}</span></p>
+        <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {site.vars.some((v) => v.id === "volcanic" && v.inMatch && v.value === null) ? `The 0.5° rock map has no cell here (island or coast), so volcanic rock is not scored at this site${site.kind === "known" ? "; the field campaign that worked here documents the lava field" : ""}.` : mission.glanceLimit ?? `${mission.keyLimit} ${(mission.always[0]?.text.split(";")[0] ?? "").replace(/\.$/, "")}.`}</span></p>
 
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
           {TABS.map(([id, label]) => (
@@ -206,9 +214,11 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
                       <div className="mono text-[11.5px] text-[var(--mut)]">here {fmt(v.value, v.unit)} · mission needs {rangeText(def.ideal!, v.unit, def.tolerance)}</div>
                     </>
                   ) : (
-                    <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no data") : `here ${fmt(v.value, v.unit)}`}</div>
+                    <div className="mono mt-0.5 text-[11.5px] text-[var(--mut)]">{v.id === "volcanic" ? (v.value === 1 ? "basic volcanic rock mapped within ~80 km" : v.value === 0 ? "no basic volcanic rock mapped within ~80 km" : "no cell on the 0.5° rock map here (small island or coast), so not scored") : `here ${fmt(v.value, v.unit)}`}</div>
                   )}
                   {def?.why && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">{def.why}</div>}
+                  <div className="src mt-1"><span>Data</span>{v.source}</div>
+                  {tval?.source && <div className="src"><span>Target</span>{tval.source}{tval.url && <> <a className="underline" href={tval.url} target="_blank" rel="noopener noreferrer">link ↗</a></>}</div>}
                   {v.id === "sand" && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">Soil-model estimate (SoilGrids, 0.1° cell mean) with a wide uncertainty. New regions cluster near 54 % because the index favours places like the known analogs, whose median is 54 %.</div>}
                 </li>
               );
@@ -247,7 +257,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1"><span className="label">Independent check</span><EvidenceBadge level={site.evidence} /></p>
               <p className="mt-1 text-[var(--mut)]">{ic.text} {ic.url && <a className="underline" href={ic.url} target="_blank" rel="noopener noreferrer">Source</a>}</p>
               {ic.image && <p className="mt-1 text-[12.5px]"><a className="underline" href={ic.image.url} target="_blank" rel="noopener noreferrer">{ic.image.label}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></p>}
-              <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Distances are approximate.{!mission.validated && " The check is about the ground and analog use nearby, not about low-Sun work."} Full notes: docs/independent-check.md and docs/independent-check-v8.md.</p>
+              <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Distances are approximate.{!mission.validated && " The check is about the ground and analog use nearby, not about low-Sun work."} Full notes: <Doc path="docs/independent-check.md" /> and <Doc path="docs/independent-check-v8.md" />.</p>
             </div>
           ); })()}
           {how && (
@@ -262,7 +272,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             <div className="flex items-center justify-between"><p className="label">Access complexity</p><AccessBars site={site} /></div>
             <p className="mt-1 text-[15px]" style={{ color: "var(--sand)" }}>{site.access.level}{site.access.score !== null && <span className="mono ml-2 text-[12px] text-[var(--mut)]">{site.access.score.toFixed(2)} / 1</span>}</p>
             {site.access.permit && <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.permit} {site.access.permitUrl && <a className="underline" href={site.access.permitUrl} target="_blank" rel="noopener noreferrer">Source</a>}</p>}
-            <p className="mt-1 text-[12px] text-[var(--mut)]">{site.access.basis}</p>
+            <ul className="mono mt-1 grid gap-0.5 text-[11.5px] text-[var(--mut)]">{site.access.basis.split(/;\s*/).filter(Boolean).map((b) => <li key={b}>{b.replace(/(\d\.\d{2})\d+/g, "$1")}</li>)}</ul>
             <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.note}</p>
             <p className="mt-2 text-[11.5px] text-[var(--dim)]">How much coordination an external field team may need. Not travel advice and not a judgement of any country.</p>
           </div>
@@ -274,7 +284,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               <li key={b.text} className="flex gap-2"><span className="text-[var(--amber)]" aria-hidden>≠</span><span>{b.text} <span className="text-[11px] text-[var(--dim)]">— {b.url ? <a className="underline" href={b.url} target="_blank" rel="noopener noreferrer">{b.source}</a> : b.source}</span></span></li>
             ))}
           </ul>
-        <p className="mt-3 text-[12px] text-[var(--dim)]">Every dataset and its licence is listed in “Method &amp; sources” (top right) and in docs/sources.md.</p></>}
+        <p className="mt-3 text-[12px] text-[var(--dim)]">Every dataset and its licence is listed in “Method &amp; sources” (top right) and in <Doc path="docs/sources.md" />.</p></>}
         </section>
       )}
     </div>

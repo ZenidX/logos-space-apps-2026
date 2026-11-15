@@ -89,7 +89,18 @@ export function targetPose(P: THREE.Vector3, body: "moon" | "mars"): Pose {
   const dir = P.clone().normalize().multiplyScalar(-0.9).add(new THREE.Vector3(0, 0.45, 0)).normalize();
   return { look: P.clone(), pos: P.clone().addScaledVector(dir, RADIUS[body] * 9) };
 }
-export const lerpPose = (a: Pose, b: Pose, k: number): Pose => ({ pos: a.pos.clone().lerp(b.pos, k), look: a.look.clone().lerp(b.look, k) });
+/** Opening shot (first screen only): behind the Earth's night side, a little above the ecliptic, so the Sun rises over its
+ * limb and the city lights show; the camera then pulls back to the overview. Earth radius here = OVERVIEW_SCALE. */
+export const INTRO_S = 7.5;
+export function introPose(E: THREE.Vector3, aspect: number): Pose {
+  const toSun = E.clone().normalize().negate(), side = new THREE.Vector3().crossVectors(toSun, UP).normalize(), r = EARTH_R * OVERVIEW_SCALE;
+  const back = aspect < 1 ? 5.6 / Math.max(0.42, aspect) : 5.6; // phones: further back so the globe fits the narrow frame
+  const pos = E.clone().addScaledVector(toSun, -back * r / 1.7).addScaledVector(UP, 0.86 * r).addScaledVector(side, 0.75 * r);
+  const look = E.clone().addScaledVector(toSun, aspect < 1 ? 1.2 * r : 2.4 * r).addScaledVector(UP, 0.32 * r);
+  return { pos, look };
+}
+export const easeOut = (k: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, k)), 3);
+export const lerpPose =(a: Pose, b: Pose, k: number): Pose => ({ pos: a.pos.clone().lerp(b.pos, k), look: a.look.clone().lerp(b.look, k) });
 export const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 
 /** Angle (radians) between the view axis and the direction an opened site is turned to. */

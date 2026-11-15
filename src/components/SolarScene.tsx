@@ -12,7 +12,7 @@ import { latLonToVec3 } from "@/lib/globe-math";
 import { EARTH_EXTRA, GLOBE_TEX, NORMAL_TEX } from "@/lib/globe-tex";
 import { ATMO_FRAG, ATMO_VERT, EARTH_FRAG, GLOBE_VERT, GLOW_FRAG, GLOW_VERT, ROCKY_FRAG, STAR_FRAG, STAR_VERT, SUN_FRAG, SUN_VERT } from "@/lib/scene-shaders";
 import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/label-layout";
-import { EARTH_R, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
+import { EARTH_R, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, easeOut, INTRO_S, introPose, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
 
 export interface SceneMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number; primary?: boolean } // primary: the sites the Earth turns to show
 interface Props {
@@ -25,6 +25,8 @@ interface Props {
   paused?: boolean;
   /** Part of the canvas kept for page text: x = left share, y = bottom share. The subject is framed in the rest (the stars still fill it all). */
   frame?: { x: number; y: number };
+  /** First screen: play the opening shot (behind the night side, the Sun rising over the limb, then pull back). */
+  intro?: boolean;
   onError?: (e: unknown) => void;
   className?: string;
 }
@@ -40,16 +42,16 @@ const ROCK = { moon: { ls: 0.75, gain: 1.9, relief: 0.9, haze: [0, 0, 0] }, mars
 const JOURNEY_S = 2.8, BACK_S = 1.3, IDLE_MS = 30000, COMPACT_W = 620, COMPACT_NAMES = 3, ROOM_W = 560;
 const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
 
-export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, frame = FULL, onError, className = "" }: Props) {
+export default function SolarScene({ mode, markers, selectedId, highlightId = null, onSelect, onHover, paused = false, frame = FULL, intro = false, onError, className = "" }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const names = useRef(new Map<string, HTMLSpanElement>());
   const labs = useRef(new Map<string, HTMLSpanElement>());
   const lines = useRef(new Map<string, SVGLineElement>());
-  const latest = useRef({ mode, markers, selectedId, highlightId, paused, frame, onError });
+  const latest = useRef({ mode, markers, selectedId, highlightId, paused, frame, intro, onError });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, frame, onError }; }, [mode, markers, selectedId, highlightId, paused, frame, onError]);
+  useEffect(() => { latest.current = { mode, markers, selectedId, highlightId, paused, frame, intro, onError }; }, [mode, markers, selectedId, highlightId, paused, frame, intro, onError]);
 
   useEffect(() => {
     const el = host.current;
@@ -110,7 +112,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     for (const id of BODIES) {
       const segs: [number, number] = id === "earth" ? (lite ? [64, 48] : [128, 96]) : lite ? [48, 32] : [96, 64];
       const m = keep(id === "earth"
-        ? new THREE.ShaderMaterial({ uniforms: { uDay: { value: null }, uNight: { value: null }, uClouds: { value: null }, uOcean: { value: null }, uExtra: { value: 0 }, uCloudShift: { value: 0 }, uOpacity: { value: 1 } }, vertexShader: GLOBE_VERT, fragmentShader: EARTH_FRAG })
+        ? new THREE.ShaderMaterial({ uniforms: { uDay: { value: null }, uNight: { value: null }, uClouds: { value: null }, uOcean: { value: null }, uExtra: { value: 0 }, uCloudShift: { value: 0 }, uCloudK: { value: 1 }, uOpacity: { value: 1 } }, vertexShader: GLOBE_VERT, fragmentShader: EARTH_FRAG })
         : new THREE.ShaderMaterial({ uniforms: { uMap: { value: null }, uNormal: { value: null }, uHasNormal: { value: 0 }, uNormalScale: { value: ROCK[id].relief }, uLS: { value: ROCK[id].ls }, uGain: { value: ROCK[id].gain }, uOpacity: { value: 1 }, uHaze: { value: new THREE.Vector3(...ROCK[id].haze) } }, vertexShader: GLOBE_VERT, fragmentShader: ROCKY_FRAG }));
       mesh[id] = new THREE.Mesh(keep(new THREE.SphereGeometry(1, segs[0], segs[1])), m); mat[id] = m; mesh[id].scale.setScalar(RADIUS[id]);
       const a = ATMO[id];
@@ -126,7 +128,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
     // the Moon's and Mars's sharper maps and relief load when they are shown in the close-up (or after a while).
     const timers: number[] = [], later = (ms: number, f: () => void) => timers.push(window.setTimeout(() => { if (!disposed) f(); }, ms));
     const v2 = lite ? 0 : 1;
-    later(lite ? 3500 : 1200, () => {
+    later(latest.current.intro ? 300 : lite ? 3500 : 1200, () => { // the opening shot shows the night side: its lights come first
       Promise.all([loadTex(EARTH_EXTRA.night[v2], false), loadTex(EARTH_EXTRA.clouds[v2], false), loadTex(EARTH_EXTRA.ocean[v2], false)]).then(([n, c, o]) => {
         if (disposed) { n.dispose(); c.dispose(); o.dispose(); return; }
         setTex("earth", "uNight", n); setTex("earth", "uClouds", c); setTex("earth", "uOcean", o); mat.earth.uniforms.uExtra.value = 1;
@@ -152,7 +154,7 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
 
     // ---------- state ----------
     const started = performance.now();
-    let tScene = 0, k = 0, back = false, last = performance.now(), raf = 0, onScreen = true, dirty = true, lastKey = "", first = true;
+    let introT = -1, tScene = 0, k = 0, back = false, last = performance.now(), raf = 0, onScreen = true, dirty = true, lastKey = "", first = true;
     let compBody: "moon" | "mars" | null = null, compAlpha = 0, fx = 0, fy = 0; // fx, fy: frame offsets, eased towards the prop
     const earthQ = new THREE.Quaternion(), tmpQ = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0), camPos = new THREE.Vector3();
     let drag: { x: number; y: number; pid: number } | null = null, userTurned = false, lastMarkers: SceneMarker[] | null = null, seen: SceneMarker[] | null = null;
@@ -224,14 +226,23 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
       }
       sun.visible = glow.visible = far > 0.01; sunMat.uniforms.uOpacity.value = far; glowMat.uniforms.uOpacity.value = far;
       if (sunMat.transparent !== far < 0.999) { sunMat.transparent = far < 0.999; sunMat.needsUpdate = true; }
-      sunMat.uniforms.uTime.value = glowMat.uniforms.uTime.value = tScene; mat.earth.uniforms.uCloudShift.value = (tScene * 0.0008) % 1;
+      sunMat.uniforms.uTime.value = glowMat.uniforms.uTime.value = tScene; mat.earth.uniforms.uCloudShift.value = (tScene * 0.0008) % 1; mat.earth.uniforms.uCloudK.value = 1 - 0.55 * smooth((k - 0.6) / 0.4); // thinner clouds in the close-up, so the sites read
       if (compBody) detail(compBody);
-      for (const [line, o] of [[orbitEarth, 0.5], [orbitMars, 0.5], [orbitMoon, 0.38]] as const) { line.visible = far > 0.01; (line.material as THREE.LineDashedMaterial).opacity = o * far; }
+      const drawn = introT >= 0 && introT < INTRO_S ? smooth((introT - 2.2) / 3) : 1; // orbits are drawn in as the opening shot pulls back
+      for (const [line, o] of [[orbitEarth, 0.5], [orbitMars, 0.5], [orbitMoon, 0.38]] as const) { line.visible = far * drawn > 0.01; (line.material as THREE.LineDashedMaterial).opacity = o * far * drawn; }
       orbitMoon.position.copy(E); orbitMoon.scale.setScalar(grow);
 
       // camera
       const room = vw >= ROOM_W ? NAME_ROOM : 0; // wide scenes keep room for names on the left of the Earth
-      const over = overviewPose(aspect), pose = !focus && k === 0 ? over
+      // opening shot: starts once the Earth's map is in, eases out to the overview; leaving the first screen finishes it fast
+      if (first && latest.current.intro && !still) introT = 0; // only when the page opens on its first screen
+      if (introT >= 0 && introT < INTRO_S) {
+        if (still) introT = INTRO_S; // paused or reduced motion: straight to the overview
+        else if (mat.earth.uniforms.uDay.value) introT = Math.min(INTRO_S, introT + dt * (latest.current.intro && !focus ? 1 : 5)); // waits for the Earth's map
+        moving = true;
+      }
+      const ov = overviewPose(aspect), over = introT >= 0 && introT < INTRO_S ? lerpPose(introPose(E, aspect), ov, easeOut(Math.max(0, introT - 0.6) / (INTRO_S - 0.6))) : ov;
+      const pose = !focus && k === 0 ? over
         : back || !focus ? lerpPose(over, closePose(E, (focus ?? compBody ?? "mars") as "moon" | "mars", aspect, room), ease(k))
         : k <= 0.5 ? lerpPose(over, targetPose(P[focus], focus), ease(k / 0.5))
         : lerpPose(targetPose(P[focus], focus), closePose(E, focus, aspect, room), ease((k - 0.5) / 0.5));

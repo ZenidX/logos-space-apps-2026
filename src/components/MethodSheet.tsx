@@ -5,7 +5,7 @@ import EvidenceBadge from "@/components/Evidence";
 
 const REPO = "https://github.com/zexuguo/SpaceApp-Logos/blob/main/";
 /** A file of the public repository, as a link. */
-const Doc = ({ path }: { path: string }) => <a className="underline" href={REPO + path} target="_blank" rel="noopener noreferrer">{path}</a>;
+export const Doc = ({ path }: { path: string }) => <a className="underline" href={REPO + path} target="_blank" rel="noopener noreferrer">{path}</a>;
 
 export default function MethodSheet({ onClose }: { onClose: () => void }) {
   const accessSources = Array.from(new Set(MISSIONS.flatMap((m) => m.sites.flatMap((s) => s.access.sources))));
