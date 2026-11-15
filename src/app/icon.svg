@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img"><title>Terra Vista</title><rect width="64" height="64" rx="15" fill="#04060c"/>
-<path d="M20 44 C20 26 32 18 46 19" fill="none" stroke="#eef2f9" stroke-width="5.5" stroke-linecap="round"/>
-<circle cx="21" cy="43" r="14" fill="#5db4ff"/><circle cx="47" cy="19" r="7.5" fill="#ff8d5e" stroke="#04060c" stroke-width="3"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img"><title>Terra Vista</title>
+<rect width="64" height="64" rx="15" fill="#04060c"/>
+<defs><clipPath id="tv-icon"><path d="M7 32 C18 15 46 15 57 32 C46 49 18 49 7 32 Z"/></clipPath></defs>
+<g clip-path="url(#tv-icon)">
+<circle cx="32" cy="74" r="36" fill="#5db4ff"/>
+<circle cx="27" cy="28" r="5.6" fill="#d7dce6"/>
+<circle cx="39.5" cy="24.5" r="3.4" fill="#ff8d5e"/>
+</g>
+<path d="M7 32 C18 15 46 15 57 32 C46 49 18 49 7 32 Z" fill="none" stroke="#eef2f9" stroke-width="3.4" stroke-linejoin="round"/>
+</svg>
