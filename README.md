@@ -16,6 +16,21 @@ NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Perm
 
 > Prototype built during the hackathon (14–15 November 2026). Not endorsed by NASA or any organisation named here.
 
+## One site, three parts
+
+<table>
+<tr>
+<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/"><img src="docs/logos/img/story-mission.jpg" alt="Missions: the camera flies to the Earth with the Moon beside it, numbered analog sites" /></a></td>
+<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/base/"><img src="docs/img/base-assembly.gif" alt="Plan a base: a Moon base assembles itself on real south-pole terrain" /></a></td>
+<td width="33%" align="center"><a href="https://zenidx.github.io/logos-space-apps-2026/appendix/discover/"><img src="docs/img/appendix-discover.jpg" alt="Appendix: the first global search, Earth candidates for Shackleton on a globe" /></a></td>
+</tr>
+<tr>
+<td><b>1 · Missions</b> (home)<br/>Pick a real field task. See where on Earth it can be rehearsed, how close each place is and where the analogy breaks.</td>
+<td><b>2 · <a href="#plan-a-base-run-a-moon-or-mars-base-on-real-terrain">Plan a base</a></b><br/>Drop a base anywhere on the Moon or Mars, watch it run on real terrain, and find where on Earth to rehearse each of its jobs.</td>
+<td><b>3 · <a href="#how-we-started-the-global-search">How we started</a></b><br/>Our first prototype: every 0.1° of Earth's land scored against Moon and Mars base sites in Google Earth Engine.</td>
+</tr>
+</table>
+
 ## The idea in one line
 
 Most analog maps ask *"which place on Earth looks like the Moon?"*. We ask **"where on Earth can we rehearse *this* mission?"**, score all land on Earth against that one target, condition by condition, say **where the analogy breaks**, and add a neutral **access complexity** layer (how much coordination a field team would need). The idea is our team's own; see [Use of AI](#use-of-super-intelligence-si--ai).
@@ -52,6 +67,33 @@ For each mission the app proposes **new regions to investigate** (19 in total), 
 
 <p align="center"><img src="docs/logos/img/mobile.jpg" alt="The app on a phone: opening shot and a site panel with the bottom navigation bar" width="520" /></p>
 
+## Plan a base: run a Moon or Mars base on real terrain
+
+**[Open Plan a base →](https://zenidx.github.io/logos-space-apps-2026/base/)** &nbsp;·&nbsp; [straight to a base site](https://zenidx.github.io/logos-space-apps-2026/base/?b=moon&lat=-88&lon=-180)
+
+A permanent base is not one mission: it is the same jobs repeated for months. This part goes from **a site on the Moon or Mars → the base running there → where on Earth to rehearse each job**.
+
+**① Choose a site.** Tap any point of the Moon or Mars, or start from the five best sites of our own search ★ (105 points of the lunar south pole scored on light, ice, buildable ground, landing slope and rover routes; [method, in Spanish](docs/sitios-base.md)).
+
+<p align="center"><img src="docs/img/base-choose.jpg" alt="Plan a base: the Moon globe on the left; on the right, the five sites recommended by our search with sunlight, distance to ice and buildable ground" width="880" /></p>
+
+**② Watch the base set itself up on the real relief.** 11 × 11 km of NASA elevation data (LOLA on the Moon). Lander, landing pad, habitat, solar masts on the sunniest points, water plant, rover hauling icy soil and the spacesuit-walk radius are placed with simple rules: flat ground, sunlight from the relief, distance to the cold traps. Then the base runs on a loop. Ground layers show the relief, photo, slope, **sunlight over a full day and year** (permanent shadow in blue, where lunar ice can last) and ice.
+
+<p align="center"><img src="docs/img/base-assembly.gif" alt="Animation: on a dark lunar ridge the lander touches down on its pad, then the habitat, solar masts, water plant, rover route and the spacesuit-walk radius appear one by one" width="760" /></p>
+
+**③ Rehearse each job on Earth.** Seven jobs keep a base alive: transport, construction, water & oxygen, power, traverses, science walks and crew life. Each gets a verdict for this site (*works here* / *with limits*) and a ranked list of Earth places to rehearse it: **conditions** from our global search of Earth's 0.1° grid with NASA data in Google Earth Engine, plus **terrain**, how close the place's slopes and relief are to your base site (half each). Press *Rehearse* and the same base plays side by side on both grounds.
+
+<p align="center"><img src="docs/img/base-rehearse-loop.gif" alt="Animation: side by side, the base laid out on 11 km of snowy mountains in Xinjiang, China, and on the lunar south-pole site" width="860" /></p>
+<p align="center"><img src="docs/img/base-rehearse.jpg" alt="Rehearse on Earth, Water and oxygen: Xinjiang, China next to Best site A on the Moon; why the place works, a same-ground table and where it breaks" width="880" /></p>
+
+Every comparison ends with **where it breaks**: gravity, vacuum, radiation and lunar dust have no match on Earth. The base is a concept placed with simple rules, not a NASA design.
+
+## How we started: the global search
+
+Before the mission app, Terra Vista was a single global search: **every 0.1° of Earth's land scored against three base sites** (Shackleton on the Moon, Jezero and Arcadia on Mars) with NASA data processed in Google Earth Engine, validated against 25 known analogs. Its pages live on in the **[appendix](https://zenidx.github.io/logos-space-apps-2026/appendix/)** (story, discover, 3D, method, data), and its data still feeds the Earth rehearsal sites in *Plan a base*.
+
+<p align="center"><img src="docs/img/appendix-discover.jpg" alt="Appendix, Discover: choose Shackleton, Jezero or Arcadia; the globe marks the best new matches on Earth and a list ranks them" width="760" /></p>
+
 ## How it works (no server, no database)
 
 ```
@@ -86,6 +128,9 @@ LOGOS_IN=/path/to/inputs npm run data:logos   # rebuild sites.json from the publ
 | `src/lib/logos/` | Mission model, rules, scene maths, label layout (with tests) |
 | `src/data/` | `sites.json` and derived terrain and climate files |
 | `scripts/data/` | Data pipeline (inputs, versions and checksums in its README) |
+| `src/app/(team)/base/`, `src/components/BasePlanner.tsx`, `src/components/BaseScene.tsx` | Plan a base: site choice, 3D base on real relief, jobs and Earth rehearsal |
+| `src/lib/base-plan.ts`, `src/lib/submissions.ts`, `src/data/base-sites.json`, `src/data/operations.json` | Base layout rules, job verdicts, our best base sites and the Earth sites for each job |
+| `src/app/(team)/appendix/`, `scripts/ee/` | How we started: the global Earth Engine search and its pages |
 | `docs/logos/` | [method](docs/logos/method.md), [sources](docs/logos/sources.md), [missions](docs/logos/missions.md), [independent check](docs/logos/independent-check.md), [design rationale](docs/logos/design-rationale.md); the original Spanish idea note is in [`docs/logos/es/origen-idea.md`](docs/logos/es/origen-idea.md) |
 
 ## Use of Super Intelligence (SI) / AI

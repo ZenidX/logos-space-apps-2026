@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 · README visual con las tres partes (C_1)
+
+- Arriba, «One site, three parts»: miniaturas enlazadas de Missions, Plan a base (GIF) y el apéndice.
+- Nueva sección **Plan a base** en tres pasos (elegir sitio → la base se monta sobre el relieve real → ensayar cada trabajo en la Tierra) y sección **How we started** (la búsqueda global de Earth Engine, ahora en `/appendix/`). En el mapa del repo, las carpetas de la base y del apéndice.
+- Imágenes nuevas en `docs/img/`, capturadas de la web publicada: `base-choose.jpg`, `base-assembly.gif` (montaje de la base en el sitio A del polo sur, 0,85 MB), `base-rehearse-loop.gif` y `base-rehearse.jpg` (Xinjiang frente al sitio A, agua y oxígeno) y `appendix-discover.jpg`. Los GIF se montaron con `sharp` a partir de capturas de pantalla.
+- Comprobado: todas las imágenes y enlaces relativos del README existen.
+
 ## 2026-11-15 (tarde, 21) · Portada: scroll con imán y giro fiel de los globos
 
 - **Scroll con imán (sin puntos muertos):** en la historia, cada sección ocupa una pantalla y se podía dejar la página a medias entre dos misiones, con la pantalla casi vacía. Ahora `html:has(.story) { scroll-snap-type: y mandatory }` y cada `.story-hero` / `.story-step` encaja por arriba (`src/app/(logos)/logos.css`). La última sección, más alta que la pantalla, sigue desplazándose libremente. En la vista de misión no hay imán (no existe `.story`). Comprobado en Chrome sin interfaz: un scroll a 700 px se queda en 513 (inicio de la sección) y uno a 1300 en 1539.
