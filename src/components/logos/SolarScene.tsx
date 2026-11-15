@@ -274,6 +274,8 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         mesh[compBody].quaternion.copy(orientToFace(latLonToVec3(target.lat, target.lon), face));
       }
 
+      const cur = k >= 0.9 && !sel ? (drag ? "grabbing" : "grab") : ""; // the Earth can be turned by hand in the close-up
+      if (el.style.cursor !== cur) el.style.cursor = cur;
       first = false;
       return moving || drag !== null;
     };

@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 20) · Portada: los globos se pueden girar en las misiones 1–4
+
+- Problema: en la historia de la portada, en las secciones «Mission 1–4», el globo de la Tierra (con la Luna o Marte al lado) no se podía girar con el ratón.
+- Causa: la capa de la historia (`.story`, z-10) tapa la escena 3D fija y se quedaba con todos los eventos del puntero; el arrastre de `SolarScene` nunca llegaba a recibirlos.
+- Arreglo: `.story { pointer-events: none }` y `.story-copy { pointer-events: auto }` (`src/app/(logos)/logos.css`). Solo el texto recoge el puntero; el resto llega a la escena. La rueda y el desplazamiento vertical en móvil siguen moviendo la página (`touch-action: pan-y`).
+- El cursor pasa a «grab»/«grabbing» en el primer plano para que se note que se puede girar (`SolarScene.tsx`).
+
 ## 2026-11-15 (tarde, 19) · Recorrido completo: volver atrás, enlace misión → base y botones más grandes
 
 - Pedido de zexu: seguir con la experiencia de usuario del recorrido completo, añadir un botón para volver a la página anterior y agrandar los botones.
