@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (noche, 26) · Analogía funcional: qué se mide en la Tierra y cómo se traslada al astro
+
+- Debate del equipo: las propiedades físicas y químicas no son equivalentes entre la Tierra y la Luna o Marte (otra gravedad, sin atmósfera, otro suelo), así que comparar valores directamente no se sostiene. Marco nuevo: **analogía funcional + traslado con física**. Se elige el sitio donde las condiciones de una tarea se parecen más (solo se compara directamente la geometría y las ausencias), se mide con sensores en la Tierra y la física traslada la medida al astro. Precedente real: Scarecrow (JPL), un Curiosity aligerado para simular la carga de las ruedas en Marte, en las dunas de Dumont.
+- **Web, «Plan a base»:** cada trabajo abierto muestra «Measure on Earth → apply on the Moon/Mars»: qué medir, cómo se traslada (gravedad, atmósfera, luz, retardo de la señal) y si se traslada bien, en parte o mal (`transferFor` en `BasePlanner.tsx`). Bien: energía en la Luna, tripulación. En parte: rover, EVA, construcción, agua, energía en Marte, polvo. Mal: aterrizaje (el chorro del motor en vacío). La nota de «This base on Earth» lo resume: las pruebas en la Tierra sirven sobre todo para descartar diseños.
+- **`docs/preguntas-dificiles.md`:** sección «Mensaje central» y pregunta 22 (propiedades no equivalentes), con el punto débil del albedo (el de Mons Mouton está convertido de LOLA a 1064 nm) y el relieve de Marte a 200 m.
+
 ## 2026-11-15 (noche, 27) · Vídeo: archivos con versión en el nombre
 
 - Problema: en otro portátil se seguía viendo el vídeo viejo (mismo nombre de archivo y caché del navegador de 10 min).

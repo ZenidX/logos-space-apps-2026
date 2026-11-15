@@ -15,6 +15,13 @@ Todo sale de la web actual (portada de misiones + «Plan a base») y de `docs/lo
 - **Filtro de terreno** de cada región: pendiente media ≤ 10°, ≤ 10 % nieve/hielo, ≤ 20 % agua, ≥ 800 km entre regiones, ≥ 300 km de cualquier análogo conocido.
 - **«Plan a base»:** 105 puntos del polo sur lunar (84–89,5°S) y 82 de Marte en regiones con hielo publicado; relieve real de NASA Trek (LOLA 30 m / 5 m, MOLA–HRSC); el parecido del relieve con la Tierra = 70 % reparto de pendientes + 30 % relieve, en ventanas de 11 × 11 km.
 
+## Mensaje central: analogía funcional + traslado con física
+No afirmamos que un sitio de la Tierra «sea como» la Luna o Marte: las propiedades físicas y químicas no son equivalentes en otro entorno (sin atmósfera, otra gravedad, otro suelo). Afirmamos dos cosas:
+1. **Dónde ensayar:** el sitio donde las condiciones de **una tarea** se parecen más. Solo se compara directamente lo comparable: la **geometría** (pendientes, relieve, altura del Sol) y las **ausencias** (sin vegetación, sin agua). El resto son condiciones de la tarea (arena suelta, suelo helado, roca volcánica).
+2. **Cómo se aprovecha:** se mide con sensores en la Tierra y la física traslada la medida al astro (gravedad, atmósfera, luz). Ejemplo real: Scarecrow, el Curiosity aligerado del JPL para simular en las dunas de Dumont la carga de las ruedas con la gravedad de Marte. Las pruebas en la Tierra sirven sobre todo para **descartar**; para confirmar hace falta un modelo calibrado.
+
+En la web: cada trabajo de «Plan a base» tiene un bloque «Measure on Earth → apply on the Moon/Mars» con qué medir, cómo se traslada y lo bien que se traslada (bien: energía en la Luna, tripulación · en parte: rover, EVA, construcción, agua, energía en Marte, polvo · mal: aterrizaje).
+
 ---
 
 ## A. Método y validez
@@ -118,6 +125,17 @@ Repreguntas:
 
 ### 21. «¿Qué haríais con tres meses más?»
 > «Tres cosas. Primero, cambiar nuestras estimaciones de la Luna y Marte por valores sacados directamente de los productos del PDS. Segundo, añadir las capas que faltan: un mapa de permafrost para el hielo, la emisividad para el tipo de roca real (ASTER en la Tierra, Diviner en la Luna, TES en Marte) y las sombras del relieve para el Sol bajo. Tercero, la prueba de verdad: enseñar la lista corta a un equipo de campañas de campo y comprobar una región sobre el terreno.»
+
+### 22. «Las propiedades físicas y químicas de la Tierra y de la Luna no son equivalentes. ¿Qué estáis comparando?»
+Cómo puede llegar: *«Un basalto de Arizona no es regolito lunar.»* · *«La temperatura en Marte no significa lo mismo que en la Tierra.»* · *«¿Cómo vais a validar nada en la Tierra?»*
+
+> «Tenéis razón: con otra gravedad, sin atmósfera y con otro suelo, la misma propiedad no se comporta igual, y no decimos que un sitio sea como la Luna. Comparamos solo lo que es comparable: la geometría del terreno y del Sol, y la ausencia de lo que allí no hay. Lo demás son condiciones de la tarea. Y el ensayo no termina en la Tierra: se mide con sensores y la física traslada la medida al astro. Así lo hizo el JPL con Scarecrow, un Curiosity aligerado para que sus ruedas apoyaran como en Marte, en las dunas de Dumont, que es uno de nuestros sitios de la misión 2. En cada trabajo de la base decimos qué medir y lo bien que se traslada.»
+
+Repreguntas:
+- *«¿Y lo que no se traslada?»* → «El vacío, el polvo lunar cargado eléctricamente y la radiación sobre las personas. En esos casos la Tierra sirve para descartar diseños, no para confirmarlos; hace falta cámara de vacío o un modelo.»
+- *«Vuestro albedo sale de un valor lunar medido con otro instrumento.»* → «Sí, es la parte más débil del método: el de Mons Mouton está convertido de LOLA a 1064 nm y el de la Tierra es de MODIS. Por eso lo marcamos como estimación. Lo correcto es comparar la emisividad en el infrarrojo térmico (ASTER, Diviner, TES).»
+
+*Trampa:* no defendáis una equivalencia física. Y el relieve de Marte es de 200 m: sale más suave que el de la Tierra, así que el parecido del terreno con Marte es aproximado.
 
 ---
 

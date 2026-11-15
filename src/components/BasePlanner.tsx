@@ -338,10 +338,44 @@ function EarthTwin({ subs, siteSig, onCompare }: { subs: SubMission[]; siteSig: 
           </li>
         ))}
       </ol>
-      <p className="mt-2 text-[11px] leading-snug text-[var(--dim)]">Each job is rehearsed where its own conditions are met (cold, thin air, dust, ice, access…), so the places differ. Conditions: our global search of Earth with NASA data. Terrain: computed now against this base site. Rank = half each; every job&apos;s full list is inside it below.</p>
+      <p className="mt-2 text-[11px] leading-snug text-[var(--dim)]">Each job is rehearsed where its own conditions are met (cold, thin air, dust, ice, access…), so the places differ. Conditions: our global search of Earth with NASA data. Terrain: computed now against this base site. Rank = half each; every job&apos;s full list is inside it below. A rehearsal here is not the Moon or Mars: you measure with sensors on Earth and carry the results over with physics (gravity, air, sunlight). Each job below says what to measure and how well it transfers; Earth tests are strongest at ruling designs out.</p>
     </section>
   );
 }
+
+// Ensayar en la Tierra solo tiene sentido si lo que se mide aquí se puede trasladar al astro con física conocida.
+// Para cada trabajo: qué medir con sensores en la Tierra, cómo se traslada (gravedad, atmósfera, luz) y lo bien que se traslada.
+type Transfer = { measure: string; how: string; level: "good" | "partial" | "poor" };
+const TRANSFER_LEVEL = {
+  good: { label: "Transfers well", color: "var(--ok)" },
+  partial: { label: "Transfers in part", color: "var(--acc)" },
+  poor: { label: "Transfers poorly", color: "var(--warn)" },
+} as const;
+const transferFor = (id: string, body: PlanetBody): Transfer | null => {
+  const moon = body === "moon";
+  switch (id) {
+    case "transport":
+      return { measure: "Ground erosion and debris thrown by engine plumes; pad wear after repeated landings.", how: `Exhaust spreads far more in ${moon ? "vacuum" : "Mars' thin air (about 6 mbar)"}, so Earth results need vacuum-chamber tests or plume models to carry over.`, level: "poor" };
+    case "construction":
+      return { measure: "Energy and time per cubic metre moved, sintered or printed; how steep a berm stands.", how: `Material and energy figures carry over; compaction and slope stability depend on gravity (${moon ? "1/6 g" : "0.38 g"}) and are corrected with soil-mechanics models.`, level: "partial" };
+    case "water":
+      return { measure: "Drill torque, power and rate in ice-cemented ground; water extracted per kWh.", how: `Ice and soil mechanics carry over; ${moon ? "in vacuum" : "in thin air"} ice turns straight to vapour instead of melting, so handling and losses need thermal models.`, level: "partial" };
+    case "power":
+      return moon
+        ? { measure: "Panel output and shadowing under a low Sun; how high masts must be.", how: "Sun angle is pure geometry and the Moon has no air: scale the output to about 1361 W/m² of sunlight at the same Sun angle.", level: "good" }
+        : { measure: "Output of panels and generators in cold, dusty air; dust build-up on panels.", how: "Scale sunlight to about 590 W/m² at the top of Mars' atmosphere, then correct for dust in the air, measured by the rovers.", level: "partial" };
+    case "exploration":
+      return { measure: "Wheel sinkage, slip and energy per km on slopes and loose ground.", how: `Use a lighter test rover so its wheels press as they would in ${moon ? "lunar" : "Martian"} gravity (JPL did this with Scarecrow for Curiosity), then wheel–soil models. Low gravity also changes the soil itself.`, level: "partial" };
+    case "eva":
+      return { measure: "Walk times, routes, sampling procedures and effort in a suit.", how: "Procedures and timelines carry over directly; physical effort is corrected for gravity with offloading rigs or models.", level: "partial" };
+    case "dust":
+      return { measure: "Abrasion of seals, soiling of panels and cleaning methods.", how: "Martian dust has a similar grain size, but thin air means wind pushes it far less; tests are scaled with wind-tunnel data.", level: "partial" };
+    case "crew":
+      return { measure: "Workload, sleep, conflicts and work with delayed communications.", how: `Human behaviour carries over directly; add the real signal delay (${moon ? "about 1.3 s each way" : "4 to 24 minutes each way"}).`, level: "good" };
+    default:
+      return null;
+  }
+};
 
 const LAYER_NAME: Record<Layer, string> = { relief: "Relief", photo: "Photo", slope: "Slope", sun: "Sunlight", ice: "Ice" };
 const LEGEND: Partial<Record<Layer, (p: BasePlan) => string>> = {
@@ -837,6 +871,18 @@ export default function BasePlanner() {
                               <span className="label mr-1.5">Needs</span>
                               {s.needs}
                             </p>
+                            {(() => {
+                              const tr = transferFor(s.id, body);
+                              if (!tr) return null;
+                              const lv = TRANSFER_LEVEL[tr.level];
+                              return (
+                                <div className="mt-3 rounded-xl border border-[var(--line)] p-3">
+                                  <p className="flex items-center justify-between gap-2"><span className="label">Measure on Earth → apply on {body === "moon" ? "the Moon" : "Mars"}</span><span className="inline-flex shrink-0 items-center gap-1.5 text-[11.5px]" style={{ color: lv.color }}><i aria-hidden className="inline-block h-[7px] w-[7px] rounded-full" style={{ background: lv.color }} />{lv.label}</span></p>
+                                  <p className="mt-1.5 text-[12.5px] text-[var(--ink)]"><span className="text-[var(--mut)]">Measure: </span>{tr.measure}</p>
+                                  <p className="mt-1 text-[12.5px] text-[var(--ink)]"><span className="text-[var(--mut)]">Transfer: </span>{tr.how}</p>
+                                </div>
+                              );
+                            })()}
                             {siteSig && (
                               <div className="mt-4">
                                 <p className="label">3 · Rehearse it on Earth</p>
