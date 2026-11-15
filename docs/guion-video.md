@@ -1,45 +1,54 @@
-# Guion del vídeo de 30 s (v2, desde cero)
+# Guion del vídeo de 30 s (v3)
 
 Requisitos: ver `docs/normas.md` → «Vídeo de demo: decisiones del equipo». Voz con ElevenLabs (la genera el equipo) e imagen solo de la web TerraVista animada, sin metraje de archivo ni logos de NASA.
+La v3 sustituye a la v2 (15-11): se rehace sobre el lema **«TerraVista — Down to Earth»** y la descripción oficial de la página del proyecto (ponderación por misión y avisos de zonas en conflicto o protegidas).
 
-## Texto para ElevenLabs (en inglés, 61 palabras)
-
-Pegar tal cual: los números van escritos con letras y la puntuación marca las pausas.
+## Texto para ElevenLabs (en inglés, 62 palabras)
 
 ```
-Before we live on the Moon or Mars, we rehearse here on Earth. But where?
+Everything we send to the Moon or Mars gets tested on Earth first. But… where?
 
-TerraVista scores all the land on Earth against real Moon and Mars base sites, using NASA satellite data.
+TerraVista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
 
-Tested on twenty-five known analogs, it finds new ones — from Arctic Canada to the high deserts of western China.
+Testing a spacesuit? An ice drill? It weighs what matters for that mission,
 
-And for each one, it shows exactly where the analogy breaks.
+shows exactly where every analogy breaks,
 
-TerraVista. Find the Moon on Earth.
+and flags the places you can't safely, or legally, go.
+
+TerraVista. Down to Earth.
 ```
 
-A ~2,5 palabras/s salen unos 25 s de voz. Con 0,5 s de entrada y 1,5 s de cierre, el total queda en 27–28 s.
+Unos 25 s de voz; con la entrada y el cierre, 27–28 s en total.
 
 ## Plano a plano
 
 | Tiempo | Voz | Imagen (la web, animada) | Texto en pantalla | Criterio |
 |---|---|---|---|---|
-| 0:00–0:05 | *Before we live on the Moon or Mars, we rehearse here on Earth. But where?* | Visor 3D: relieve de Shackleton (LOLA/LRO WAC) que gira y se funde en el globo de la Tierra (GIBS Blue Marble). | — | Impact (el problema) |
-| 0:05–0:11 | *TerraVista scores all the land on Earth against real Moon and Mars base sites, using NASA satellite data.* | Selector de objetivo Shackleton → Jezero → Arcadia; el mapa global de puntuación se rellena. | Chips: `MODIS · GPM IMERG · LRO · MOLA` y, 1,5 s: «Nowhere on Earth hits −230 °C — so we match extremes, not raw numbers.» | Relevance, Creativity |
-| 0:11–0:18 | *Tested on twenty-five known analogs, it finds new ones — from Arctic Canada to the high deserts of western China.* | Panel de validación (los análogos conocidos sobre la mediana y en el top 10 %), y vuelo a los candidatos #1 de Nunavut y Sinkiang. | «Validated on 25 known analogs» | Validity |
-| 0:18–0:23 | *And for each one, it shows exactly where the analogy breaks.* | Ficha del candidato: barras por dimensión, línea «Where the analogy breaks», visor 3D lado a lado (candidato frente a objetivo). | — | Validity, Creativity |
-| 0:23–0:28 | *TerraVista. Find the Moon on Earth.* | Cierre: nombre TerraVista, URL de la web y «Team Logos · Space Apps 2026». Sin logos de NASA. | «For mission planners, agencies and universities» | Impact, Presentation |
+| 0:00–0:05 | *Everything we send… But where?* | Escena Luna → Tierra de la portada (Story), o el visor 3D de Shackleton que se funde en el globo. | — | Impact |
+| 0:05–0:11 | *TerraVista scans the whole planet… Earth's own Moon and Mars.* | Globo: el mapa de puntuación se rellena y aparecen los candidatos; cambio Shackleton → Jezero → Arcadia. | `NASA MODIS · GPM · MERRA-2 · LRO · MOLA` | Relevance, Creativity |
+| 0:11–0:16 | *Testing a spacesuit? An ice drill? It weighs what matters…* | Selector de tarea (EVA → perforación de permafrost); las barras de peso cambian y el ranking se reordena. | «Ice drill → mean temperature ×2» | Creativity, Impact |
+| 0:16–0:20 | *shows exactly where every analogy breaks,* | Ficha del candidato: «Where the analogy breaks» y el visor 3D candidato frente a objetivo. | «Validated on 25 known analogs» | Validity |
+| 0:20–0:24 | *and flags the places you can't safely, or legally, go.* | Un candidato con aviso ⚠ (zona en conflicto o protegida, p. ej. North Sentinel Island). | «⚠ Conflict zone · ⚠ Protected area» | Validity, Impact |
+| 0:24–0:28 | *TerraVista. Down to Earth.* | Cierre: logotipo TerraVista, «Down to Earth», URL y «Team Logos · Space Apps 2026». | — | Presentation |
 
-Durante todo el vídeo:
-- **Subtítulos** quemados abajo, idénticos a la voz.
-- **Marca de agua** pequeña en una esquina: `AI-assisted editing · AI voice: ElevenLabs`.
+Durante todo el vídeo: subtítulos quemados, idénticos a la voz, y la marca de agua `AI-assisted editing · AI voice: ElevenLabs`.
+
+## Bloqueos: la web todavía no enseña dos cosas que dice la voz
+Comprobado en `origin/main` el 15-11:
+1. **Ponderación por misión:** está calculada (`src/data/operations.json`: 11 tareas, por ejemplo `permafrost_drill` con `lst_mean` ×2), pero **ninguna pantalla la usa**. Hace falta un selector de tarea en la web para el plano 0:11–0:16.
+2. **Avisos de conflicto y zonas protegidas:** **no existen** en el código. El #3 de Shackleton está en la provincia de Kapisa (Afganistán), que sería el ejemplo perfecto para el plano. Hay que construirlo o cambiar la frase.
+
+Si no da tiempo, se usan estas frases (en vez de las líneas 3 y 5):
+- *"It shows how close each site is, and exactly where every analogy breaks."*
+- La línea de los avisos se quita y el «Validated on 25 known analogs» pasa a la voz.
 
 ## Por qué así
-- **Impact:** la pregunta inicial plantea el problema y el cierre dice para quién es. «Open Spaces» no sale todavía porque no está en la web; si se construye, puede sustituir al texto de cierre.
-- **Creativity:** la idea de comparar extremos y no cifras en bruto es lo más original del método, y sale en pantalla, no en la voz, para no pasarnos de tiempo.
-- **Validity:** se dice que está validado y dónde falla. No hay cifras que no podamos defender (se quitan «hundreds of millions» y «80 %» de los guiones anteriores).
-- **Relevance:** «NASA satellite data» en la voz y los nombres de los productos en pantalla.
-- **Presentation:** una idea por frase, 61 palabras y todo dentro de 28 s.
+- **Impact:** el problema se dice en una frase. Se da un ejemplo concreto de uso (traje, taladro) y el aviso de seguridad o legalidad hace que la herramienta sea práctica.
+- **Creativity:** *«Earth's own Moon and Mars»* y la ponderación según lo que se ensaya.
+- **Validity:** dice dónde se rompe la analogía, añade la validación en pantalla y no da cifras que no podamos defender.
+- **Relevance:** «open NASA data» en la voz y los productos en pantalla.
+- **Presentation:** el lema cierra el vídeo, hay una idea por frase y todo cabe en 28 s.
 
 ## Ajustes en ElevenLabs
-Una voz natural y cálida, no la de narrador de tráiler. Stability ~45–55 %, Similarity ~75 % y Style bajo. Si la voz pasa de 26 s, se acelera un poco o se quita «here». Exportar en MP3 o WAV de 44,1 kHz y dejarlo en `video/audio/`. Los tiempos de la imagen se ajustan al audio real.
+Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio. Los puntos suspensivos de «But… where?» y las comas de «safely, or legally,» marcan las pausas. Si pasa de 26 s, se quita «exactly» o «the». Dejar el audio en `video/audio/`.
