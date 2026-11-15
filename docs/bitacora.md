@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 4) · Vídeo: un solo comando y v3 publicada
+
+- `video/scripts/make.sh [nombre] [planos…]` hace todo el proceso (captura → superposiciones → subtítulos → montaje). Con `SKIP_CAPTURE=1` reutiliza los fotogramas ya capturados (~70 s); con captura completa tarda ~4 min. Si llegan pantallas nuevas, basta con añadir el plano en `capture.cjs` y en la línea de tiempo de `build.sh`, y volver a lanzarlo.
+- `video/scripts/publish-demo.sh [nombre]` copia el vídeo en `public/demo/` (MP4, WebM y portada del cierre) para la página `/demo-video/`. Después: commit en `main` y `npm run deploy`.
+- Publicada en `/demo-video/` la v3 (subtítulos palabra a palabra), con captura nueva de la web.
+
 ## 2026-11-15 (tarde, 3) · Vídeo: subtítulos palabra a palabra (prototipo v3)
 
 - **Tiempos de cada palabra:** `video/scripts/align.py` pasa la voz por Vosk (modelo pequeño de inglés, instalado fuera del repo) y la alinea con el guion. 54 de 64 palabras salen tal cual; «TerraVista» (Vosk oye «terror beast») y «spacesuit? An ice drill?» se reparten en el tramo que ocupa ese sonido. Resultado en `video/audio/word-timings.json`.
