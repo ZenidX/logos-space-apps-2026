@@ -75,7 +75,7 @@ Date of check: 2026-11-15. Scope: literature / agency sources only; no new data 
 
 ### (j) Northern Ellesmere Island, Nunavut (81.48, -70.85) — verdict: SUPPORTS the physical property (same island, different peninsula); analog link is indirect
 
-> Update 15 Nov 2026: shown in the app as **Partly** ("new region · support nearby, partial"), because the support is from another peninsula of the island and the analog link is indirect (team decision recorded in `docs/es/`).
+> Update 15 Nov 2026: shown in the app as **Partly** ("new region · support nearby, partial"), because the support is from another peninsula of the island and the analog link is indirect (team decision).
 
 - **Source 1 (peer-reviewed, open access).** Bernard-Grand'Maison, C., & Pollard, W. (2018). An estimate of ice wedge volume for a High Arctic polar desert environment, Fosheim Peninsula, Ellesmere Island. *The Cryosphere* 12(11), 3589–3604. doi:10.5194/tc-12-3589-2018. Verified text: "the Fosheim Peninsula, Ellesmere Island, a continuous permafrost area characterized by polar desert conditions and extensive ground ice."
   - URL: https://tc.copernicus.org/articles/12/3589/2018/ — HTTP **200**. Citation details confirmed in the Crossref record.

@@ -14,5 +14,5 @@ Files are reviewed by team Logos before submission; files still marked "to be re
 | `src/data/sites.json` | Data prepared with AI-assisted scripts from public datasets (NASA MODIS, GPM, SoilGrids, GLiM, WGI, UCDP…); has `generatedWith` |
 | `scripts/data/*` | Data pipeline scripts (Python), written with AI assistance; each carries the header |
 | `next.config.ts`, `package.json`, `vercel.json` | Project configuration |
-| `README.md`, `docs/*` (incl. `method.md`, `missions.md`, `sources.md`; Spanish working notes in `docs/es/`) | Research summaries and drafting of texts |
+| `README.md`, `docs/*` (incl. `method.md`, `missions.md`, `sources.md`; the Spanish idea note in `docs/es/`) | Research summaries and drafting of texts |
 | `public/tex/*.jpg` | Not AI-generated: NASA imagery, only resized and recompressed |

@@ -86,7 +86,7 @@ LOGOS_IN=/path/to/inputs npm run data   # rebuild sites.json from the public dat
 | `src/lib/` | Mission model, rules, scene maths, label layout (with tests) |
 | `src/data/` | `sites.json` and derived terrain and climate files |
 | `scripts/data/` | Data pipeline (inputs, versions and checksums in its README) |
-| `docs/` | [method](docs/method.md), [sources](docs/sources.md), [missions](docs/missions.md), [independent check](docs/independent-check.md), [design rationale](docs/design-rationale.md); team notes in Spanish in `docs/es/` |
+| `docs/` | [method](docs/method.md), [sources](docs/sources.md), [missions](docs/missions.md), [independent check](docs/independent-check.md), [design rationale](docs/design-rationale.md); the original Spanish idea note is in [`docs/es/origen-idea.md`](docs/es/origen-idea.md) |
 
 ## Use of Super Intelligence (SI) / AI
 The idea and the approach of this project are our team's own: finding Earth analog sites **per mission** and adding an **access-complexity index** — a team-defined coordination proxy shown next to each site, not part of the analog index and not a feasibility or safety assessment. No AI tool was used to come up with the idea or the problem framing.
