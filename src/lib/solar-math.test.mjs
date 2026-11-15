@@ -2,7 +2,7 @@
 // Tests of the scene maths (heliocentric overview + Earth close-up). Run with `npm test`.
 import assert from "node:assert/strict";
 import * as THREE from "three";
-import { AU, EARTH_R, FACTS, FOV, ORBIT, PERIOD_S, RADIUS, YEAR_S, closeFrame, closePose, companionPos, linkAlpha, orientToFace, overviewExtent, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose } from "./solar-math.ts";
+import { AU, EARTH_R, FACTS, FOV, NAME_ROOM, ORBIT, PERIOD_S, RADIUS, YEAR_S, closeFrame, closePose, companionPos, facesCamera, FACING_MIN, SITE_TILT, orientToFace, overviewExtent, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose } from "./solar-math.ts";
 import { latLonToVec3 } from "./globe-math.ts";
 const V = (...a) => new THREE.Vector3(...a), near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
 const camFor = (pose, aspect) => { const c = new THREE.PerspectiveCamera(FOV, aspect, 0.05, 400); c.position.copy(pose.pos); c.lookAt(pose.look); c.updateMatrixWorld(true); c.updateProjectionMatrix(); return c; };
@@ -30,8 +30,8 @@ console.log(`2 ok · overview inside the frame at ${Object.keys(sizes).length} s
 
 // 3) Close-up: the Earth and the companion world fit the frame, do not touch, and the companion is on the right of the Earth.
 worst = 0;
-for (const t of [0, 13, 29, 47]) for (const body of ["moon", "mars"]) for (const [name, [w, h]] of Object.entries(sizes)) {
-  const E = positions(t).earth, C = companionPos(E, body), f = closeFrame(E), cam = camFor(closePose(E, body, w / h), w / h);
+for (const room of [0, NAME_ROOM]) for (const t of [0, 13, 29, 47]) for (const body of ["moon", "mars"]) for (const [name, [w, h]] of Object.entries(sizes)) {
+  const E = positions(t).earth, C = companionPos(E, body), f = closeFrame(E), cam = camFor(closePose(E, body, w / h, room), w / h);
   assert.ok(C.distanceTo(E) > EARTH_R + RADIUS[body] + 0.3, "companion must not touch the Earth");
   assert.ok(near(f.dir.length(), 1) && Math.abs(f.dir.dot(f.right)) < 1e-9 && Math.abs(f.up.dot(f.right)) < 1e-9);
   const pe = E.clone().project(cam), pc = C.clone().project(cam); assert.ok(pc.x > pe.x, `${name}: companion on the right`);
@@ -39,36 +39,36 @@ for (const t of [0, 13, 29, 47]) for (const body of ["moon", "mars"]) for (const
     const q = c.clone().addScaledVector(f.right, x * r).addScaledVector(f.up, y * r).project(cam), m = Math.max(Math.abs(q.x), Math.abs(q.y)); worst = Math.max(worst, m);
     assert.ok(m <= 0.9, `${name} ${body}: a globe leaves the frame in the close-up (${m.toFixed(3)})`);
   }
+  // with room asked for, at least that much of the frame is left free on the left of the Earth
+  if (room) { const edge = E.clone().addScaledVector(f.right, -EARTH_R).project(cam), free = E.clone().addScaledVector(f.right, -(EARTH_R + room)).project(cam); assert.ok(free.x >= -0.9 && free.x < edge.x, `${name} ${body}: no room for names left of the Earth`); }
   const tp = targetPose(positions(t)[body], body); assert.ok(tp.pos.distanceTo(tp.look) > RADIUS[body] * 3);
 }
 console.log(`3 ok · close-up: Earth and companion inside the frame at every size and date (worst |ndc| ${worst.toFixed(3)})`);
 
-// 4) Links never pass through a globe: whenever one is drawn (alpha > 0), every interior point is outside both globes.
-let drawn = 0, hidden = 0, seed = 11;
+// 4) Sites on the far side are not shown, and one that is shown is never seen through the Earth.
+let shown = 0, hiddenSites = 0, seed = 11;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-for (const body of ["moon", "mars"]) for (let k = 0; k < 6000; k++) {
-  const E = positions(rnd() * 120).earth, C = companionPos(E, body), cam = closePose(E, body, 0.6 + rnd() * 1.6).pos;
+for (let k = 0; k < 6000; k++) {
+  const body = k % 2 ? "moon" : "mars", E = positions(rnd() * 120).earth, cam = closePose(E, body, 0.6 + rnd() * 1.6).pos;
   const qE = new THREE.Quaternion().setFromEuler(new THREE.Euler(rnd() * 6.28, rnd() * 6.28, rnd() * 6.28)), nS = latLonToVec3(rnd() * 180 - 90, rnd() * 360 - 180).applyQuaternion(qE).normalize(), S = E.clone().addScaledVector(nS, EARTH_R);
-  const nM = V(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).normalize(), M = C.clone().addScaledVector(nM, RADIUS[body]);
-  const a = linkAlpha(S, nS, M, E, C, RADIUS[body], cam, rnd() < 0.3);
-  assert.ok(a >= 0 && a <= 1);
-  if (a === 0) { hidden++; continue; }
-  drawn++;
-  for (let i = 1; i < 40; i++) { const p = S.clone().lerp(M, i / 40);
-    assert.ok(p.distanceTo(E) >= EARTH_R * 0.9985, `link inside the Earth (case ${k}, point ${i})`); assert.ok(p.distanceTo(C) >= RADIUS[body] * 0.9985, `link inside the target world (case ${k}, point ${i})`); }
+  if (!facesCamera(S, nS, cam)) { hiddenSites++; continue; }
+  shown++;
+  assert.equal(segmentHitsSphere(S, cam, E, EARTH_R), false, `case ${k}: a shown site must not be behind the Earth`);
 }
-assert.ok(drawn > 300 && hidden > 300, `must cover drawn and hidden links (${drawn}/${hidden})`);
+assert.ok(shown > 1500 && hiddenSites > 1500 && FACING_MIN > 0, `must cover shown and hidden sites (${shown}/${hiddenSites})`);
 assert.equal(segmentHitsSphere(V(-2, 0, 0), V(2, 0, 0), V(0, 0, 0), 1), true); assert.equal(segmentHitsSphere(V(-2, 1.2, 0), V(2, 1.2, 0), V(0, 0, 0), 1), false);
-console.log(`4 ok · ${drawn} links drawn, none through a globe; ${hidden} correctly not drawn`);
+console.log(`4 ok · ${shown} sites facing the camera are shown, none through the Earth; ${hiddenSites} on the far side are hidden`);
 
-// 5) An opened site, turned to its facing direction, always gets a clear link to the target point on the companion.
-for (const t of [0, 13, 29, 47]) for (const body of ["moon", "mars"]) {
-  const E = positions(t).earth, C = companionPos(E, body), cam = closePose(E, body, 1.3).pos, face = siteFacing(E, body);
+// 5) An opened site is turned towards the camera, down and to the right of the Earth's centre, well inside the visible side.
+for (const t of [0, 13, 29, 47]) for (const body of ["moon", "mars"]) for (const [name, [w, h]] of Object.entries(sizes)) {
+  const E = positions(t).earth, f = closeFrame(E), pose = closePose(E, body, w / h, w >= 560 ? NAME_ROOM : 0), cam = camFor(pose, w / h), face = siteFacing(E);
+  assert.ok(near(face.length(), 1) && near(face.dot(f.dir), Math.cos(SITE_TILT), 1e-9) && face.dot(f.right) > 0.2 && face.dot(f.up) < -0.3);
   for (const [lat, lon] of [[35.6, -111.6], [-48.3, -69.2], [75.4, -89.7], [-77.5, 162], [18.3, 41.8], [-32.7, 19.8]]) {
     const q = orientToFace(latLonToVec3(lat, lon), face), nS = latLonToVec3(lat, lon).applyQuaternion(q).normalize(), S = E.clone().addScaledVector(nS, EARTH_R);
-    assert.ok(nS.distanceTo(face) < 1e-6);
-    const nM = cam.clone().sub(C).normalize().multiplyScalar(0.45).addScaledVector(S.clone().sub(C).normalize(), 0.55).normalize(), M = C.clone().addScaledVector(nM, RADIUS[body]);
-    assert.equal(linkAlpha(S, nS, M, E, C, RADIUS[body], cam, true), 1, `opened site ${lat},${lon} (${body}): link must be clear`);
+    assert.ok(nS.distanceTo(face) < 1e-6 && facesCamera(S, nS, pose.pos), `${name}: the opened site ${lat},${lon} must face the camera`);
+    const ps = S.clone().project(cam), pe = E.clone().project(cam);
+    assert.ok(ps.x > pe.x && ps.y < pe.y, `${name}: the opened site is shown right of and below the Earth's centre`);
+    assert.ok(Math.abs(ps.x) < 0.9 && Math.abs(ps.y) < 0.9);
   }
 }
-console.log("5 ok · the opened site always has a clear, pinned link to its target");
+console.log("5 ok · the opened site always faces the camera, below and to the right of the Earth's centre");

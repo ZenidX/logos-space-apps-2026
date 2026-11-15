@@ -52,3 +52,11 @@ python -I 07_details.py work/sites.json src/data/site-details.json              
 
 ## Known limits
 Moon/Mars target values are approximate literature values hard-coded in `build_common.py`; the exclusion list in `02_missions.py` uses approximate region centres; thresholds and weights are team choices (see method.md).
+
+## Data v7 notes
+- Fourth mission `m4-low-sun`: Sun variables computed from latitude in `02_missions.py`; index = plain mean of similarities (no known-analog term); extra screen rule in `02b_screen.py` (bare ground + moss/lichen ≥ 50 %). Not validated.
+- `variables[].coverageWeight` (was `weight`): only sets the 66 % data-coverage rule; F and D are unweighted.
+- `accessRisk.floor`: an official advisory at its maximum (US level 4 of 4, UK against all travel to the whole country) sets the level to at least high (`build_common.access`, tested in `test_index.py`).
+- `accessRisk.permitFlag` / `permitNote` / `permitUrl`: Tibet entry permit, Nunavut and NWT research licences (`05_build.py`, `PERMITS`).
+- `07_details.py` also stores POWER `clearnessIndex` (ALLSKY_KT) and `solarKWhM2Day` (ALLSKY_SFC_SW_DWN).
+- `02b_screen.py` takes about 40 min with four missions (150 candidate regions each, live reads).

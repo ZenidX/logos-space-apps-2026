@@ -1,8 +1,8 @@
 {
  "generatedWith": "AI-assisted (Claude), reviewed by team Logos",
- "generatedAt": "2026-11-15T00:27:43+01:00",
- "version": "v4",
- "method": "see method.md (section v3) in the same folder",
+ "generatedAt": "2026-11-15T01:18:04+01:00",
+ "version": "v7",
+ "method": "docs/method.md (method v3, data v7)",
  "missions": [
   {
    "id": "m1-eva-basalt",
@@ -94,7 +94,7 @@
      "inMatch": true,
      "ideal": "<= 0.05",
      "tolerance": 0.1,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "albedo",
@@ -104,7 +104,7 @@
      "inMatch": true,
      "ideal": "0.07-0.20",
      "tolerance": 0.06,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "precip",
@@ -114,7 +114,7 @@
      "inMatch": true,
      "ideal": "<= 250",
      "tolerance": 300,
-     "weight": 0.5
+     "coverageWeight": 0.5
     },
     {
      "id": "volcanic",
@@ -124,7 +124,7 @@
      "inMatch": true,
      "ideal": "1",
      "tolerance": 0.5,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "sun_max_deg",
@@ -134,7 +134,7 @@
      "inMatch": false,
      "ideal": "~6.9",
      "tolerance": 15,
-     "weight": 0
+     "coverageWeight": 0
     },
     {
      "id": "sun_winter_solstice_deg",
@@ -142,7 +142,7 @@
      "unit": "deg",
      "why": "<= 0 means polar night",
      "inMatch": false,
-     "weight": 0
+     "coverageWeight": 0
     },
     {
      "id": "slope",
@@ -235,6 +235,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.159,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
@@ -309,6 +310,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.159,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
@@ -376,6 +378,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.167,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.313; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-07-31); UK: no travel alert",
@@ -451,6 +454,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.159,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
@@ -536,6 +540,7 @@
      ],
      "accessRisk": {
       "level": "high",
+      "floor": null,
       "score": 0.619,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.619 (0-1, relative); Governance perception (WGI, perceptions-based) 0.341; nearby organised-violence events 0.963; travel advice 0.583; US level 3 of 4 (2026-10-22); UK advice mentions specific regions; see source",
@@ -621,6 +626,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.126,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
@@ -706,6 +712,7 @@
      ],
      "accessRisk": {
       "level": "high",
+      "floor": null,
       "score": 0.518,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.518 (0-1, relative); Governance perception (WGI, perceptions-based) 0.54; nearby organised-violence events 0.447; travel advice 0.583; US level 3 of 4 (2026-10-18); UK advice mentions specific regions; see source",
@@ -791,6 +798,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.083,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.083 (0-1, relative); Governance perception (WGI, perceptions-based) 0.207; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-08-17); UK: no travel alert",
@@ -876,6 +884,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.126,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
@@ -961,6 +970,7 @@
      ],
      "accessRisk": {
       "level": "medium",
+      "floor": null,
       "score": 0.42,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.42 (0-1, relative); Governance perception (WGI, perceptions-based) 0.411; nearby organised-violence events 0.612; travel advice 0.167; US level 2 of 4 (2025-05-26); UK: no travel alert",
@@ -978,6 +988,7 @@
    ],
    "validation": {
     "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "validated": true,
     "result": "3 of 4 known analogs in the top 2 % of land cells (SP Crater 99.9, Craters of the Moon 98.6, Timanfaya 99.6); Kilauea Iki 86.4 (11 km cell mostly rainforest). Amazonia control: 31.2th percentile.",
     "landCells": 1854290,
     "knownMedianPercentiles": {
@@ -1056,7 +1067,7 @@
      "inMatch": true,
      "ideal": ">= 50",
      "tolerance": 12,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "ndvi",
@@ -1066,7 +1077,7 @@
      "inMatch": true,
      "ideal": "<= 0.05",
      "tolerance": 0.1,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "precip",
@@ -1076,7 +1087,7 @@
      "inMatch": true,
      "ideal": "<= 150",
      "tolerance": 250,
-     "weight": 0.5
+     "coverageWeight": 0.5
     },
     {
      "id": "albedo",
@@ -1086,7 +1097,7 @@
      "inMatch": true,
      "ideal": "0.12-0.28",
      "tolerance": 0.08,
-     "weight": 0.5
+     "coverageWeight": 0.5
     },
     {
      "id": "slope",
@@ -1162,6 +1173,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.159,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
@@ -1223,6 +1235,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.167,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.167 (0-1, relative); Governance perception (WGI, perceptions-based) 0.314; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-08-18); UK: no travel alert",
@@ -1284,6 +1297,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.159,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.159 (0-1, relative); Governance perception (WGI, perceptions-based) 0.397; nearby organised-violence events 0.0; travel advice 0.0; UK: no travel alert",
@@ -1357,6 +1371,7 @@
      ],
      "accessRisk": {
       "level": "high",
+      "floor": null,
       "score": 0.856,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.856 (0-1, relative); Governance perception (WGI, perceptions-based) 0.64; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
@@ -1430,6 +1445,7 @@
      ],
      "accessRisk": {
       "level": "high",
+      "floor": null,
       "score": 0.913,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.783; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-10-22); UK advice covers whole country; see source",
@@ -1503,6 +1519,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.179,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.179 (0-1, relative); Governance perception (WGI, perceptions-based) 0.24; nearby organised-violence events 0.0; travel advice 0.333; US level 3 of 4 (2026-10-22); UK: no travel alert",
@@ -1576,6 +1593,7 @@
      ],
      "accessRisk": {
       "level": "high",
+      "floor": null,
       "score": 0.913,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.913 (0-1, relative); Governance perception (WGI, perceptions-based) 0.782; nearby organised-violence events 1.0; travel advice 1.0; US level 4 of 4 (2026-06-07); UK advice covers whole country; see source",
@@ -1649,8 +1667,9 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.178,
-      "permitFlag": "NONE",
+      "permitFlag": "TIBET_ENTRY_PERMIT",
       "basis": "Access complexity 0.178 (0-1, relative); Governance perception (WGI, perceptions-based) 0.34; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-10-18); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
@@ -1660,7 +1679,9 @@
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
+      ],
+      "permitNote": "Foreign visitors need a permit for the Tibet Autonomous Region, obtained through a travel agent in China, and must travel on an organised tour; permits can be suspended without notice (UK FCDO travel advice, read 2026-11-15).",
+      "permitUrl": "https://www.gov.uk/foreign-travel-advice/china/regional-risks"
      }
     },
     {
@@ -1722,6 +1743,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.126,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.126 (0-1, relative); Governance perception (WGI, perceptions-based) 0.316; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-07-09); UK: no travel alert",
@@ -1739,6 +1761,7 @@
    ],
    "validation": {
     "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "validated": true,
     "result": "3 of 3 known analogs in the top 2.1 % (Dumont Dunes 100.0, Yungay 97.9, MDRS 100.0). Amazonia control: 1.5th percentile.",
     "landCells": 1452035,
     "knownMedianPercentiles": {
@@ -1819,7 +1842,7 @@
      "inMatch": true,
      "ideal": "<= -5",
      "tolerance": 6,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "precip",
@@ -1829,7 +1852,7 @@
      "inMatch": true,
      "ideal": "<= 250",
      "tolerance": 250,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "albedo",
@@ -1839,7 +1862,7 @@
      "inMatch": true,
      "ideal": "<= 0.5",
      "tolerance": 0.12,
-     "weight": 1.0
+     "coverageWeight": 1.0
     },
     {
      "id": "ndvi",
@@ -1849,7 +1872,7 @@
      "inMatch": true,
      "ideal": "<= 0.10",
      "tolerance": 0.1,
-     "weight": 0.5
+     "coverageWeight": 0.5
     }
    ],
    "breaks": [
@@ -1917,8 +1940,9 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.081,
-      "permitFlag": "NONE",
+      "permitFlag": "NUNAVUT_RESEARCH_LICENCE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
@@ -1928,7 +1952,9 @@
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
+      ],
+      "permitNote": "Research in Nunavut requires a licence from the Nunavut Research Institute under the Scientists Act (NRI, read 2026-11-15).",
+      "permitUrl": "https://www.nri.nu.ca/"
      }
     },
     {
@@ -1972,6 +1998,7 @@
      ],
      "accessRisk": {
       "level": null,
+      "floor": null,
       "score": null,
       "permitFlag": "ANTARCTIC_TREATY_AREA",
       "basis": "Not computed: Antarctic Treaty area (no country attributed). Activities require prior EIA and national authorisation; entry to an Antarctic Specially Protected Area requires a permit. ASPA status of this point not checked.",
@@ -2045,8 +2072,9 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.081,
-      "permitFlag": "NONE",
+      "permitFlag": "NUNAVUT_RESEARCH_LICENCE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
@@ -2056,7 +2084,9 @@
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
+      ],
+      "permitNote": "Research in Nunavut requires a licence from the Nunavut Research Institute under the Scientists Act (NRI, read 2026-11-15).",
+      "permitUrl": "https://www.nri.nu.ca/"
      }
     },
     {
@@ -2118,8 +2148,9 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.081,
-      "permitFlag": "NONE",
+      "permitFlag": "NWT_RESEARCH_LICENCE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
@@ -2129,7 +2160,9 @@
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
+      ],
+      "permitNote": "Research in the Northwest Territories may need licences or permits; the Aurora Research Institute publishes the licensing and permitting process (ARI, read 2026-11-15).",
+      "permitUrl": "https://nwtresearch.com/licensing"
      }
     },
     {
@@ -2190,7 +2223,8 @@
       "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
      ],
      "accessRisk": {
-      "level": "medium",
+      "level": "high",
+      "floor": "Level raised to high: US advisory at its highest level (4 of 4); UK advises against all travel to the whole country. The 0-1 score is unchanged.",
       "score": 0.454,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.454 (0-1, relative); Governance perception (WGI, perceptions-based) 0.51; nearby organised-violence events 0.0; travel advice 1.0; US level 4 of 4 (2025-12-28); UK advice covers whole country; see source",
@@ -2264,8 +2298,9 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.081,
-      "permitFlag": "NONE",
+      "permitFlag": "NUNAVUT_RESEARCH_LICENCE",
       "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
       "note": "Check national park and research permits before fieldwork.",
       "sources": [
@@ -2275,7 +2310,9 @@
        "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
        "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
        "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
-      ]
+      ],
+      "permitNote": "Research in Nunavut requires a licence from the Nunavut Research Institute under the Scientists Act (NRI, read 2026-11-15).",
+      "permitUrl": "https://www.nri.nu.ca/"
      }
     },
     {
@@ -2337,6 +2374,7 @@
      ],
      "accessRisk": {
       "level": "low",
+      "floor": null,
       "score": 0.178,
       "permitFlag": "NONE",
       "basis": "Access complexity 0.178 (0-1, relative); Governance perception (WGI, perceptions-based) 0.34; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2026-10-18); UK: no travel alert",
@@ -2354,6 +2392,7 @@
    ],
    "validation": {
     "method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
+    "validated": true,
     "result": "2 of 2 known analogs in the top 1 % (Haughton 99.6, McMurdo Dry Valleys 99.2). Amazonia control: 2.8th percentile. Only 2 verified known sites: weak test.",
     "landCells": 1854344,
     "knownMedianPercentiles": {
@@ -2362,10 +2401,519 @@
      "albedo": 68.0,
      "ndvi": 6.2
     },
-    "candidateRegionsFound": 752,
+    "candidateRegionsFound": 751,
     "control": {
      "match": 0.28,
      "matchPercentile": 2.8
+    }
+   }
+  },
+  {
+   "id": "m4-low-sun",
+   "title": "Low-Sun operations and solar power",
+   "campaigns": [
+    {
+     "name": "NASA JETT3 (2022): night moonwalks with a lighting cart",
+     "url": "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log"
+    },
+    {
+     "name": "NASA JETT5 (2024): night EVAs with a portable spotlight acting as the Sun",
+     "url": "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field"
+    },
+    {
+     "name": "NASA Ames Lunar Lab and regolith testbeds (low-angle lighting for VIPER)",
+     "url": "https://www.nasa.gov/centers-and-facilities/ames/the-lunar-lab-and-regolith-testbeds/"
+    },
+    {
+     "name": "Apollo geology field training in Iceland (1965, 1967; NASA SP-2015-626): known analog, not a low-Sun rehearsal",
+     "url": "https://ntrs.nasa.gov/citations/20190026783"
+    }
+   ],
+   "target": {
+    "body": "moon",
+    "name": "Mons Mouton (lunar south pole)",
+    "lat": -84.6,
+    "lon": 31.0,
+    "description": "A lunar south-pole region NASA listed among its Artemis III landing candidates in 2024. NASA now describes Artemis III as a crewed demonstration in low Earth orbit (launch 2027), with lunar landings beginning with Artemis IV.",
+    "descriptionSources": [
+     {
+      "name": "NASA (2024): update to 9 Artemis III landing regions",
+      "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"
+     },
+     {
+      "name": "NASA Artemis III mission page (read 2026-11-14)",
+      "url": "https://www.nasa.gov/mission/artemis-III/"
+     }
+    ],
+    "coordSource": "USGS Gazetteer Feature 16070, https://planetarynames.wr.usgs.gov/Feature/16070",
+    "values": {
+     "low_sun_months": {
+      "value": 12,
+      "unit": "months/yr",
+      "source": "computed: at 84.6 S the noon Sun stays between about 3.9 and 6.9 deg all year (latitude and the 1.54 deg tilt of the lunar equator to the ecliptic); terrain ignored",
+      "url": null
+     },
+     "polar_night_months": {
+      "value": null,
+      "unit": "months/yr",
+      "source": "not computed: darkness at the lunar pole depends on local terrain (illumination maps not processed)",
+      "url": null
+     },
+     "ndvi": {
+      "value": 0,
+      "unit": "index",
+      "source": "no vegetation (by definition)",
+      "url": null
+     },
+     "albedo": {
+      "value": 0.15,
+      "unit": "0-1",
+      "source": "estimate: broadband albedo = 0.49 x LOLA 1064 nm normal albedo (Hayne et al. 2017, doi:10.1002/2017JE005387) with typical highland normal albedo ~0.3 (Lucey et al. 2014, doi:10.1002/2013JE004592); not a site-specific measurement",
+      "url": "https://doi.org/10.1002/2017JE005387"
+     }
+    }
+   },
+   "variables": [
+    {
+     "id": "low_sun_months",
+     "label": "Months with a low noon Sun (0-12 deg)",
+     "unit": "months/yr",
+     "why": "a real low Sun is what crews and solar arrays face at the lunar pole; campaigns so far had to simulate it at night",
+     "inMatch": true,
+     "ideal": ">= 2",
+     "tolerance": 1.0,
+     "coverageWeight": 1.0
+    },
+    {
+     "id": "polar_night_months",
+     "label": "Months with the Sun below the horizon at noon",
+     "unit": "months/yr",
+     "why": "long polar night stops solar power and daylight work; candidate lunar sites are chosen for near-continuous light",
+     "inMatch": true,
+     "ideal": "<= 1",
+     "tolerance": 1.5,
+     "coverageWeight": 0.5
+    },
+    {
+     "id": "ndvi",
+     "label": "Vegetation (NDVI)",
+     "unit": "index",
+     "why": "bare ground, so shadows fall on rock and soil",
+     "inMatch": true,
+     "ideal": "<= 0.15",
+     "tolerance": 0.1,
+     "coverageWeight": 1.0
+    },
+    {
+     "id": "albedo",
+     "label": "Surface albedo",
+     "unit": "0-1",
+     "why": "no year-round snow or ice cover (annual mean)",
+     "inMatch": true,
+     "ideal": "<= 0.35",
+     "tolerance": 0.1,
+     "coverageWeight": 1.0
+    }
+   ],
+   "breaks": [
+    {
+     "text": "Season: on Earth the low noon Sun lasts a few months and comes with winter cold, snow and short days; at the lunar pole it is permanent.",
+     "source": "computed (latitude, 23.44 deg and 1.54 deg tilts); snow not scored",
+     "url": null
+    },
+    {
+     "text": "Atmosphere: air scatters light into shadows and clouds dim the Sun; on the Moon (surface pressure ~3e-15 bar) shadows are black and sunlight is undimmed.",
+     "source": "NASA NSSDC Moon fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+    },
+    {
+     "text": "Terrain shadowing is not computed: the index uses latitude only, while real lunar lighting depends on local ridges and craters.",
+     "source": "method limit",
+     "url": null
+    },
+    {
+     "text": "Gravity: 1.62 m/s2 on the Moon vs 9.80 on Earth (0.165 g).",
+     "source": "NASA NSSDC Moon fact sheet",
+     "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+    }
+   ],
+   "sites": [
+    {
+     "id": "askja_iceland",
+     "name": "Askja highlands, Iceland",
+     "country": "Iceland",
+     "lat": 65.05,
+     "lon": -16.75,
+     "kind": "known",
+     "match": 0.845,
+     "ruleFraction": 0.75,
+     "percentileDistance": null,
+     "matchPercentile": 91.1,
+     "perVariable": {
+      "low_sun_months": {
+       "value": 4.0,
+       "percentile": 100.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction"
+      },
+      "polar_night_months": {
+       "value": 0.0,
+       "percentile": 62.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th) with the noon Sun at or below the horizon"
+      },
+      "ndvi": {
+       "value": -0.063,
+       "percentile": 0.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.489,
+       "percentile": 73.9,
+       "similarity": 0.378,
+       "meetsRule": false,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "campaign": "Apollo geology training 1965 (not a low-Sun rehearsal)",
+     "breaks": [
+      "Surface albedo 0.489 0-1 outside the mission range (<= 0.35)",
+      "Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "floor": null,
+      "score": 0.045,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.045 (0-1, relative); Governance perception (WGI, perceptions-based) 0.112; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-05-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m4-low-sun-new1",
+     "name": "Ungava Peninsula · Kativik · Quebec",
+     "country": "Canada",
+     "lat": 62.206,
+     "lon": -73.15,
+     "kind": "new",
+     "match": 1.0,
+     "ruleFraction": 1.0,
+     "percentileDistance": null,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "low_sun_months": {
+       "value": 3.0,
+       "percentile": 96.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction"
+      },
+      "polar_night_months": {
+       "value": 0.0,
+       "percentile": 62.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th) with the noon Sun at or below the horizon"
+      },
+      "ndvi": {
+       "value": 0.061,
+       "percentile": 8.7,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.347,
+       "percentile": 61.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 7964,
+      "areaKm2": 551550,
+      "bbox": [
+       -78.45,
+       54.69,
+       -61.45,
+       62.52
+      ],
+      "meanSimilarity": 0.902
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "floor": null,
+      "score": 0.081,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.081 (0-1, relative); Governance perception (WGI, perceptions-based) 0.202; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-06-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m4-low-sun-new2",
+     "name": "Greenland · Qeqqata",
+     "country": "Greenland",
+     "lat": 66.335,
+     "lon": -49.95,
+     "kind": "new",
+     "match": 1.0,
+     "ruleFraction": 1.0,
+     "percentileDistance": null,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "low_sun_months": {
+       "value": 4.0,
+       "percentile": 100.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction"
+      },
+      "polar_night_months": {
+       "value": 0.0,
+       "percentile": 62.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th) with the noon Sun at or below the horizon"
+      },
+      "ndvi": {
+       "value": 0.087,
+       "percentile": 12.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.344,
+       "percentile": 60.9,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 698,
+      "areaKm2": 34879,
+      "bbox": [
+       -53.85,
+       66.12,
+       -49.55,
+       69.83
+      ],
+      "meanSimilarity": 0.954
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "floor": null,
+      "score": 0.124,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.124 (0-1, relative); Governance perception (WGI, perceptions-based) 0.205; nearby organised-violence events 0.0; travel advice 0.167; US level 2 of 4 (2024-10-28); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m4-low-sun-new3",
+     "name": "Chukchi Peninsula · Far Eastern Federal District · Chukotka Autonomous Okrug",
+     "country": "Russia",
+     "lat": 66.018,
+     "lon": -177.75,
+     "kind": "new",
+     "match": 1.0,
+     "ruleFraction": 1.0,
+     "percentileDistance": null,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "low_sun_months": {
+       "value": 4.0,
+       "percentile": 100.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction"
+      },
+      "polar_night_months": {
+       "value": 0.0,
+       "percentile": 62.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th) with the noon Sun at or below the horizon"
+      },
+      "ndvi": {
+       "value": 0.142,
+       "percentile": 23.4,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.347,
+       "percentile": 61.2,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 364,
+      "areaKm2": 19558,
+      "bbox": [
+       -178.85,
+       64.43,
+       -173.55,
+       67.18
+      ],
+      "meanSimilarity": 0.941
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "high",
+      "floor": "Level raised to high: US advisory at its highest level (4 of 4); UK advises against all travel to the whole country. The 0-1 score is unchanged.",
+      "score": 0.454,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.454 (0-1, relative); Governance perception (WGI, perceptions-based) 0.51; nearby organised-violence events 0.0; travel advice 1.0; US level 4 of 4 (2025-12-28); UK advice covers whole country; see source",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    },
+    {
+     "id": "m4-low-sun-new4",
+     "name": "Iceland · Vesturbyggð",
+     "country": "Iceland",
+     "lat": 65.594,
+     "lon": -23.55,
+     "kind": "new",
+     "match": 1.0,
+     "ruleFraction": 1.0,
+     "percentileDistance": null,
+     "matchPercentile": 100.0,
+     "perVariable": {
+      "low_sun_months": {
+       "value": 4.0,
+       "percentile": 100.0,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction"
+      },
+      "polar_night_months": {
+       "value": 0.0,
+       "percentile": 62.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "computed from latitude: months (15th) with the noon Sun at or below the horizon"
+      },
+      "ndvi": {
+       "value": 0.149,
+       "percentile": 24.3,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MOD13C1 v061, 2024 mean, 0.1 deg (public domain)"
+      },
+      "albedo": {
+       "value": 0.324,
+       "percentile": 58.6,
+       "similarity": 1.0,
+       "meetsRule": true,
+       "source": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)"
+      }
+     },
+     "region": {
+      "cells": 56,
+      "areaKm2": 2995,
+      "bbox": [
+       -24.35,
+       65.49,
+       -22.95,
+       66.12
+      ],
+      "meanSimilarity": 0.973
+     },
+     "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14",
+     "breaks": [
+      "Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored",
+      "0.1 deg cell (~11 km): describes the cell, not a specific outcrop"
+     ],
+     "accessRisk": {
+      "level": "low",
+      "floor": null,
+      "score": 0.045,
+      "permitFlag": "NONE",
+      "basis": "Access complexity 0.045 (0-1, relative); Governance perception (WGI, perceptions-based) 0.112; nearby organised-violence events 0.0; travel advice 0.0; US level 1 of 4 (2026-05-04); UK: no travel alert",
+      "note": "Check national park and research permits before fieldwork.",
+      "sources": [
+       "World Bank, Worldwide Governance Indicators, 2026 update (2025 data), CC BY 4.0 - perceptions-based and inherently subjective",
+       "UCDP GED Global 26.1 + Candidate v26.0.9, Uppsala Conflict Data Program, CC BY 4.0",
+       "U.S. Department of State, travel.state.gov (retrieved 2026-11-14). Travel advice from two governments (US, UK); other governments may assess differently.",
+       "UK FCDO foreign travel advice, gov.uk/foreign-travel-advice (retrieved 2026-11-14). Contains public sector information licensed under the Open Government Licence v3.0.",
+       "Boundaries are de facto (Natural Earth) and imply no position on sovereignty",
+       "Weights and level thresholds are a design choice by team Logos, adjustable. Not travel advice."
+      ]
+     }
+    }
+   ],
+   "validation": {
+    "method": "index = mean of the condition similarities (no known-analog term, because no campaign site exists for this task); every 0.1 deg land cell scored; Amazonia as negative control. Not validated.",
+    "validated": false,
+    "result": "Computed, not validated: no field campaign has rehearsed this task under a real low Sun (JETT3 and JETT5 simulated it at night in Arizona, where the lowest noon Sun is about 31 deg). The index here is the plain mean of the condition similarities, without the known-analog term. Sanity checks only: Amazonia control at the 24.0th percentile; Askja (Iceland), a known planetary analog but not a low-Sun rehearsal, at the 91.1th percentile (it fails the snow-free rule).",
+    "landCells": 1854638,
+    "knownMedianPercentiles": {
+     "low_sun_months": 100.0,
+     "polar_night_months": 62.3,
+     "ndvi": 0.7,
+     "albedo": 73.9
+    },
+    "candidateRegionsFound": 651,
+    "control": {
+     "match": 0.534,
+     "matchPercentile": 24.0
     }
    }
   }

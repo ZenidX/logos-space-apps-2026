@@ -46,6 +46,15 @@ volc05 = np.where(anydata > 0, vb, np.nan)
 gi = np.clip(((90 - lats) / 0.5).astype(int), 0, 359); gj = np.clip(((lons + 180) / 0.5).astype(int), 0, 719)
 volcanic = volc05[gi[:, None], gj[None, :]]; volcanic[~LAND] = np.nan
 
+# Low-Sun variables, from latitude only (Cooper 1969 declination on the 15th of each month; no terrain, no refraction)
+_DOY = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
+_dec = np.array([23.44 * math.sin(math.radians(360 * (284 + d) / 365)) for d in _DOY])
+_elev = 90 - np.abs(lats[:, None] - _dec[None, :])                      # noon Sun elevation, rows x 12 months
+LOW_SUN_MAX = 12.0                                                      # "low Sun" = noon Sun above the horizon but <= 12 deg
+low_sun_months = np.repeat(((_elev > 0) & (_elev <= LOW_SUN_MAX)).sum(1)[:, None].astype("float64"), W, 1)
+polar_night_months = np.repeat((_elev <= 0).sum(1)[:, None].astype("float64"), W, 1)
+low_sun_months[~LAND] = np.nan; polar_night_months[~LAND] = np.nan
+NO_D = {"m4-low-sun"}  # no campaign rehearsed this under a real low Sun: index = mean similarity (unweighted), no known-analog term
 # (array, lo, hi, tol, weight, binary)
 M = {
     "m1-eva-basalt": {"ndvi": (ndvi, -1, 0.05, 0.10, 1.0, 0), "albedo": (albedo, 0.07, 0.20, 0.06, 1.0, 0),
@@ -54,6 +63,8 @@ M = {
                       "precip": (precip, 0, 150, 250, 0.5, 0), "albedo": (albedo, 0.12, 0.28, 0.08, 0.5, 0)},
     "m3-ground-ice": {"lst_mean": (lst_mean, -100, -5, 6, 1.0, 0), "precip": (precip, 0, 250, 250, 1.0, 0),
                       "albedo": (albedo, 0, 0.5, 0.12, 1.0, 0), "ndvi": (ndvi, -1, 0.10, 0.10, 0.5, 0)},
+    "m4-low-sun": {"low_sun_months": (low_sun_months, 2, 12, 1.0, 1.0, 0), "polar_night_months": (polar_night_months, 0, 1, 1.5, 0.5, 0),
+                   "ndvi": (ndvi, -1, 0.15, 0.10, 1.0, 0), "albedo": (albedo, 0, 0.35, 0.10, 1.0, 0)},
 }
 KNOWN = {
     "m1-eva-basalt": [("sp_crater_az", 35.5823524, -111.63186), ("craters_of_the_moon_id", 43.4050421, -113.5060838),
@@ -61,6 +72,7 @@ KNOWN = {
     "m2-rover-sand": [("dumont_dunes_ca", 35.6810623, -116.2247997), ("yungay_atacama", -24.08, -69.93),
                       ("mdrs_hanksville_ut", 38.4053762, -110.7898833)],
     "m3-ground-ice": [("haughton_crater", 75.3771298, -89.6804276), ("mcmurdo_dry_valleys", -77.5145082, 161.9469821)],
+    "m4-low-sun": [("askja_iceland", 65.05, -16.75)],  # known planetary analog (Apollo training, rover tests), NOT a low-Sun rehearsal: sanity check only
 }
 # every analog site named in misiones.md with a usable location (excluded from 'new'); Black Point is ~40 km from SP Crater
 OTHER = [(36.46, -116.87), (19.82, -155.47), (35.58, -111.63), (37.75, 14.99), (17.0, 54.0), (30.6, 34.8), (40.0, 44.6), (28.97, -13.6), (79.5, -91.0), (79.45, 13.3), (38.0, 92.5), (14.24, 40.3)]
@@ -116,6 +128,12 @@ for mid, spec in M.items():
         dsum += np.where(ok, d, 0); dn += ok
     D = np.where(dn > 0, dsum / np.maximum(dn, 1), np.nan)
     S = 0.5 * F + 0.5 * (1 - D)
+    if mid in NO_D:
+        num = np.zeros((H, W)); den = np.zeros((H, W))
+        for k, (a, lo, hi, tol, w, b) in spec.items():
+            d = np.where(a < lo, lo - a, np.where(a > hi, a - hi, 0.0)); ok = np.isfinite(a)
+            num += np.where(ok, np.exp(-0.5 * (d / tol) ** 2), 0); den += ok  # unweighted, like F and D
+        S = np.where(den > 0, num / np.maximum(den, 1e-9), np.nan); D = np.full((H, W), np.nan)
     S[(wavail < 0.66 * wall) | ~LAND] = np.nan
     Sv = np.sort(S[np.isfinite(S)])
     Spct = lambda x: None if not np.isfinite(x) else round(100 * np.searchsorted(Sv, x, side="right") / Sv.size, 1)
@@ -127,7 +145,7 @@ for mid, spec in M.items():
             pv[k] = None if not np.isfinite(x) else {"value": round(float(x), 3), "percentile": None if b else round(float(P[k][i, j]), 1),
                                                     "similarity": round(math.exp(-0.5 * ((lo - x if x < lo else (x - hi if x > hi else 0)) / tol) ** 2), 3), "meetsRule": bool(math.exp(-0.5 * ((lo - x if x < lo else (x - hi if x > hi else 0)) / tol) ** 2) >= 0.5)}
         return {"lat": round(float(lats[i]), 3), "lon": round(float(lons[j]), 3), "ruleFraction": round(float(F[i, j]), 3),
-                "percentileDistance": round(float(D[i, j]), 3), "similarity": None if not np.isfinite(S[i, j]) else round(float(S[i, j]), 3),
+                "percentileDistance": None if not np.isfinite(D[i, j]) else round(float(D[i, j]), 3), "similarity": None if not np.isfinite(S[i, j]) else round(float(S[i, j]), 3),
                 "similarityPercentile": Spct(S[i, j]), "perVariable": pv}
 
     res = {"knownMedian": {k: (None if not np.isfinite(v) else round(v, 1)) for k, v in med.items()}, "landCells": int(Sv.size),

@@ -48,6 +48,7 @@ def site_breaks(mid, r, kind):
     if mid == "m1-eva-basalt" and kind == "new": b.append("Basalt from a 0.5 deg geological map: outcrop not confirmed")
     if mid == "m2-rover-sand" and kind == "new": b.append("Sand fraction is a 5 km model value: dunes not confirmed on imagery")
     if mid == "m3-ground-ice" and kind == "new": b.append("Ground ice inferred from temperature only: no ice or permafrost map used")
+    if mid == "m4-low-sun": b.append("Low-Sun months fall in winter: expect snow cover, cold and short days then; cloud cover is not scored")
     b.append("0.1 deg cell (~11 km): describes the cell, not a specific outcrop")
     return b
 
@@ -61,13 +62,26 @@ def mk(mid, r, kind, sid, name, a, extra):
             "breaks": site_breaks(mid, r, kind), "accessRisk": access(a)}
 
 
+MB["m4-low-sun"] = [
+  {"text": "Season: on Earth the low noon Sun lasts a few months and comes with winter cold, snow and short days; at the lunar pole it is permanent.", "source": "computed (latitude, 23.44 deg and 1.54 deg tilts); snow not scored", "url": None},
+  {"text": "Atmosphere: air scatters light into shadows and clouds dim the Sun; on the Moon (surface pressure ~3e-15 bar) shadows are black and sunlight is undimmed.", "source": "NASA NSSDC Moon fact sheet", "url": NS + "moonfact.html"},
+  {"text": "Terrain shadowing is not computed: the index uses latitude only, while real lunar lighting depends on local ridges and craters.", "source": "method limit", "url": None},
+  {"text": "Gravity: 1.62 m/s2 on the Moon vs 9.80 on Earth (0.165 g).", "source": "NASA NSSDC Moon fact sheet", "url": NS + "moonfact.html"}]
+PERMITS = {
+ "TIBET_ENTRY_PERMIT": {"note": "Foreign visitors need a permit for the Tibet Autonomous Region, obtained through a travel agent in China, and must travel on an organised tour; permits can be suspended without notice (UK FCDO travel advice, read 2026-11-15).", "url": "https://www.gov.uk/foreign-travel-advice/china/regional-risks"},
+ "NUNAVUT_RESEARCH_LICENCE": {"note": "Research in Nunavut requires a licence from the Nunavut Research Institute under the Scientists Act (NRI, read 2026-11-15).", "url": "https://www.nri.nu.ca/"},
+ "NWT_RESEARCH_LICENCE": {"note": "Research in the Northwest Territories may need licences or permits; the Aurora Research Institute publishes the licensing and permitting process (ARI, read 2026-11-15).", "url": "https://nwtresearch.com/licensing"},
+}
+PERMIT_BY_STATE = {"Xizang": "TIBET_ENTRY_PERMIT", "Tibet": "TIBET_ENTRY_PERMIT", "Nunavut": "NUNAVUT_RESEARCH_LICENCE", "Northwest Territories": "NWT_RESEARCH_LICENCE"}
+PERMIT_BY_ID = {"haughton_crater": "NUNAVUT_RESEARCH_LICENCE"}
 VAL3 = {
+ "m4-low-sun": "Computed, not validated: no field campaign has rehearsed this task under a real low Sun (JETT3 and JETT5 simulated it at night in Arizona, where the lowest noon Sun is about 31 deg). The index here is the plain mean of the condition similarities, without the known-analog term. Sanity checks only: Amazonia control at the {ctrl}th percentile; Askja (Iceland), a known planetary analog but not a low-Sun rehearsal, at the {askja}th percentile (it fails the snow-free rule).",
  "m1-eva-basalt": "3 of 4 known analogs in the top 2 % of land cells (SP Crater 99.9, Craters of the Moon 98.6, Timanfaya 99.6); Kilauea Iki 86.4 (11 km cell mostly rainforest). Amazonia control: 31.2th percentile.",
  "m2-rover-sand": "3 of 3 known analogs in the top 2.1 % (Dumont Dunes 100.0, Yungay 97.9, MDRS 100.0). Amazonia control: 1.5th percentile.",
  "m3-ground-ice": "2 of 2 known analogs in the top 1 % (Haughton 99.6, McMurdo Dry Valleys 99.2). Amazonia control: 2.8th percentile. Only 2 verified known sites: weak test.",
 }
 out = {"generatedWith": "AI-assisted (Claude), reviewed by team Logos", "generatedAt": __import__("datetime").datetime.now().astimezone().isoformat(timespec="seconds"),
-       "version": "v4", "method": "see method.md (section v3) in the same folder", "missions": []}
+       "version": "v7", "method": "docs/method.md (method v3, data v7)", "missions": []}
 for mid, spec in MISSIONS.items():
     r = v3[mid]; sites = []
     for k in r["known"]:
@@ -80,9 +94,19 @@ for mid, spec in MISSIONS.items():
         name = " · ".join(dict.fromkeys(parts)) or "Unnamed region"
         sites.append(mk(mid, k, "new", sid, name, acc3[sid], {"region": k["region"],
                         "nameSource": "Natural Earth geography regions (public domain) + OpenStreetMap Nominatim reverse geocode (ODbL), 2026-11-14"}))
+    vres = VAL3[mid]
+    vmeth = "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control."
+    if mid == "m4-low-sun":
+        vres = vres.format(ctrl=r["control"]["similarityPercentile"], askja=next(k["similarityPercentile"] for k in r["known"] if k["id"] == "askja_iceland"))
+        vmeth = "index = mean of the condition similarities (no known-analog term, because no campaign site exists for this task); every 0.1 deg land cell scored; Amazonia as negative control. Not validated."
+    spec = {**spec, "variables": [{("coverageWeight" if kk == "weight" else kk): vv for kk, vv in v.items()} for v in spec["variables"]]}
+    for s_ in sites:  # special entry or research permits, from official pages (see PERMITS)
+        key = PERMIT_BY_ID.get(s_["id"]) or next((p for st, p in PERMIT_BY_STATE.items() if st in (nm3.get(s_["id"], {}).get("state") or "")), None)
+        if key and s_["accessRisk"]["permitFlag"] == "NONE":
+            s_["accessRisk"].update(permitFlag=key, permitNote=PERMITS[key]["note"], permitUrl=PERMITS[key]["url"])
     out["missions"].append({"id": mid, **spec, "breaks": MB[mid], "sites": sites,
-        "validation": {"method": "similarity = 0.5 x rule fraction + 0.5 x (1 - percentile distance to the known-analog median); every 0.1 deg land cell scored; percentile of each known analog among all land cells; Amazonia as negative control.",
-                       "result": VAL3[mid], "landCells": r["landCells"], "knownMedianPercentiles": r["knownMedian"], "candidateRegionsFound": r["nRegionsFound"],
+        "validation": {"method": vmeth, "validated": mid != "m4-low-sun",
+                       "result": vres, "landCells": r["landCells"], "knownMedianPercentiles": r["knownMedian"], "candidateRegionsFound": r["nRegionsFound"],
                        "control": {"match": r["control"]["similarity"], "matchPercentile": r["control"]["similarityPercentile"]}}})
 json.dump(out, open(sys.argv[1] if len(sys.argv) > 1 else f"{WORK}/sites.json", "w"), indent=1, ensure_ascii=False)
 print("ok")

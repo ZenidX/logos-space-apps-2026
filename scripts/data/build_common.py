@@ -8,6 +8,8 @@ SRC = {
     "albedo": "NASA MODIS MCD43C3 v061 white-sky shortwave albedo, 2024 mean, 0.1 deg (public domain)",
     "precip": "NASA GPM IMERG V07 monthly, 2024 mean, 0.1 deg (public domain)",
     "lst_mean": "NASA MODIS MOD11A2 v061, mean of 2024 day and night LST, 0.1 deg (public domain)",
+    "low_sun_months": "computed from latitude: months (15th of each month) with the noon Sun above the horizon and at most 12 deg; declination by Cooper (1969); no terrain, no refraction",
+    "polar_night_months": "computed from latitude: months (15th) with the noon Sun at or below the horizon",
     "sand": "ISRIC SoilGrids 2.0 sand 0-5 cm, 5 km aggregate regridded to 0.1 deg (CC BY 4.0); model prediction",
     "sun_max_deg": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
     "sun_winter_solstice_deg": "computed from latitude (Earth obliquity 23.44 deg); no dataset",
@@ -85,7 +87,26 @@ MISSIONS = {
    {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "excludes ice sheets and glaciers (~0.8); Arcadia is dark ground (TES albedo ~0.23) over ice", "inMatch": True, "ideal": "<= 0.5", "tolerance": 0.12, "weight": 1.0},
    {"id": "ndvi", "label": "Vegetation (NDVI)", "unit": "index", "why": "bare ground", "inMatch": True, "ideal": "<= 0.10", "tolerance": 0.10, "weight": 0.5}]},
 }
+MISSIONS["m4-low-sun"] = {
+  "title": "Low-Sun operations and solar power",
+  "campaigns": [C("NASA JETT3 (2022): night moonwalks with a lighting cart", "https://www.nasa.gov/feature/moonwalking-test-mission-daily-field-log"),
+                C("NASA JETT5 (2024): night EVAs with a portable spotlight acting as the Sun", "https://www.usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field"),
+                C("NASA Ames Lunar Lab and regolith testbeds (low-angle lighting for VIPER)", "https://www.nasa.gov/centers-and-facilities/ames/the-lunar-lab-and-regolith-testbeds/"),
+                C("Apollo geology field training in Iceland (1965, 1967; NASA SP-2015-626): known analog, not a low-Sun rehearsal", "https://ntrs.nasa.gov/citations/20190026783")],
+  "target": {"body": "moon", "name": "Mons Mouton (lunar south pole)", "lat": -84.60, "lon": 31.00,
+             "description": MISSIONS["m1-eva-basalt"]["target"]["description"], "descriptionSources": MISSIONS["m1-eva-basalt"]["target"]["descriptionSources"],
+             "coordSource": "USGS Gazetteer Feature 16070, https://planetarynames.wr.usgs.gov/Feature/16070",
+             "values": {"low_sun_months": {"value": 12, "unit": "months/yr", "source": "computed: at 84.6 S the noon Sun stays between about 3.9 and 6.9 deg all year (latitude and the 1.54 deg tilt of the lunar equator to the ecliptic); terrain ignored", "url": None},
+                        "polar_night_months": {"value": None, "unit": "months/yr", "source": "not computed: darkness at the lunar pole depends on local terrain (illumination maps not processed)", "url": None},
+                        "ndvi": {"value": 0, "unit": "index", "source": "no vegetation (by definition)", "url": None},
+                        "albedo": MISSIONS["m1-eva-basalt"]["target"]["values"]["albedo"]}},
+  "variables": [
+   {"id": "low_sun_months", "label": "Months with a low noon Sun (0-12 deg)", "unit": "months/yr", "why": "a real low Sun is what crews and solar arrays face at the lunar pole; campaigns so far had to simulate it at night", "inMatch": True, "ideal": ">= 2", "tolerance": 1.0, "weight": 1.0},
+   {"id": "polar_night_months", "label": "Months with the Sun below the horizon at noon", "unit": "months/yr", "why": "long polar night stops solar power and daylight work; candidate lunar sites are chosen for near-continuous light", "inMatch": True, "ideal": "<= 1", "tolerance": 1.5, "weight": 0.5},
+   {"id": "ndvi", "label": "Vegetation (NDVI)", "unit": "index", "why": "bare ground, so shadows fall on rock and soil", "inMatch": True, "ideal": "<= 0.15", "tolerance": 0.10, "weight": 1.0},
+   {"id": "albedo", "label": "Surface albedo", "unit": "0-1", "why": "no year-round snow or ice cover (annual mean)", "inMatch": True, "ideal": "<= 0.35", "tolerance": 0.10, "weight": 1.0}]}
 KNOWN_NAMES = {
+ "askja_iceland": ("Askja highlands, Iceland", "Apollo geology training 1965 (not a low-Sun rehearsal)"),
  "sp_crater_az": ("SP Crater, San Francisco Volcanic Field, Arizona", "JETT3/JETT5"),
  "craters_of_the_moon_id": ("Craters of the Moon, Idaho", "BASALT"),
  "timanfaya_lanzarote": ("Timanfaya, Lanzarote", "PANGAEA"),
@@ -121,7 +142,14 @@ def access(a):
         if uk.get("alert_status"): parts.append("UK advice mentions specific regions; see source" if all(s.endswith("_parts") for s in uk["alert_status"]) else "UK advice covers whole country; see source")
         elif uk: parts.append("UK: no travel alert")
         basis = "; ".join(parts)
-    return {"level": level(a), "score": a.get("access_complexity"),
+    lvl, floor = level(a), None
+    us = a.get("us_advisory"); uk = (a.get("uk_advisory") or {}).get("alert_status") or []
+    top = []
+    if isinstance(us, dict) and "level 4 of 4" in (us.get("label") or ""): top.append("US advisory at its highest level (4 of 4)")
+    if "avoid_all_travel_to_whole_country" in uk: top.append("UK advises against all travel to the whole country")
+    if top and lvl in ("low", "medium"):  # declared rule: an official advisory at its maximum sets the level to at least high
+        lvl = "high"; floor = "Level raised to high: " + "; ".join(top) + ". The 0-1 score is unchanged."
+    return {"level": lvl, "floor": floor, "score": a.get("access_complexity"),
             "permitFlag": a.get("permit_flag"), "basis": basis,
             "note": "Check national park and research permits before fieldwork.", "sources": CREDITS}
 

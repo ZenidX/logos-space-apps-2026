@@ -520,6 +520,108 @@
    "source": "earth",
    "minM": 3937.9,
    "maxM": 5261.6
+  },
+  "target-m4-low-sun": {
+   "name": "Mons Mouton (lunar south pole)",
+   "body": "moon",
+   "lat": -84.6,
+   "lon": 31.0,
+   "file": "/heightmaps/moon/target-m4-low-sun.bin",
+   "stats": {
+    "slopeMeanDeg": 6.02,
+    "slopeP90Deg": 10.38,
+    "roughnessStdM": 93.2,
+    "reliefM": 735.5,
+    "nodataFraction": 0.0
+   },
+   "source": "moon",
+   "minM": 4838.5,
+   "maxM": 5574.0
+  },
+  "askja_iceland": {
+   "name": "Askja highlands, Iceland",
+   "body": "earth",
+   "lat": 65.05,
+   "lon": -16.75,
+   "file": "/heightmaps/earth/askja_iceland.bin",
+   "stats": {
+    "slopeMeanDeg": 6.91,
+    "slopeP90Deg": 17.99,
+    "roughnessStdM": 86.2,
+    "reliefM": 595.9,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 890.2,
+   "maxM": 1486.0
+  },
+  "m4-low-sun-new1": {
+   "name": "Ungava Peninsula · Kativik · Quebec",
+   "body": "earth",
+   "lat": 62.206,
+   "lon": -73.15,
+   "file": "/heightmaps/earth/m4-low-sun-new1.bin",
+   "stats": {
+    "slopeMeanDeg": 6.53,
+    "slopeP90Deg": 14.37,
+    "roughnessStdM": 63.9,
+    "reliefM": 499.6,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 0.0,
+   "maxM": 499.6
+  },
+  "m4-low-sun-new2": {
+   "name": "Greenland · Qeqqata",
+   "body": "earth",
+   "lat": 66.335,
+   "lon": -49.95,
+   "file": "/heightmaps/earth/m4-low-sun-new2.bin",
+   "stats": {
+    "slopeMeanDeg": 9.62,
+    "slopeP90Deg": 19.3,
+    "roughnessStdM": 125.5,
+    "reliefM": 572.2,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 691.5,
+   "maxM": 1263.7
+  },
+  "m4-low-sun-new3": {
+   "name": "Chukchi Peninsula · Far Eastern Federal District · Chukotka Autonomous Okrug",
+   "body": "earth",
+   "lat": 66.018,
+   "lon": -177.75,
+   "file": "/heightmaps/earth/m4-low-sun-new3.bin",
+   "stats": {
+    "slopeMeanDeg": 7.06,
+    "slopeP90Deg": 18.24,
+    "roughnessStdM": 85.0,
+    "reliefM": 432.8,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 89.1,
+   "maxM": 521.9
+  },
+  "m4-low-sun-new4": {
+   "name": "Iceland · Vesturbyggð",
+   "body": "earth",
+   "lat": 65.594,
+   "lon": -23.55,
+   "file": "/heightmaps/earth/m4-low-sun-new4.bin",
+   "stats": {
+    "slopeMeanDeg": 9.04,
+    "slopeP90Deg": 20.03,
+    "roughnessStdM": 122.7,
+    "reliefM": 687.5,
+    "nodataFraction": 0.0
+   },
+   "source": "earth",
+   "minM": 0.0,
+   "maxM": 687.5
   }
  },
  "generatedWith": "AI-assisted (Claude), to be reviewed by team Logos"

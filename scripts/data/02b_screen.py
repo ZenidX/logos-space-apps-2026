@@ -19,6 +19,7 @@ from shapely.prepared import prep
 HERE = os.path.dirname(os.path.abspath(__file__)); IN = os.environ["LOGOS_IN"]; WORK = os.environ.get("LOGOS_WORK", "work")
 spec = importlib.util.spec_from_file_location("terrain", os.path.join(HERE, "06_terrain.py")); T = importlib.util.module_from_spec(spec); spec.loader.exec_module(T)
 MAX_SLOPE, MAX_ICE, MAX_WATER, SEP_KM, NREG = 10.0, 0.10, 0.20, 800, 6
+MIN_BARE = {"m4-low-sun": 0.5}  # extra rule per mission: bare/sparse + moss/lichen share of the window (WorldCover classes 60 and 100)
 WC = "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_{t}_Map.tif"
 CLASSES = {10: "tree", 20: "shrub", 30: "grass", 40: "crop", 50: "built", 60: "bare", 70: "snow_ice", 80: "water", 90: "wetland", 95: "mangrove", 100: "moss_lichen", 0: "nodata"}
 
@@ -61,7 +62,7 @@ def main():
     m = json.load(open(f"{WORK}/missions.json"))
     ids_path = os.path.join(HERE, "site_ids.json"); ids = json.load(open(ids_path)) if os.path.exists(ids_path) else {}
     glac, shelf = polys("ne_10m_glaciated_areas"), polys("ne_10m_antarctic_ice_shelves_polys")
-    log = {"criteria": {"maxMeanSlopeDeg": MAX_SLOPE, "maxSnowIceFraction": MAX_ICE, "maxWaterFraction": MAX_WATER, "minSeparationKm": SEP_KM,
+    log = {"criteria": {"maxMeanSlopeDeg": MAX_SLOPE, "maxSnowIceFraction": MAX_ICE, "maxWaterFraction": MAX_WATER, "minSeparationKm": SEP_KM, "minBareFractionByMission": MIN_BARE, "bareDefinition": "WorldCover classes 60 (bare/sparse vegetation) + 100 (moss and lichen)",
                         "window": "11 x 11 km around the region's best 0.1 deg cell", "landCover": "ESA WorldCover 2021 v200 (10 m, read at ~80 m), CC BY 4.0; south of 60 S: Natural Earth glaciated areas and Antarctic ice shelves (public domain)",
                         "slope": "Copernicus DEM GLO-30 on the 114.6 m grid"}, "missions": {}}
     for mid, r in m.items():
@@ -82,20 +83,23 @@ def main():
             else:
                 row["slopeMeanDeg"] = st["slopeMeanDeg"]; row["reliefM"] = st["reliefM"]
                 if st["slopeMeanDeg"] > MAX_SLOPE: reasons.append(f"mean slope {st['slopeMeanDeg']} deg > {MAX_SLOPE}")
+            if mid in MIN_BARE and la <= -60: reasons.append("no land-cover map south of 60 S for the bare-ground rule")
             if la > -60:
                 wc = worldcover(la, lo); row["landCover"] = wc
                 if wc is None: reasons.append("no land-cover tile")
                 else:
                     ice = wc.get("snow_ice", 0); wat = wc.get("water", 0) + wc.get("nodata", 0)
-                    if ice > MAX_ICE: reasons.append(f"snow/ice {round(100 * ice)} % > {round(100 * MAX_ICE)} %")
-                    if wat > MAX_WATER: reasons.append(f"water {round(100 * wat)} % > {round(100 * MAX_WATER)} %")
+                    if ice > MAX_ICE: reasons.append(f"snow/ice {100 * ice:.1f} % > {round(100 * MAX_ICE)} %")
+                    if wat > MAX_WATER: reasons.append(f"water {100 * wat:.1f} % > {round(100 * MAX_WATER)} %")
+                    bare = wc.get("bare", 0) + wc.get("moss_lichen", 0)
+                    if mid in MIN_BARE and bare < MIN_BARE[mid]: reasons.append(f"bare ground {100 * bare:.1f} % < {round(100 * MIN_BARE[mid])} %")
             else:
                 pt = Point(lo, la); g = any(p.contains(pt) for p in glac); s = any(p.contains(pt) for p in shelf)
                 sea = float((z == 0).mean()) if z is not None else None
                 row["landCover"] = {"naturalEarthGlaciated": g, "naturalEarthIceShelf": s, "demSeaFraction": None if sea is None else round(sea, 3)}
                 if g: reasons.append("inside a Natural Earth glaciated area (ice sheet or glacier)")
                 if s: reasons.append("on an ice shelf (Natural Earth)")
-                if sea is not None and sea > MAX_WATER: reasons.append(f"sea {round(100 * sea)} % > {round(100 * MAX_WATER)} %")
+                if sea is not None and sea > MAX_WATER: reasons.append(f"sea {100 * sea:.1f} % > {round(100 * MAX_WATER)} %")
             row["verdict"] = "keep" if not reasons else "remove"; row["reasons"] = reasons
             if not reasons:
                 key = f"{mid}|{la:.3f}|{lo:.3f}"

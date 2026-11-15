@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Count from "@/components/Count";
-import { INDEPENDENT, TOP_NOTE, fmt, idx, type Mission, type Site } from "@/lib/missions";
+import { INDEPENDENT, MISSIONS, fmt, idx, topNote, type Mission, type Site } from "@/lib/missions";
 import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
 import LocatorMap from "@/components/LocatorMap";
 import RadialDial, { RadialLegend, RadialMini } from "@/components/RadialDial";
@@ -100,7 +100,8 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
   const [tab, setTab] = useState<"why" | "when" | "how" | "limits" | "shape" | null>("why"); // Why is open by default
   const t = mission.target;
   const matchVars = site.vars.filter((v) => v.inMatch);
-  const tSun = t.values.sun_max_deg?.value ?? null;
+  // highest noon Sun at the target; missions that share a target share the figure (it is computed from the target's latitude)
+  const tSun = t.values.sun_max_deg?.value ?? MISSIONS.find((m) => m.target.name === t.name && m.target.values.sun_max_deg?.value != null)?.target.values.sun_max_deg.value ?? null;
   const targetShort = t.name.split(" (")[0];
   const det = DETAILS[site.id], how = det?.how;
   const ts = terrainOf(site.id), tt = terrainOf(`target-${mission.id}`);
@@ -124,7 +125,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
           <RadialDial index={idx(site.match)} rings={rings} className="h-[clamp(150px,24vh,232px)] w-[clamp(150px,24vh,232px)]" />
-          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={TOP_NOTE}>Analog index 0–1: a ranking index, not suitability. Grey rings: 1 = same as the target. Amber: fuller = more complex access.</p></div>
+          <div><RadialLegend rings={rings} /><p className="mt-1 text-[11px] text-[var(--dim)]" title={topNote(mission)}>Analog index 0–1: a ranking index, not suitability. Grey rings: 1 = same as the target. Amber: fuller = more complex access.</p></div>
         </div>
         <div className="mt-2 sm:hidden">
           <p className="flex items-baseline gap-3"><span className="label">Analog index</span><span className="mono text-[40px] leading-none tracking-[-.04em]"><Count value={site.match} ms={900} decimals={3} /></span><span className="text-[11px] text-[var(--dim)]">0–1, not suitability</span></p>
@@ -138,7 +139,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
             {tt && <LocatorMap body={tt.body} lat={tt.lat} lon={tt.lon > 180 ? tt.lon - 360 : tt.lon} color={tt.body === "moon" ? "#d7dce6" : "#ff8d5e"} label={t.name} />}
           </div>
         </div>
-        {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept only to validate the index; a new region this steep would have been screened out.</p>}
+        {site.kind === "known" && ts && ts.stats.slopeMeanDeg > 10 && <p className="mt-2 text-[12px] text-[var(--amber)]">Steep ground here (mean slope {ts.stats.slopeMeanDeg.toFixed(0)}° over 11 km). This known analog is kept {mission.validated ? "only to validate the index" : "for reference"}; a new region this steep would have been screened out.</p>}
         {how?.travelTimeToCityHours != null && <p className="mt-2 text-[12px] text-[var(--mut)]"><b className="text-[var(--ink)]">Remoteness:</b> about {how.travelTimeToCityHours < 10 ? how.travelTimeToCityHours.toFixed(1) : Math.round(how.travelTimeToCityHours)} h to a city (not part of the access ring).</p>}
 
         <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {mission.keyLimit} {mission.always[0]?.text.split(";")[0]}.</span></p>
@@ -154,7 +155,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
       {tab && (
         <section id="site-detail" role="tabpanel" className="fade-in mt-4 scroll-mt-4 border-t border-[var(--line)] pt-4" key={tab}>
           {tab === "why" && <>
-          <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? TOP_NOTE : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
+          <p className="mb-2 text-[12.5px] text-[var(--dim)]">{site.kind === "new" ? topNote(mission) : "Known analogs are scored the same way as every other cell; the index compares surface conditions, not suitability."}</p>
           <p className="mb-2 mt-1 text-[13px] text-[var(--mut)]">Each condition is checked against the <b>range the mission needs</b> (solid band; dashed = still accepted), not against the target&apos;s exact value. The dot is this site; the tick is the target.</p>
           <ul className="grid gap-1.5">
             {matchVars.map((v) => {
@@ -210,7 +211,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
               <p><span className="label mr-2">Independent check</span><b>{ic.verdict}</b></p>
               <p className="mt-1 text-[var(--mut)]">{ic.text} {ic.url && <a className="underline" href={ic.url} target="_blank" rel="noopener noreferrer">Source</a>}</p>
               {ic.image && <p className="mt-1 text-[12.5px]"><a className="underline" href={ic.image.url} target="_blank" rel="noopener noreferrer">{ic.image.label}</a> <span aria-hidden className="text-[var(--dim)]">↗</span></p>}
-              <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Full notes: docs/independent-check.md.</p>
+              <p className="mt-1 text-[11.5px] text-[var(--dim)]">No source names this point as an established analog. Distances are approximate.{!mission.validated && " The check is about the ground and analog use nearby, not about low-Sun work."} Full notes: docs/independent-check.md and docs/independent-check-v8.md.</p>
             </div>
           ); })()}
           {how && (
@@ -224,7 +225,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
           <div className="mt-3 rounded-xl border border-[var(--line2)] p-3">
             <div className="flex items-center justify-between"><p className="label">Access complexity</p><AccessBars site={site} /></div>
             <p className="mt-1 text-[15px]" style={{ color: "var(--sand)" }}>{site.access.level}{site.access.score !== null && <span className="mono ml-2 text-[12px] text-[var(--mut)]">{site.access.score.toFixed(2)} / 1</span>}</p>
-            {site.access.permit && <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.permit}</p>}
+            {site.access.permit && <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.permit} {site.access.permitUrl && <a className="underline" href={site.access.permitUrl} target="_blank" rel="noopener noreferrer">Source</a>}</p>}
             <p className="mt-1 text-[12px] text-[var(--mut)]">{site.access.basis}</p>
             <p className="mt-1 text-[12.5px] text-[var(--mut)]">• {site.access.note}</p>
             <p className="mt-2 text-[11.5px] text-[var(--dim)]">How much coordination an external field team may need. Not travel advice and not a judgement of any country.</p>

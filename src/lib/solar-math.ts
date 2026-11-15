@@ -70,9 +70,11 @@ export function companionPos(E: THREE.Vector3, body: "moon" | "mars"): THREE.Vec
   const f = closeFrame(E);
   return E.clone().addScaledVector(f.right, EARTH_R + RADIUS[body] + 0.55).addScaledVector(f.up, 0.4).addScaledVector(f.dir, 0.25);
 }
-export function closePose(E: THREE.Vector3, body: "moon" | "mars", aspect: number): Pose {
-  const f = closeFrame(E), C = companionPos(E, body), look = E.clone().lerp(C, 0.42);
-  const pts = [...ring(E, EARTH_R * 1.1, f.right, f.up), ...ring(C, RADIUS[body] * 1.35 + 0.12, f.right, f.up)];
+/** Room kept free on the left of the Earth for the names of the sites, in Earth radii (used when the scene is wide enough). */
+export const NAME_ROOM = 0.6;
+export function closePose(E: THREE.Vector3, body: "moon" | "mars", aspect: number, room = 0): Pose {
+  const f = closeFrame(E), C = companionPos(E, body), look = E.clone().lerp(C, 0.42).addScaledVector(f.right, -room * 0.5);
+  const pts = [...ring(E, EARTH_R * 1.1, f.right, f.up), ...ring(C, RADIUS[body] * 1.35 + 0.12, f.right, f.up), E.clone().addScaledVector(f.right, -(EARTH_R * 1.1 + room))];
   return { look, pos: look.clone().addScaledVector(f.dir, fitDistance(look, f.dir, pts, aspect, 0.86)) };
 }
 /** Stop-over of the camera journey: close to the target world at its real place on its orbit. */
@@ -83,11 +85,19 @@ export function targetPose(P: THREE.Vector3, body: "moon" | "mars"): Pose {
 export const lerpPose = (a: Pose, b: Pose, k: number): Pose => ({ pos: a.pos.clone().lerp(b.pos, k), look: a.look.clone().lerp(b.look, k) });
 export const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 
-/** Direction (from the Earth's centre) an opened site should face: between the camera and the target world. */
-export function siteFacing(E: THREE.Vector3, body: "moon" | "mars"): THREE.Vector3 {
-  const f = closeFrame(E);
-  return f.dir.clone().multiplyScalar(0.62).addScaledVector(companionPos(E, body).sub(E).normalize(), 0.38).normalize();
+/** Angle (radians) between the view axis and the direction an opened site is turned to. */
+export const SITE_TILT = 0.52;
+/**
+ * Direction (from the Earth's centre) an opened site is turned to: towards the camera, tilted down and to the right.
+ * There its name has free room below the Earth, next to the target world, at every size of the scene.
+ */
+export function siteFacing(E: THREE.Vector3): THREE.Vector3 {
+  const f = closeFrame(E), side = f.right.clone().multiplyScalar(0.6).addScaledVector(f.up, -0.8).normalize();
+  return f.dir.clone().multiplyScalar(Math.cos(SITE_TILT)).addScaledVector(side, Math.sin(SITE_TILT)).normalize();
 }
+/** A point of a globe is shown only if it faces the camera by more than this (cosine of the angle between its normal and the line of sight). */
+export const FACING_MIN = 0.12;
+export const facesCamera = (p: THREE.Vector3, n: THREE.Vector3, camPos: THREE.Vector3) => camPos.clone().sub(p).normalize().dot(n) > FACING_MIN;
 
 /** Orientation that turns local point `v` to face direction `dir`, keeping north up (no odd roll). */
 export function orientToFace(v: THREE.Vector3, dir: THREE.Vector3, up = UP): THREE.Quaternion {
@@ -106,21 +116,4 @@ export function segmentHitsSphere(p: THREE.Vector3, q: THREE.Vector3, c: THREE.V
   if (len2 < 1e-12) return false;
   const t = Math.min(0.985, Math.max(0.015, c.clone().sub(p).dot(d) / len2));
   return p.clone().addScaledVector(d, t).distanceTo(c) < r * 0.999;
-}
-
-export const LINK_NEAR = 1.0, LINK_FAR = 2.0;
-const smooth = (x: number) => { const k = Math.min(1, Math.max(0, x)); return k * k * (3 - 2 * k); };
-/**
- * Opacity (0–1) of the straight line of light between an Earth site S (outward normal nS) and the target point M on the
- * companion world (centre bodyC, radius bodyR), with the Earth centred at earthC. It is 0, i.e. not drawn, when the line
- * would pass through the Earth or the companion, when the target is below the site's horizon, or when the site is on the
- * far side from the camera. Otherwise it fades with distance, unless the site is the opened one (`pinned`).
- */
-export function linkAlpha(S: THREE.Vector3, nS: THREE.Vector3, M: THREE.Vector3, earthC: THREE.Vector3, bodyC: THREE.Vector3, bodyR: number, camPos: THREE.Vector3, pinned = false): number {
-  const dir = M.clone().sub(S), dist = dir.length();
-  if (dist < 1e-6) return 0;
-  if (dir.dot(nS) / dist <= 0.02) return 0;
-  if (segmentHitsSphere(S, M, earthC, EARTH_R) || segmentHitsSphere(S, M, bodyC, bodyR)) return 0;
-  if (camPos.clone().sub(S).normalize().dot(nS) <= 0.05) return 0;
-  return pinned ? 1 : 1 - smooth((dist - LINK_NEAR) / (LINK_FAR - LINK_NEAR));
 }

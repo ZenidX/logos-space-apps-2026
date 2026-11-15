@@ -30,8 +30,17 @@ def test_sites_json_consistent():  # every site: match == 0.5F + 0.5(1-D) within
     if not p: return
     for m in json.load(open(p))["missions"]:
         for s in m["sites"]:
-            if s.get("match") is None: continue
+            if s.get("match") is None or s.get("percentileDistance") is None: continue  # missions without the known-analog term (m4)
             assert abs(s["match"] - analog_index(s["ruleFraction"], s["percentileDistance"])) <= 0.0011, s["id"]
+
+
+def test_advisory_floor():          # an official advisory at its maximum -> level at least high, score unchanged
+    from build_common import access
+    a = {"access_complexity": 0.454, "G": 0.51, "C": 0.0, "A": 1.0, "permit_flag": "NONE", "us_advisory": {"label": "US level 4 of 4", "updated": "2025-12-28T00:00"},
+         "uk_advisory": {"alert_status": ["avoid_all_travel_to_whole_country"]}}
+    r = access(a); assert r["level"] == "high" and r["floor"] and r["score"] == 0.454
+    b = {**a, "access_complexity": 0.167, "A": 0.167, "us_advisory": {"label": "US level 2 of 4", "updated": "2026-01-01T00:00"}, "uk_advisory": {"alert_status": []}}
+    r = access(b); assert r["level"] == "low" and r["floor"] is None
 
 
 if __name__ == "__main__":

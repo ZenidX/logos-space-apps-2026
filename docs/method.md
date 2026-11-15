@@ -1,22 +1,23 @@
-# Method · mission-based analog index (method v3, data v4; 2026-11-14)
+# Method · mission-based analog index (method v3, data v7; 2026-11-15)
 
 AI-assisted (Claude), to be reviewed by team Logos.
 Scripts: scripts/data/02_missions.py (scoring), scripts/data/index.py (index), scripts/data/05_build.py (JSON build); inputs and commands: scripts/data/README.md.
-Data: `src/data/sites.json` (v4). Rebuild with `LOGOS_IN=/path/to/inputs npm run data`; test with `npm run test:data`. Sources and checks: `docs/sources.md`.
+Data: `src/data/sites.json` (data v7). Rebuild with `LOGOS_IN=/path/to/inputs npm run data`; test with `npm run test:data`. Sources and checks: `docs/sources.md`.
 
 ## 1. Idea
-An Earth site is an analog **for a mission**, not in general. We took three tasks that agencies have rehearsed in real field campaigns (`docs/missions.md`), wrote down the surface conditions each task needs, scored every 0.1° land cell (~11 km) on Earth against those conditions, and checked that the score finds the places where the campaigns actually ran. The top-scoring places outside those known sites are the **new candidate regions**.
+An Earth site is an analog **for a mission**, not in general. We took tasks that agencies have rehearsed in real field campaigns (`docs/missions.md`), wrote down the surface conditions each task needs, scored every 0.1° land cell (~11 km) on Earth against those conditions, and checked that the score finds the places where the campaigns actually ran. The top-scoring places outside those known sites are the **new candidate regions**.
 
 | Mission | Target | Campaigns it is based on |
 |---|---|---|
 | M1 Suited EVA on volcanic terrain | Mons Mouton, a lunar south-pole region NASA listed among its Artemis III landing candidates in 2024 (NASA now describes Artemis III as a crewed low-Earth-orbit demonstration, with landings from Artemis IV) | NASA JETT3/JETT5, Desert RATS, BASALT; ESA PANGAEA |
 | M2 Rover mobility on loose sand and slopes | Jezero crater, Mars | JPL Scarecrow tests, ESA SAFER, NASA ARADS, Mars Society MDRS |
 | M3 Shallow ground ice for ISRU and drilling | Arcadia Planitia, Mars | NASA TRIDENT at Haughton, IceBite (ASTEP), RESOLVE |
+| M4 Low-Sun operations and solar power (computed, not validated) | Mons Mouton, lunar south pole | NASA JETT3/JETT5 night EVAs with artificial low light; NASA Ames Lunar Lab |
 
 ## 2. Variables and rules
 Each variable *k* has an **ideal range** [lo, hi] and a **tolerance** τ in its own unit. The range comes from the target where the quantity is physically comparable (e.g. no vegetation), otherwise from what the task needs (e.g. loose sand). All Earth layers are 2024 values on a 0.1° grid.
 
-| Mission | Variable (Earth source) | Ideal range | τ | Weight | Why |
+| Mission | Variable (Earth source) | Ideal range | τ | Coverage weight | Why |
 |---|---|---|---|---|---|
 | M1 | NDVI (MODIS MOD13C1) | ≤ 0.05 | 0.10 | 1 | bare rock; the target has no vegetation |
 | M1 | Albedo, white-sky shortwave (MODIS MCD43C3) | 0.07–0.20 | 0.06 | 1 | dark basaltic ground |
@@ -30,6 +31,13 @@ Each variable *k* has an **ideal range** [lo, hi] and a **tolerance** τ in its 
 | M3 | Precipitation | ≤ 250 mm/yr | 250 | 1 | polar desert |
 | M3 | Albedo | ≤ 0.5 | 0.12 | 1 | excludes ice sheets and glaciers |
 | M3 | NDVI | ≤ 0.10 | 0.10 | 0.5 | bare ground |
+
+| M4 | Months with a low noon Sun, 0–12° (computed from latitude) | ≥ 2 per year | 1 | 1 | a real low Sun, as at the lunar pole |
+| M4 | Months with the noon Sun below the horizon (computed) | ≤ 1 per year | 1.5 | 0.5 | long polar night stops solar power and daylight work |
+| M4 | NDVI | ≤ 0.15 | 0.10 | 1 | bare ground |
+| M4 | Albedo | ≤ 0.35 | 0.10 | 1 | no year-round snow or ice |
+
+**Coverage weights are not importance weights.** They only set the minimum data coverage: a cell is scored when the variables with data add up to at least 66 % of the total weight. F and D below are unweighted: every available condition counts the same.
 
 Per-variable similarity:
 
@@ -46,6 +54,9 @@ Sun elevation is shown for M1 as an attribute and does **not** enter the index. 
     Analog index = 0.5 · F + 0.5 · (1 − D)
 
 F says **whether** a place meets the task's conditions. D says **how close** it sits, within Earth's own range of values, to where the task was actually rehearsed. A cell needs data for ≥ 66 % of the variable weight. Reference implementation: `scripts/data/index.py`; hand-computed cases: `scripts/data/test_index.py`.
+
+### Mission 4 (low-Sun operations): computed, not validated
+No campaign has rehearsed low-Sun work under a real low Sun: NASA's JETT3 and JETT5 simulated it at night in Arizona, where the lowest noon Sun is about 31°. With no known analog site there is no median to compare with, so for M4 the index is the plain mean of the condition similarities (no D term) and `validation.validated` is false. Sun variables use the 15th of each month, declination by Cooper (1969), latitude only: no terrain, no refraction. The ground screen adds one rule for M4: bare or sparsely vegetated ground plus moss/lichen ≥ 50 % of the window (WorldCover classes 60 and 100). Snow in the low-Sun months and cloud cover are not scored; monthly clearness index and irradiance from NASA POWER are shown per site as context only.
 
 ## 4. New candidate regions
 1. Candidate cells have all available rules met (minimum 66% of weight coverage), i.e. F = 1 over the variables with data.
@@ -78,7 +89,7 @@ A relative, neutral estimate of how much administrative and security coordinatio
     C = 1 − exp(−Σ exp(−d_i / 50 km)) over UCDP organised-violence events within 200 km, 2021–2025 (GED 26.1, weight 1) and 2026 (Candidate v26.0.9, weight 0.5)
     A = mean of US advisory (level − 1)/3 and UK FCDO alert (none 0 · parts 0.33–0.5 · whole country 0.67–1)
 
-Levels: low < 0.25 ≤ medium < 0.5 ≤ high. Weights, radii and levels are team design choices. Countries are de facto (Natural Earth) with no position on sovereignty. Not computed in Antarctica (Antarctic Treaty area, permits only) or in disputed areas. Every site carries the note "Check national park and research permits before fieldwork."
+Levels: low < 0.25 ≤ medium < 0.5 ≤ high. **Advisory floor:** if an official advisory is at its maximum (US level 4 of 4, or UK advice against all travel to the whole country), the level is at least high; the 0–1 score is not changed and `accessRisk.floor` states the reason. **Special permits** are flagged where an official page states them: Tibet Autonomous Region entry permit (UK FCDO), research licences in Nunavut (Nunavut Research Institute) and the Northwest Territories (Aurora Research Institute); elsewhere permits were not checked. Weights, radii and levels are team design choices. Countries are de facto (Natural Earth) with no position on sovereignty. Not computed in Antarctica (Antarctic Treaty area, permits only) or in disputed areas. Every site carries the note "Check national park and research permits before fieldwork."
 
 ## 7. Limits
 - Moon and Mars comparison values: Jezero and Arcadia albedo from the MGS TES albedo map (Lambert albedo, not white-sky); Arcadia mean temperature from the Mars Climate Database (a model); Mons Mouton albedo 0.15 is an estimate converted from LOLA 1064 nm normal albedo. See `docs/sources.md`.

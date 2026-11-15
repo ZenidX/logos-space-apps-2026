@@ -7,7 +7,7 @@ import type { SceneMarker } from "@/components/SolarScene";
 import SitePanel, { AccessBars, KindChip } from "@/components/SitePanel";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
-import { MISSIONS, NEXT_MISSIONS, TOP_NOTE, type Mission, type MissionId } from "@/lib/missions";
+import { MISSIONS, NEXT_MISSIONS, sceneLabel, topNote, type Mission, type MissionId } from "@/lib/missions";
 
 const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
 const DEMO_MS = 7000;
@@ -16,7 +16,7 @@ const STATS: [string, string][] = [
   [String(MISSIONS.length), "missions from real field campaigns"],
   [`${(Math.min(...MISSIONS.map((m) => m.landCells ?? Infinity)) / 1e6).toFixed(1)}M+`, "land cells scored per mission"],
   [String(MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.kind === "new").length, 0)), "new regions to investigate"],
-  [String(MISSIONS.reduce((n, m) => n + m.sites.filter((s) => s.kind === "known").length, 0)), "known analogs used to validate"],
+  [String(MISSIONS.filter((m) => m.validated).reduce((n, m) => n + m.sites.filter((s) => s.kind === "known").length, 0)), "known analogs used to validate"],
 ];
 const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
 
@@ -24,7 +24,7 @@ function sceneFor(m: Mission) {
   const tId = `t-${m.id}`;
   const markers: SceneMarker[] = [
     { id: tId, body: m.target.body, lat: m.target.lat, lon: m.target.lon, kind: "target", label: m.target.name.split(" (")[0] },
-    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: s.name.split(",")[0], rank: i + 1 })),
+    ...m.sites.map((s, i) => ({ id: s.id, body: "earth" as const, lat: s.lat, lon: s.lon, kind: "candidate" as const, label: sceneLabel(s, m.sites), rank: i + 1 })),
   ];
   return { markers };
 }
@@ -104,6 +104,7 @@ export default function Home() {
             markers={scene.markers}
             selectedId={sel}
             highlightId={hover}
+            onHover={setHover}
             onSelect={(id) => { if (!missionId) pick(shown.id); setSel(id.startsWith("t-") ? null : id); }}
             paused={paused}
             primaryCount={shown.sites.filter((x) => x.kind === "new").length}
@@ -113,8 +114,8 @@ export default function Home() {
       </div>
 
       <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 bg-[var(--bg)] px-4 py-2 md:bg-transparent md:p-4 md:px-8">
-        <button onClick={home} className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
-        <div className="pointer-events-auto flex items-center gap-2">
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className="hidden text-[var(--mut)] sm:inline">· Mission Analogs</span></button>
+        <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <span className="hidden sm:inline"><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           <button className="chip hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span><span className="hidden sm:inline">{paused ? "Play motion" : "Pause motion"}</span></button>
           <button className="chip hover:border-[var(--ink)]" onClick={() => setMethod(true)}>Method &amp; sources</button>
@@ -122,7 +123,7 @@ export default function Home() {
       </header>
 
       {/* Left column: hero + mission picker (landing) or mission tabs (mission) */}
-      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? "md:absolute md:left-0 md:top-0 md:pt-20" : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
+      <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} ${missionId ? `md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-396px)]"}` : "md:w-[36%] md:max-w-[560px] md:pb-4 md:pt-20"}`}>
         {!missionId && (
           <div className="fade-in pt-1 md:pt-0">
             <p className="label">NASA Space Apps Challenge 2026</p>
@@ -130,7 +131,7 @@ export default function Home() {
             <p className="mt-3 max-w-[440px] text-[15.5px] leading-snug text-[var(--mut)]">Pick a mission to see where on Earth it could be rehearsed, how each region compares with the target, and where the comparison breaks.</p>
           </div>
         )}
-        <div className={missionId ? "flex flex-wrap gap-2" : "stagger mt-4 grid gap-2"} role="group" aria-label="Choose a mission">
+        <div className={missionId ? "flex flex-wrap gap-2" : "stagger mt-4 grid gap-2"} role="group" aria-label="Choose a mission" data-scene-avoid>
           {MISSIONS.map((m) => {
             const active = m.id === missionId || (!missionId && m.id === shown.id);
             const c = BODY_COLOR[m.target.body];
@@ -178,13 +179,13 @@ export default function Home() {
               </ul>
 
               <div className="mt-5 flex items-baseline justify-between"><h3 className="label">New regions to investigate</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
-              <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">{TOP_NOTE}</p>
+              <p className="mt-1 text-[11.5px] leading-snug text-[var(--dim)]">{topNote(shown)}</p>
               <ul className="stagger mt-1 grid gap-0.5">{fresh.map((s, i) => row(s, i + 1))}</ul>
 
-              <h3 className="label mt-4">Known analogs · used to validate</h3>
+              <h3 className="label mt-4">{shown.validated ? "Known analogs · used to validate" : "Known analog · for reference, not a rehearsal of this task"}</h3>
               <ul className="stagger mt-1 grid gap-0.5">{known.map((s, i) => row(s, fresh.length + i + 1))}</ul>
 
-              <p className="mt-4 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">Validation.</b> {shown.validation.result}</p>
+              <p className="mt-4 text-[12.5px] text-[var(--mut)]"><b className="text-[var(--ink)]">{shown.validated ? "Validation." : "Not validated."}</b> {shown.validation.result}</p>
               <p className="mt-2 text-[11.5px] text-[var(--dim)]">Access complexity: Low · Medium · High (team-defined, neutral). Not travel advice.</p>
               <div className="mt-3 flex flex-wrap gap-1.5"><KindChip kind="new" /><KindChip kind="known" /></div>
             </div>
@@ -197,7 +198,7 @@ export default function Home() {
           <h2 id="how" className="display text-[28px]">How it works</h2>
           <ol className="stagger mt-4 grid gap-4">
             <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">1</span><div><b className="title-sm text-[15px]">Start from a real mission</b><p className="text-[13.5px] text-[var(--mut)]">We read what NASA, ESA and Mars Society field campaigns actually rehearsed, and turned each task into a few surface conditions that open data can measure.</p></div></li>
-            <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">2</span><div><b className="title-sm text-[15px]">Score all land on Earth</b><p className="text-[13.5px] text-[var(--mut)]">NASA MODIS and GPM grids, soil and rock maps: every 0.1° cell gets an analog index per mission. Known analog sites are used to check that the index finds them.</p></div></li>
+            <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">2</span><div><b className="title-sm text-[15px]">Score all land on Earth</b><p className="text-[13.5px] text-[var(--mut)]">NASA MODIS and GPM grids, soil and rock maps: every 0.1° cell gets an analog index per mission. Known analog sites are used to check that the index finds them; where no campaign site exists, the mission says “computed, not validated”.</p></div></li>
             <li className="grid grid-cols-[36px_1fr] gap-2"><span className="step-n">3</span><div><b className="title-sm text-[15px]">Show new regions — and their limits</b><p className="text-[13.5px] text-[var(--mut)]">Each mission gets new regions to investigate, compared with its target condition by condition, with where the analogy breaks and how complex access is.</p></div></li>
           </ol>
           <p className="mt-4 text-[13px] text-[var(--dim)]">For EVA and rover field teams, this is a first-pass shortlist to verify with high-resolution imagery, terrain and field checks before planning a rehearsal — not a site recommendation.</p>
@@ -210,7 +211,7 @@ export default function Home() {
         </section>
       )}
 
-      <footer className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
+      <footer data-scene-avoid className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
         Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA.
       </footer>
 

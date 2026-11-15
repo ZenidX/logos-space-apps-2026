@@ -11,7 +11,7 @@ import numpy as np, rasterio, shapefile
 IN = os.environ["LOGOS_IN"]; UA = {"User-Agent": "space-apps-research-client/1.0"}
 MONTH_DAY15 = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]  # day of year of the 15th (non-leap)
 MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
-POWER = "https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=TS,T2M&community=RE&longitude={lon}&latitude={lat}&format=JSON"
+POWER = "https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=TS,T2M,ALLSKY_KT,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&format=JSON"
 
 CAMPAIGN = {
     "sp_crater_az": ("NASA's JETT3 (Oct 2022) and JETT5 (May 2024) ran simulated Artemis moonwalks here, some at night under artificial low-angle light.",
@@ -30,6 +30,8 @@ CAMPAIGN = {
                            ["https://www.marssociety.org/"]),
     "haughton_crater": ("NASA Ames drilled about 11 m with the TRIDENT drill here in August 2024, 4 m of it into ice-cemented ground.",
                         ["https://ntrs.nasa.gov/api/citations/20250004164/downloads/LSIC25-Glass_abst2.docx"]),
+    "askja_iceland": ("Apollo astronauts did geology field training in Iceland in July 1965 (Askja area) and July 1967 (NASA SP-2015-626). A known planetary analog, but not a low-Sun rehearsal.",
+                      ["https://ntrs.nasa.gov/citations/20190026783"]),
     "mcmurdo_dry_valleys": ("NASA's ASTEP project IceBite (selected 2008) planned to test a ground-ice auger in University Valley in the Dry Valleys; the field outcome is not verified here.",
                             ["https://astrobiology.nasa.gov/news/new-astep-projects-reach-from-arctic-to-antarctic-mars-to-europa/"]),
 }
@@ -78,7 +80,7 @@ def power(lat, lon):
         with urllib.request.urlopen(urllib.request.Request(POWER.format(lat=lat, lon=lon), headers=UA), timeout=90) as r:
             p = json.load(r)["properties"]["parameter"]
         f = lambda k: [None if p[k][m] == -999 else p[k][m] for m in MONTHS]
-        return {"surfaceTempC": f("TS"), "airTemp2mC": f("T2M")}
+        return {"surfaceTempC": f("TS"), "airTemp2mC": f("T2M"), "clearnessIndex": f("ALLSKY_KT"), "solarKWhM2Day": f("ALLSKY_SFC_SW_DWN")}
     except Exception as e:
         return {"error": str(e)[:80]}
 
@@ -89,7 +91,8 @@ def main():
     acc = rasterio.open(f"{IN}/access_hours.tif"); A = acc.read(1, masked=True)
     out = {"generatedWith": "AI-assisted (Claude), to be reviewed by team Logos", "sources": {
         "sun": "computed: declination by Cooper (1969) for the 15th of each month; noon elevation = 90 - |lat - declination|; daylight from the sunrise hour angle (no refraction, no terrain)",
-        "temperature": "NASA POWER Climatology API v2.10.1 (MERRA-2, 2001-2025 monthly climatology, 0.5 x 0.625 deg), parameters TS (earth skin temperature) and T2M (air at 2 m), retrieved 2026-11-14. POWER Reference: The data was obtained from National Aeronautics and Space Administration (NASA) Langley Research Center's Prediction Of Worldwide Energy Resources (POWER) project funded through the NASA Earth Science Division. POWER Data Reference: The data was obtained from the POWER Project's Climatology API v2.10.1 on 2026/11/14.",
+        "solar": "clearnessIndex and solarKWhM2Day: NASA POWER Climatology API v2.10.1, satellite-based solar data (CERES SYN1deg per the API response), 2001-2025 monthly climatology, 1 x 1 deg; same POWER references as temperature",
+        "temperature": "NASA POWER Climatology API v2.10.1, 2001-2025 monthly climatology: TS (earth skin temperature) and T2M (air at 2 m) from MERRA-2 (0.5 x 0.625 deg), retrieved 2026-11-14. POWER Reference: The data was obtained from National Aeronautics and Space Administration (NASA) Langley Research Center's Prediction Of Worldwide Energy Resources (POWER) project funded through the NASA Earth Science Division. POWER Data Reference: The data was obtained from the POWER Project's Climatology API v2.10.1 on 2026/11/14.",
         "temperatureUrl": "https://power.larc.nasa.gov/docs/referencing/",
         "travelTime": "Weiss et al. 2018, Nature 553:333, doi:10.1038/nature25181 (Oxford MAP accessibility to cities 2015), CC BY 4.0; team 0.1 deg cell mean",
         "city": "Natural Earth 10m populated places (public domain), POP_MAX >= 50,000; straight-line (great-circle) distance",

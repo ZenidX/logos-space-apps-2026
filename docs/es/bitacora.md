@@ -2,6 +2,13 @@
 
 Entradas nuevas arriba. Horas = hora del commit (CET). Corregido a las 21:50: las primeras entradas llevaban horas estimadas, no reales.
 
+## 2026-11-15 · 01:27 · Etiquetas B, misión 4 y datos v8
+- Decisiones de zexu (00:43, vía Jefe): sitios en la Tierra con «líneas a etiquetas» (opción B, sin línea al mundo objetivo); 4 añadidos baratos (filtros de logística, selector Flat/Steep/Any, niveles de evidencia como insignia y orden, «Hardware rehearsed» por misión); extra opcional: deslizadores «Your priorities». Orden: escena + etiquetas B → radial → misión 4 → 2a–2d → deslizadores. Congelación a las 13:00.
+- Hecho en esta tanda: `src/lib/label-layout.ts` (colocación 2D de nombres fuera del globo, con prueba: no se pisan, no tapan la Tierra, el mundo objetivo ni los botones; la línea no es mucho más larga que la mínima); `SolarScene.tsx` sin líneas 3D ni `Line2`; pulso en el sitio abierto (se para con «Pause motion»); la vista general se para tras 30 s sin interacción; `MeshLambertMaterial`; los enlaces directos abren ya en primer plano.
+- Datos v8 de Logos Datos: 4 misiones (la 4.ª, «Low-Sun operations and solar power», calculada y NO validada: índice = media de similitudes), `coverageWeight`, suelo de avisos y permisos con fuente en el pipeline, nombre de Chukotka en inglés. Comprobación independiente de 9 regiones más (`docs/independent-check-v8.md`).
+- Retirada: Tankwa Karoo (m1-new7): la fuente geológica la sitúa en lutitas, sin dolerita; queda en «Removed» con su motivo. Total: 19 regiones nuevas.
+- Pendiente: filtros 2a/2b, insignias y orden 2c, línea 2d, rehacer el panel de misión (lista más arriba), gráfico de energía solar por mes, medir fps y Lighthouse a las 09:00, capturas y textos a las 12:00.
+
 ## 2026-11-15 · 00:47 · Sistema real con el Sol, interfaz radial y auditoría de Jefe
 - Decisiones de zexu (apuntadas en `docs/idea-origin.md`): fuera la «órbita compartida» (Marte no orbita la Tierra). Escena nueva: vista general heliocéntrica (Sol, Tierra y Marte con radios 1 : 1,52 y periodos 1 : 1,88 en proporción; Luna alrededor de la Tierra, ampliada) y primer plano de la Tierra con sus sitios y el mundo objetivo al lado, a tamaño proporcional. Al elegir misión la cámara viaja de la vista general al objetivo y luego a la Tierra. Nombres de los sitios con líneas discontinuas semitransparentes y una sola línea discontinua, con los trazos avanzando, del sitio abierto a su objetivo; ninguna cruza un globo. Pie con lo que va a escala y lo que no.
 - Interfaz «radial» (componente de Diseño): índice en el centro y un anillo por condición (cian), forma frente al objetivo (gris: cociente menor/mayor) y permisos y política (ámbar). Prueba «anillo = dato» sobre 182 anillos.
