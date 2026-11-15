@@ -8,7 +8,7 @@ import { PageIntro } from "@/components/HowItWorks";
 export default function DiscoverPage() {
   return (
     <div className="pt-12">
-      <PageIntro step={2} title="Find Earth's twins of the Moon and Mars.">
+      <PageIntro step={3} title="Find Earth's twins of the Moon and Mars.">
         Choose the Moon or Mars. The globe marks the Earth places that match it best. Then move the slider to weigh how
         similar a place is against how easy it is to reach.
       </PageIntro>

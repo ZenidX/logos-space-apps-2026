@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 
 export const PAGES = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
+  { href: "/story/", label: "Story" },
   { href: "/discover/", label: "Discover" },
   { href: "/3d/", label: "3D" },
   { href: "/base/", label: "Base" },

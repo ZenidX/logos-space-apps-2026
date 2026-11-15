@@ -70,9 +70,9 @@ export function PageIntro({ step, title, children }: { step: number; title: Reac
   return (
     <header className="mx-auto w-full max-w-6xl px-5 pt-16 md:pt-20">
       <p className="font-mono text-xs uppercase tracking-[.16em] text-[var(--acc)]">
-        Step {step} of 6
+        Step {step} of 7
         <span aria-hidden className="ml-3 inline-flex gap-1 align-middle">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
             <i key={i} className={`inline-block h-[3px] w-5 ${i <= step ? "bg-[var(--acc)]" : "bg-[var(--line2)]"}`} />
           ))}
         </span>
