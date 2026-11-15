@@ -31,7 +31,7 @@ Contexto para cualquier sesión de Claude Code abierta en este repo. Léelo ante
 - `src/components/DataTab.tsx` ← `src/data/catalog.ts` + `ee-samples.json`: fichas de cada capa.
 - `src/components/Viewer3D.tsx` + `Terrain3D.tsx` + `src/lib/terrain.ts`: visor 3D de 11 × 11 km, candidato frente a objetivo. Luna/Marte desde el **ArcGIS ImageServer de Trek** (`exportImage`, F32, `format=bsq`); las teselas WMTS de Trek NO son alturas.
 - Interfaz en inglés (la entrega tiene que ir en inglés); la documentación interna sigue en español.
-- Estilo «Consola» (animaciones.zenidx.com): tokens en `src/app/globals.css` (la paleta de Tailwind slate/orange/sky está remapeada) y marco HUD en `src/components/Visor.tsx`.
+- **Estilo:** el de la portada (Logos) en toda la web: Bricolage Grotesque + Martian Mono, paleta azul (`--earth` #5db4ff), paneles de cristal y botones en píldora (`glass`, `glass-tab`). En la parte del equipo, los tokens y las clases están al final de `src/app/(team)/globals.css` (la paleta de Tailwind slate/orange/sky sigue remapeada); el estilo «Consola» antiguo se anula ahí, no se ha borrado.
 - `src/components/TileMap.tsx`: Leaflet con NASA GIBS (Tierra, EPSG:3857) y Moon/Mars Trek (EPSG:4326).
 - `src/data/targets.ts`: huellas de Shackleton, Jezero y Arcadia (valores **aproximados**).
 - Método: posición relativa dentro del rango terrestre p1–p99. «Fuera de rango» se marca contra el mín./máx. real. Ver `docs/metodo.md`.

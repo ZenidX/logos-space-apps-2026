@@ -2,6 +2,20 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 12) · Las páginas del equipo, con el estilo de la portada (Logos)
+
+- Pedido de zexu: Base y las demás páginas tienen que llevar el estilo general de la app de Logos.
+- `src/app/(team)/layout.tsx`: las fuentes pasan a ser **Bricolage Grotesque y Martian Mono**, las mismas de la portada. Se cargan en las variables que ya usaba el CSS (`--font-plex`, `--font-jetbrains`), así que no ha habido que tocar componentes por la tipografía. El título pasa a «Terra Vista».
+- `src/app/(team)/globals.css`:
+  - Paleta de Logos (`--acc` = `--earth` #5db4ff, ámbar #ffb454 para avisos, mismas tintas y líneas) y remapeo de los colores de Tailwind.
+  - Radios redondeados (de 6 a 28 px) en lugar de 1–3 px.
+  - Fuera el estilo «Consola»: esquinas cortadas (`.cut`, `.btn-cut`, `.visor`), escuadras, retícula, líneas de barrido, glitch y rejilla de fondo. Los visores pasan a ser paneles oscuros redondeados y el fondo lleva estrellas suaves.
+  - Copia de las clases `glass`, `glass-strong`, `glass-chip` y `glass-tab` de `logos.css`, con sus versiones para móvil, transparencia reducida y contraste.
+- `SiteNav.tsx`: cabecera como la de Logos (símbolo del logo + «Terra Vista», páginas en píldora `glass-tab`; la activa, en píldora clara).
+- Base y comparación: botones en píldora (`glass-tab`), botón principal claro, tarjetas y filas redondeadas.
+- Cada parte sigue cargando su propio CSS: Logos no se ha tocado.
+- Comprobado con Chromium: Story, Discover, Method, Base y Data **sin errores de hidratación** (un aviso que salió era la caché vieja del servidor de desarrollo; desapareció al reiniciar) y Base a 390 px.
+
 ## 2026-11-15 (tarde, 11) · Base: por qué sirve cada sitio de la Tierra y la misión animada en los dos lados
 
 - Pedido de zexu: para cada misión, explicar **por qué** se puede hacer en cada sitio de la Tierra y **animarla tanto en la Tierra como en la base** lunar o marciana.

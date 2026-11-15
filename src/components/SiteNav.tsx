@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
+import { asset } from "@/lib/logos/asset";
 
 export const PAGES = [
   { href: "/", label: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
@@ -20,35 +21,24 @@ const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
 export default function SiteNav() {
   const path = norm(usePathname() || "/");
   return (
-    <header className="fixed inset-x-0 top-0 z-[1000] border-b border-[var(--line)] bg-[rgba(4,8,15,.78)] backdrop-blur-md">
-      <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-1.5">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="TerraVista, home">
-          <i className="relative inline-block h-4 w-4 rotate-45 border border-[var(--acc)]">
-            <span className="absolute inset-[3px] bg-[var(--acc)]" />
-          </i>
-          <span className="font-[family-name:var(--font-grotesk)] text-xl font-semibold leading-none">
-            Terra<span className="text-[var(--acc)]">Vista</span>
-          </span>
+    <header className="fixed inset-x-0 top-0 z-[1000] bg-[linear-gradient(rgba(4,6,12,.92),rgba(4,6,12,.55)_70%,transparent)] pb-3">
+      <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-3 md:px-5">
+        {/* Igual que la cabecera de la portada (Logos): símbolo + «Terra Vista» */}
+        <Link href="/" className="flex shrink-0 items-center gap-2 text-[16px] font-semibold" aria-label="Terra Vista, home">
+          <span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />
+          Terra Vista
         </Link>
-        <ul className="-mr-2 flex items-center gap-1 overflow-x-auto font-mono text-[11px] uppercase tracking-[.08em] [scrollbar-width:none]">
-          {PAGES.map((p, i) => {
+        <ul className="-mr-1 flex items-center gap-1 overflow-x-auto py-1 [scrollbar-width:none]">
+          {PAGES.map((p) => {
             const on = path === norm(p.href);
             return (
-              <li key={p.href} className="relative">
+              <li key={p.href} className="shrink-0">
                 <Link
                   href={p.href}
                   aria-current={on ? "page" : undefined}
-                  className={`relative flex min-h-[var(--tap)] items-center whitespace-nowrap px-2.5 transition-colors ${on ? "text-[var(--acc)]" : "text-[var(--mut)] hover:text-[var(--ink)]"}`}
+                  className={`glass-tab !min-h-[36px] !px-3.5 text-[13.5px] ${on ? "" : "text-[var(--ink)]"}`}
                 >
-                  <span className="mr-1 hidden text-[var(--dim)] sm:inline">0{i + 1}</span>
                   {p.label}
-                  {on && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      className="absolute inset-x-2 -bottom-[7px] h-[2px] bg-[var(--acc)]"
-                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                    />
-                  )}
                 </Link>
               </li>
             );

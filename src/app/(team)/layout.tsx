@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import SiteNav from "@/components/SiteNav";
 import { AppStateProvider } from "@/components/AppState";
 
-const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["300", "400", "500"] });
-// Variable (sin lista de pesos): con pesos fijos Google sirve a veces URLs /l/font?kit= sin extensión y next/font falla.
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
-const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], weight: ["400", "500", "600"] });
+// Mismas fuentes que la portada (Logos): Bricolage Grotesque (texto y títulos) y Martian Mono (datos y rótulos).
+// Se cargan en las variables que ya usa el CSS del equipo (--font-plex, --font-jetbrains); --font-grotesk apunta a la misma sans.
+const plex = Bricolage_Grotesque({ subsets: ["latin"], weight: "variable", axes: ["opsz"], variable: "--font-plex", display: "swap" });
+const jetbrains = Martian_Mono({ subsets: ["latin"], weight: "400", variable: "--font-jetbrains", display: "swap", preload: false });
 
 export const metadata: Metadata = {
-  title: "TerraVista",
+  title: "Terra Vista",
   description: "Finding the Moon and Mars on Earth with NASA data — NASA Space Apps Challenge 2026, team Logos.",
   manifest: "manifest.webmanifest",
 };
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${plex.variable} ${jetbrains.variable} ${grotesk.variable} antialiased`}>
+      <body className={`${plex.variable} ${jetbrains.variable}  antialiased`}>
         <a href="#main" className="skip-link">
           Skip to content
         </a>

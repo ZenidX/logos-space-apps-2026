@@ -102,7 +102,7 @@ export default function MissionCompare({ sub, site, base, onClose }: { sub: SubM
         <button
           ref={closeBtn}
           onClick={onClose}
-          className="btn-cut min-h-[var(--tap)] shrink-0 border border-[var(--line2)] px-3 font-mono text-xs uppercase tracking-[.08em] hover:text-[var(--acc)]"
+          className="glass-tab shrink-0 text-[14px]"
         >
           Close <span aria-hidden>✕</span>
         </button>

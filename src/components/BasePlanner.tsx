@@ -173,7 +173,7 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
           const m = match[s.key];
           const t = total(s);
           return (
-            <li key={s.key} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border border-[var(--line)] bg-[var(--bg2)] px-3 py-2.5">
+            <li key={s.key} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border border-[var(--line)] bg-[var(--bg2)] px-4 py-3">
               <span className="font-mono text-xs text-[var(--dim)]">{String(i + 1).padStart(2, "0")}</span>
               <span className="min-w-0">
                 <span className="block truncate text-[15px] text-[var(--ink)]">{s.place}</span>
@@ -184,15 +184,15 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
                 </span>
                 <WhyChips sub={sub} site={s} />
                 {t >= 0 && (
-                  <span className="mt-1 block h-[3px] w-full bg-[var(--line)]">
-                    <span className="block h-full bg-[var(--acc)]" style={{ width: `${Math.round(t * 100)}%` }} />
+                  <span className="mt-1.5 block h-[4px] w-full overflow-hidden rounded-full bg-[var(--line)]">
+                    <span className="block h-full rounded-full bg-[var(--acc)]" style={{ width: `${Math.round(t * 100)}%` }} />
                   </span>
                 )}
               </span>
               <button
                 type="button"
                 onClick={() => onCompare(s)}
-                className="btn-cut min-h-[var(--tap)] border border-[var(--line2)] px-3 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--acc)] hover:border-[var(--acc)]"
+                className="glass-tab text-[14px]"
               >
                 Rehearse <span aria-hidden>▶</span>
                 <span className="sr-only"> {sub.name} at {s.place}, side by side with the base site</span>
@@ -338,8 +338,8 @@ export default function BasePlanner() {
     choose({ lat, lon, name: coord(lat, lon) });
   };
 
-  const tab = (on: boolean) =>
-    `min-h-[var(--tap)] px-3 font-mono text-xs uppercase tracking-[.08em] border ${on ? "border-[var(--acc)] text-[var(--acc)]" : "border-[var(--line2)] text-[var(--mut)] hover:text-[var(--ink)]"}`;
+  // Botones como en la portada (Logos): píldoras de cristal; la elegida, píldora clara (aria-pressed)
+  const primary = "inline-flex min-h-[var(--tap)] items-center rounded-full bg-[var(--ink)] px-5 text-[14px] font-semibold text-[var(--bg)] hover:bg-white";
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 pb-10 pt-8">
@@ -347,10 +347,10 @@ export default function BasePlanner() {
       <section aria-labelledby="pick-h" className="grid gap-5 md:grid-cols-[1.2fr_1fr]">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2" role="group" aria-label="World">
-            <button type="button" className={tab(body === "moon")} aria-pressed={body === "moon"} onClick={() => switchBody("moon")}>
+            <button type="button" className="glass-tab text-[14px]" aria-pressed={body === "moon"} onClick={() => switchBody("moon")}>
               Moon
             </button>
-            <button type="button" className={tab(body === "mars")} aria-pressed={body === "mars"} onClick={() => switchBody("mars")}>
+            <button type="button" className="glass-tab text-[14px]" aria-pressed={body === "mars"} onClick={() => switchBody("mars")}>
               Mars
             </button>
           </div>
@@ -382,7 +382,7 @@ export default function BasePlanner() {
                   type="button"
                   onClick={() => choose(p)}
                   aria-pressed={site?.name === p.name}
-                  className={`w-full border bg-[var(--bg2)] px-3 py-2.5 text-left transition-colors hover:border-[var(--acc)] ${site?.name === p.name ? "border-[var(--acc)]" : "border-[var(--line2)]"}`}
+                  className={`w-full rounded-2xl border bg-[var(--bg2)] px-4 py-3 text-left transition-colors hover:border-[var(--acc)] ${site?.name === p.name ? "border-[var(--acc)]" : "border-[var(--line2)]"}`}
                 >
                   <span className="block text-[15px] text-[var(--ink)]">{p.name}</span>
                   <span className="block text-xs text-[var(--mut)]">{p.why}</span>
@@ -393,13 +393,13 @@ export default function BasePlanner() {
           <form onSubmit={submit} className="mt-4 flex flex-wrap items-end gap-2">
             <label className="flex flex-col font-mono text-[11px] uppercase tracking-[.08em] text-[var(--mut)]">
               Lat (°)
-              <input inputMode="decimal" value={form.lat} onChange={(e) => setForm({ ...form, lat: e.target.value })} className="mt-1 w-24 border border-[var(--line2)] bg-transparent px-2 py-2 text-base text-[var(--ink)]" />
+              <input inputMode="decimal" value={form.lat} onChange={(e) => setForm({ ...form, lat: e.target.value })} className="mt-1 w-24 rounded-xl border border-[var(--line2)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--ink)]" />
             </label>
             <label className="flex flex-col font-mono text-[11px] uppercase tracking-[.08em] text-[var(--mut)]">
               Lon (°)
-              <input inputMode="decimal" value={form.lon} onChange={(e) => setForm({ ...form, lon: e.target.value })} className="mt-1 w-24 border border-[var(--line2)] bg-transparent px-2 py-2 text-base text-[var(--ink)]" />
+              <input inputMode="decimal" value={form.lon} onChange={(e) => setForm({ ...form, lon: e.target.value })} className="mt-1 w-24 rounded-xl border border-[var(--line2)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--ink)]" />
             </label>
-            <button type="submit" className={tab(true)}>
+            <button type="submit" className={primary}>
               Plan base
             </button>
           </form>
@@ -458,12 +458,12 @@ export default function BasePlanner() {
         {plan && (
           <>
             <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-              <button type="button" onClick={replay} className={tab(true)}>
+              <button type="button" onClick={replay} className="glass-chip">
                 Replay set-up
               </button>
               <div className="flex gap-1" role="group" aria-label="Ground layer">
                 {(["relief", "photo", "slope"] as Layer[]).map((l) => (
-                  <button key={l} type="button" className={tab(layer === l)} aria-pressed={layer === l} onClick={() => setLayer(l)}>
+                  <button key={l} type="button" className="glass-tab text-[14px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
                     {l === "relief" ? "Relief" : l === "photo" ? "Photo" : "Slope"}
                   </button>
                 ))}
@@ -495,7 +495,7 @@ export default function BasePlanner() {
                       type="button"
                       onClick={() => pickSub(s.id)}
                       aria-pressed={on}
-                      className={`flex h-full w-full flex-col border bg-[var(--bg2)] p-3 text-left transition-colors hover:border-[var(--acc)] ${on ? "border-[var(--acc)]" : "border-[var(--line)]"}`}
+                      className={`flex h-full w-full flex-col rounded-2xl border bg-[var(--bg2)] p-4 text-left transition-colors hover:border-[var(--acc)] ${on ? "border-[var(--acc)]" : "border-[var(--line)]"}`}
                     >
                       <span className="flex items-center justify-between gap-2">
                         <span className="text-[15px] text-[var(--ink)]">{s.name}</span>
@@ -534,7 +534,7 @@ export default function BasePlanner() {
           <h3 className="mt-12 text-xl">What this site is like</h3>
           <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {plan.conditions.map((c) => (
-              <div key={c.label} className="border border-[var(--line)] bg-[var(--bg2)] p-3">
+              <div key={c.label} className="rounded-2xl border border-[var(--line)] bg-[var(--bg2)] p-4">
                 <dt className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[.08em] text-[var(--mut)]">
                   {c.label}
                   <span className={`px-1 text-[10px] ${c.kind === "data" ? "text-[var(--ok)]" : c.kind === "physics" ? "text-[var(--acc2-t)]" : "text-[var(--warn)]"}`}>
