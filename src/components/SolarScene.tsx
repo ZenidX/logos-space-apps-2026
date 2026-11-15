@@ -241,7 +241,8 @@ export default function SolarScene({ mode, markers, selectedId, highlightId = nu
         else if (mat.earth.uniforms.uDay.value) introT = Math.min(INTRO_S, introT + dt * (latest.current.intro && !focus ? 1 : 5)); // waits for the Earth's map
         moving = true;
       }
-      const ov = overviewPose(aspect), over = introT >= 0 && introT < INTRO_S ? lerpPose(introPose(E, aspect), ov, easeOut(Math.max(0, introT - 0.6) / (INTRO_S - 0.6))) : ov;
+      const ov = overviewPose(aspect, aspect < 0.9 ? 1.3 : 0.93), // phones in portrait: the orbit of Mars runs past the edges, the worlds read larger
+         over = introT >= 0 && introT < INTRO_S ? lerpPose(introPose(E, aspect), ov, easeOut(Math.max(0, introT - 0.6) / (INTRO_S - 0.6))) : ov;
       const pose = !focus && k === 0 ? over
         : back || !focus ? lerpPose(over, closePose(E, (focus ?? compBody ?? "mars") as "moon" | "mars", aspect, room), ease(k))
         : k <= 0.5 ? lerpPose(over, targetPose(P[focus], focus), ease(k / 0.5))

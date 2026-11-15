@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#04060c" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#04060c", viewportFit: "cover" }; // cover: the page draws under the notch; header and bottom bar keep the safe areas
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

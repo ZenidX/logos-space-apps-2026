@@ -57,9 +57,10 @@ export function overviewExtent(): THREE.Vector3[] {
   return pts;
 }
 export const OVERVIEW_ELEV = 0.86; // radians above the ecliptic
-export function overviewPose(aspect: number): Pose {
+/** `margin` > 1 lets the orbit of Mars run past the frame (used on phones in portrait, so the bodies read larger). */
+export function overviewPose(aspect: number, margin = 0.93): Pose {
   const dir = new THREE.Vector3(0, Math.sin(OVERVIEW_ELEV), Math.cos(OVERVIEW_ELEV)), look = new THREE.Vector3();
-  return { look, pos: dir.clone().multiplyScalar(fitDistance(look, dir, overviewExtent(), aspect, 0.93)) };
+  return { look, pos: dir.clone().multiplyScalar(fitDistance(look, dir, overviewExtent(), aspect, margin)) };
 }
 
 /** Angle between the Sun's direction and the close-up camera, around the vertical: the Sun lights the Earth from the

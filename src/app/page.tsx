@@ -12,6 +12,7 @@ import EvidenceBadge from "@/components/Evidence";
 import MethodSheet from "@/components/MethodSheet";
 import Count from "@/components/Count";
 import MissionPreview from "@/components/MissionPreview";
+import { GLOBE_TEX } from "@/lib/globe-tex";
 import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/missions";
 
 const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
@@ -187,11 +188,12 @@ export default function Home() {
   return (
     <main className="stars relative min-h-dvh overflow-x-clip">
       {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
-      <header className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
+      <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
         <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Logos, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Logos <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
-          <button ref={methodBtn} className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`} onClick={() => setMethod(true)}>Method &amp; sources</button>
+          {!missionId && !calm && step !== "explore" && <button type="button" className="chip md:hidden" onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}>Missions <span aria-hidden>↓</span></button>}
+          <button ref={methodBtn} className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`} onClick={() => setMethod(true)}><span className="sm:hidden">Sources</span><span className="hidden sm:inline">Method &amp; sources</span></button>
           <button className="chip icon-btn hover:border-[var(--ink)]" aria-pressed={paused} aria-label={paused ? "Play motion" : "Pause motion"} title={paused ? "Play motion" : "Pause motion"} onClick={() => setPaused((p) => !p)}><span aria-hidden>{paused ? "▶" : "❚❚"}</span></button>
         </div>
       </header>
@@ -275,6 +277,7 @@ export default function Home() {
                         <b className="display text-[19px] leading-tight">{m.short}</b>
                         <span className="text-[14px]" style={{ color: c }}>{m.target.body === "moon" ? "Moon" : "Mars"} · <span className="place">{m.target.name.split(" (")[0]}</span></span>
                       </span>
+                      <span className="card-meta md:hidden"><span className="mh-world" aria-hidden style={{ backgroundImage: `url(${GLOBE_TEX[m.target.body as "moon" | "mars"].lo})`, ["--c" as string]: c }} /><span><b>{m.sites.length}</b> sites · {m.validated ? <b style={{ color: "var(--earth)" }}>validated</b> : <b style={{ color: "var(--amber)" }}>computed, not validated</b>}<br /><span className="text-[var(--dim)]">{m.keyLimit.split(";")[0].split(". ")[0]}</span></span><span aria-hidden className="ml-auto text-[18px]">›</span></span>
                     </button></MissionPreview>
                   );
                 })}
@@ -314,7 +317,7 @@ export default function Home() {
 
       {missionId && (
         <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}`}>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Choose a mission" data-scene-avoid>
+          <div className="chip-row flex gap-2 md:flex-wrap" role="group" aria-label="Choose a mission" data-scene-avoid>
             {MISSIONS.map((m) => {
               const c = BODY_COLOR[m.target.body];
               return m.id === missionId
@@ -327,7 +330,7 @@ export default function Home() {
 
       {missionId && <h1 className="sr-only">Logos Mission Analogs: {shown.short}, target {t.name}</h1>}
       {missionId && (
-        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-hidden ${site ? "md:w-[min(760px,60vw)]" : "md:w-[420px]"}`} aria-label={shown.title}>
+        <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 ${site ? "mb-24" : "mb-6"} rounded-[20px] transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-hidden ${site ? "md:w-[min(760px,60vw)]" : "md:w-[420px]"}`} aria-label={shown.title}>
           <div ref={scroller} className={`p-5 md:h-full md:overflow-y-auto ${site ? "md:p-8" : "md:p-6"}`}>
           {site ? (
             <SitePanel site={site} mission={shown} onBack={() => setSel(null)} nav={navPos >= 0 ? { pos: navPos + 1, total: navList.length, prev: () => step1(-1), next: () => step1(1) } : undefined} />
@@ -390,6 +393,14 @@ export default function Home() {
       )}
 
       {credits}
+      {missionId && site && navPos >= 0 && !wide && (
+        <nav className="site-bar" aria-label="Browse the sites of this mission">
+          <button type="button" onClick={() => setSel(null)} aria-label="Back to all sites"><span aria-hidden>☰</span></button>
+          <button type="button" onClick={() => step1(-1)} aria-label="Previous site"><span aria-hidden>‹</span></button>
+          <span className="site-bar-t"><b>{site.name.split(",")[0]}</b><i className="mono">{String(navPos + 1).padStart(2, "0")} / {String(navList.length).padStart(2, "0")} · {shown.short}</i></span>
+          <button type="button" onClick={() => step1(1)} aria-label="Next site"><span aria-hidden>›</span></button>
+        </nav>
+      )}
 
       {method && <MethodSheet onClose={() => { setMethod(false); window.requestAnimationFrame(() => methodBtn.current?.focus()); }} />}
     </main>
