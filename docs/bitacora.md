@@ -2,6 +2,13 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 24) · Vídeo de demo v6: grabado de nuevo, con *Plan a base*
+
+- Pedido del usuario: vídeo nuevo porque la web cambió; centrado en el problema (emparejar la Tierra con cada misión, con sus valores y atributos, incluidos permisos y política) y con *Plan a base* como lo que nos diferencia. Voz nueva `video/audio/final-voice.wav` (29,59 s); el usuario cambió el texto al grabar y no tocó `docs/timestamps.txt`: lo rehice yo con la transcripción de Vosk y las pausas medidas.
+- Todos los planos se graban sobre https://zenidx.github.io/logos-space-apps-2026/ (Vercel no tiene *Plan a base*): a apertura → misiones 1 y 3 · s ficha de Haughton → licencia de Nunavut · b base montándose en Best site A · r ensayo de Water & oxygen lado a lado (Badakhshan ↔ Luna) → «Where it breaks» · cierre. Guion y planos en `docs/guion-video.md`.
+- `capture.cjs`: planos nuevos, `frozenLoad` para `/base/` (reloj parado mientras carga; fuerza el final del fundido de framer-motion, que se quedaba en opacidad 0) y relleno en el diálogo de ensayo para subir «Where it breaks» por encima de los subtítulos. `build.sh`: cortes a 10,5 / 15,3 / 19,4 / 26,3; `DUR` 29,5.
+- «Terra Vista scores» fijado a mano a 5,40 s en `word-timings.json` (Vosk oyó «terrible discourse»).
+- Comprobado: 1920×1080, H.264 + AAC, 29,5 s; hojas de contactos en cada inicio de frase. El usuario lo revisó y aprobó. Publicado en `/demo-video/`.
 ## 2026-11-15 (noche, 25) · Preguntas difíciles del jurado
 
 - Nuevo `docs/preguntas-dificiles.md`: 21 preguntas probables del jurado, agrupadas por los criterios (validez, creatividad, impacto y relevancia, «Plan a base», datos e IA), con la respuesta en inglés lista para decir y, en español, la trampa de cada una. Al principio, las cifras que hay que saber; al final, qué hacer si la demo falla.

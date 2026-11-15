@@ -1,432 +1,433 @@
 [
  {
   "start": 0.0,
-  "end": 5.9,
-  "text": "Everything we send to the Moon or Mars gets tested on Earth first. But… where?",
+  "end": 5.0,
+  "text": "Everything bound for the outer space is tested on Earth first. But… where?",
   "words": [
    {
     "w": "Everything",
     "start": 0.06,
-    "end": 0.54,
+    "end": 0.57,
     "aligned": true
    },
    {
-    "w": "we",
-    "start": 0.54,
-    "end": 0.69,
-    "aligned": true
-   },
-   {
-    "w": "send",
-    "start": 0.69,
-    "end": 0.96,
-    "aligned": true
-   },
-   {
-    "w": "to",
-    "start": 0.96,
-    "end": 1.05,
-    "aligned": true
-   },
-   {
-    "w": "the",
-    "start": 1.05,
-    "end": 1.17,
-    "aligned": true
-   },
-   {
-    "w": "Moon",
-    "start": 1.17,
-    "end": 1.53,
-    "aligned": true
-   },
-   {
-    "w": "or",
-    "start": 1.53,
-    "end": 1.77,
-    "aligned": true
-   },
-   {
-    "w": "Mars",
-    "start": 1.77,
-    "end": 2.28,
-    "aligned": true
-   },
-   {
-    "w": "gets",
-    "start": 2.31,
-    "end": 2.58,
-    "aligned": true
-   },
-   {
-    "w": "tested",
-    "start": 2.58,
-    "end": 3.03,
-    "aligned": true
-   },
-   {
-    "w": "on",
-    "start": 3.03,
-    "end": 3.21,
-    "aligned": true
-   },
-   {
-    "w": "Earth",
-    "start": 3.24,
-    "end": 3.54,
-    "aligned": true
-   },
-   {
-    "w": "first.",
-    "start": 3.54,
-    "end": 4.11,
-    "aligned": true
-   },
-   {
-    "w": "But…",
-    "start": 4.47,
-    "end": 4.74,
-    "aligned": true
-   },
-   {
-    "w": "where?",
-    "start": 5.1,
-    "end": 5.64,
-    "aligned": true
-   }
-  ]
- },
- {
-  "start": 5.9,
-  "end": 12.3,
-  "text": "Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.",
-  "words": [
-   {
-    "w": "Terra",
-    "start": 6.18,
-    "end": 6.553,
-    "aligned": false
-   },
-   {
-    "w": "Vista",
-    "start": 6.553,
-    "end": 6.925,
-    "aligned": false
-   },
-   {
-    "w": "scans",
-    "start": 6.925,
-    "end": 7.29,
-    "aligned": true
-   },
-   {
-    "w": "the",
-    "start": 7.29,
-    "end": 7.41,
-    "aligned": true
-   },
-   {
-    "w": "whole",
-    "start": 7.41,
-    "end": 7.74,
-    "aligned": true
-   },
-   {
-    "w": "planet",
-    "start": 7.74,
-    "end": 8.22,
-    "aligned": true
-   },
-   {
-    "w": "with",
-    "start": 8.22,
-    "end": 8.4,
-    "aligned": true
-   },
-   {
-    "w": "open",
-    "start": 8.43,
-    "end": 8.76,
-    "aligned": true
-   },
-   {
-    "w": "NASA",
-    "start": 8.76,
-    "end": 9.15,
-    "aligned": true
-   },
-   {
-    "w": "data,",
-    "start": 9.15,
-    "end": 9.51,
-    "aligned": true
-   },
-   {
-    "w": "to",
-    "start": 9.72,
-    "end": 9.87,
-    "aligned": true
-   },
-   {
-    "w": "find",
-    "start": 9.87,
-    "end": 10.17,
-    "aligned": true
-   },
-   {
-    "w": "Earth's",
-    "start": 10.2,
-    "end": 10.53,
-    "aligned": true
-   },
-   {
-    "w": "own",
-    "start": 10.59,
-    "end": 10.89,
-    "aligned": true
-   },
-   {
-    "w": "Moon",
-    "start": 10.89,
-    "end": 11.16,
-    "aligned": true
-   },
-   {
-    "w": "and",
-    "start": 11.16,
-    "end": 11.28,
-    "aligned": true
-   },
-   {
-    "w": "Mars.",
-    "start": 11.28,
-    "end": 11.76,
-    "aligned": true
-   }
-  ]
- },
- {
-  "start": 12.3,
-  "end": 17.7,
-  "text": "Testing a spacesuit? An ice drill? It weighs what matters for that mission,",
-  "words": [
-   {
-    "w": "Testing",
-    "start": 12.75,
-    "end": 13.17,
-    "aligned": true
-   },
-   {
-    "w": "a",
-    "start": 13.17,
-    "end": 13.2,
-    "aligned": true
-   },
-   {
-    "w": "spacesuit?",
-    "start": 13.2,
-    "end": 13.95,
-    "aligned": true
-   },
-   {
-    "w": "An",
-    "start": 14.25,
-    "end": 14.43,
-    "aligned": true
-   },
-   {
-    "w": "ice",
-    "start": 14.43,
-    "end": 14.7,
-    "aligned": true
-   },
-   {
-    "w": "drill?",
-    "start": 14.7,
-    "end": 15.06,
-    "aligned": true
-   },
-   {
-    "w": "It",
-    "start": 15.45,
-    "end": 15.63,
-    "aligned": true
-   },
-   {
-    "w": "weighs",
-    "start": 15.63,
-    "end": 15.96,
-    "aligned": true
-   },
-   {
-    "w": "what",
-    "start": 15.96,
-    "end": 16.17,
-    "aligned": true
-   },
-   {
-    "w": "matters",
-    "start": 16.17,
-    "end": 16.62,
+    "w": "bound",
+    "start": 0.57,
+    "end": 0.9,
     "aligned": true
    },
    {
     "w": "for",
-    "start": 16.62,
-    "end": 16.74,
+    "start": 0.9,
+    "end": 0.99,
     "aligned": true
    },
    {
-    "w": "that",
-    "start": 16.74,
-    "end": 16.95,
+    "w": "the",
+    "start": 0.99,
+    "end": 1.17,
+    "aligned": true
+   },
+   {
+    "w": "outer",
+    "start": 1.17,
+    "end": 1.41,
+    "aligned": true
+   },
+   {
+    "w": "space",
+    "start": 1.41,
+    "end": 1.92,
+    "aligned": true
+   },
+   {
+    "w": "is",
+    "start": 1.95,
+    "end": 2.1,
+    "aligned": true
+   },
+   {
+    "w": "tested",
+    "start": 2.1,
+    "end": 2.55,
+    "aligned": true
+   },
+   {
+    "w": "on",
+    "start": 2.55,
+    "end": 2.73,
+    "aligned": true
+   },
+   {
+    "w": "Earth",
+    "start": 2.76,
+    "end": 3.09,
+    "aligned": true
+   },
+   {
+    "w": "first.",
+    "start": 3.09,
+    "end": 3.66,
+    "aligned": true
+   },
+   {
+    "w": "But…",
+    "start": 4.02,
+    "end": 4.26,
+    "aligned": true
+   },
+   {
+    "w": "where?",
+    "start": 4.26,
+    "end": 4.83,
+    "aligned": false
+   }
+  ]
+ },
+ {
+  "start": 5.0,
+  "end": 10.4,
+  "text": "Terra Vista scores all of Earth against each mission, with open NASA data:",
+  "words": [
+   {
+    "w": "Terra",
+    "start": 5.4,
+    "end": 5.75,
+    "aligned": false
+   },
+   {
+    "w": "Vista",
+    "start": 5.75,
+    "end": 6.1,
+    "aligned": false
+   },
+   {
+    "w": "scores",
+    "start": 6.1,
+    "end": 6.5,
+    "aligned": false
+   },
+   {
+    "w": "all",
+    "start": 6.564,
+    "end": 6.9,
+    "aligned": true
+   },
+   {
+    "w": "of",
+    "start": 6.9,
+    "end": 7.02,
+    "aligned": true
+   },
+   {
+    "w": "Earth",
+    "start": 7.05,
+    "end": 7.32,
+    "aligned": true
+   },
+   {
+    "w": "against",
+    "start": 7.32,
+    "end": 7.68,
+    "aligned": true
+   },
+   {
+    "w": "each",
+    "start": 7.71,
+    "end": 7.98,
     "aligned": true
    },
    {
     "w": "mission,",
-    "start": 16.95,
-    "end": 17.4,
+    "start": 7.98,
+    "end": 8.43,
+    "aligned": true
+   },
+   {
+    "w": "with",
+    "start": 8.55,
+    "end": 8.82,
+    "aligned": true
+   },
+   {
+    "w": "open",
+    "start": 8.85,
+    "end": 9.21,
+    "aligned": true
+   },
+   {
+    "w": "NASA",
+    "start": 9.21,
+    "end": 9.6,
+    "aligned": true
+   },
+   {
+    "w": "data:",
+    "start": 9.6,
+    "end": 9.99,
     "aligned": true
    }
   ]
  },
  {
-  "start": 17.7,
-  "end": 21.3,
-  "text": "shows exactly where every analogy breaks,",
+  "start": 10.4,
+  "end": 15.3,
+  "text": "rock, sand, sunlight, even permits and local politics.",
   "words": [
    {
-    "w": "shows",
-    "start": 18.09,
-    "end": 18.48,
+    "w": "rock,",
+    "start": 10.8,
+    "end": 11.28,
     "aligned": true
    },
    {
-    "w": "exactly",
-    "start": 18.48,
-    "end": 19.14,
+    "w": "sand,",
+    "start": 11.37,
+    "end": 12.06,
     "aligned": true
    },
    {
-    "w": "where",
-    "start": 19.14,
-    "end": 19.38,
+    "w": "sunlight,",
+    "start": 12.12,
+    "end": 12.9,
     "aligned": true
    },
    {
-    "w": "every",
-    "start": 19.44,
-    "end": 19.83,
+    "w": "even",
+    "start": 13.08,
+    "end": 13.38,
     "aligned": true
    },
    {
-    "w": "analogy",
-    "start": 19.83,
-    "end": 20.37,
+    "w": "permits",
+    "start": 13.38,
+    "end": 13.92,
     "aligned": true
    },
-   {
-    "w": "breaks,",
-    "start": 20.37,
-    "end": 20.97,
-    "aligned": true
-   }
-  ]
- },
- {
-  "start": 21.3,
-  "end": 25.6,
-  "text": "and flags where access needs permits, or extra care.",
-  "words": [
    {
     "w": "and",
-    "start": 21.63,
-    "end": 21.78,
+    "start": 13.92,
+    "end": 14.07,
     "aligned": true
    },
    {
-    "w": "flags",
-    "start": 21.78,
-    "end": 22.26,
+    "w": "local",
+    "start": 14.07,
+    "end": 14.34,
     "aligned": true
    },
    {
-    "w": "where",
-    "start": 22.26,
-    "end": 22.44,
-    "aligned": false
-   },
+    "w": "politics.",
+    "start": 14.34,
+    "end": 15.09,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 15.3,
+  "end": 19.3,
+  "text": "Then, build a base on real Moon or Mars terrain,",
+  "words": [
    {
-    "w": "access",
-    "start": 22.44,
-    "end": 23.01,
+    "w": "Then,",
+    "start": 15.57,
+    "end": 16.05,
     "aligned": true
    },
    {
-    "w": "needs",
-    "start": 23.014,
-    "end": 23.28,
+    "w": "build",
+    "start": 16.17,
+    "end": 16.53,
     "aligned": true
    },
    {
-    "w": "permits,",
-    "start": 23.28,
-    "end": 23.94,
+    "w": "a",
+    "start": 16.53,
+    "end": 16.56,
+    "aligned": true
+   },
+   {
+    "w": "base",
+    "start": 16.56,
+    "end": 16.95,
+    "aligned": true
+   },
+   {
+    "w": "on",
+    "start": 16.95,
+    "end": 17.13,
+    "aligned": true
+   },
+   {
+    "w": "real",
+    "start": 17.13,
+    "end": 17.49,
+    "aligned": true
+   },
+   {
+    "w": "Moon",
+    "start": 17.49,
+    "end": 17.88,
     "aligned": true
    },
    {
     "w": "or",
-    "start": 24.0,
-    "end": 24.33,
+    "start": 17.88,
+    "end": 18.06,
     "aligned": true
    },
    {
-    "w": "extra",
-    "start": 24.33,
-    "end": 24.66,
+    "w": "Mars",
+    "start": 18.06,
+    "end": 18.42,
     "aligned": true
    },
    {
-    "w": "care.",
-    "start": 24.66,
-    "end": 25.11,
+    "w": "terrain,",
+    "start": 18.42,
+    "end": 18.96,
     "aligned": true
    }
   ]
  },
  {
-  "start": 25.6,
-  "end": 28.85,
-  "text": "Terra Vista. Down to Earth.",
+  "start": 19.3,
+  "end": 22.8,
+  "text": "and see where on Earth to rehearse every job,",
   "words": [
    {
-    "w": "Terra",
-    "start": 26.07,
-    "end": 26.46,
-    "aligned": false
+    "w": "and",
+    "start": 19.68,
+    "end": 19.89,
+    "aligned": true
    },
    {
-    "w": "Vista.",
-    "start": 26.46,
-    "end": 26.85,
-    "aligned": false
+    "w": "see",
+    "start": 19.89,
+    "end": 20.16,
+    "aligned": true
    },
    {
-    "w": "Down",
-    "start": 27.42,
-    "end": 27.78,
+    "w": "where",
+    "start": 20.16,
+    "end": 20.55,
+    "aligned": true
+   },
+   {
+    "w": "on",
+    "start": 20.55,
+    "end": 20.76,
+    "aligned": true
+   },
+   {
+    "w": "Earth",
+    "start": 20.79,
+    "end": 21.12,
     "aligned": true
    },
    {
     "w": "to",
-    "start": 27.78,
-    "end": 27.93,
+    "start": 21.15,
+    "end": 21.27,
+    "aligned": true
+   },
+   {
+    "w": "rehearse",
+    "start": 21.27,
+    "end": 21.75,
+    "aligned": true
+   },
+   {
+    "w": "every",
+    "start": 21.75,
+    "end": 22.11,
+    "aligned": true
+   },
+   {
+    "w": "job,",
+    "start": 22.11,
+    "end": 22.56,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 22.8,
+  "end": 26.2,
+  "text": "and exactly where the analogy breaks.",
+  "words": [
+   {
+    "w": "and",
+    "start": 23.16,
+    "end": 23.34,
+    "aligned": true
+   },
+   {
+    "w": "exactly",
+    "start": 23.34,
+    "end": 24.0,
+    "aligned": true
+   },
+   {
+    "w": "where",
+    "start": 24.0,
+    "end": 24.42,
+    "aligned": true
+   },
+   {
+    "w": "the",
+    "start": 24.42,
+    "end": 24.6,
+    "aligned": true
+   },
+   {
+    "w": "analogy",
+    "start": 24.6,
+    "end": 25.08,
+    "aligned": true
+   },
+   {
+    "w": "breaks.",
+    "start": 25.08,
+    "end": 25.65,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 26.2,
+  "end": 29.5,
+  "text": "Terra Vista. Down to Earth.",
+  "words": [
+   {
+    "w": "Terra",
+    "start": 26.7,
+    "end": 27.15,
+    "aligned": false
+   },
+   {
+    "w": "Vista.",
+    "start": 27.15,
+    "end": 27.6,
+    "aligned": false
+   },
+   {
+    "w": "Down",
+    "start": 28.14,
+    "end": 28.5,
+    "aligned": true
+   },
+   {
+    "w": "to",
+    "start": 28.5,
+    "end": 28.65,
     "aligned": true
    },
    {
     "w": "Earth.",
-    "start": 27.93,
-    "end": 28.35,
+    "start": 28.65,
+    "end": 29.07,
     "aligned": true
    }
   ]

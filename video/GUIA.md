@@ -3,8 +3,8 @@
 Léela entera antes de tocar nada. Contexto del proyecto en `CLAUDE.md`. Guion, planos y decisiones en `docs/guion-video.md` y `docs/normas.md` («Vídeo de demo: decisiones del equipo»).
 
 ## Qué es
-- Vídeo de **28,85 s** (v5, voz masculina `video/audio/male_voice.wav`; la v4 con `voice.wav` duraba 29,5 s), 1920×1080, 30 fps, H.264 + AAC (y copia WebM). Voz de ElevenLabs (la genera el usuario), subtítulos quemados palabra a palabra y marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
-- **La imagen sale de la web real que se entrega:** la del repo del equipo `zexuguo/SpaceApp-Logos`, publicada en **https://spaceapp-logos.vercel.app** (clon local: `/home/event/SpaceApps-v2`). **No escribas en ese repo.** Solo se abre la web pública.
+- Vídeo de **29,5 s** (v6, voz `video/audio/final-voice.wav`; planos y texto en `docs/guion-video.md`), 1920×1080, 30 fps, H.264 + AAC (y copia WebM). Voz de ElevenLabs (la genera el usuario), subtítulos quemados palabra a palabra y marca de agua `SI-assisted editing · SI voice: ElevenLabs`.
+- **La imagen sale de la web real que se entrega:** desde la v6, https://zenidx.github.io/logos-space-apps-2026/ (portada de misiones + `/base/`). Planos de `capture.cjs`: a (apertura → misiones), s (ficha de Haughton → permisos), b (*Plan a base* montándose), r (ensayo en la Tierra lado a lado → «Where it breaks»). Tiempos en este PC: a ≈ 4,5 min, s ≈ 2,5, b ≈ 2, r ≈ 6.
 - **Dónde se publica:** página oculta https://zenidx.github.io/logos-space-apps-2026/demo-video/ de ESTE repo (MP4 directo en `/demo/terravista-demo.mp4`).
 
 ## Reglas que no se negocian (las puso el usuario)
@@ -86,6 +86,8 @@ video/tools/node_modules/ffmpeg-static/ffmpeg -loglevel error -y -i video/build/
 ```
 
 ## Trampas ya resueltas (no las repitas)
+- **Páginas de `/base/` (v6):** se cargan con el reloj parado (`frozenLoad`) para que el montaje no empiece antes de grabar. El fundido de entrada de `src/app/template.tsx` (framer-motion) se queda en opacidad 0 con el reloj pausado: `frozenLoad` fuerza su estado final. El diálogo de ensayo no hace scroll porque cabe justo: se le añade relleno abajo para subir «Where it breaks» por encima de los subtítulos.
+- **Alineación:** si Vosk entiende mal un nombre al principio de una frase («terrible discourse» por «Terra Vista scores»), las palabras pueden quedar antes de lo que se dicen; se fijan a mano en `word-timings.json` al inicio de la voz medido con silencedetect.
 - **El PC del evento tiene 7,6 GB de RAM.** Se colgó con un ffmpeg de 64 entradas. Por eso los subtítulos van como UNA secuencia PNG. No montes con decenas de entradas.
 - **WebGL por software (SwiftShader):** en la carga hay que avanzar poco el reloj (`__pump`, `__pumpSkip`), o se acumulan fotogramas y la primera captura tarda minutos. Hay una captura de calentamiento con un timeout largo.
 - **Las animaciones CSS no siguen `requestAnimationFrame`.** `__syncCss` las pausa y les fija el tiempo desde el reloj virtual. Las que ya habían terminado se quedan terminadas.

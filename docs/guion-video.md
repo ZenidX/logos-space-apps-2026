@@ -1,4 +1,21 @@
-# Guion del vídeo de 30 s (v4)
+# Guion del vídeo de 30 s (v6)
+
+## v6 (15-11, tarde): vuelve a grabarse entero, con *Plan a base*
+
+La web cambió (la app de misiones se unió a este repo y apareció *Plan a base*), así que **todos los planos se graban de nuevo sobre https://zenidx.github.io/logos-space-apps-2026/** (la de Vercel no tiene *Plan a base*). Equilibrio pedido por el usuario: lo principal es el emparejamiento (puntuar la Tierra condición a condición para cada misión, con permisos y política), y la base va como extensión. Voz: `video/audio/final-voice.wav` (29,59 s; habla hasta el s 29,07); el vídeo se corta a **29,5 s**. El texto lo cambió el usuario al grabar; los subtítulos siguen lo que dice la voz (incluido «bound for *the* outer space»).
+
+| Tiempo | Voz | Imagen (plano de `capture.cjs`) | Criterio |
+|---|---|---|---|
+| 0–5,1 | *Everything bound for the outer space is tested on Earth first. But… where?* | **a**: plano de apertura de la portada (el Sol sale tras la Tierra) | Impact |
+| 5,1–10,5 | *Terra Vista scores all of Earth against each mission, with open NASA data:* | **a**: misión 1 (Luna, Mons Mouton) y misión 3 (Marte, Arcadia), con sus sitios en la Tierra | Relevance |
+| 10,5–15,3 | *rock, sand, sunlight, even permits and local politics.* | **s**: ficha de Haughton (índice, condiciones, «Permits and politics») → pestaña How: complejidad de acceso con la licencia de Nunavut | Validity, Impact |
+| 15,3–19,4 | *Then, build a base on real Moon or Mars terrain,* | **b**: *Plan a base*, Best site A (polo sur lunar): la base se monta en 6 pasos sobre LOLA | Creativity |
+| 19,4–26,3 | *and see where on Earth to rehearse every job, and exactly where the analogy breaks.* | **r**: Water & oxygen, la misma base en Badakhshan (Afganistán) y en la Luna, lado a lado → «Where it breaks» | Impact, Validity |
+| 26,3–29,5 | *Terra Vista. Down to Earth.* | Cierre | Presentation |
+
+---
+
+## Versiones anteriores (v4/v5)
 
 Requisitos: ver `docs/normas.md` → «Vídeo de demo: decisiones del equipo». La voz es de ElevenLabs (la genera el equipo). La imagen es solo la web real del equipo, animada, sin metraje de archivo ni logos de NASA.
 

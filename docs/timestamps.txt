@@ -1,11 +1,13 @@
-[0, 5.9]: Everything we send to the Moon or Mars gets tested on Earth first. But… where?
+[0, 5.0]: Everything bound for the outer space is tested on Earth first. But… where?
 
-[5.9, 12.3]: Terra Vista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.
+[5.0, 10.4]: Terra Vista scores all of Earth against each mission, with open NASA data:
 
-[12.3, 17.7]: Testing a spacesuit? An ice drill? It weighs what matters for that mission,
+[10.4, 15.3]: rock, sand, sunlight, even permits and local politics.
 
-[17.7, 21.3]: shows exactly where every analogy breaks,
+[15.3, 19.3]: Then, build a base on real Moon or Mars terrain,
 
-[21.3, 25.6]: and flags where access needs permits, or extra care.
+[19.3, 22.8]: and see where on Earth to rehearse every job,
 
-[25.6, 28.85]: Terra Vista. Down to Earth.
+[22.8, 26.2]: and exactly where the analogy breaks.
+
+[26.2, 29.5]: Terra Vista. Down to Earth.

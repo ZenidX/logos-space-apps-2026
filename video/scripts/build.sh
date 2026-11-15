@@ -7,22 +7,23 @@ cd "$(dirname "$0")/.."
 FF=tools/node_modules/ffmpeg-static/ffmpeg
 B=build; O=$B/overlays; F=$B/frames
 NAME=${1:-terravista-demo}
-DUR=${DUR:-28.85}  # the male voice is 28.85 s; the rules say 30 s or less
+DUR=${DUR:-29.5}  # final-voice.wav is 29.59 s, speech ends 29.07; the rules say 30 s or less
 CAP_Y=905         # vertical centre of the captions
 N="scale=1920:1080,setsar=1,fps=30,format=yuv420p"
 
-# Timeline (docs/timestamps.txt), all real screens of the team's app (capture.cjs):
-# a 0–18 (story) · b 18–21.6 (where it breaks, first 108 of 120 frames) · c1 21.6–24.0 (permit) · c2 24.0–25.6 (access High) · end card 25.6–$DUR
-END=$(node -e "console.log(($DUR-25.6).toFixed(2))")
+# Timeline (docs/timestamps.txt), all real screens of the team's app at zenidx.github.io (capture.cjs):
+# a 0–10.5 (opening → missions) · s 10.5–15.3 (site card, permits and politics) · b 15.3–19.4 (Plan a base)
+# · r 19.4–26.3 (rehearse on Earth → where it breaks) · end card 26.3–$DUR
+END=$(node -e "console.log(($DUR-26.3).toFixed(2))")
 in=(
   -framerate 30 -i $F/a/%04d.jpg
+  -framerate 30 -i $F/s/%04d.jpg
   -framerate 30 -i $F/b/%04d.jpg
-  -framerate 30 -i $F/c1/%04d.jpg
-  -framerate 30 -i $F/c2/%04d.jpg
+  -framerate 30 -i $F/r/%04d.jpg
   -loop 1 -framerate 30 -t $END -i $O/end.png
   -i $O/watermark.png
 )
-fc="[0:v]$N[a];[1:v]trim=end_frame=108,setpts=PTS-STARTPTS,$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N,fade=in:st=0:d=0.4[e];"
+fc="[0:v]$N[a];[1:v]$N[b];[2:v]$N[c];[3:v]$N[d];[4:v]$N,fade=in:st=0:d=0.4[e];"
 fc+="[a][b][c][d][e]concat=n=5:v=1:a=0[v0];[v0][5:v]overlay=0:0[w0];"
 
 # Captions, word by word: one transparent PNG sequence rendered by captions.cjs (1920x240 strip), centred on CAP_Y
