@@ -2,6 +2,16 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 19) · Recorrido completo: volver atrás, enlace misión → base y botones más grandes
+
+- Pedido de zexu: seguir con la experiencia de usuario del recorrido completo, añadir un botón para volver a la página anterior y agrandar los botones.
+- **«Plan a base» guarda su estado en la URL** (`?b=moon&lat=..&lon=..&n=..&s=water&pick=1`). Así el «atrás» del navegador va paso a paso (submisión → sitio → globo → página anterior) y se puede enlazar a un sitio concreto.
+- **Botón «← Back»** (`src/components/BackButton.tsx`): en la barra de las páginas del equipo y en la cabecera de la portada cuando hay una misión o un sitio abiertos. Usa el historial y, si no hay, vuelve a la portada (en la portada, deshace el paso: sitio → lista → inicio).
+- **Enlace misión → base:** en el panel de cada misión, «Plan a base at {objetivo} →» abre la base en las coordenadas del objetivo (p. ej. Mons Mouton).
+- **Botones más grandes:** píldoras de 44 a 48 px, chips de 36 a 42 px (Logos: 40 px) y los botones de la escena a 42 px.
+- **En móvil:** etiquetas cortas en la barra (Missions · Base · More), chips algo más estrechos por debajo de 420 px, «Terra Vista» oculto cuando está el botón de volver, y márgenes ajustados a la barra más alta.
+- **Comprobado en Chromium:** misión → «Plan a base at Mons Mouton» → abrir submisión → Back (se cierra) → Change site → Back (vuelve a la base) → Back (vuelve a la misión). Capturas a 1366 y 390 px, sin errores.
+
 ## 2026-11-15 (tarde, 18) · Experiencia de usuario: «Plan a base» como espacio de trabajo
 
 - Pedido de zexu: mejorar mucho la experiencia de usuario. Problemas de «Plan a base»:

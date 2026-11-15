@@ -7,6 +7,7 @@
 import { asset } from "@/lib/logos/asset";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SceneMarker } from "@/components/logos/SolarScene";
 import SitePanel, { AccessBars } from "@/components/logos/SitePanel";
@@ -199,7 +200,10 @@ export default function Home() {
     <main className="stars relative min-h-dvh overflow-x-clip">
       {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
       <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
-        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />Terra Vista <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
+        <div className="pointer-events-auto flex shrink-0 items-center gap-2" data-scene-avoid>
+        {missionId && <BackButton className="chip gap-1.5 hover:border-[var(--ink)]" onNoHistory={() => (sel ? setSel(null) : home())} />}
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 whitespace-nowrap text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} /><span className={missionId ? "hidden sm:inline" : ""}>Terra Vista</span> <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
+        </div>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <Link href="/base/" className={`chip transition-[opacity,visibility,border-color] duration-500 hover:border-[var(--ink)] ${calm ? "invisible opacity-0" : ""}`}>Plan a base <span aria-hidden>→</span></Link>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
@@ -351,6 +355,13 @@ export default function Home() {
               <h2 className="display mt-1 text-[30px] leading-[1]">{shown.short}</h2>
               <p className="mt-1 text-[13.5px] text-[var(--mut)]">{shown.blurb}</p>
               <p className="mt-2 border-l-2 pl-3 text-[12.5px]" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}>{shown.keyLimit}</p>
+              {/* Puente a la otra mitad de la web: la base en el objetivo de esta misión */}
+              <Link
+                href={`/base/?b=${t.body}&lat=${t.lat}&lon=${t.lon}&n=${encodeURIComponent(t.name.split(" (")[0])}`}
+                className="chip mt-3 inline-flex hover:border-[var(--ink)]"
+              >
+                Plan a base at {t.name.split(" (")[0]} <span aria-hidden>→</span>
+              </Link>
 
               <p className="mt-3 text-[12.5px] leading-snug text-[var(--mut)]"><span className="label mr-1.5">Hardware rehearsed</span>
                 {HARDWARE[shown.id].map((h, i) => <span key={h.text}>{i > 0 && " · "}<a href={h.url} target="_blank" rel="noopener noreferrer" title={`${h.text} (${h.by})`} className="text-[var(--ink)] underline decoration-[var(--line2)] underline-offset-2 hover:decoration-[var(--ink)]">{h.short}</a></span>)}

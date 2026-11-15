@@ -112,16 +112,16 @@ export default function MissionCompare({ sub, site, sites = [], onSite, base, on
         <div className="flex shrink-0 items-center gap-2">
           {sites.length > 1 && (
             <>
-              <button type="button" className="glass-tab text-[14px]" onClick={() => go(-1)} aria-label="Previous Earth site">‹</button>
+              <button type="button" className="glass-tab text-[15.5px]" onClick={() => go(-1)} aria-label="Previous Earth site">‹</button>
               <span className="font-mono text-[11px] text-[var(--mut)]">{idx + 1} / {sites.length}</span>
-              <button type="button" className="glass-tab text-[14px]" onClick={() => go(1)} aria-label="Next Earth site">›</button>
+              <button type="button" className="glass-tab text-[15.5px]" onClick={() => go(1)} aria-label="Next Earth site">›</button>
             </>
           )}
-          <button type="button" className="glass-tab text-[14px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>Real scale</button>
+          <button type="button" className="glass-tab text-[15.5px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>Real scale</button>
         <button
           ref={closeBtn}
           onClick={onClose}
-          className="glass-tab shrink-0 text-[14px]"
+          className="glass-tab shrink-0 text-[15.5px]"
         >
           Close <span aria-hidden>✕</span>
         </button>

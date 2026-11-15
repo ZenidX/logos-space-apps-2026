@@ -224,7 +224,7 @@ function EarthSim({ sub, siteSig, onCompare }: { sub: SubMission; siteSig: Shape
               <button
                 type="button"
                 onClick={() => onCompare(s, ranked)}
-                className="glass-tab text-[14px]"
+                className="glass-tab text-[15.5px]"
               >
                 Rehearse <span aria-hidden>▶</span>
                 <span className="sr-only"> {sub.name} at {s.place}, side by side with the base site</span>
@@ -271,12 +271,33 @@ export default function BasePlanner() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const timer = useRef(0);
 
-  const choose = useCallback((s: Site) => {
-    setSite(s);
-    setForm({ lat: s.lat.toFixed(3), lon: s.lon.toFixed(3) });
-    setShowGlobe(false);
-    setViewOpen(false);
+  // Estado en la URL (?b=moon&lat=..&lon=..&n=..&s=sub&pick=1): «atrás» del navegador paso a paso y enlaces directos
+  // (la portada de misiones enlaza aquí con el objetivo de cada misión).
+  const bodyRef = useRef<PlanetBody>("moon");
+  const pendingSub = useRef<string | null>(null);
+  const pushURL = useCallback((q: { b: PlanetBody; site?: Site | null; s?: string | null; pick?: boolean }) => {
+    const u = new URLSearchParams();
+    u.set("b", q.b);
+    if (q.site) {
+      u.set("lat", String(+q.site.lat.toFixed(4)));
+      u.set("lon", String(+q.site.lon.toFixed(4)));
+      u.set("n", q.site.name);
+    }
+    if (q.s) u.set("s", q.s);
+    if (q.pick) u.set("pick", "1");
+    const url = `${window.location.pathname}?${u.toString()}`;
+    if (url !== window.location.pathname + window.location.search) window.history.pushState(null, "", url);
   }, []);
+  const choose = useCallback(
+    (s: Site) => {
+      setSite(s);
+      setForm({ lat: s.lat.toFixed(3), lon: s.lon.toFixed(3) });
+      setShowGlobe(false);
+      setViewOpen(false);
+      pushURL({ b: bodyRef.current, site: s });
+    },
+    [pushURL],
+  );
 
   // Cargar terreno + planificar
   useEffect(() => {
@@ -289,9 +310,12 @@ export default function BasePlanner() {
         const plan = planBase(terrain, body, site.lat, site.lon);
         setData({ terrain, plan, key: `${body}:${site.lat}:${site.lon}` });
         setStatus("");
-        setStep(0);
+        // con una submisión en la URL, la base aparece ya montada y centrada en ella
+        const want = pendingSub.current;
+        pendingSub.current = null;
+        setStep(want ? STEP_DONE : 0);
         setStepKey((k) => k + 1);
-        setSubId(null);
+        setSubId(want);
         setImagery("");
         // Sol: en el polo lunar, la altura máxima real (rasante); fuera, media mañana para ver el relieve.
         const max = Math.min(90, 90 - Math.abs(site.lat) + (body === "moon" ? 1.54 : 25.19));
@@ -316,6 +340,32 @@ export default function BasePlanner() {
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
+  useEffect(() => {
+    const apply = () => {
+      const q = new URLSearchParams(window.location.search);
+      const b: PlanetBody = q.get("b") === "mars" ? "mars" : "moon";
+      const lat = Number(q.get("lat")), lon = Number(q.get("lon"));
+      const has = q.has("lat") && q.has("lon") && Number.isFinite(lat) && Number.isFinite(lon);
+      bodyRef.current = b;
+      setBody(b);
+      if (has) {
+        setSite((cur) => (cur && cur.lat === lat && cur.lon === lon ? cur : { lat, lon, name: q.get("n") || coord(lat, lon) }));
+        setForm({ lat: lat.toFixed(3), lon: lon.toFixed(3) });
+      } else {
+        setSite(null);
+        setData(null);
+        setStatus("");
+      }
+      setShowGlobe(!has || q.get("pick") === "1");
+      const s = q.get("s");
+      pendingSub.current = s;
+      setSubId(s);
+    };
+    apply();
+    window.addEventListener("popstate", apply);
+    return () => window.removeEventListener("popstate", apply);
+  }, []);
+
   // Montaje automático: un paso tras otro hasta que la base queda en marcha
   const onStepEnd = useCallback((s: number) => {
     if (s >= STEP_DONE) return;
@@ -335,13 +385,22 @@ export default function BasePlanner() {
   const sub = subs.find((s) => s.id === subId) ?? subs.find((s) => s.tasks.length) ?? null;
   const running = step >= STEP_DONE;
 
-  const pickSub = (id: string) => {
+  const pickSub = (id: string, push = true) => {
     window.clearTimeout(timer.current);
     if (!running) {
       setStep(STEP_DONE);
       setStepKey((k) => k + 1);
     }
     setSubId(id);
+    if (push) pushURL({ b: body, site, s: id });
+  };
+  const closeSub = () => {
+    setSubId(null);
+    pushURL({ b: body, site });
+  };
+  const openGlobe = (v: boolean) => {
+    setShowGlobe(v);
+    pushURL({ b: body, site, pick: v });
   };
 
   const compare = (s: EarthSite, ranked: EarthSite[]) => setRehearse({ site: s, list: ranked });
@@ -355,8 +414,10 @@ export default function BasePlanner() {
     [body, site],
   );
 
-  const switchBody = (b: PlanetBody) => {
+  const switchBody = (b: PlanetBody, push = true) => {
     if (b === body) return;
+    bodyRef.current = b;
+    if (push) pushURL({ b });
     setBody(b);
     setSite(null);
     setData(null);
@@ -378,9 +439,9 @@ export default function BasePlanner() {
   const primary = "inline-flex min-h-[var(--tap)] items-center rounded-full bg-[var(--ink)] px-5 text-[14px] font-semibold text-[var(--bg)] hover:bg-white";
 
   return (
-    <div className="pt-[3.75rem] md:grid md:h-dvh md:grid-cols-[minmax(0,1fr)_minmax(360px,440px)] md:gap-4 md:px-4 md:pb-4 md:pt-[4.25rem]">
+    <div className="pt-[4.25rem] md:grid md:h-dvh md:grid-cols-[minmax(0,1fr)_minmax(360px,440px)] md:gap-4 md:px-4 md:pb-4 md:pt-[5rem]">
       {/* Escena: el globo para elegir sitio; después, la base sobre su terreno real. Fija mientras se lee el panel. */}
-      <section ref={sceneRef} aria-label="3D view" className="sticky top-[3.6rem] z-20 h-[44dvh] bg-[var(--bg)] px-3 pb-2 md:static md:h-full md:bg-transparent md:px-0 md:pb-0">
+      <section ref={sceneRef} aria-label="3D view" className="sticky top-[4rem] z-20 h-[44dvh] bg-[var(--bg)] px-3 pb-2 md:static md:h-full md:bg-transparent md:px-0 md:pb-0">
         <div className="relative h-full">
           <Visor
             className={`h-full ${showGlobe || !data ? "globo" : ""}`}
@@ -431,17 +492,17 @@ export default function BasePlanner() {
             <div className="pointer-events-none absolute inset-x-2 bottom-2 z-[700] flex items-end justify-between gap-2 md:inset-x-3 md:bottom-3">
               <div className="pointer-events-auto flex min-w-0 gap-1.5 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="Ground layer">
                 {(["relief", "photo", "slope", "sun", ...(plan?.ice ? (["ice"] as Layer[]) : [])] as Layer[]).map((l) => (
-                  <button key={l} type="button" className="glass-tab !min-h-[34px] shrink-0 !px-3 text-[13px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
+                  <button key={l} type="button" className="glass-tab !min-h-[42px] shrink-0 !px-4 text-[15px]" aria-pressed={layer === l} onClick={() => setLayer(l)}>
                     {LAYER_NAME[l]}
                   </button>
                 ))}
               </div>
               <div className="pointer-events-auto flex shrink-0 gap-1.5">
-                <button type="button" className="glass-tab !min-h-[34px] !px-3 text-[13px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>
+                <button type="button" className="glass-tab !min-h-[42px] !px-4 text-[15px]" aria-pressed={realScale} onClick={() => setRealScale((v) => !v)}>
                   <span className="md:hidden">1:1</span>
                   <span className="hidden md:inline">Real scale</span>
                 </button>
-                <button type="button" className="glass-tab !min-h-[34px] !px-3 text-[13px]" aria-expanded={viewOpen} onClick={() => setViewOpen((v) => !v)}>
+                <button type="button" className="glass-tab !min-h-[42px] !px-4 text-[15px]" aria-expanded={viewOpen} onClick={() => setViewOpen((v) => !v)}>
                   View ▾
                 </button>
               </div>
@@ -482,10 +543,10 @@ export default function BasePlanner() {
             <p className="mt-1 text-sm text-[var(--mut)]">Pick a site, watch the base run on its real terrain, then see where on Earth to rehearse each job.</p>
           </div>
           <div className="flex shrink-0 gap-1.5" role="group" aria-label="World">
-            <button type="button" className="glass-tab !min-h-[36px] text-[14px]" aria-pressed={body === "moon"} onClick={() => switchBody("moon")}>
+            <button type="button" className="glass-tab !min-h-[44px] text-[15.5px]" aria-pressed={body === "moon"} onClick={() => switchBody("moon")}>
               Moon
             </button>
-            <button type="button" className="glass-tab !min-h-[36px] text-[14px]" aria-pressed={body === "mars"} onClick={() => switchBody("mars")}>
+            <button type="button" className="glass-tab !min-h-[44px] text-[15.5px]" aria-pressed={body === "mars"} onClick={() => switchBody("mars")}>
               Mars
             </button>
           </div>
@@ -497,7 +558,7 @@ export default function BasePlanner() {
             <div className="flex items-center justify-between">
               <h2 id="pick-h" className="text-lg font-semibold">1 · Choose a site</h2>
               {data && site && (
-                <button type="button" className="glass-chip !min-h-[32px] text-[13px]" onClick={() => setShowGlobe(false)}>
+                <button type="button" className="glass-chip !min-h-[42px] text-[15px]" onClick={() => openGlobe(false)}>
                   Back to {site.name.replace(/^★ /, "").replace(/ · .*/, "")}
                 </button>
               )}
@@ -552,7 +613,7 @@ export default function BasePlanner() {
                   <h2 id="site-h" className="mt-1 text-[18px] font-semibold leading-snug">{site.name.replace(/^★ /, "")}</h2>
                   <p className="font-mono text-[12px] text-[var(--dim)]">{coord(site.lat, site.lon)} · {body === "moon" ? "Moon" : "Mars"}</p>
                 </div>
-                <button type="button" className="glass-chip !min-h-[34px] shrink-0 text-[13px]" onClick={() => setShowGlobe(true)}>
+                <button type="button" className="glass-chip !min-h-[42px] shrink-0 text-[15px]" onClick={() => openGlobe(true)}>
                   Change site
                 </button>
               </div>
@@ -588,7 +649,7 @@ export default function BasePlanner() {
                         <button
                           type="button"
                           aria-expanded={open}
-                          onClick={() => (open ? setSubId(null) : pickSub(s.id))}
+                          onClick={() => (open ? closeSub() : pickSub(s.id))}
                           className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
                         >
                           <span className="min-w-0">

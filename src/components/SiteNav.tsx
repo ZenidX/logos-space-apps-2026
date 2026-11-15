@@ -5,11 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { asset } from "@/lib/logos/asset";
+import BackButton from "@/components/BackButton";
 
 export const PAGES = [
-  { href: "/", label: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
-  { href: "/base/", label: "Plan a base" },
-  { href: "/appendix/", label: "Appendix" }, // prototipo anterior: Story, Discover, 3D, Method, Data
+  { href: "/", label: "Missions", short: "Missions" }, // portada: la app de misiones (antes SpaceApp-Logos), con su propio layout
+  { href: "/base/", label: "Plan a base", short: "Base" },
+  { href: "/appendix/", label: "Appendix", short: "More" }, // prototipo anterior: Story, Discover, 3D, Method, Data
 ] as const;
 
 const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
@@ -19,11 +20,14 @@ export default function SiteNav() {
   return (
     <header className="fixed inset-x-0 top-0 z-[1000] bg-[var(--bg)] pb-2 md:bg-[linear-gradient(rgba(4,6,12,.92),rgba(4,6,12,.55)_70%,transparent)] md:pb-3">
       <nav aria-label="Pages" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-3 md:px-5">
+        <div className="flex shrink-0 items-center gap-2">
+        <BackButton className="glass-tab !min-h-[40px] gap-1.5 !px-3 text-[14px] md:!min-h-[44px] md:!px-4 md:text-[15px]" />
         {/* Igual que la cabecera de la portada (Logos): símbolo + «Terra Vista» */}
         <Link href="/" className="flex shrink-0 items-center gap-2 text-[16px] font-semibold" aria-label="Terra Vista, home">
           <span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />
           <span className="hidden sm:inline">Terra Vista</span>
         </Link>
+        </div>
         <ul className="-mr-1 flex items-center gap-1 overflow-x-auto py-1 [scrollbar-width:none]">
           {PAGES.map((p) => {
             const on = p.href === "/appendix/" ? path.startsWith("/appendix/") : path === norm(p.href);
@@ -32,9 +36,10 @@ export default function SiteNav() {
                 <Link
                   href={p.href}
                   aria-current={on ? "page" : undefined}
-                  className={`glass-tab !min-h-[36px] !px-3.5 text-[13.5px] ${on ? "" : "text-[var(--ink)]"}`}
+                  className={`glass-tab !min-h-[40px] !px-3 text-[14px] md:!min-h-[44px] md:!px-4 md:text-[15px] ${on ? "" : "text-[var(--ink)]"}`}
                 >
-                  {p.label}
+                  <span className="md:hidden">{p.short}</span>
+                  <span className="hidden md:inline">{p.label}</span>
                 </Link>
               </li>
             );
