@@ -2,6 +2,30 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 14) · Hielo lunar investigado y simulado con temperatura
+
+- Investigación con fuentes en `docs/hielo-lunar.md`:
+  - Trampas frías por debajo de ~110 K (Hayne et al. 2021; Schörghofer 2025): ~40 000 km², 60 % en el sur, casi todas por encima de 80°.
+  - Diviner: 40–90 K en los grandes cráteres y permafrost lunar alrededor (Paige et al. 2010).
+  - LCROSS: 5,6 ± 2,9 % de agua en masa en Cabeus.
+  - M³: hielo en superficie irregular (Li et al. 2018).
+  - Origen: cometas y viento solar.
+  - Extracción térmica (NASA LuSTR).
+- `iceModel()` en `src/lib/base-plan.ts`:
+  - Temperatura máxima y media por equilibrio radiativo, a partir de la luz calculada.
+  - En sombra permanente: calor interno más reflejo de las paredes iluminadas, con un factor calibrado a Diviner.
+  - Clases: trampa fría en superficie (máxima < 110 K), hielo enterrado posible (media < 110 K) o ninguno.
+- **Extracción:**
+  - La planta va en el borde con más sol y la excavadora en la trampa fría más cercana.
+  - El rover acarrea el regolito helado entre las dos.
+  - El veredicto da las cifras: 1 t de regolito ≈ 56 kg de agua (27–85 kg) con LCROSS.
+- **Validación con terreno real:**
+  - Mediodía en Tranquility: 385–387 K (lo real, unos 390 K).
+  - Trampas frías de la cresta de Shackleton y de Mons Mouton: 58–70 K (Diviner: 40–90).
+  - Fondo de Shackleton: 25 K. Es bajo porque las paredes iluminadas quedan fuera de la zona de 11 km.
+- Condiciones nuevas: «Coldest ground», «Ice at the surface» y «Buried ice possible».
+- `src/lib/base-models.ts` (en curso): modelos en metros reales para sustituir las piezas simples.
+
 ## 2026-11-15 (tarde, 13) · Base: luz y sombra reales (paneles por orientación, hielo lunar solo en sombra permanente)
 
 - Pedido de zexu: que la simulación no sea solo topográfica; que cuenten la orientación para los paneles solares y cosas básicas como el hielo de la Luna.

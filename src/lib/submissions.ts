@@ -68,18 +68,18 @@ export function subMissions(p: BasePlan, g: HeightGrid): SubMission[] {
     name: "Water & oxygen",
     cadence: "Daily: mining, melting, splitting",
     needs: moon
-      ? "Water ice survives on the Moon only where the Sun never shines: permanently shadowed polar ground. Everywhere else there is none."
+      ? "Water ice lasts on the Moon only where the ground stays below ~110 K: polar cold traps the Sun never reaches, or buried under cold ground. It is mixed into the soil (a few % by mass), not sheets of ice."
       : "Shallow ground ice (mostly poleward of ~35°), or else the CO₂ air for oxygen.",
     level: ice ? (p.isru.kind === "ice-shadow" ? "limited" : "good") : "hard",
     verdict:
-      p.isru.kind === "ice-shadow"
-        ? `${p.sun.psrPct.toFixed(1)} % of this patch never sees the Sun (computed from the relief): ice can last there. Nearest spot ${km(dist(p.isru.spot, p.habitat))} away, in the deep cold.`
+      p.isru.kind === "ice-shadow" && p.ice
+        ? `${p.iceClass === 2 ? `Surface cold trap: the dig site never gets above ${Math.round(p.ice.tmax[p.isru.spot.r * g.n + p.isru.spot.c])} K (ice lasts below 110 K)` : "No surface cold trap here, but ice can survive buried under cold ground"}; ${p.ice.surfPct.toFixed(1)} % of the patch at the surface, ${p.ice.buriedPct.toFixed(1)} % buried. The rover hauls icy soil ${km(p.routeLenM)} up to a plant on sunlit ground (${pct(p.plant ? p.sun.lit[p.plant.r * g.n + p.plant.c] : 0)} sun). At LCROSS's 5.6 ± 2.9 % water by mass, each tonne gives ~56 kg of water (27–85 kg).`
         : p.isru.kind === "ice-ground"
           ? `Ice likely within metres at ${Math.abs(p.lat).toFixed(0)}° latitude; drill ${km(dist(p.isru.spot, p.habitat))} from the habitat.`
           : p.noIce === "no-psr"
-            ? "No ground in this patch stays dark all year, so no ice: oxygen from regolith, water brought from a shadowed crater or from Earth."
+            ? "No ground in this patch stays cold enough (below 110 K), so no ice: oxygen from regolith, water brought from a cold trap or from Earth."
             : moon
-              ? "No ice: away from the poles every point gets two weeks of sunlight a month. Oxygen from regolith, water shipped in."
+              ? "No ice: away from the poles the ground reaches ~390 K at noon. Oxygen from regolith, water shipped in."
               : "No shallow ice expected here: oxygen from the CO₂ air, water is the hard part.",
     tasks: ice ? (p.isru.kind === "ice-shadow" ? ["permafrost_drill", "cold_trap"] : ["permafrost_drill"]) : moon ? ["regolith_build"] : [],
     focus: "isru",

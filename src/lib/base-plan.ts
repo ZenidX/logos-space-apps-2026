@@ -20,6 +20,18 @@ export interface SunMap {
   psr: Uint8Array; // 1 = sombra permanente: ningún Sol del modelo llega nunca (trampa fría posible)
   psrPct: number;
   litMean: number;
+  maxDot: Float32Array; // insolación directa más fuerte que recibe el suelo (coseno de incidencia), 0–1
+}
+
+// Temperatura e hielo (ver docs/hielo-lunar.md). Clases: 2 = trampa fría en superficie (máx. < 110 K),
+// 1 = hielo enterrado posible (media < 110 K), 0 = ninguno.
+export interface IceMap {
+  tmax: Float32Array;
+  tmean: Float32Array;
+  cls: Uint8Array;
+  surfPct: number;
+  buriedPct: number;
+  coldestK: number;
 }
 
 export interface Spot {
@@ -62,6 +74,9 @@ export interface BasePlan {
   evaRadiusM: number;
   polar: boolean;
   sun: SunMap;
+  ice: IceMap | null; // solo Luna
+  iceClass: 0 | 1 | 2; // dónde se excava: 2 = trampa fría en superficie, 1 = hielo enterrado
+  plant: Spot | null; // planta de extracción en el borde iluminado (si hay hielo)
   habitatLit: number; // fracción del tiempo con sol en el hábitat
   powerLit: number; // la mejor fracción de luz entre las piezas solares
   noIce: "" | "no-psr" | "not-polar"; // Luna sin hielo: por qué
@@ -178,7 +193,7 @@ export function sunlight(g: HeightGrid, lat: number, tiltDeg: number, radiusM: n
       gE[r * n + c] = gx * cn - gy * sn;
       gN[r * n + c] = gx * sn + gy * cn;
     }
-  const lit = new Float32Array(N), irr = new Float32Array(N), seen = new Uint8Array(N);
+  const lit = new Float32Array(N), irr = new Float32Array(N), seen = new Uint8Array(N), maxDot = new Float32Array(N);
   const phi = (lat * Math.PI) / 180;
   const decl = [-1, -0.5, 0, 0.5, 1].map((f) => (f * tiltDeg * Math.PI) / 180);
   let total = 0;
@@ -201,7 +216,10 @@ export function sunlight(g: HeightGrid, lat: number, tiltDeg: number, radiusM: n
         seen[i] = 1;
         const nx = -gE[i], ny = -gN[i];
         const dot = (nx * sE + ny * sN + sU) / Math.hypot(nx, ny, 1);
-        if (dot > 0) irr[i] += dot;
+        if (dot > 0) {
+          irr[i] += dot;
+          if (dot > maxDot[i]) maxDot[i] = dot;
+        }
       }
     }
   let psrCnt = 0, litSum = 0;
@@ -215,7 +233,38 @@ export function sunlight(g: HeightGrid, lat: number, tiltDeg: number, radiusM: n
       psrCnt++;
     }
   }
-  return { lit, irr, psr, psrPct: (100 * psrCnt) / N, litMean: litSum / N };
+  return { lit, irr, psr, psrPct: (100 * psrCnt) / N, litMean: litSum / N, maxDot };
+}
+
+// Temperatura por equilibrio radiativo (albedo 0,12, emisividad 0,95) e hielo estable por debajo de 110 K.
+// Sombra permanente: calor interno (~0,02 W/m²) + luz y calor reflejados por el terreno iluminado cercano (radio ~700 m),
+// con un factor CALIBRADO (0,006) para que el fondo de los grandes cráteres dé 40–90 K como mide Diviner (Paige et al. 2010).
+export const ICE_K = 110;
+export function iceModel(sun: SunMap, n: number, cellM: number, solarWm2: number): IceMap {
+  const N = n * n;
+  const k = 0.95 * 5.670e-8;
+  const absorbed = (1 - 0.12) * solarWm2;
+  const fGeo = 0.02;
+  // flujo medio que reciben los vecinos (para el reflejo / calor de paredes): media en ventana
+  const R = Math.max(1, Math.round(700 / cellM));
+  const pre = new Float64Array((n + 1) * (n + 1));
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) pre[(r + 1) * (n + 1) + c + 1] = absorbed * sun.maxDot[r * n + c] + pre[r * (n + 1) + c + 1] + pre[(r + 1) * (n + 1) + c] - pre[r * (n + 1) + c];
+  const tmax = new Float32Array(N), tmean = new Float32Array(N), cls = new Uint8Array(N);
+  let surf = 0, buried = 0, coldest = Infinity;
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) {
+      const r0 = Math.max(0, r - R), r1 = Math.min(n, r + R + 1), c0 = Math.max(0, c - R), c1 = Math.min(n, c + R + 1);
+      const sumN = pre[r1 * (n + 1) + c1] - pre[r0 * (n + 1) + c1] - pre[r1 * (n + 1) + c0] + pre[r0 * (n + 1) + c0];
+      const fSec = 0.006 * (sumN / ((r1 - r0) * (c1 - c0)));
+      const i = r * n + c;
+      tmax[i] = Math.pow((absorbed * sun.maxDot[i] + fGeo + fSec) / k, 0.25);
+      tmean[i] = Math.pow((absorbed * sun.irr[i] + fGeo + fSec) / k, 0.25);
+      if (tmax[i] < ICE_K) { cls[i] = 2; surf++; }
+      else if (tmean[i] < ICE_K) { cls[i] = 1; buried++; }
+      if (tmax[i] < coldest) coldest = tmax[i];
+    }
+  return { tmax, tmean, cls, surfPct: (100 * surf) / N, buriedPct: (100 * buried) / N, coldestK: coldest };
 }
 
 export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: number, opt: PlanOptions = {}): BasePlan {
@@ -226,6 +275,7 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
   const polar = Math.abs(lat) >= RULES.polarLat;
   const sun = sunlight(g, opt.sunLat ?? lat, opt.tiltDeg ?? BODY[body].tilt, opt.radiusM ?? BODY[body].radius);
   const L = sun.lit;
+  const ice = body === "moon" && opt.sunLat === undefined ? iceModel(sun, n, cellM, 1361) : null;
 
   let minH = Infinity, maxH = -Infinity, sum = 0, flatCnt = 0;
   for (let i = 0; i < n * n; i++) {
@@ -318,22 +368,29 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
   }
 
   // 4. Recursos (ISRU).
-  // Luna: hielo SOLO en suelo que nunca ve el Sol (sombra permanente calculada). Si no hay, no hay hielo aquí.
+  // Luna: hielo SOLO donde el modelo térmico lo permite: trampa fría en superficie (< 110 K) o, si no hay,
+  // hielo enterrado bajo suelo que de media sigue por debajo de 110 K. Si no hay ninguna de las dos, no hay hielo.
   let isru: BasePlan["isru"];
   let noIce: BasePlan["noIce"] = "";
+  let iceClass: 0 | 1 | 2 = 0;
+  let plant: Spot | null = null;
   const wantKind = opt.isruKind;
-  const psrIn = (r: number, c: number) => sun.psr[r * n + c] === 1;
-  const anyPsr = (() => {
-    for (let r = margin; r < n - margin; r++) for (let c = margin; c < n - margin; c++) if (psrIn(r, c)) return true;
+  const clsAt = (r: number, c: number) => (ice ? ice.cls[r * n + c] : 0);
+  const anyCls = (k: number) => {
+    for (let r = margin; r < n - margin; r++) for (let c = margin; c < n - margin; c++) if (clsAt(r, c) >= k) return true;
     return false;
-  })();
-  if (wantKind === "ice-shadow" || (!wantKind && body === "moon" && polar && anyPsr)) {
-    // La sombra permanente más cercana al hábitat (en un ensayo terrestre: el suelo con menos sol)
+  };
+  const target: 0 | 1 | 2 = ice ? (anyCls(2) ? 2 : anyCls(1) ? 1 : 0) : 0;
+  if (wantKind === "ice-shadow" || (!wantKind && body === "moon" && target > 0)) {
+    iceClass = wantKind ? 2 : target;
+    // Planta de extracción: en el borde con más sol (energía para calentar el regolito), cerca del hábitat
+    plant = pick((r, c) => -L[r * n + c] * 6 + flat[r * n + c] / 6 + dist(spot(r, c), habitat) / 800, (r, c) => ring(habitat, 250, 900)(r, c) && flat[r * n + c] < 12);
+    // Excavación: el punto más cercano de la clase elegida (en un ensayo terrestre: el suelo con menos sol)
     isru = {
       kind: "ice-shadow",
       spot: pick(
-        (r, c) => (wantKind ? L[r * n + c] * 20 : 0) + dist(spot(r, c), habitat) / 1000 + flat[r * n + c] / 10,
-        (r, c) => (wantKind ? true : psrIn(r, c)) && dist(spot(r, c), habitat) >= 500,
+        (r, c) => (wantKind ? L[r * n + c] * 20 : 0) + dist(spot(r, c), plant!) / 1000 + flat[r * n + c] / 10,
+        (r, c) => (wantKind ? true : clsAt(r, c) >= target) && dist(spot(r, c), plant!) >= 400,
       ),
     };
   } else if (wantKind === "ice-ground" || (!wantKind && body === "mars" && Math.abs(lat) >= RULES.marsIceLat)) {
@@ -363,13 +420,14 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
 
   // 6. Ruta del rover: hábitat → objetivo de la travesía (hielo en sombra si hay; si no, ciencia).
   const goal = isru.kind === "ice-shadow" ? isru.spot : science;
+  const start = plant ?? habitat; // con hielo, el rover hace de acarreo: planta ↔ zona de excavación
   let limit: number = RULES.roverLimitDeg;
-  let path = route(h, n, cellM, habitat, goal, limit);
+  let path = route(h, n, cellM, start, goal, limit);
   while (!path && limit < 35) {
     limit += 5;
-    path = route(h, n, cellM, habitat, goal, limit);
+    path = route(h, n, cellM, start, goal, limit);
   }
-  const cells = path ?? [habitat, goal].map((s) => [s.r, s.c] as [number, number]);
+  const cells = path ?? [start, goal].map((s) => [s.r, s.c] as [number, number]);
   const routeSpots = cells.map(([r, c]) => spot(r, c));
   let len = 0, maxGrade = 0;
   for (let i = 1; i < routeSpots.length; i++) {
@@ -398,10 +456,13 @@ export function planBase(g: HeightGrid, body: PlanetBody, lat: number, lon: numb
     evaRadiusM: RULES.evaRadiusM,
     polar,
     sun,
+    ice,
+    iceClass,
+    plant,
     habitatLit: L[habitat.r * n + habitat.c],
     powerLit: Math.max(...power.spots.slice(0, power.kind === "solar-masts" ? 3 : 1).map((s) => L[s.r * n + s.c])),
     noIce,
-    conditions: conditions(body, lat, lon, stats, habitat.h, sun, L[habitat.r * n + habitat.c], noIce),
+    conditions: conditions(body, lat, lon, stats, habitat.h, sun, L[habitat.r * n + habitat.c], noIce, ice),
     taskIds: tasksFor(body, lat, polar, isru.kind),
   };
 }
@@ -477,7 +538,7 @@ function route(h: Float32Array, n: number, cellM: number, a: Spot, b: Spot, limi
   return out.reverse();
 }
 
-function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["stats"], habH: number, sunMap: SunMap, habLit: number, noIce: BasePlan["noIce"]): Condition[] {
+function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["stats"], habH: number, sunMap: SunMap, habLit: number, noIce: BasePlan["noIce"], ice: IceMap | null): Condition[] {
   const sun = maxSunElevation(body, lat);
   const out: Condition[] = [
     { label: "Buildable ground", value: `${Math.round(s.flatPct)} %`, note: `Share of this patch with slope under ${RULES.flatDeg}° (same rule as our Earth buildability score).`, kind: "data" },
@@ -497,6 +558,27 @@ function conditions(body: PlanetBody, lat: number, lon: number, s: BasePlan["sta
       kind: "data",
     },
   ];
+  if (ice)
+    out.push(
+      {
+        label: "Coldest ground",
+        value: `${Math.round(ice.coldestK)} K (${Math.round(ice.coldestK - 273)} °C)`,
+        note: "Daily maximum in the coldest spot, from a simple radiative model calibrated to LRO Diviner (40–90 K in large polar craters).",
+        kind: "data",
+      },
+      {
+        label: "Ice at the surface",
+        value: `${ice.surfPct.toFixed(1)} % of the patch`,
+        note: "Ground whose maximum stays below 110 K: ice there outlasts the solar system (Hayne et al. 2021). Mixed into the soil, a few % by mass.",
+        kind: "data",
+      },
+      {
+        label: "Buried ice possible",
+        value: `${ice.buriedPct.toFixed(1)} % of the patch`,
+        note: "Sunlit at times but cold on average: ice can survive centimetres to decimetres down ('lunar permafrost', Paige et al. 2010).",
+        kind: "data",
+      },
+    );
   if (body === "moon")
     out.push({
       label: "Permanent shadow",
