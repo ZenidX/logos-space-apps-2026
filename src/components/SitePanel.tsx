@@ -126,7 +126,7 @@ function SunChart({ lat, targetMax, targetName }: { lat: number; targetMax: numb
   );
 }
 
-export default function SitePanel({ site, mission, onBack }: { site: Site; mission: Mission; onBack: () => void }) {
+export default function SitePanel({ site, mission, onBack, nav }: { site: Site; mission: Mission; onBack: () => void; nav?: { pos: number; total: number; prev: () => void; next: () => void } }) {
   const [tab, setTab] = useState<"why" | "when" | "how" | "limits" | "shape" | null>("why"); // Why is open by default
   const t = mission.target;
   const matchVars = site.vars.filter((v) => v.inMatch);
@@ -150,14 +150,26 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
     <div>
       {/* ---- At a glance: everything essential on one screen ---- */}
       <div className="stagger">
-        <div className="flex items-center justify-between gap-2">
-          <button onClick={onBack} className="back-btn label -ml-1 px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="flex items-center gap-1">
+            <button onClick={onBack} className="back-btn label -ml-1 whitespace-nowrap px-1 py-1 hover:text-[var(--ink)]">← All sites</button>
+            {nav && nav.total > 1 && <span className="site-nav" role="group" aria-label="Browse the sites of this mission">
+              <button type="button" onClick={nav.prev} aria-label="Previous site" title="Previous site (←)">‹</button>
+              <span className="mono" aria-live="polite">{String(nav.pos).padStart(2, "0")}/{String(nav.total).padStart(2, "0")}</span>
+              <button type="button" onClick={nav.next} aria-label="Next site" title="Next site (→)">›</button>
+            </span>}
+          </span>
           <span className="flex items-center gap-2">{site.campaign && <span className="hidden text-[12px] text-[var(--mut)] sm:inline">{site.campaign}</span>}<span className="chip" style={{ borderColor: EVIDENCE[site.evidence].color }}><EvidenceBadge level={site.evidence} />{!mission.validated && <span className="text-[11.5px] font-normal text-[var(--mut)]">{site.kind === "new" ? "· ground only" : "· another task"}</span>}</span></span>
         </div>
         <header className="mt-1">
           <h3 className="place text-[clamp(22px,3.3vh,34px)] leading-[1] tracking-[-.03em]">{site.name}</h3>
           <p className="text-[13px] leading-snug text-[var(--mut)]">{site.country} <span className="mono text-[11.5px] text-[var(--dim)]">· {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}° · {site.kind === "new" ? "new region to investigate, not a surveyed site" : "known analog · 0.1° cell around the site"}</span></p>
-        </header>
+                  <p className="verdict mt-2">{(() => {
+            const st = matchVars.map((v) => { const d = mission.variables.find((x) => x.id === v.id); return v.value === null || v.similarity === null ? "none" : d?.ideal && d.tolerance != null && hasStrip(v.id, d.ideal, d.tolerance) ? conditionStatus(v.value, d.ideal, d.tolerance) : v.similarity >= 0.5 ? "in range" : "out of range"; });
+            const n = (k: string) => st.filter((x) => x.startsWith(k)).length, parts = [n("in range") && `in range on ${n("in range")}`, n("accepted") && `accepted on ${n("accepted")}`, n("out") && `out of range on ${n("out")}`, n("none") && `no data on ${n("none")}`].filter(Boolean);
+            return <><b>{parts.join(", ").replace(/^./, (c) => c.toUpperCase())}</b> of {st.length} mission conditions · access {site.access.level.toLowerCase()} · {travelText(site.travelH)}.</>;
+          })()}</p>
+</header>
 
         {/* Radial: the index in the centre, one ring per mission condition (cyan), shape against the target (grey), permits and politics (amber) */}
         <div className="mt-2 hidden items-center gap-5 sm:grid sm:grid-cols-[auto_1fr]">
@@ -182,16 +194,17 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
 
         <p className="mt-3 flex gap-2 border-l-2 pl-3 text-[13px] leading-snug" style={{ borderColor: "var(--amber)", color: "var(--amber)" }}><span aria-hidden>≠</span><span><b>Where it breaks:</b> {site.vars.some((v) => v.id === "volcanic" && v.inMatch && v.value === null) ? `The 0.5° rock map has no cell here (island or coast), so volcanic rock is not scored at this site${site.kind === "known" ? "; the field campaign that worked here documents the lava field" : ""}.` : mission.glanceLimit ?? `${mission.keyLimit} ${(mission.always[0]?.text.split(";")[0] ?? "").replace(/\.$/, "")}.`}</span></p>
 
-        <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
-          {TABS.map(([id, label]) => (
-            <button key={id} role="tab" id={`tab-${id}`} aria-selected={tab === id} tabIndex={tab === id ? 0 : -1} aria-controls="site-detail" onKeyDown={(e) => {
-              // arrow keys move between tabs, as in any tab list
-              const i = TABS.findIndex(([t]) => t === id), j = e.key === "ArrowRight" ? (i + 1) % TABS.length : e.key === "ArrowLeft" ? (i + TABS.length - 1) % TABS.length : e.key === "Home" ? 0 : e.key === "End" ? TABS.length - 1 : -1;
-              if (j < 0) return;
-              e.preventDefault(); setTab(TABS[j][0]); window.setTimeout(() => document.getElementById(`tab-${TABS[j][0]}`)?.focus(), 0);
-            }} onClick={() => { setTab(id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
-          ))}
-        </div>
+      </div>
+
+      <div className="tabs-sticky mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Details">
+        {TABS.map(([id, label]) => (
+          <button key={id} role="tab" id={`tab-${id}`} aria-selected={tab === id} tabIndex={tab === id ? 0 : -1} aria-controls="site-detail" onKeyDown={(e) => {
+            // arrow keys move between tabs, as in any tab list
+            const i = TABS.findIndex(([t]) => t === id), j = e.key === "ArrowRight" ? (i + 1) % TABS.length : e.key === "ArrowLeft" ? (i + TABS.length - 1) % TABS.length : e.key === "Home" ? 0 : e.key === "End" ? TABS.length - 1 : -1;
+            if (j < 0) return;
+            e.preventDefault(); setTab(TABS[j][0]); window.setTimeout(() => document.getElementById(`tab-${TABS[j][0]}`)?.focus(), 0);
+          }} onClick={() => { setTab(id); if (tab !== id) window.setTimeout(() => document.getElementById("site-detail")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), 60); }} className="glass-tab chip">{label}</button>
+        ))}
       </div>
 
       {/* ---- Detail on demand ---- */}
@@ -219,6 +232,7 @@ export default function SitePanel({ site, mission, onBack }: { site: Site; missi
                   {def?.why && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">{def.why}</div>}
                   <div className="src mt-1"><span>Data</span>{v.source}</div>
                   {tval?.source && <div className="src"><span>Target</span>{tval.source}{tval.url && <> <a className="underline" href={tval.url} target="_blank" rel="noopener noreferrer">link ↗</a></>}</div>}
+                  {v.id === "precip" && <div className="mt-0.5 text-[11.5px] text-[var(--amber)]">Satellite estimate (GPM IMERG, 2024 only, 0.1° cell). On small islands and hyper-arid coasts it can differ a lot from rain gauges; poleward of 60° its coverage is partial, so a 0 there may mean no estimate.</div>}
                   {v.id === "sand" && <div className="mt-0.5 text-[11.5px] text-[var(--dim)]">Soil-model estimate (SoilGrids, 0.1° cell mean) with a wide uncertainty. New regions cluster near 54 % because the index favours places like the known analogs, whose median is 54 %.</div>}
                 </li>
               );

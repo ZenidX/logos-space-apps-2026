@@ -300,3 +300,34 @@ b, strong { font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .hero-line span { animation: none; opacity: 1; transform: none; filter: none; } }
 /* Header over scrolled text: a soft veil so the title never sits on the copy */
 .head-veil { background: linear-gradient(rgba(4, 6, 12, .92), rgba(4, 6, 12, .55) 70%, transparent); backdrop-filter: blur(6px); }
+
+/* Site panel: browse the mission's sites in place (‹ 02/09 ›, also ← →) */
+.site-nav { display: inline-flex; align-items: center; gap: 2px; margin-left: 6px; padding: 2px; border: 1px solid var(--line2); border-radius: 999px; font-size: 11px; color: var(--mut); }
+.site-nav button { width: 26px; height: 26px; border-radius: 999px; font: 600 16px/1 var(--sans); color: var(--ink); }
+.site-nav button:hover { background: rgb(255 255 255 / .1); }
+.site-nav span { padding: 0 4px; letter-spacing: .04em; }
+@media (pointer: coarse) { .site-nav button { width: 38px; height: 38px; } }
+/* One plain sentence under the name: how the site does, before any chart */
+.verdict { font-size: 13.5px; line-height: 1.45; color: var(--mut); }
+.verdict b { color: var(--ink); font-weight: 600; }
+/* Detail tabs stay reachable while the panel scrolls */
+.tabs-sticky { position: sticky; top: 52px; z-index: 5; margin-inline: -8px; padding: 8px; border-radius: 16px; background: rgb(8 11 20 / .96); backdrop-filter: blur(10px); box-shadow: 0 8px 18px -10px rgb(0 0 0 / .8); }
+@media (min-width: 768px) { .tabs-sticky { top: -12px; } }
+/* Story: quick jump to any mission, from the second screen on */
+.dock { position: fixed; left: 50%; bottom: 18px; z-index: 15; display: flex; align-items: center; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid var(--line2); border-radius: 999px; background: rgb(6 9 16 / .78); backdrop-filter: blur(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease), visibility 0s linear 0s; }
+.dock.off { opacity: 0; visibility: hidden; transform: translate(-50%, 16px); transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s linear 400ms; }
+.dock > span { padding: 0 8px 0 10px; font: 400 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
+.dock button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; font: 600 12.5px/1 var(--sans); color: var(--mut); white-space: nowrap; transition: background-color 200ms, color 200ms; }
+.dock button i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+.dock button:hover, .dock button[aria-current="step"] { color: var(--ink); background: rgb(255 255 255 / .08); }
+@media (max-width: 767px) { .dock { display: none; } }
+@media (prefers-reduced-motion: reduce) { .dock, .dock.off { transition: none; } }
+
+/* Mission list: filters folded by default (open while one is on) */
+.filters > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--sans); color: var(--mut); }
+.filters > summary::-webkit-details-marker { display: none; }
+.filters > summary::before { content: "⌄"; font-size: 13px; transition: transform 200ms var(--ease); transform: rotate(-90deg); }
+.filters[open] > summary::before { transform: none; }
+.filters > summary b { color: var(--amber); font-weight: 600; }
+.filters > summary:hover { color: var(--ink); }
+@media (max-width: 767px) { .tabs-sticky { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .tabs-sticky > * { flex: none; } }

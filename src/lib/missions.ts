@@ -51,10 +51,10 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
   "m1-eva-basalt": {
     short: "Suited EVA on volcanic terrain",
     blurb: "An operational analogue for suited traverses and field geology — not a match to Mons Mouton's highland rock.",
-    rehearse: "Suited traverses, sampling and field geology over bare volcanic ground, as in NASA's JETT and Desert RATS tests and ESA's PANGAEA training.",
+    rehearse: "Suited traverses, sampling and field geology over volcanic ground, bare or sparsely vegetated, as in NASA's JETT and Desert RATS tests and ESA's PANGAEA training.",
     matters: "Crews rehearse surface operations on Earth before they fly. Where a test runs decides what it can teach.",
     keyLimit: "Volcanic rock is mapped within ~80 km (0.5° geological map); basalt at the site itself is not confirmed.",
-    notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Slope along a real traverse route — the mean slope of the 11 km window is shown, but it is not part of the index"],
+    notScored: ["Rock type at the outcrop — volcanic class comes from a 0.5° map (GLiM)", "Bare rock — the new regions are sparsely vegetated (NDVI about 0.16), not bare: vegetation is accepted within the tolerance, so check imagery before planning", "Slope along a real traverse route — the mean slope of the 11 km window is shown, but it is not part of the index"],
     always: ["Gravity: 1.62 m/s² on the Moon vs 9.80 on Earth."],
   },
   "m2-rover-sand": {
@@ -72,7 +72,7 @@ const COPY: Record<MissionId, { short: string; blurb: string; rehearse: string; 
     rehearse: "Drilling through dry soil into ice-cemented ground, as NASA's TRIDENT drill did at Haughton crater (2024).",
     matters: "Ice near the surface could supply water for crews. Drills must be proven on frozen ground first.",
     keyLimit: "Ground ice is inferred from temperature and dryness; no ice was detected directly.",
-    glanceLimit: "Ground ice is inferred from temperature and dryness, not detected. At the 6.36 mb of Mars, drilled ice sublimes instead of melting and refreezing on the bit.",
+    glanceLimit: "Ground ice is inferred from temperature and dryness, not detected. Near the 6.1 mb triple point of water, ice on Mars tends to sublimate rather than melt, unlike Earth permafrost.",
     notScored: ["Ground ice itself — temperature is used as a proxy", "Arcadia ice map (NASA SWIM) — not included in this prototype"],
     always: ["Gravity: 3.73 m/s² on Mars vs 9.80 on Earth."],
   },

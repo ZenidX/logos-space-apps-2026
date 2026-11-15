@@ -23,6 +23,7 @@ const STATS: [string, string][] = [
 ];
 const BODY_COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
 const NO_MARKERS: SceneMarker[] = [];
+const DOCK_NAME: Record<MissionId, string> = { "m1-eva-basalt": "Suited EVA", "m2-rover-sand": "Rover", "m3-ground-ice": "Ground ice", "m4-low-sun": "Low Sun" };
 type Step = "hero" | "intro" | "idea" | MissionId | "figures" | "explore";
 
 /** Markers of the scene: the target and the sites of the list, in the order of the list (filtered-out sites are not drawn). */
@@ -136,18 +137,24 @@ export default function Home() {
     else if (lastSite.current) document.querySelector<HTMLElement>(`#panel [data-site="${lastSite.current}"]`)?.focus({ preventScroll: true });
   }, [sel]);
   const openSite = (id: string) => { listScroll.current = scroller.current?.scrollTop ?? 0; setSel(id); setHover(null); };
+  // browse the mission's sites in place, in the order of the list (wraps around)
+  const navList = site && list.some((x) => x.id === site.id) ? list : byEvidence(shown.sites);
+  const navPos = site ? navList.findIndex((x) => x.id === site.id) : -1;
+  const step1 = (d: number) => { if (navPos < 0) return; const n = navList[(navPos + d + navList.length) % navList.length]; setSel(n.id); setHover(null); };
 
   const pick = (id: MissionId) => { if (!missionId) leaveStory(); listScroll.current = 0; lastSite.current = null; setMissionId(id); setSel(null); setFilter(NO_FILTER); }; // filters start clean in each mission
   const home = () => { if (missionId) back.current = true; listScroll.current = 0; lastSite.current = null; setMissionId(null); setSel(null); };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const tg = e.target as HTMLElement;
+      if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && sel && !method && !tg.closest("input, textarea, select, [role=tablist], [contenteditable]")) { e.preventDefault(); step1(e.key === "ArrowRight" ? 1 : -1); return; }
       if (e.key !== "Escape") return;
       if (method) setMethod(false); else if (sel) setSel(null); else if (missionId) { back.current = true; setMissionId(null); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [method, sel, missionId]);
+  }, [method, sel, missionId, navPos, navList]); // eslint-disable-line react-hooks/exhaustive-deps
   const chip = (on: boolean, label: string, onClick: () => void) => <button key={label} type="button" className="fchip" aria-pressed={on} onClick={onClick}>{label}</button>;
 
   // A plain function (not a component defined during render): rows keep their identity, so keyboard focus is not lost.
@@ -297,6 +304,13 @@ export default function Home() {
         </div>
       )}
 
+      {!missionId && (
+        <nav className={`dock ${calm || step === "explore" ? "off" : ""}`} aria-label="Jump to a mission">
+          <span>Missions</span>
+          {MISSIONS.map((m) => <button key={m.id} type="button" aria-current={step === m.id ? "step" : undefined} onClick={() => pick(m.id)} style={{ ["--c" as string]: BODY_COLOR[m.target.body] }} title={`${m.short} · ${m.target.name.split(" (")[0]}`}><i aria-hidden />{DOCK_NAME[m.id]}</button>)}
+        </nav>
+      )}
+
       {missionId && (
         <section className={`relative z-10 px-4 pb-6 md:px-8 ${site ? "hidden md:block" : ""} md:absolute md:left-0 md:top-0 md:pt-20 ${site ? "md:max-w-[calc(100vw-min(760px,60vw)-16px)]" : "md:max-w-[calc(100vw-436px)]"}`}>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Choose a mission" data-scene-avoid>
@@ -313,7 +327,7 @@ export default function Home() {
         <aside id="panel" className={`slide-in glass relative z-10 scroll-mt-14 mx-4 mb-6 rounded-[20px] transition-[width] duration-500 md:fixed md:bottom-4 md:right-4 md:top-16 md:mx-0 md:mb-0 md:overflow-hidden ${site ? "md:w-[min(760px,60vw)]" : "md:w-[420px]"}`} aria-label={shown.title}>
           <div ref={scroller} className={`p-5 md:h-full md:overflow-y-auto ${site ? "md:p-8" : "md:p-6"}`}>
           {site ? (
-            <SitePanel site={site} mission={shown} onBack={() => setSel(null)} />
+            <SitePanel site={site} mission={shown} onBack={() => setSel(null)} nav={navPos >= 0 ? { pos: navPos + 1, total: navList.length, prev: () => step1(-1), next: () => step1(1) } : undefined} />
           ) : (
             <div className="fade-in" key={shown.id}>
               <p className="text-[14px]" style={{ color: BODY_COLOR[t.body] }}>Target · {t.body === "moon" ? "Moon" : "Mars"} · <span className="place">{t.name}</span></p>
@@ -327,6 +341,8 @@ export default function Home() {
 
               <div className="mt-4 flex items-baseline justify-between"><h3 className="label">Sites · {filtered ? `${list.length} of ${shown.sites.length}` : shown.sites.length}</h3><span className="mono whitespace-nowrap text-[11px] text-[var(--dim)]">index · access</span></div>
               <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-snug text-[var(--dim)]"><span className="ev-pips" style={{ ["--ev" as string]: "var(--mut)" }} aria-hidden><i className="f" /><i className="f" /><i className="f" /><i /></span>dots: independent evidence, more is stronger<span aria-hidden>·</span><span className="inline-flex items-center gap-0.5" aria-hidden><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--sand)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /><i className="inline-block h-2.5 w-1.5 rounded-sm bg-[var(--line2)]" /></span>bars: access complexity, low to high</p>
+              <details className="filters mt-2" open={filtered || undefined}>
+              <summary>Filter by logistics and terrain{filtered && <b> · on</b>}</summary>
               <div className="mt-2 flex flex-wrap gap-1" role="group" aria-label="Filter the sites by logistics">
                 {chip(filter.reach === "near", `Reachable in < ${FILTERS.reachH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "near" ? "any" : "near" })))}
                 {chip(filter.reach === "remote", `Remote > ${FILTERS.remoteH} h`, () => setFilter((f) => ({ ...f, reach: f.reach === "remote" ? "any" : "remote" })))}
@@ -337,6 +353,7 @@ export default function Home() {
                 {(["any", "flat", "steep"] as const).map((g) => chip(filter.ground === g, g === "any" ? "Any" : g === "flat" ? `Flat ≤ ${FILTERS.flatDeg}°` : `Steep > ${FILTERS.flatDeg}°`, () => setFilter((f) => ({ ...f, ground: g }))))}
               </div>
               <p className="mt-1.5 text-[11px] leading-snug text-[var(--dim)]">Travel time to a city, mean slope and access are not part of the index. Remoteness can be the point: some analog missions rehearse isolation.</p>
+              </details>
 
               {groups.map((g) => (
                 <section key={g.e} aria-label={EVIDENCE[g.e].group}>

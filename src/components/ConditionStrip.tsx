@@ -25,7 +25,7 @@ export default function ConditionStrip({ id, label, ideal, tolerance, value, tar
   const A = band(alo, ahi), I = band(lo, hi), here = x(value), tx = target === null ? null : x(target);
   const u = unit === "index" || unit === "0-1" ? "" : unit;
   return (
-    <svg viewBox={`0 0 ${W} 50`} className="block h-auto w-full overflow-visible" role="img" aria-label={`${label}: here ${fmt(value, u)}; mission range ${rangeText(ideal, unit)}${target !== null ? `; target ${fmt(target, u)}` : ""}.`}>
+    <svg viewBox={`0 0 ${W} 50`} className="block h-auto w-full max-w-[480px] overflow-visible" role="img" aria-label={`${label}: here ${fmt(value, u)}; mission range ${rangeText(ideal, unit)}${target !== null ? `; target ${fmt(target, u)}` : ""}.`}>
       <rect x={X0} y={21} width={SPAN} height={2} fill="var(--line2)" />
       <rect x={A.x} y={13} width={A.w} height={18} rx={9} fill="rgba(93,180,255,.10)" stroke="rgba(93,180,255,.5)" strokeDasharray="3 3" />
       <rect x={I.x} y={13} width={I.w} height={18} rx={9} fill="rgba(93,180,255,.40)" />

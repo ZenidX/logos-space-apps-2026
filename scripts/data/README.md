@@ -2,7 +2,9 @@
 
 # Logos data pipeline → `sites.json` (v4)
 
-Regenerates `src/data/sites.json`: 3 missions, known analogs, 6 new candidate regions each, Analog index 0–1, accessRisk. Method: `docs/method.md` (section v3).
+Regenerates `src/data/sites.json`: 4 missions, 10 known analogs, up to 6 new candidate regions each (5, 6, 4 and 4 shown after the ground screen and two removals; see `docs/method.md` §4), Analog index 0–1, accessRisk. Method: `docs/method.md`.
+
+> Note (15 Nov 2026): the title still says v4 and the reproducibility check below was run on data v4; the current file is a later version (see the `version` field in `sites.json`).
 Checked 2026-11-14: a clean run of steps 1–5 reproduces `src/data/sites.json` (data v4) with 0 differences apart from `generatedAt`.
 
 ## Environment
