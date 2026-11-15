@@ -126,7 +126,7 @@ export const REMOVED: Record<string, { name: string; reason: string }> = {
   "m3-ground-ice-new3": { name: "Allaikhovsky Ulus, Sakha (Russia)", reason: "54 % of the 11 km window is water (lake-covered tundra; ESA WorldCover 2021)" },
   "m3-ground-ice-new5": { name: "Coats Land coast (Antarctica)", reason: "inside the ice sheet (Natural Earth glaciated areas) and 31 % sea" },
   "m3-ground-ice-new6": { name: "Baffin coast, Nunavut (Canada)", reason: "18 % glacier and 56 % water in the window (ESA WorldCover 2021)" },
-  "m1-eva-basalt-new7": { name: "Tankwa Karoo, Western Cape (South Africa)", reason: "passes the ground screen, but the independent check contradicts it: a geological study places the Tankwa Karoo in shale, south of the line where Karoo dolerite occurs (De Kock et al. 2017, South African Journal of Science); its volcanic flag came from the coarse 0.5° rock map" },
+  "m1-eva-basalt-new7": { name: "Tankwa Karoo, Western Cape (South Africa)", reason: "passes the ground screen, but the independent check contradicts it: a geological study places the Tankwa Karoo in shale, south of the line where Karoo dolerite occurs (De Kock et al. 2017, South African Journal of Science, doi:10.17159/sajs.2017/20160331); its volcanic flag came from the coarse 0.5° rock map" },
   "m3-ground-ice-new9": { name: "Qilian Mountains, Gansu (China)", reason: "passes the screen but relief is 1,324 m over 11 km and it ranks 102nd: left out as the weakest" },
 };
 
@@ -163,14 +163,14 @@ export const INDEPENDENT: Record<string, { verdict: "Supported nearby" | "Partly
   "m1-eva-basalt-new2": { verdict: "None found", text: "No source found for basaltic lava fields at this point in Santa Cruz. NASA Earth Observatory shows bare lava plateaus elsewhere in Patagonia, which does not confirm this region." },
   "m1-eva-basalt-new3": { verdict: "Partly", text: "The Marsabit shield volcano, with unvegetated young lava flows (Smithsonian Global Volcanism Program), is about 185 km to the south-east. Nothing was found for the point itself.", url: "https://volcano.si.edu/volcano.cfm?vn=222021" },
   "m1-eva-basalt-new4": { verdict: "Partly", text: "The Pilbara is a known analog for the search for ancient life (NASA JPL, 2019), not for suited traverses on lava fields.", url: "https://www.jpl.nasa.gov/news/mars-scientists-investigate-ancient-life-in-australia/" },
-  "m1-eva-basalt-new5": { verdict: "Supported nearby", text: "The Somuncura province is a back-arc field of mafic lava flows of more than 55,000 km², with plateau lavas sampled near Valcheta, about 93 km away (Kay et al. 2007, Journal of Petrology). Whether this point itself lies on the lava was not verified.", url: "https://bibliotecadigital.exactas.uba.ar/download/paper/paper_00223530_v48_n1_p43_Kay.pdf" },
+  "m1-eva-basalt-new5": { verdict: "Supported nearby", text: "The Somuncura province is a back-arc field of mafic lava flows of more than 55,000 km², with plateau lavas sampled near Valcheta, about 93 km away (Kay et al. 2007, Journal of Petrology). Whether this point itself lies on the lava was not verified.", url: "https://doi.org/10.1093/petrology/egl053" },
   "m2-rover-sand-new1": { verdict: "Partly", text: "Only weak, indirect support was found for sandy ground in this region." },
   "m2-rover-sand-new2": { verdict: "None found", text: "No verifiable source found for this region." },
   "m2-rover-sand-new3": { verdict: "Partly", text: "Oman hosted a full Mars analog mission (AMADEE-18), but in Dhofar, about 500 km to the south; nothing describes sand at this point." },
   "m2-rover-sand-new4": { verdict: "None found", text: "No source found for this region." },
   "m2-rover-sand-new6": { verdict: "Partly", text: "The Médanos Grandes dune field is nearby, but it is described as largely inactive, which weakens it as a test of loose, moving sand.", image: { label: "Satellite image of Médanos Grandes (CC BY-SA 2.0; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:M%C3%A9danos_Grandes,_Argentina.jpg" } },
   "m2-rover-sand-new7": { verdict: "Partly", text: "A land-cover study of the whole Qiangtang Plateau, which contains this point, reports 26 % bare land and sand-covered ground in a cold, dry, windy climate (Bian et al. 2023, Frontiers in Environmental Science). It does not map dunes or name this county.", url: "https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2023.1217225/full" },
-  "m3-ground-ice-new1": { verdict: "Partly", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature, but the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
+  "m3-ground-ice-new1": { verdict: "Partly", text: "Northern Ellesmere Island is a permafrost polar desert with ground ice in the literature, but the documented sites are about 300 km away on the same island.", image: { label: "Sentinel-2 image of Lake Hazen, northern Ellesmere (contains modified Copernicus Sentinel data 2022; Wikimedia Commons)", url: "https://commons.wikimedia.org/wiki/File:Lake_Hazen_2022-07-16_Sentinel-2_L2A_Highlight_Optimized_Natural_Color.jpg" } },
   "m3-ground-ice-new2": { verdict: "Supported nearby", text: "Banks Island has ice-rich continuous permafrost (Lewkowicz & Way 2019, Nature Communications). No analog study was found." },
   "m3-ground-ice-new7": { verdict: "Supported nearby", text: "Permafrost ice wedges were sampled on Kotelny Island, about 90 km away on the same island (Opel et al. 2019, Alfred Wegener Institute dataset on PANGAEA).", url: "https://doi.pangaea.de/10.1594/PANGAEA.904091" },
   "m3-ground-ice-new8": { verdict: "Partly", text: "A national ground-ice model places Baffin Island in continuous permafrost; the ice-rich areas it names are about 209 km away (O'Neill et al. 2019, The Cryosphere). Nothing specific to this point was found.", url: "https://tc.copernicus.org/articles/13/753/2019/" },
@@ -186,7 +186,7 @@ const EVIDENCE_OF: Record<string, Evidence> = { "Supported nearby": "nearby", Pa
  * "Partial" = the source is farther away, regional in scale, or covers only part of the property.
  */
 export const EVIDENCE: Record<Evidence, { label: string; group: string; note: string; color: string; pips: number }> = {
-  agency: { label: "Used by agencies", group: "Used by agencies", note: "A real field campaign ran here.", color: "#7ef0c1", pips: 4 },
+  agency: { label: "Used in real campaigns", group: "Used in real campaigns", note: "A real field campaign ran here (for Askja: Apollo geology training, not this task).", color: "#7ef0c1", pips: 4 },
   nearby: { label: "Support nearby", group: "New regions · support nearby", note: "New region: an independent source confirms the key property close to this point.", color: "#5ee6ff", pips: 3 },
   partial: { label: "Partial support", group: "New regions · partial support", note: "New region: only indirect or distant support was found.", color: "#ffb454", pips: 2 },
   none: { label: "No support found", group: "New regions · no support found", note: "New region: we looked for independent sources and found none.", color: "#b9c2d3", pips: 1 },
@@ -230,7 +230,7 @@ export const MISSIONS: Mission[] = data.missions.map((m) => {
     title: m.title,
     ...COPY[m.id],
     always: m.breaks?.length ? m.breaks : COPY[m.id].always.map((text) => ({ text, source: "NASA NSSDC planetary fact sheets", url: "https://nssdc.gsfc.nasa.gov/planetary/factsheet/" })),
-    target: { ...m.target, lon: lon180(m.target.lon) },
+    target: { ...m.target, lon: lon180(m.target.lon), coordSource: m.target.coordSource.replace(/(https?:\/\/[^\s;]+);/g, "$1 ·") }, // a ";" glued to a link breaks it when copied
     campaigns: m.campaigns,
     variables: vars,
     sites,

@@ -73,7 +73,7 @@ export default function MethodSheet({ onClose }: { onClose: () => void }) {
         </ul>
         <h3 className="label mt-6">Use of Super Intelligence (SI) / AI</h3>
         <p className="mt-2 text-[12.5px] text-[var(--mut)]">The idea and the problem framing are our team&apos;s own. AI assistants (Claude) were used as tools, under the team&apos;s direction, for code, data search, drafting the scoring method, design proposals and texts; outputs are reviewed by the team before submission. No AI-generated images or video.</p>
-        <p className="mt-6 text-[12px] text-[var(--dim)]">Data {DATA_VERSION}, prepared {DATA_DATE}. NASA Space Apps Challenge 2026 · team Logos. Globes not to scale. This project is not endorsed by NASA.</p>
+        <p className="mt-6 text-[12px] text-[var(--dim)]">Data {DATA_VERSION}, prepared {DATA_DATE}. NASA Space Apps Challenge 2026 · team Logos. Globes not to scale. This project is not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.</p>
       </div>
     </div>
   );

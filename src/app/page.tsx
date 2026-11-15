@@ -187,7 +187,7 @@ export default function Home() {
                 <span className="label mr-1">Terrain</span>
                 {(["any", "flat", "steep"] as const).map((g) => chip(filter.ground === g, g === "any" ? "Any" : g === "flat" ? `Flat ≤ ${FILTERS.flatDeg}°` : `Steep > ${FILTERS.flatDeg}°`, () => setFilter((f) => ({ ...f, ground: g }))))}
               </div>
-              <p className="mt-1.5 text-[11px] leading-snug text-[var(--dim)]">Travel time to a city, mean slope and access are not part of the index. Remote can be wanted: some missions rehearse isolation.</p>
+              <p className="mt-1.5 text-[11px] leading-snug text-[var(--dim)]">Travel time to a city, mean slope and access are not part of the index. Remoteness can be the point: some analog missions rehearse isolation.</p>
 
               {groups.map((g) => (
                 <section key={g.e} aria-label={EVIDENCE[g.e].group}>
@@ -238,7 +238,7 @@ export default function Home() {
       )}
 
       <footer data-scene-avoid className={`relative z-10 px-4 pb-4 text-[11.5px] text-[var(--dim)] md:max-w-[34%] md:px-8 ${missionId ? "md:fixed md:bottom-3 md:left-0 md:pb-0" : ""}`}>
-        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA.
+        Imagery: NASA GIBS · NASA SVS / LROC WAC · NASA/USGS Viking MDIM 2.1. To scale: orbit radii (Earth 1 : Mars 1.52), orbital periods (1 : 1.88) and the relative sizes of Earth, Mars and the Moon. Not to scale: body sizes against the orbits, the Sun, the Moon’s orbit (enlarged) and orbit shapes (drawn as circles); the target world is shown beside Earth for comparison. Not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
       </footer>
 
       {method && <MethodSheet onClose={() => setMethod(false)} />}

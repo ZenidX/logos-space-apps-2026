@@ -1,4 +1,5 @@
 {
+ "generatedWith": "AI-assisted (Claude), to be reviewed by team Logos",
  "criteria": {
   "maxMeanSlopeDeg": 10.0,
   "maxSnowIceFraction": 0.1,
@@ -21,7 +22,7 @@
     "lat": 18.265,
     "lon": 41.75,
     "similarity": 0.998,
-    "naturalEarthRegion": "Tih\u0101mah",
+    "naturalEarthRegion": "Tihāmah",
     "slopeMeanDeg": 5.72,
     "reliefM": 533.8,
     "landCover": {

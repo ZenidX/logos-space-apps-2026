@@ -34,7 +34,7 @@ The idea and the approach of this project are our team's own: finding Earth anal
 
 We used AI (Claude agents by Anthropic, via Claude Code) as a tool, under the team's direction, for:
 - **Code:** writing and debugging the web app and the data-processing scripts.
-- **Data search:** finding and summarising field campaigns, public datasets and their licences. Source and licence checks, including unresolved items, are tracked in `docs/sources.md`.
+- **Data search:** finding and summarising field campaigns, public datasets and their licences, including the independent literature check of each new region. Source and licence checks, including unresolved items, are tracked in `docs/sources.md`.
 - **Method drafting:** the scoring formula, thresholds and weights were drafted with AI assistance from the team's idea; they are documented as team choices in `docs/method.md`.
 - **Design and writing:** a front-end design proposal, and drafting and editing documentation and texts in English.
 
@@ -60,4 +60,4 @@ AI-assisted outputs are reviewed by the team before submission. AI-assisted code
 ## Licence
 Code: MIT (see `LICENSE`). Third-party data and imagery keep their own licences (see `docs/sources.md`).
 
-This project is not endorsed by NASA.
+This project is not endorsed by NASA, ESA, JAXA, CSA or any organisation named here.
