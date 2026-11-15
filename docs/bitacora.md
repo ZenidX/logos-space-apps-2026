@@ -2,6 +2,12 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 · README principal = el de SpaceApp-Logos (C_1)
+
+- Por decisión del usuario, el README de la raíz pasa a ser el de `zexuguo/SpaceApp-Logos` («ese es el bueno»). Sustituye al README que describía las tres partes del repo fusionado.
+- Solo se han cambiado rutas para que nada quede roto en este repo: documentos e imágenes en `docs/logos/`, código en `src/app/(logos)/`, `src/components/logos/` y `src/lib/logos/`, `npm run data:logos` y demo en `zenidx.github.io/logos-space-apps-2026`. Comprobado: los 13 enlaces e imágenes relativos existen.
+- Lo que ya no aparece en el README principal: la descripción de `/base/` y de la búsqueda global con Earth Engine (`/story/`, `/discover/`, `/3d/`, `/method/`, `/data/`). Sigue en el historial de git.
+
 ## 2026-11-15 (tarde, 14) · Hielo lunar investigado y simulado con temperatura
 
 - Investigación con fuentes en `docs/hielo-lunar.md`:
