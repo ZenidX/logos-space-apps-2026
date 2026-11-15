@@ -1,12 +1,12 @@
 # Logos · NASA Space Apps Challenge 2026
 
-<p align="center"><img src="docs/img/banner.svg" alt="Terra Analog: scanning Earth for places that resemble Moon and Mars base sites" width="100%"></p>
+<p align="center"><img src="docs/img/banner.svg" alt="TerraVista: scanning Earth for places that resemble Moon and Mars base sites" width="100%"></p>
 
 Project of team **Logos** for the NASA Space Apps Challenge 2026 (Barcelona local event, 14-15 November 2026).
 
 **Challenge:** [Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)
 
-## Terra Analog
+## TerraVista
 
 A mobile-first web app that searches all land between 85°N and 85°S for places that resemble future Moon and Mars base sites, using NASA data processed in Google Earth Engine. For every place it explains **what is analogous, how much, and where the analogy breaks**.
 
@@ -25,7 +25,7 @@ flowchart LR
     C --> D["Score per dimension<br/>Surface · Relief · Access"]
     D --> E["Validate against<br/>25 known analog sites"]
     D --> F["Rank new candidates<br/>known sites excluded"]
-    E --> G(["Terra Analog web app"])
+    E --> G(["TerraVista web app"])
     F --> G
 ```
 
@@ -37,7 +37,7 @@ The Moon and Mars are more extreme than anywhere on Earth, so we don't compare r
 
 **Validation.** Most known analog sites (Atacama, McMurdo Dry Valleys, Devon Island, Svalbard…) score above the Earth-wide median for every target, so the scoring points the right way. Few of them reach the top 10 %, which tells us that well-known analogs were chosen for reasons our current layers don't capture yet (geology, ice, logistics).
 
-**Discovery (v2, feasibility-aware).** Climate is no longer scored. The total is the mean of **Surface** and **Relief** (analogy with the target) and **Access**: travel time to the nearest city (Oxford MAP, Weiss et al. 2018), because a field site is only useful if people and materials can get there. Urban and water-dominated cells are excluded. The best *uncatalogued* candidates are bare, arid terrains less than about 1 h from a city: the Iranian plateau and Alborz foothills (Isfahan, Tehran, Qazvin), the Kabul–Parwan basin in Afghanistan, southern Peru (Tacna, Arequipa), the Hajar mountains in Oman, San Juan in Argentina and Tenerife (Canary Islands), which is already used as a Mars analog but was not in our exclusion list.
+**Discovery (v3, three phases).** 1 · *Geographic form* (surface + relief) keeps the 5 % of Earth that looks most like the target. 2 · *Climate conditioning* (MODIS temperature, GPM rain and NASA MERRA-2 atmosphere: surface pressure, wind, humidity, dust) keeps the best 10 % of those. 3 · *Accessibility* orders the survivors by travel time to the nearest city. The winners are the high, dry, thin-air plateaus of Central Asia (Tibet, Qinghai, Xinjiang, Kyrgyzstan, Afghanistan) and, for the Moon, the high Rockies of Colorado. For Mars, the dusty Qinghai and Taklamakan margins appear right next to Qaidam, a known Mars analog that we had excluded, which is a good sign. Honest caveat: few classic analogs survive both filters (0–1 of 25), because together they keep only ~0.5 % of Earth and many classic sites fail on atmosphere (Atacama air is very clean; Mars is dusty).
 
 **Known limitations.** Moon/Mars target values are approximate literature figures, not computed from PDS products. Climate is shown for context but not scored, so the ranking favours accessible bare, arid terrain rather than the coldest places on Earth; the Moon's temperatures remain the clearest point where any Earth analogy breaks. Slope is measured at 5 km scale, where almost every mountain range is above Earth's 99th percentile; the app flags this as a tie at Earth's limit instead of a match. With only surface, slope and access, any bare, steep and reachable place scores well; geology (thermal-infrared emissivity) and ice are the next dimensions to add.
 

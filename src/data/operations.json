@@ -1,0 +1,3073 @@
+{
+ "generatedAt": "2026-11-14T17:45:53.700Z",
+ "source": "scripts/ops/score-ops.mjs over data/ee/ GeoTIFFs (0.1° grid); criteria in scripts/ops/tasks.mjs; method in docs/estrategias-bases.md",
+ "grid": "85°N to -85°, 0.100° × 0.100°",
+ "proxies": [],
+ "selection": {
+  "best": 5,
+  "accessible": 3,
+  "accessibleMaxHours": 6,
+  "minSeparationKm": 300,
+  "excludedKmFromKnownAnalogs": 300
+ },
+ "tasks": [
+  {
+   "id": "eva_cold_rough",
+   "name": "Spacesuit EVA on cold, rough, thin-air terrain",
+   "targets": [
+    "shackleton",
+    "jezero",
+    "arcadia"
+   ],
+   "need": "Suit mobility, fatigue and procedures on broken, bare terrain, in the cold and at low pressure (less oxygen, like a pressurised suit with a low-pressure mix).",
+   "criteria": [
+    {
+     "var": "lst_min",
+     "w": 1,
+     "why": "Night-time cold below −40 °C stresses suits, gloves and batteries",
+     "rule": "lo(-40, 0)"
+    },
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Rough but walkable ground (5 km slope)",
+     "rule": "band(1, 2.5, 6, 10)"
+    },
+    {
+     "var": "ps_hpa",
+     "w": 1,
+     "why": "Thin air: below ~600 hPa means above ~4 km altitude",
+     "rule": "lo(600, 900)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground, no vegetation (MODIS NDVI of bare soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
+    }
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 38.65,
+     "lon": 72.05,
+     "score": 1,
+     "values": {
+      "lst_min": -40.5,
+      "ndvi": 0.049,
+      "slope": 5.8,
+      "elev": 3898,
+      "ps_hpa": 584.4,
+      "access_h": 22.5
+     },
+     "place": "Gorno-Badakhshan Autonomous Region, Tajikistan"
+    },
+    {
+     "lat": 35.95,
+     "lon": 75.55,
+     "score": 1,
+     "values": {
+      "lst_min": -39.4,
+      "ndvi": -0.035,
+      "slope": 3,
+      "elev": 4919,
+      "ps_hpa": 565.3,
+      "access_h": 30.1
+     },
+     "place": "Gilgit-Baltistan, Pakistan"
+    },
+    {
+     "lat": 35.35,
+     "lon": 81.25,
+     "score": 1,
+     "values": {
+      "lst_min": -42.4,
+      "ndvi": -0.034,
+      "slope": 2.9,
+      "elev": 6282,
+      "ps_hpa": 521.6,
+      "access_h": 48.9
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 29.75,
+     "lon": 96.35,
+     "score": 0.99,
+     "values": {
+      "lst_min": -37.9,
+      "ndvi": 0.069,
+      "slope": 2.9,
+      "elev": 4764,
+      "ps_hpa": 582.3,
+      "access_h": 15
+     },
+     "place": "Xizang, China"
+    },
+    {
+     "lat": 30.75,
+     "lon": 88.65,
+     "score": 0.98,
+     "values": {
+      "lst_min": -36.2,
+      "ndvi": 0.09,
+      "slope": 4,
+      "elev": 5574,
+      "ps_hpa": 555.3,
+      "access_h": 5.8
+     },
+     "place": "Xizang, China"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 30.75,
+     "lon": 88.65,
+     "score": 0.98,
+     "values": {
+      "lst_min": -36.2,
+      "ndvi": 0.09,
+      "slope": 4,
+      "elev": 5574,
+      "ps_hpa": 555.3,
+      "access_h": 5.8
+     },
+     "place": "Xizang, China"
+    },
+    {
+     "lat": 34.15,
+     "lon": 77.75,
+     "score": 0.93,
+     "values": {
+      "lst_min": -30.1,
+      "ndvi": 0.065,
+      "slope": 2.7,
+      "elev": 5217,
+      "ps_hpa": 536.2,
+      "access_h": 5.6
+     },
+     "place": "Ladakh, India"
+    },
+    {
+     "lat": 35.75,
+     "lon": 70.15,
+     "score": 0.93,
+     "values": {
+      "lst_min": -31.1,
+      "ndvi": 0.057,
+      "slope": 4.7,
+      "elev": 3866,
+      "ps_hpa": 611.8,
+      "access_h": 5.9
+     },
+     "place": "Panjshir Province, Afghanistan"
+    }
+   ],
+   "reference": null,
+   "known": [
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "grazing_sun",
+   "name": "Navigation and operations under low-angle sun and long shadows",
+   "targets": [
+    "shackleton"
+   ],
+   "need": "At the lunar south pole the Sun stays within ~1.5° of the horizon: long shadows, glare and spots where cameras and people go blind. Navigation, rover driving and solar panels on vertical masts.",
+   "criteria": [
+    {
+     "var": "abs_lat",
+     "w": 2,
+     "why": "Polar latitude: the Sun circles low over the horizon (polar day and night)",
+     "rule": "hi(66.5, 78)"
+    },
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Relief that casts long shadows",
+     "rule": "band(1, 3, 8, 15)"
+    },
+    {
+     "var": "albedo",
+     "w": 1,
+     "why": "Snow-free ground in summer (regolith, not ice)",
+     "rule": "lo(0.35, 0.6)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
+    }
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 80.75,
+     "lon": 55.95,
+     "score": 1,
+     "values": {
+      "lat": 80.8,
+      "ndvi": -0.077,
+      "albedo": 0.304,
+      "slope": 3,
+      "elev": 8,
+      "access_h": 83.7
+     },
+     "place": "Arkhangelsk Oblast, Russia"
+    },
+    {
+     "lat": 81.95,
+     "lon": -84.65,
+     "score": 1,
+     "values": {
+      "lat": 82,
+      "ndvi": -0.027,
+      "albedo": 0.349,
+      "slope": 6.8,
+      "elev": 37,
+      "access_h": 137
+     },
+     "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 82.55,
+     "lon": -63.25,
+     "score": 1,
+     "values": {
+      "lat": 82.5,
+      "ndvi": 0.007,
+      "albedo": 0.352,
+      "slope": 3.1,
+      "elev": 117,
+      "access_h": 142.6
+     },
+     "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 80.05,
+     "lon": -71.65,
+     "score": 0.99,
+     "values": {
+      "lat": 80,
+      "ndvi": -0.047,
+      "albedo": 0.365,
+      "slope": 3.8,
+      "elev": 634,
+      "access_h": 167.8
+     },
+     "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 78.95,
+     "lon": 100.85,
+     "score": 0.98,
+     "values": {
+      "lat": 79,
+      "ndvi": -0.085,
+      "albedo": 0.373,
+      "slope": 4.9,
+      "elev": 0,
+      "access_h": 91.2
+     },
+     "place": "Krasnoyarsk Krai, Russia"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 70.65,
+     "lon": 28.15,
+     "score": 0.67,
+     "values": {
+      "lat": 70.7,
+      "ndvi": 0.114,
+      "albedo": 0.29,
+      "slope": 4.7,
+      "elev": 455,
+      "access_h": 6
+     },
+     "place": "Finnmark, Norway"
+    },
+    {
+     "lat": 69.55,
+     "lon": 88.55,
+     "score": 0.54,
+     "values": {
+      "lat": 69.5,
+      "ndvi": 0.115,
+      "albedo": 0.428,
+      "slope": 2.9,
+      "elev": 375,
+      "access_h": 2
+     },
+     "place": "Krasnoyarsk Krai, Russia"
+    },
+    {
+     "lat": 67.75,
+     "lon": 33.75,
+     "score": 0.39,
+     "values": {
+      "lat": 67.8,
+      "ndvi": 0.115,
+      "albedo": 0.409,
+      "slope": 3,
+      "elev": 612,
+      "access_h": 3.6
+     },
+     "place": "Murmansk Oblast, Russia"
+    }
+   ],
+   "reference": {
+    "name": "Svalbard (AMASE)",
+    "score": 0.95
+   },
+   "known": [
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0.95
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0.83
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "cold_trap",
+   "name": "Hardware and EVA in extreme cold (permanently shadowed craters)",
+   "targets": [
+    "shackleton"
+   ],
+   "need": "Shackleton's shadowed floor stays below −230 °C, colder than anywhere on Earth. Earth can only test the start of that curve: seals, lubricants, batteries and short EVAs at −60 °C or below.",
+   "criteria": [
+    {
+     "var": "lst_min",
+     "w": 2,
+     "why": "The colder the better, up to Earth's p1 (−75 °C)",
+     "rule": "lo(-75, -30)"
+    },
+    {
+     "var": "lst_max",
+     "w": 1,
+     "why": "Even the summer maximum stays cold",
+     "rule": "lo(-10, 10)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Polar desert: little snow",
+     "rule": "lo(100, 300)"
+    }
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": -72.75,
+     "lon": 128.15,
+     "score": 1,
+     "values": {
+      "lst_min": -74.8,
+      "lst_max": -28.4,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
+    },
+    {
+     "lat": -73.25,
+     "lon": 115.25,
+     "score": 1,
+     "values": {
+      "lst_min": -74.8,
+      "lst_max": -29,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
+    },
+    {
+     "lat": -74.95,
+     "lon": 96.05,
+     "score": 1,
+     "values": {
+      "lst_min": -74.8,
+      "lst_max": -32.6,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
+    },
+    {
+     "lat": -75.45,
+     "lon": 23.95,
+     "score": 1,
+     "values": {
+      "lst_min": -74.6,
+      "lst_max": -30,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
+    },
+    {
+     "lat": -76.25,
+     "lon": 39.05,
+     "score": 1,
+     "values": {
+      "lst_min": -74.8,
+      "lst_max": -32.3,
+      "precip": 0,
+      "elev": null,
+      "access_h": null
+     },
+     "place": "Antarctica"
+    }
+   ],
+   "accessible": [],
+   "reference": {
+    "name": "Concordia (Dome C)",
+    "score": 1
+   },
+   "known": [
+    {
+     "name": "Concordia (Dome C)",
+     "score": 1
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": 0.47
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0.18
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    }
+   ]
+  },
+  {
+   "id": "permafrost_drill",
+   "name": "Drilling and extracting shallow ground ice",
+   "targets": [
+    "arcadia",
+    "shackleton"
+   ],
+   "need": "Arcadia has water ice under less than 1 m of soil (SWIM). Shackleton has ice in permanently shadowed regolith. Drilling, sampling ice-cemented ground and extracting water (ISRU).",
+   "criteria": [
+    {
+     "var": "lst_mean",
+     "w": 2,
+     "why": "Mean annual surface temperature well below 0 °C (continuous-permafrost proxy)",
+     "rule": "lo(-10, -2)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Dry permafrost (polar desert), not boggy",
+     "rule": "lo(150, 400)"
+    },
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Plain, like Arcadia",
+     "rule": "lo(2, 6)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.25)"
+    }
+   ],
+   "gaps": [
+    "We have no direct ground-ice or permafrost layer: ESA CCI Permafrost (ground temperature and probability, Obu et al. 2019) would replace the proxy."
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 37.25,
+     "lon": 74.65,
+     "score": 1,
+     "values": {
+      "lst_mean": -9.9,
+      "precip": 93.4,
+      "ndvi": -0.011,
+      "slope": 0.6,
+      "elev": 5214,
+      "access_h": 9.5
+     },
+     "place": "Badakhshan Province, Afghanistan"
+    },
+    {
+     "lat": 34.45,
+     "lon": 77.25,
+     "score": 1,
+     "values": {
+      "lst_mean": -10.1,
+      "precip": 140.2,
+      "ndvi": 0,
+      "slope": 0.6,
+      "elev": 5370,
+      "access_h": 12.6
+     },
+     "place": "Ladakh, India"
+    },
+    {
+     "lat": 35.45,
+     "lon": 81.25,
+     "score": 1,
+     "values": {
+      "lst_mean": -17.4,
+      "precip": 137.2,
+      "ndvi": -0.019,
+      "slope": 1.7,
+      "elev": 6190,
+      "access_h": 41.3
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 36.85,
+     "lon": 85.05,
+     "score": 1,
+     "values": {
+      "lst_mean": -11.1,
+      "precip": 145.3,
+      "ndvi": 0.007,
+      "slope": 1.4,
+      "elev": 5539,
+      "access_h": 47.1
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 69.65,
+     "lon": 161.25,
+     "score": 1,
+     "values": {
+      "lst_mean": -13.2,
+      "precip": 85.4,
+      "ndvi": -0.003,
+      "slope": 0,
+      "elev": 0,
+      "access_h": 47.7
+     },
+     "place": "Sakha Republic, Russia"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 62.85,
+     "lon": 129.75,
+     "score": 0.88,
+     "values": {
+      "lst_mean": -10.2,
+      "precip": 259.9,
+      "ndvi": 0.125,
+      "slope": 0.2,
+      "elev": 58,
+      "access_h": 3.1
+     },
+     "place": "Sakha Republic, Russia"
+    },
+    {
+     "lat": 43.45,
+     "lon": 84.65,
+     "score": 0.73,
+     "values": {
+      "lst_mean": -6.9,
+      "precip": 256.2,
+      "ndvi": 0.032,
+      "slope": 1.8,
+      "elev": 3644,
+      "access_h": 5.4
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 39.85,
+     "lon": 72.85,
+     "score": 0.63,
+     "values": {
+      "lst_mean": -8.2,
+      "precip": 358.4,
+      "ndvi": 0.003,
+      "slope": 1.4,
+      "elev": 4264,
+      "access_h": 5
+     },
+     "place": "Osh Region, Kyrgyzstan"
+    }
+   ],
+   "reference": {
+    "name": "Haughton / Devon",
+    "score": 0.96
+   },
+   "known": [
+    {
+     "name": "Haughton / Devon",
+     "score": 0.96
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0.95
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0.78
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "dust_ops",
+   "name": "Operations with dust: abrasion, seals and panel cleaning",
+   "targets": [
+    "jezero",
+    "arcadia"
+   ],
+   "need": "Martian dust is fine and electrostatic, and dust storms cut solar power (Opportunity, 2018). Testing seals, filters, airlocks and panel cleaning.",
+   "criteria": [
+    {
+     "var": "dust_aod",
+     "w": 2,
+     "why": "Dusty air: from Earth's p75 (0.03) to p95 (0.2). Mars (τ≈0.5) sits at Earth's absolute maximum",
+     "optional": true,
+     "rule": "hi(0.03, 0.2)"
+    },
+    {
+     "var": "wind_ms",
+     "w": 1,
+     "why": "Wind that lifts dust: from Earth's median (4.3 m/s, close to Mars) up to ~p85",
+     "optional": true,
+     "rule": "hi(4, 7)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Aridity: dust is not washed out",
+     "rule": "lo(50, 200)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
+    },
+    {
+     "var": "albedo",
+     "w": 1,
+     "why": "Loose, bright sediment (not rock, not ice)",
+     "rule": "band(0.18, 0.25, 0.35, 0.45)"
+    },
+    {
+     "var": "lst_max",
+     "w": 1,
+     "why": "Hot surface: convection and dust devils lift dust (as on Mars)",
+     "rule": "hi(15, 35)"
+    }
+   ],
+   "proxyNote": "Without MERRA-2 dust and wind, the task falls back to aridity and loose sediment only.",
+   "optionalLayers": [
+    {
+     "var": "dust_aod",
+     "available": true
+    },
+    {
+     "var": "wind_ms",
+     "available": true
+    }
+   ],
+   "best": [
+    {
+     "lat": 21.15,
+     "lon": -16.95,
+     "score": 0.97,
+     "values": {
+      "lst_max": 36.2,
+      "precip": 42.3,
+      "ndvi": 0.094,
+      "albedo": 0.29,
+      "elev": 9,
+      "wind_ms": 6.5,
+      "dust_aod": 0.376,
+      "access_h": 1.5
+     },
+     "place": "Dakhlet Nouadhibou, Mauritania"
+    },
+    {
+     "lat": 23.95,
+     "lon": -15.55,
+     "score": 0.97,
+     "values": {
+      "lst_max": 36.5,
+      "precip": 19,
+      "ndvi": 0.094,
+      "albedo": 0.35,
+      "elev": 47,
+      "wind_ms": 6.4,
+      "dust_aod": 0.309,
+      "access_h": 2.5
+     },
+     "place": "Cercle d'El Argoub, Western Sahara"
+    },
+    {
+     "lat": 27.15,
+     "lon": -11.35,
+     "score": 0.95,
+     "values": {
+      "lst_max": 39.3,
+      "precip": 22.6,
+      "ndvi": 0.059,
+      "albedo": 0.254,
+      "elev": 166,
+      "wind_ms": 6,
+      "dust_aod": 0.214,
+      "access_h": 6.1
+     },
+     "place": "Cercle d'Es-Semara, Western Sahara"
+    },
+    {
+     "lat": 18.85,
+     "lon": 18.75,
+     "score": 0.95,
+     "values": {
+      "lst_max": 46.9,
+      "precip": 51.8,
+      "ndvi": 0.076,
+      "albedo": 0.337,
+      "elev": 337,
+      "wind_ms": 6.1,
+      "dust_aod": 0.317,
+      "access_h": 16.4
+     },
+     "place": "Tibesti, Chad"
+    },
+    {
+     "lat": 24.65,
+     "lon": -12.65,
+     "score": 0.93,
+     "values": {
+      "lst_max": 45.2,
+      "precip": 24.8,
+      "ndvi": 0.089,
+      "albedo": 0.306,
+      "elev": 259,
+      "wind_ms": 5.8,
+      "dust_aod": 0.32,
+      "access_h": 16.4
+     },
+     "place": "cercle de Jraifia, Western Sahara"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 21.15,
+     "lon": -16.95,
+     "score": 0.97,
+     "values": {
+      "lst_max": 36.2,
+      "precip": 42.3,
+      "ndvi": 0.094,
+      "albedo": 0.29,
+      "elev": 9,
+      "wind_ms": 6.5,
+      "dust_aod": 0.376,
+      "access_h": 1.5
+     },
+     "place": "Dakhlet Nouadhibou, Mauritania"
+    },
+    {
+     "lat": 23.95,
+     "lon": -15.55,
+     "score": 0.97,
+     "values": {
+      "lst_max": 36.5,
+      "precip": 19,
+      "ndvi": 0.094,
+      "albedo": 0.35,
+      "elev": 47,
+      "wind_ms": 6.4,
+      "dust_aod": 0.309,
+      "access_h": 2.5
+     },
+     "place": "Cercle d'El Argoub, Western Sahara"
+    },
+    {
+     "lat": 27.05,
+     "lon": -11.15,
+     "score": 0.93,
+     "values": {
+      "lst_max": 44.2,
+      "precip": 25.6,
+      "ndvi": 0.084,
+      "albedo": 0.241,
+      "elev": 202,
+      "wind_ms": 6,
+      "dust_aod": 0.214,
+      "access_h": 5.9
+     },
+     "place": "Cercle d'Es-Semara, Western Sahara"
+    }
+   ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 0.45
+   },
+   "known": [
+    {
+     "name": "Qaidam",
+     "score": 0.45
+    },
+    {
+     "name": "Namib",
+     "score": 0.27
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    }
+   ]
+  },
+  {
+   "id": "landing_pad",
+   "name": "Landing and launch: pad, plume and ejected debris",
+   "targets": [
+    "arcadia",
+    "jezero",
+    "shackleton"
+   ],
+   "need": "Engine plumes dig craters and throw regolith (Apollo 12, Chang'e). Testing pads, berms and hazard detection.",
+   "criteria": [
+    {
+     "var": "slope",
+     "w": 2,
+     "why": "Very flat, like Arcadia",
+     "rule": "lo(0.5, 2)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Dry, loose surface",
+     "rule": "lo(100, 400)"
+    },
+    {
+     "var": "albedo",
+     "w": 1,
+     "why": "Sediment or rock, not water or ice",
+     "rule": "band(0.12, 0.18, 0.35, 0.5)"
+    }
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 24.95,
+     "lon": 46.65,
+     "score": 1,
+     "values": {
+      "precip": 98.6,
+      "ndvi": 0.08,
+      "albedo": 0.353,
+      "slope": 0.3,
+      "elev": 655,
+      "access_h": 0.2
+     },
+     "place": "Riyadh Region, Saudi Arabia"
+    },
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 21.85,
+     "lon": 39.05,
+     "score": 1,
+     "values": {
+      "precip": 78.8,
+      "ndvi": 0.075,
+      "albedo": 0.212,
+      "slope": 0.2,
+      "elev": 3,
+      "access_h": 0.3
+     },
+     "place": "Makkah Region, Saudi Arabia"
+    },
+    {
+     "lat": 14.65,
+     "lon": 49.25,
+     "score": 1,
+     "values": {
+      "precip": 48.2,
+      "ndvi": 0.115,
+      "albedo": 0.263,
+      "slope": 0.3,
+      "elev": 33,
+      "access_h": 0.4
+     },
+     "place": "Hadramaut Governorate, Yemen"
+    },
+    {
+     "lat": 27.25,
+     "lon": 56.25,
+     "score": 1,
+     "values": {
+      "precip": 95.6,
+      "ndvi": 0.082,
+      "albedo": 0.242,
+      "slope": 0.3,
+      "elev": 29,
+      "access_h": 0.4
+     },
+     "place": "Hormozgan Province, Iran"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 24.95,
+     "lon": 46.65,
+     "score": 1,
+     "values": {
+      "precip": 98.6,
+      "ndvi": 0.08,
+      "albedo": 0.353,
+      "slope": 0.3,
+      "elev": 655,
+      "access_h": 0.2
+     },
+     "place": "Riyadh Region, Saudi Arabia"
+    },
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 21.85,
+     "lon": 39.05,
+     "score": 1,
+     "values": {
+      "precip": 78.8,
+      "ndvi": 0.075,
+      "albedo": 0.212,
+      "slope": 0.2,
+      "elev": 3,
+      "access_h": 0.3
+     },
+     "place": "Makkah Region, Saudi Arabia"
+    }
+   ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 1
+   },
+   "known": [
+    {
+     "name": "Qaidam",
+     "score": 1
+    },
+    {
+     "name": "Namib",
+     "score": 0.99
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0.96
+    },
+    {
+     "name": "Atacama",
+     "score": 0.92
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0.9
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0.88
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0.85
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0.81
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0.57
+    },
+    {
+     "name": "Pilbara",
+     "score": 0.44
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0.3
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.26
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "power_mars",
+   "name": "Deploying power in cold, dusty, thin air (solar + fission)",
+   "targets": [
+    "jezero",
+    "arcadia"
+   ],
+   "need": "On Mars sunlight is ~43 % of Earth's, dust covers the panels and the cold eats batteries. Deploying panels, cables and a small reactor mock-up (Fission Surface Power).",
+   "criteria": [
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Clear skies, dry",
+     "rule": "lo(50, 250)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
+    },
+    {
+     "var": "lst_min",
+     "w": 1,
+     "why": "Night-time cold for batteries",
+     "rule": "lo(-30, 0)"
+    },
+    {
+     "var": "ps_hpa",
+     "w": 1,
+     "why": "Thin air: less convective cooling, like Mars",
+     "rule": "lo(650, 950)"
+    },
+    {
+     "var": "dust_aod",
+     "w": 1,
+     "why": "Dust that dims and soils panels: from Earth's median (0.013) to p90 (0.12)",
+     "optional": true,
+     "rule": "hi(0.013, 0.12)"
+    }
+   ],
+   "optionalLayers": [
+    {
+     "var": "dust_aod",
+     "available": true
+    }
+   ],
+   "best": [
+    {
+     "lat": 36.35,
+     "lon": 83.85,
+     "score": 1,
+     "values": {
+      "lst_min": -29.7,
+      "precip": 42.3,
+      "ndvi": 0.037,
+      "elev": 4892,
+      "ps_hpa": 601.8,
+      "dust_aod": 0.129,
+      "access_h": 20
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 36.05,
+     "lon": 78.35,
+     "score": 0.97,
+     "values": {
+      "lst_min": -34.7,
+      "precip": 79.6,
+      "ndvi": 0.045,
+      "elev": 5080,
+      "ps_hpa": 611.1,
+      "dust_aod": 0.126,
+      "access_h": 9.2
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 37.65,
+     "lon": 87.35,
+     "score": 0.95,
+     "values": {
+      "lst_min": -23.6,
+      "precip": 54,
+      "ndvi": 0.056,
+      "elev": 3646,
+      "ps_hpa": 651.3,
+      "dust_aod": 0.128,
+      "access_h": 24.2
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 38.75,
+     "lon": 90.95,
+     "score": 0.93,
+     "values": {
+      "lst_min": -25.9,
+      "precip": 46.7,
+      "ndvi": 0.048,
+      "elev": 3173,
+      "ps_hpa": 709,
+      "dust_aod": 0.126,
+      "access_h": 11.1
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 38.05,
+     "lon": 75.35,
+     "score": 0.91,
+     "values": {
+      "lst_min": -27.6,
+      "precip": 105.9,
+      "ndvi": 0.119,
+      "elev": 4539,
+      "ps_hpa": 658.6,
+      "dust_aod": 0.116,
+      "access_h": 14.1
+     },
+     "place": "Xinjiang, China"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 36.55,
+     "lon": 77.05,
+     "score": 0.95,
+     "values": {
+      "lst_min": -28.3,
+      "precip": 79.6,
+      "ndvi": 0.026,
+      "elev": 5106,
+      "ps_hpa": 662.2,
+      "dust_aod": 0.15,
+      "access_h": 5.4
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 41.45,
+     "lon": 95.25,
+     "score": 0.82,
+     "values": {
+      "lst_min": -24,
+      "precip": 54.8,
+      "ndvi": 0.065,
+      "elev": 1740,
+      "ps_hpa": 806.9,
+      "dust_aod": 0.126,
+      "access_h": 5.2
+     },
+     "place": "Gansu, China"
+    },
+    {
+     "lat": 39.45,
+     "lon": 97.75,
+     "score": 0.77,
+     "values": {
+      "lst_min": -25.8,
+      "precip": 153.3,
+      "ndvi": 0.118,
+      "elev": 4229,
+      "ps_hpa": 711.3,
+      "dust_aod": 0.101,
+      "access_h": 4.6
+     },
+     "place": "Gansu, China"
+    }
+   ],
+   "reference": {
+    "name": "Qaidam",
+    "score": 0.78
+   },
+   "known": [
+    {
+     "name": "Qaidam",
+     "score": 0.78
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0.23
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "regolith_build",
+   "name": "Building with regolith (sintering, 3D printing, berms)",
+   "targets": [
+    "shackleton",
+    "jezero",
+    "arcadia"
+   ],
+   "need": "Shielding against radiation and micrometeorites with local material: dark basaltic soil is the closest feedstock to lunar and Martian simulants.",
+   "criteria": [
+    {
+     "var": "albedo",
+     "w": 2,
+     "why": "Dark ground (basalt proxy)",
+     "rule": "band(0.08, 0.1, 0.18, 0.25)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
+    },
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Flat for a construction site",
+     "rule": "lo(1, 3)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Dry",
+     "rule": "lo(100, 300)"
+    }
+   ],
+   "gaps": [
+    "Albedo does not distinguish basalt from other dark rock: ASTER GED (emissivity, silica index) would say whether it is truly basaltic. Shackleton's highlands are anorthositic (bright): there, dark ground is NOT the right analog."
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 19.65,
+     "lon": 37.25,
+     "score": 1,
+     "values": {
+      "precip": 73.7,
+      "ndvi": 0.064,
+      "albedo": 0.129,
+      "slope": 0.1,
+      "elev": 4,
+      "access_h": 0.2
+     },
+     "place": "Red Sea State, Sudan"
+    },
+    {
+     "lat": 26.95,
+     "lon": 56.25,
+     "score": 1,
+     "values": {
+      "precip": 86.1,
+      "ndvi": 0.109,
+      "albedo": 0.132,
+      "slope": 0,
+      "elev": 26,
+      "access_h": 0.4
+     },
+     "place": "Hormozgan Province, Iran"
+    },
+    {
+     "lat": 23.85,
+     "lon": -15.85,
+     "score": 1,
+     "values": {
+      "precip": 17.5,
+      "ndvi": 0.099,
+      "albedo": 0.108,
+      "slope": 0,
+      "elev": 1,
+      "access_h": 0.5
+     },
+     "place": "Western Sahara"
+    },
+    {
+     "lat": 14.55,
+     "lon": 49.15,
+     "score": 1,
+     "values": {
+      "precip": 46.7,
+      "ndvi": 0.105,
+      "albedo": 0.171,
+      "slope": 0,
+      "elev": 96,
+      "access_h": 0.5
+     },
+     "place": "Hadramaut Governorate, Yemen"
+    },
+    {
+     "lat": 21.95,
+     "lon": 38.95,
+     "score": 1,
+     "values": {
+      "precip": 68.6,
+      "ndvi": 0.073,
+      "albedo": 0.106,
+      "slope": 0,
+      "elev": 2,
+      "access_h": 0.6
+     },
+     "place": "Makkah Region, Saudi Arabia"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 19.65,
+     "lon": 37.25,
+     "score": 1,
+     "values": {
+      "precip": 73.7,
+      "ndvi": 0.064,
+      "albedo": 0.129,
+      "slope": 0.1,
+      "elev": 4,
+      "access_h": 0.2
+     },
+     "place": "Red Sea State, Sudan"
+    },
+    {
+     "lat": 26.95,
+     "lon": 56.25,
+     "score": 1,
+     "values": {
+      "precip": 86.1,
+      "ndvi": 0.109,
+      "albedo": 0.132,
+      "slope": 0,
+      "elev": 26,
+      "access_h": 0.4
+     },
+     "place": "Hormozgan Province, Iran"
+    },
+    {
+     "lat": 23.85,
+     "lon": -15.85,
+     "score": 1,
+     "values": {
+      "precip": 17.5,
+      "ndvi": 0.099,
+      "albedo": 0.108,
+      "slope": 0,
+      "elev": 1,
+      "access_h": 0.5
+     },
+     "place": "Western Sahara"
+    }
+   ],
+   "reference": {
+    "name": "Death Valley / Mojave",
+    "score": 0.8
+   },
+   "known": [
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0.8
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.64
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0.41
+    },
+    {
+     "name": "Atacama",
+     "score": 0.4
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0.26
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    }
+   ]
+  },
+  {
+   "id": "rover_traverse",
+   "name": "Long-distance rover traverses",
+   "targets": [
+    "jezero",
+    "arcadia"
+   ],
+   "need": "Perseverance-style traverses: tens of km over plains and delta sediment, with autonomous navigation and communications relay.",
+   "criteria": [
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Drivable but not trivial",
+     "rule": "band(0.3, 0.8, 3, 6)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Bare ground (MODIS NDVI of bare desert soil is up to ~0.12)",
+     "rule": "lo(0.12, 0.2)"
+    },
+    {
+     "var": "precip",
+     "w": 1,
+     "why": "Dry",
+     "rule": "lo(100, 300)"
+    }
+   ],
+   "window": 3,
+   "windowNote": "Score averaged over a 7 × 7-cell window (~75 km): the favourable terrain has to be continuous for a long traverse.",
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 20.95,
+     "lon": 16.95,
+     "score": 1,
+     "values": {
+      "precip": 73.7,
+      "ndvi": 0.113,
+      "slope": 2.3,
+      "elev": 2047,
+      "access_h": 29.3
+     },
+     "place": "Tibesti, Chad"
+    },
+    {
+     "lat": 39.35,
+     "lon": 90.85,
+     "score": 1,
+     "values": {
+      "precip": 33.6,
+      "ndvi": 0.06,
+      "slope": 1.8,
+      "elev": 1831,
+      "access_h": 35.7
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": -27.95,
+     "lon": -70.35,
+     "score": 0.99,
+     "values": {
+      "precip": 63.5,
+      "ndvi": 0.081,
+      "slope": 1.8,
+      "elev": 1066,
+      "access_h": 2.3
+     },
+     "place": "Atacama Region, Chile"
+    },
+    {
+     "lat": 43.35,
+     "lon": 94.95,
+     "score": 0.99,
+     "values": {
+      "precip": 92,
+      "ndvi": 0.06,
+      "slope": 1.9,
+      "elev": 1206,
+      "access_h": 4.7
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": 33.85,
+     "lon": 80.45,
+     "score": 0.99,
+     "values": {
+      "precip": 94.2,
+      "ndvi": 0.092,
+      "slope": 1,
+      "elev": 4850,
+      "access_h": 11.5
+     },
+     "place": "Xizang, China"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": -27.95,
+     "lon": -70.35,
+     "score": 0.99,
+     "values": {
+      "precip": 63.5,
+      "ndvi": 0.081,
+      "slope": 1.8,
+      "elev": 1066,
+      "access_h": 2.3
+     },
+     "place": "Atacama Region, Chile"
+    },
+    {
+     "lat": 43.35,
+     "lon": 94.95,
+     "score": 0.99,
+     "values": {
+      "precip": 92,
+      "ndvi": 0.06,
+      "slope": 1.9,
+      "elev": 1206,
+      "access_h": 4.7
+     },
+     "place": "Xinjiang, China"
+    },
+    {
+     "lat": -18.95,
+     "lon": -69.95,
+     "score": 0.98,
+     "values": {
+      "precip": 51.1,
+      "ndvi": 0.067,
+      "slope": 2,
+      "elev": 1385,
+      "access_h": 3.6
+     },
+     "place": "Arica y Parinacota Region, Chile"
+    }
+   ],
+   "reference": {
+    "name": "Wadi Rum",
+    "score": 0.95
+   },
+   "known": [
+    {
+     "name": "Wadi Rum",
+     "score": 0.95
+    },
+    {
+     "name": "Atacama",
+     "score": 0.93
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0.82
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0.6
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0.56
+    },
+    {
+     "name": "Namib",
+     "score": 0.55
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0.4
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0.36
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0.18
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "isolation",
+   "name": "Crew isolation and delayed communications",
+   "targets": [
+    "shackleton",
+    "jezero",
+    "arcadia"
+   ],
+   "need": "Psychology, autonomy and procedures with no quick help (HERA, CHAPEA, Concordia). The communication delay (2.6 s Moon; 4–24 min Mars) is simulated anywhere; remoteness is not.",
+   "criteria": [
+    {
+     "var": "access_h",
+     "w": 2,
+     "why": "More than a day from the nearest city",
+     "rule": "hi(24, 72)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "Barren landscape",
+     "rule": "lo(0.15, 0.35)"
+    },
+    {
+     "var": "lst_min",
+     "w": 1,
+     "why": "Hostile climate",
+     "rule": "lo(-30, 0)"
+    }
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 65.95,
+     "lon": -86.45,
+     "score": 1,
+     "values": {
+      "lst_min": -34.4,
+      "ndvi": 0.087,
+      "elev": 68,
+      "access_h": 71.5
+     },
+     "place": "Nunavut, Canada"
+    },
+    {
+     "lat": 76.65,
+     "lon": -121.05,
+     "score": 1,
+     "values": {
+      "lst_min": -40.4,
+      "ndvi": 0.025,
+      "elev": 4,
+      "access_h": 71.5
+     },
+     "place": "Northwest Territories, Canada"
+    },
+    {
+     "lat": 69.45,
+     "lon": -28.75,
+     "score": 1,
+     "values": {
+      "lst_min": -42.3,
+      "ndvi": -0.051,
+      "elev": 0,
+      "access_h": 71.5
+     },
+     "place": "Greenland"
+    },
+    {
+     "lat": 68.25,
+     "lon": -122.85,
+     "score": 1,
+     "values": {
+      "lst_min": -34.6,
+      "ndvi": 0.146,
+      "elev": 519,
+      "access_h": 71.5
+     },
+     "place": "Northwest Territories, Canada"
+    },
+    {
+     "lat": 69.95,
+     "lon": -113.35,
+     "score": 1,
+     "values": {
+      "lst_min": -34.5,
+      "ndvi": 0.066,
+      "elev": 262,
+      "access_h": 71.5
+     },
+     "place": "Nunavut, Canada"
+    }
+   ],
+   "accessible": [],
+   "reference": {
+    "name": "Haughton / Devon",
+    "score": 1
+   },
+   "known": [
+    {
+     "name": "Haughton / Devon",
+     "score": 1
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 1
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 1
+    },
+    {
+     "name": "Bunge Land",
+     "score": 1
+    },
+    {
+     "name": "Atacama",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Qaidam",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Namib",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "Wadi Rum",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  },
+  {
+   "id": "astrobio",
+   "name": "Astrobiology sampling in hyper-arid sediments",
+   "targets": [
+    "jezero"
+   ],
+   "need": "Jezero is an ancient lake delta. Testing contamination-free sampling, caching and life detection at the dry limit of life (Atacama, Mars 2020).",
+   "criteria": [
+    {
+     "var": "precip",
+     "w": 2,
+     "why": "Hyper-arid",
+     "rule": "lo(25, 100)"
+    },
+    {
+     "var": "ndvi",
+     "w": 1,
+     "why": "No vegetation (at or below the hyper-arid median of 0.10)",
+     "rule": "lo(0.11, 0.16)"
+    },
+    {
+     "var": "albedo",
+     "w": 1,
+     "why": "Sediment",
+     "rule": "band(0.15, 0.2, 0.35, 0.45)"
+    },
+    {
+     "var": "slope",
+     "w": 1,
+     "why": "Basin or plain",
+     "rule": "lo(1, 3)"
+    }
+   ],
+   "gaps": [
+    "We have no lacustrine or deltaic geology layer: a dry-lake map (Global Lakes and Wetlands Database, playas) would separate deltas and salars from rocky desert."
+   ],
+   "optionalLayers": [],
+   "best": [
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 27.45,
+     "lon": 30.95,
+     "score": 1,
+     "values": {
+      "precip": 7.3,
+      "ndvi": 0.095,
+      "albedo": 0.331,
+      "slope": 0.4,
+      "elev": 183,
+      "access_h": 0.5
+     },
+     "place": "Asyut, Egypt"
+    },
+    {
+     "lat": 24.05,
+     "lon": 32.85,
+     "score": 1,
+     "values": {
+      "precip": 8.8,
+      "ndvi": 0.106,
+      "albedo": 0.298,
+      "slope": 0.1,
+      "elev": 169,
+      "access_h": 0.7
+     },
+     "place": "Aswan, Egypt"
+    },
+    {
+     "lat": -20.35,
+     "lon": -70.05,
+     "score": 1,
+     "values": {
+      "precip": 16.1,
+      "ndvi": 0.09,
+      "albedo": 0.217,
+      "slope": 0.3,
+      "elev": 976,
+      "access_h": 0.7
+     },
+     "place": "Tarapacá Region, Chile"
+    },
+    {
+     "lat": 23.95,
+     "lon": -15.75,
+     "score": 1,
+     "values": {
+      "precip": 16.8,
+      "ndvi": 0.086,
+      "albedo": 0.209,
+      "slope": 0.1,
+      "elev": 2,
+      "access_h": 0.8
+     },
+     "place": "Western Sahara"
+    }
+   ],
+   "accessible": [
+    {
+     "lat": 30.25,
+     "lon": 31.75,
+     "score": 1,
+     "values": {
+      "precip": 9.5,
+      "ndvi": 0.102,
+      "albedo": 0.263,
+      "slope": 0.4,
+      "elev": 157,
+      "access_h": 0.3
+     },
+     "place": "Cairo, Egypt"
+    },
+    {
+     "lat": 27.45,
+     "lon": 30.95,
+     "score": 1,
+     "values": {
+      "precip": 7.3,
+      "ndvi": 0.095,
+      "albedo": 0.331,
+      "slope": 0.4,
+      "elev": 183,
+      "access_h": 0.5
+     },
+     "place": "Asyut, Egypt"
+    },
+    {
+     "lat": 24.05,
+     "lon": 32.85,
+     "score": 1,
+     "values": {
+      "precip": 8.8,
+      "ndvi": 0.106,
+      "albedo": 0.298,
+      "slope": 0.1,
+      "elev": 169,
+      "access_h": 0.7
+     },
+     "place": "Aswan, Egypt"
+    }
+   ],
+   "reference": {
+    "name": "Wadi Rum",
+    "score": 0.99
+   },
+   "known": [
+    {
+     "name": "Wadi Rum",
+     "score": 0.99
+    },
+    {
+     "name": "Namib",
+     "score": 0.93
+    },
+    {
+     "name": "Atacama",
+     "score": 0.92
+    },
+    {
+     "name": "Qaidam",
+     "score": 0.62
+    },
+    {
+     "name": "Haughton / Devon",
+     "score": 0
+    },
+    {
+     "name": "Death Valley / Mojave",
+     "score": 0
+    },
+    {
+     "name": "Iceland",
+     "score": 0
+    },
+    {
+     "name": "Hawaii · Mauna Kea / Mauna Loa (HI-SEAS)",
+     "score": 0
+    },
+    {
+     "name": "MDRS Utah",
+     "score": 0
+    },
+    {
+     "name": "Rio Tinto",
+     "score": 0
+    },
+    {
+     "name": "Lanzarote",
+     "score": 0
+    },
+    {
+     "name": "Svalbard (AMASE)",
+     "score": 0
+    },
+    {
+     "name": "Pilbara",
+     "score": 0
+    },
+    {
+     "name": "Meteor / SP Crater",
+     "score": 0
+    },
+    {
+     "name": "Axel Heiberg",
+     "score": 0
+    },
+    {
+     "name": "Danakil / Dallol",
+     "score": 0
+    },
+    {
+     "name": "Ries",
+     "score": 0
+    },
+    {
+     "name": "Arkaroola",
+     "score": 0
+    },
+    {
+     "name": "Sudbury",
+     "score": 0
+    },
+    {
+     "name": "Lonar",
+     "score": 0
+    },
+    {
+     "name": "Kamchatka",
+     "score": 0
+    },
+    {
+     "name": "Bunge Land",
+     "score": 0
+    },
+    {
+     "name": "Mojave Bristol",
+     "score": 0
+    },
+    {
+     "name": "McMurdo Dry Valleys",
+     "score": null
+    },
+    {
+     "name": "Concordia (Dome C)",
+     "score": null
+    }
+   ]
+  }
+ ],
+ "candidates": {
+  "shackleton": [
+   {
+    "place": "Colorado, United States",
+    "lat": 39.45,
+    "lon": -106.15,
+    "tasks": {
+     "eva_cold_rough": 0.44,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Xizang, China",
+    "lat": 29.75,
+    "lon": 91.15,
+    "tasks": {
+     "eva_cold_rough": 0,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Kapisa Province, Afghanistan",
+    "lat": 35.15,
+    "lon": 69.55,
+    "tasks": {
+     "eva_cold_rough": 0.84,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Xinjiang, China",
+    "lat": 43.15,
+    "lon": 84.75,
+    "tasks": {
+     "eva_cold_rough": 0.71,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0.34,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0.38,
+     "regolith_build": 0,
+     "rover_traverse": 0.4,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Himachal Pradesh, India",
+    "lat": 32.15,
+    "lon": 77.25,
+    "tasks": {
+     "eva_cold_rough": 0,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   }
+  ],
+  "jezero": [
+   {
+    "place": "Xinjiang, China",
+    "lat": 36.95,
+    "lon": 80.05,
+    "tasks": {
+     "eva_cold_rough": 0.43,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0.52,
+     "power_mars": 0.67,
+     "regolith_build": 0,
+     "rover_traverse": 1,
+     "isolation": 0,
+     "astrobio": 0.29
+    }
+   },
+   {
+    "place": "Chuy Region, Kyrgyzstan",
+    "lat": 42.35,
+    "lon": 73.95,
+    "tasks": {
+     "eva_cold_rough": 0.74,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Qinghai, China",
+    "lat": 37.75,
+    "lon": 101.35,
+    "tasks": {
+     "eva_cold_rough": 0.6,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Xizang, China",
+    "lat": 30.05,
+    "lon": 90.55,
+    "tasks": {
+     "eva_cold_rough": 0.35,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Bamyan Province, Afghanistan",
+    "lat": 34.65,
+    "lon": 67.65,
+    "tasks": {
+     "eva_cold_rough": 0.77,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0.61,
+     "regolith_build": 0,
+     "rover_traverse": 0.79,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   }
+  ],
+  "arcadia": [
+   {
+    "place": "Xinjiang, China",
+    "lat": 37.05,
+    "lon": 79.85,
+    "tasks": {
+     "eva_cold_rough": 0,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Xizang, China",
+    "lat": 31.55,
+    "lon": 91.95,
+    "tasks": {
+     "eva_cold_rough": 0,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Qinghai, China",
+    "lat": 37.55,
+    "lon": 100.55,
+    "tasks": {
+     "eva_cold_rough": 0.4,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Maidan Wardak Province, Afghanistan",
+    "lat": 34.55,
+    "lon": 68.05,
+    "tasks": {
+     "eva_cold_rough": 0.47,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0,
+     "dust_ops": 0,
+     "landing_pad": 0.73,
+     "power_mars": 0.62,
+     "regolith_build": 0,
+     "rover_traverse": 0.81,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   },
+   {
+    "place": "Naryn Region, Kyrgyzstan",
+    "lat": 41.85,
+    "lon": 75.25,
+    "tasks": {
+     "eva_cold_rough": 0.48,
+     "grazing_sun": 0,
+     "cold_trap": 0,
+     "permafrost_drill": 0.24,
+     "dust_ops": 0,
+     "landing_pad": 0.5,
+     "power_mars": 0,
+     "regolith_build": 0,
+     "rover_traverse": 0,
+     "isolation": 0,
+     "astrobio": 0
+    }
+   }
+  ]
+ }
+}

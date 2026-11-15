@@ -25,13 +25,15 @@ interface Props {
   onSelect?: (id: string) => void;
   onError?: (e: unknown) => void; // sin WebGL o fallo de carga → el padre muestra el mapa 2D (TileMap)
   className?: string;
+  // false: la rueda del ratón hace scroll de la página en lugar de zoom (portada).
+  zoom?: boolean;
 }
 
 
 const ATMO_VERT = "varying vec3 n; void main(){ n = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
 const ATMO_FRAG = "uniform vec3 c; varying vec3 n; void main(){ float i = pow(0.7 - dot(n, vec3(0.0, 0.0, 1.0)), 4.0); gl_FragColor = vec4(c, 1.0) * clamp(i, 0.0, 1.0); }";
 
-export default function Globe({ body, markers, selectedId = null, onSelect, onError, className = "" }: Props) {
+export default function Globe({ body, markers, selectedId = null, onSelect, onError, className = "", zoom = true }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const markersRef = useRef(markers);
@@ -118,6 +120,7 @@ export default function Globe({ body, markers, selectedId = null, onSelect, onEr
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = 0.08;
     controls.minDistance = 1.8; controls.maxDistance = 5; controls.rotateSpeed = 0.6; controls.zoomSpeed = 0.7;
+    controls.enableZoom = zoom;
     controls.autoRotate = !reduce.matches; controls.autoRotateSpeed = 0.5;
     let idle = 0;
     controls.addEventListener("start", () => { controls.autoRotate = false; window.clearTimeout(idle); });

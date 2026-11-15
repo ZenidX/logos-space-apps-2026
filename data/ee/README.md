@@ -3,13 +3,14 @@
 Copia completa (14-11-2026) de lo que hay en el proyecto de Earth Engine **`terra-analog`**, para poder trabajar sin cuenta de Earth Engine (QGIS, Python/rasterio, GDAL…).
 
 ## Acceso público en Earth Engine
-- **Assets (lectura pública):** `projects/terra-analog/assets/terra_features_01deg` (variables) y `projects/terra-analog/assets/terra_access_01deg` (accesibilidad y fracción urbana, script `08_export_access.js`). Cualquier persona con cuenta de Earth Engine puede usarlo con `ee.Image('projects/terra-analog/assets/terra_features_01deg')`.
+- **Assets (lectura pública):** `projects/terra-analog/assets/terra_features_01deg` (variables), `projects/terra-analog/assets/terra_access_01deg` (accesibilidad y fracción urbana, script `08_export_access.js`) y `projects/terra-analog/assets/terra_atmo_01deg` (atmósfera MERRA-2, script `09_export_atmo.js`). Cualquier persona con cuenta de Earth Engine puede usarlo con `ee.Image('projects/terra-analog/assets/terra_features_01deg')`.
 - **Script de puntuación listo para abrir y ejecutar** (copia pública de solo lectura de `scripts/ee/06_puntuar_asset.js`): https://code.earthengine.google.com/f08f00b996446e8bc90653d3bec72b83
 - Los demás scripts están en [`scripts/ee/`](../../scripts/ee/). Para usarlos, se copian en el [Code Editor](https://code.earthengine.google.com/) con un proyecto de Cloud propio registrado en Earth Engine.
 
 ## Formato común de todos los GeoTIFF
-- 3600 × 1700 píxeles, `EPSG:4326`. **Usar la georreferencia de la cabecera de cada TIFF**: transformación `[0.1, 0, -180, 0, -0.10588235, 90]` (píxel de 0,1° en longitud y 180/1700 ≈ 0,10588° en latitud, origen 90°N). La rejilla de cálculo era de 0,1° entre 85°N y 85°S, pero la exportación quedó estirada a ±90°. Con la transformación antigua `[0.1, 0, -180, 0, -0.1, 85]` los datos salen hasta ~5° fuera de su sitio. Comprobado con puntos conocidos: el Mar Muerto da −242 m con la cabecera y +419 m con la transformación antigua.
-- Float32, una banda por archivo. Mar y sin dato = nodata (máscara).
+- Rejilla de **0,1° (≈11 km)** con celdas cuadradas, de **85°N a 85°S**, 3600 × 1700 píxeles, `EPSG:4326`, transformación `[0.1, 0, -180, 0, -0.1, 85]`: la misma rejilla que los assets de Earth Engine. Fila = `floor((85 − lat) / 0.1)`, columna = `floor((lon + 180) / 0.1)`.
+- Float32, una banda por archivo. **Sin dato = −9999** (mar, fuera de cobertura). Ojo: la altitud y la pendiente de GMTED2010 valen 0 sobre el mar, no −9999.
+- ⚠ **Corrección del 14-11 (aviso de C_2):** la primera versión de estos archivos se descargó por error en una rejilla de 90°N a 90°S con filas de 0,10588°, y el sin dato era −Infinity. La georreferencia interna era coherente, pero este README decía otra cosa. Se volvieron a descargar todos los archivos fijando la región a ±85° (`getDownloadURL` con `region` + `dimensions`; con `crsTransform` + `dimensions` Earth Engine ignora la transformación).
 
 ## `terra_features_01deg/`: variables de la Tierra (= las bandas del asset)
 Las genera `scripts/ee/05_export_features.js` (año 2024).
@@ -21,12 +22,12 @@ Las genera `scripts/ee/05_export_features.js` (año 2024).
 | `lst_max.tif` | Temperatura diurna máxima | °C | NASA MODIS MOD11A2 |
 | `lst_min.tif` | Temperatura nocturna mínima | °C | NASA MODIS MOD11A2 |
 | `precip.tif` | Precipitación | mm/año | NASA GPM IMERG V07 mensual |
-| `ndvi.tif` | Vegetación (NDVI) | índice **×10⁻⁴** ⚠ | NASA MODIS MOD13C1 |
+| `ndvi.tif` | Vegetación (NDVI) | índice (ya corregido) | NASA MODIS MOD13C1 |
 | `albedo.tif` | Albedo de onda corta (white-sky) | 0–1 | NASA MODIS MCD43C3 |
 | `slope.tif` | Pendiente a 5 km | ° | USGS GMTED2010 |
 | `elev.tif` | Altitud media | m | USGS GMTED2010 |
 
-⚠ **NDVI:** el asset se exportó con un factor de escala aplicado dos veces, así que los valores son 10 000 veces más pequeños. **Hay que multiplicarlos por 10 000** para tener el NDVI real (de −0,2 a 1). `06_puntuar_asset.js` y la web ya lo corrigen.
+**NDVI:** el asset de Earth Engine guarda el NDVI 10 000 veces más pequeño (factor de escala aplicado dos veces), pero **este `ndvi.tif` ya está corregido** (valores reales de −0,2 a 1).
 
 ## `access/`: accesibilidad (v2)
 
@@ -35,6 +36,19 @@ Las genera `scripts/ee/05_export_features.js` (año 2024).
 | `access_hours.tif` | Tiempo de viaje a la ciudad más cercana (≥50 000 hab.), en horas, media de la celda | Oxford Malaria Atlas Project, Weiss et al. 2018 (*Nature*) |
 | `access_score.tif` | Nota de accesibilidad, 0–1: `1 − ln(1+h)/ln(73)` | derivado |
 | `urban_fraction.tif` | Fracción de suelo urbano de la celda (0–1) | NASA MODIS MCD12Q1 2023 |
+
+## `atmo/`: atmósfera (fase 2 del análisis v3)
+
+Media de 2024 de **NASA MERRA-2** (reanálisis horario, ~0,5° × 0,625°, remuestreado a 0,1°). Asset público `projects/terra-analog/assets/terra_atmo_01deg`, script `scripts/ee/09_export_atmo.js`. A diferencia del resto, **cubre también el mar** (es un modelo global).
+
+| Archivo | Variable | Unidad | Producto MERRA-2 |
+|---|---|---|---|
+| `ps_hpa.tif` | Presión en superficie | hPa | M2T1NXSLV · PS |
+| `wind_ms.tif` | Velocidad media del viento a 10 m (calculada hora a hora) | m/s | M2T1NXSLV · U10M, V10M |
+| `qv_gkg.tif` | Humedad específica a 2 m | g/kg | M2T1NXSLV · QV2M |
+| `dust_aod.tif` | Espesor óptico del polvo a 550 nm | adimensional | M2T1NXAER · DUEXTTAU |
+
+Comprobación: Tíbet 556 hPa; Sáhara con polvo 0,21 (el máximo); Amazonía con humedad 18,5 g/kg; Atacama con polvo 0,009 (aire muy limpio).
 
 ## `scores/`: mapas de puntuación (0–1) con cada objetivo, v2
 Calculados con la misma fórmula que `06_puntuar_asset.js`: posición relativa dentro del rango terrestre p1–p99, ver [docs/metodo.md](../../docs/metodo.md). Son los mapas completos, **sin** excluir los análogos conocidos.

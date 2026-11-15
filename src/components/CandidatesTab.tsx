@@ -13,14 +13,21 @@ import eeSamples from "@/data/ee-samples.json";
 
 interface Candidate {
   c: [number, number]; // [lon, lat]
-  total: number;
+  total: number; // v3: analogía = media(forma, clima)
+  forma?: number | null; // fase 1: forma geográfica = media(superficie, relieve)
+  clima?: number | null; // fase 2: condición climática = media(clima_t, atmos)
+  clima_t?: number | null; // temperaturas MODIS + lluvia GPM
+  atmos?: number | null; // presión, viento, humedad, polvo (MERRA-2)
+  ps_hpa?: number | null;
+  wind_ms?: number | null;
+  dust_aod?: number | null;
   superficie: number | null;
   relieve: number | null;
   accesibilidad: number | null; // 0–1, from travel time to the nearest city
   access_h: number | null; // travel time to the nearest city (h), Oxford MAP 2015
   urban_frac?: number | null;
   elev?: number | null;
-  lst_day: number | null; // climate: shown for context, NOT scored (v2)
+  lst_day: number | null;
   lst_min: number | null;
   precip: number | null;
   ndvi: number | null;
@@ -31,7 +38,8 @@ interface Candidate {
 interface TargetResult {
   top: Candidate[];
   dist: { total_p50: number; total_p90: number; total_p99: number };
-  known: { name: string; total: number | null }[];
+  known: { name: string; total: number | null; pass1?: boolean; pass2?: boolean }[];
+  phases?: { thr1: number; shortlist: number; thr2: number; survivors: number };
 }
 const DATA = eeGlobal as unknown as Record<string, TargetResult | undefined>;
 // Extremos reales de la Tierra (mín./máx. global de 01_inventario_capas.js) para decidir "fuera de la Tierra".
@@ -171,12 +179,28 @@ export default function CandidatesTab() {
           <section className="rounded-2xl bg-gradient-to-br from-indigo-900/60 to-slate-900 p-4">
             <h2 className="text-lg font-bold">New analogs of {target.short}</h2>
             <p className="text-xs text-slate-300">
-              All land between 85°N and 85°S in 0.1° cells (~11 km), scored in Earth Engine on three equal-weight
-              dimensions: Surface and Relief (analogy with the target, NASA MODIS data) and Access (how easy it is to
-              bring people and materials: travel time to the nearest city). Climate is not scored. Urban and
-              water-dominated cells and the 25 already-catalogued analogs (300 km radius) are excluded; candidates are
-              at least 300 km apart.
+              All land between 85°N and 85°S in 0.1° cells (~11 km), analysed in three phases in Earth Engine:
+              <b> 1 · geographic form</b> (surface and relief), <b>2 · climate conditioning</b> (temperature, rainfall and
+              atmosphere: pressure, wind, humidity, dust) and <b>3 · accessibility</b> (travel time to the nearest city).
+              Urban and water-dominated cells and the 25 already-catalogued analogs (300 km radius) are excluded;
+              candidates are at least 300 km apart.
             </p>
+            {res.phases && (
+              <ol className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] font-mono text-[11px] sm:grid-cols-4">
+                {[
+                  ["All land", "≈1.7 M cells", "0.1° grid"],
+                  ["1 · Form", `${res.phases.shortlist.toLocaleString("en")} cells`, `form ≥ ${pct(res.phases.thr1)} (top 5 %)`],
+                  ["2 · Climate", `${res.phases.survivors.toLocaleString("en")} cells`, `climate ≥ ${pct(res.phases.thr2)} (top 10 %)`],
+                  ["3 · Access", `${res.top.length} sites`, "closest to a city, ≥ 300 km apart"],
+                ].map(([k, v, d]) => (
+                  <li key={k} className="bg-[var(--bg2)] px-3 py-2">
+                    <span className="block uppercase tracking-[.1em] text-[var(--dim)]">{k}</span>
+                    <span className="block text-[13px] text-[var(--acc)]">{v}</span>
+                    <span className="block text-[10px] text-[var(--mut)]">{d}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
           </section>
 
           <GlobeView
@@ -239,9 +263,20 @@ export default function CandidatesTab() {
                   <span className="btn-cut bg-[var(--acc)] px-2 py-0.5 font-mono text-sm font-medium text-[var(--bg)]">{pct(c.total)}</span>
                 </header>
                 <div className="space-y-1">
-                  <DimBar label="Surface" v={c.superficie} />
-                  <DimBar label="Relief" v={c.relieve} />
-                  <DimBar label="Access" v={c.accesibilidad} />
+                  {c.forma != null ? (
+                    <>
+                      <DimBar label="1 · Form" v={c.forma} />
+                      <DimBar label="2 · Climate" v={c.clima_t ?? null} />
+                      <DimBar label="2 · Atmos." v={c.atmos ?? null} />
+                      <DimBar label="3 · Access" v={c.accesibilidad} />
+                    </>
+                  ) : (
+                    <>
+                      <DimBar label="Surface" v={c.superficie} />
+                      <DimBar label="Relief" v={c.relieve} />
+                      <DimBar label="Access" v={c.accesibilidad} />
+                    </>
+                  )}
                 </div>
                 <dl className="mt-2 grid grid-cols-3 gap-1 text-[11px]">
                   <div>

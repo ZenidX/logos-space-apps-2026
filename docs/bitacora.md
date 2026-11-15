@@ -2,11 +2,213 @@
 
 Registro cronológico de lo que se ha hecho. Lo más reciente, arriba.
 
+## 2026-11-15 (tarde, 4) · Vídeo: un solo comando y v3 publicada
+
+- `video/scripts/make.sh [nombre] [planos…]` hace todo el proceso (captura → superposiciones → subtítulos → montaje). Con `SKIP_CAPTURE=1` reutiliza los fotogramas ya capturados (~70 s); con captura completa tarda ~4 min. Si llegan pantallas nuevas, basta con añadir el plano en `capture.cjs` y en la línea de tiempo de `build.sh`, y volver a lanzarlo.
+- `video/scripts/publish-demo.sh [nombre]` copia el vídeo en `public/demo/` (MP4, WebM y portada del cierre) para la página `/demo-video/`. Después: commit en `main` y `npm run deploy`.
+- Publicada en `/demo-video/` la v3 (subtítulos palabra a palabra), con captura nueva de la web.
+
+## 2026-11-15 (tarde, 3) · Vídeo: subtítulos palabra a palabra (prototipo v3)
+
+- **Tiempos de cada palabra:** `video/scripts/align.py` pasa la voz por Vosk (modelo pequeño de inglés, instalado fuera del repo) y la alinea con el guion. 54 de 64 palabras salen tal cual; «TerraVista» (Vosk oye «terror beast») y «spacesuit? An ice drill?» se reparten en el tramo que ocupa ese sonido. Resultado en `video/audio/word-timings.json`.
+- **Estilo:** las palabras van apareciendo una a una (aparecen del 85 al 100 % en 0,12 s), en amarillo, Nimbus Sans negrita a 44 px y sin caja. La frase se compone entera desde el principio, así que la línea no se mueve al ir llegando palabras.
+- **El PC del evento se colgó** con la primera versión: un solo ffmpeg con 64 entradas (una imagen por palabra) agotó la memoria. Ahora `video/scripts/captions.cjs` dibuja los subtítulos con Chrome como una sola secuencia PNG transparente (897 fotogramas, ~35 s) y ffmpeg solo superpone esa secuencia: pico de 1,25 GB y 33 s de montaje.
+- Orden: `capture.cjs` → `overlays.cjs` → `captions.cjs` → `build.sh`. Salida: `video/build/terravista-test-v3.mp4` + `.webm` (29,9 s, 1920×1080, con voz).
+- Sigue faltando: en `origin/main` todavía no están el selector de misión ni los avisos de zonas en conflicto o protegidas, así que los tramos 13–18 y 22–27 siguen en negro. La web publicada sigue con la v2.
+
+## 2026-11-15 (tarde, 2) · Vídeo publicado en una página oculta de la web
+
+- Página `/demo-video/` (sin enlace en el menú y con `noindex`): https://zenidx.github.io/logos-space-apps-2026/demo-video/ · enlace directo al MP4: https://zenidx.github.io/logos-space-apps-2026/demo/terravista-demo.mp4
+- Reproductor: el `<video>` nativo del navegador, con MP4 (H.264 + AAC) y copia WebM de respaldo, más una imagen de portada (el cierre). Archivos en `public/demo/` y página en `src/app/demo-video/page.tsx`.
+- Commit `aa278ed`, directo en `main` (encima de `6044abb`, sin tocar nada más), y publicado con `npm run deploy` desde un worktree de `origin/main`. Desde la rama `video` no se puede publicar: lleva una versión vieja de la web.
+- Prueba de punta a punta: la página da 200, el MP4 se sirve como `video/mp4` con peticiones por rangos (206), y en Chrome se reproduce en escritorio (1440 px) y en móvil (390 px): dura 29,9 s, es 1920×1080 y tiene audio.
+- **Para cambiar el vídeo:** sustituir los tres archivos de `public/demo/` en `main`, hacer commit y volver a publicar. Ahora está el montaje de prueba v2 (con planos en negro).
+
+## 2026-11-15 (tarde) · Vídeo: voz de ElevenLabs montada
+
+- `video/audio/voice.wav` (44,1 kHz mono, 30,08 s; fuera de git). La voz termina en el s 29,6, así que el corte a 29,9 s no se come nada. Las pausas entre frases caen en 5,9 · 12,2 · 18,2 · 21,6 · 26,2 · 28,1 s, de acuerdo con `docs/timestamps.txt`.
+- `build.sh` acepta `voice.wav` o `voice.mp3`, recorta a 29,9 s con un fundido de 0,1 s y codifica AAC a 48 kHz (Opus en la copia WebM).
+
+## 2026-11-15 (mediodía, 2) · Vídeo: montaje de prueba v2, horizontal
+
+- Formato **horizontal 16:9** (1920×1080; captura a 1280×720 ×1,5). Duración **29,9 s**: la voz ocupa los 30 s y se recortan 0,1 s del cierre.
+- Subtítulos **amarillos sin caja**, con contorno oscuro, sombra y una entrada con un ligero «pop» (del 90 al 100 % en 0,2 s). Un degradado oscuro suave en la franja inferior hace que se lean sobre cualquier pantalla.
+- Marca de agua: `SI-assisted editing · SI voice: ElevenLabs`.
+- Plano 18–22: se oculta la tarjeta «Every number, every source» para que no compita con el subtítulo, y el título entra entero.
+- `build.sh` genera también una copia WebM (VP9), porque el ordenador del evento no tiene decodificador H.264.
+- Registro actualizado en `docs/normas.md`, `docs/guion-video.md` y en la memoria.
+
+## 2026-11-15 (mediodía) · Vídeo: primer montaje de prueba (v1)
+
+- `video/scripts/capture.cjs`: captura la web pública fotograma a fotograma con un reloj virtual (sin GPU solo salen ~2 capturas/s, así que el tiempo de la página avanza 1/30 s por captura y el movimiento queda fluido). `overlays.cjs`: subtítulos desde `docs/timestamps.txt`, marca de agua de SI y cierre. `build.sh`: montaje con ffmpeg.
+- Resultado: `video/build/terravista-test-v1.mp4` (fuera de git), 1080×1920, 30 fps, 30,000 s exactos, sin audio. Planos: escena Luna → Tierra (0–6), Discover con los tres objetivos (6–13), negro (13–18, ponderación por misión sin pantalla), «Where every analogy breaks» de Method (18–22), negro (22–27, avisos sin pantalla) y cierre (27–30).
+- Por pulir: los textos de la escena Luna → Tierra chocan con los subtítulos; el plano 18–22 enseña poco; la web aún dice «Terra Analog» (el equipo lo sabe).
+
+## 2026-11-15 (mañana, 2) · Guion del vídeo v3: «Down to Earth»
+
+La v2 sonaba floja. La v3 ([docs/guion-video.md](guion-video.md)) se escribe sobre el lema «TerraVista — Down to Earth» y la descripción oficial de la página del proyecto. 62 palabras.
+Hallazgo: la descripción oficial promete dos cosas que la web aún no enseña (comprobado en `origin/main`): la ponderación por misión, que está calculada en `operations.json` pero no sale en ninguna pantalla, y los avisos de zonas en conflicto o protegidas, que no existen. Están apuntadas las frases alternativas por si no da tiempo a construirlas. Además, la rama `video` va por detrás de `origin/main`.
+
+## 2026-11-15 (mañana) · Vídeo de 30 s: normas comprobadas y guion v2
+
+- Normas del vídeo comprobadas de nuevo y decisiones del equipo apuntadas en `docs/normas.md`: menos de 30 s (objetivo 27–28 s), voz y subtítulos en inglés, marca de agua de SI que nombra ElevenLabs y cada plano pensado para un criterio del jurado.
+- Guion v2 desde cero en [docs/guion-video.md](guion-video.md): 61 palabras para ElevenLabs, y la imagen es solo la web animada. Sale de las ideas de los guiones del equipo, sin cifras que no se puedan defender.
+
 ## 2026-11-14 (noche) · Georreferencia de las GeoTIFF y nueva búsqueda (Space Apps)
 
 - `data/ee/README.md` daba una transformación equivocada (`[0.1,0,-180,0,-0.1,85]`). La cabecera de las TIFF (etiqueta 34264) dice origen 90°N y píxel de 0,10588° en latitud. Lo detectó Space Apps Datos con puntos conocidos (Mar Muerto, Qattara) y lo comprobé en `elev.tif`, `access_hours.tif` y `shackleton_total.tif`. README corregido. La web no lee estas TIFF (usa `ee-global.json`).
 - zexu redefine «Access»: viabilidad de llegar por tierra y montar cosas en el terreno, no cercanía a una ciudad. Además, los candidatos tienen que parecerse en forma. Datos busca sitios nuevos: prefiltro desde las TIFF → forma v3 contra el nulo de tierra → % de terreno con pendiente <10° y llegada por tierra → nota = Forma + Superficie + Viabilidad.
 - Rama `feature/shape` (local): línea de forma en la ficha y botón «Sort by shape». A zexu no le convence: la v2 no se parece en forma.
+- (Superado: después se volvieron a descargar todas las TIFF en la rejilla de ±85°; ver el README actual.)
+
+## 2026-11-14 (noche, 9) · Vídeo de 30 s: borrón y cuenta nueva
+
+El guion tiene que cumplir unos requisitos nuevos y se empieza de cero. Borrado (recuperable desde el commit `ea2ce49` con `git checkout ea2ce49 -- <ruta>`):
+- `docs/guion-video.md` (guion v1 Apolo/Armstrong y alternativas) y la sección «Vídeo de demo» de `docs/pitch.md`.
+- `video/assets/` entera: el clip del primer paso del Apolo 11, el audio de Armstrong y `CREDITS.md`.
+- Fuera de git: `video/build/` (cinta del Apolo, miniaturas, recortes) y los temporales del reconocedor de voz.
+
+Se quedan los guiones originales del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`), los datos del presupuesto (`video/data/nasa_budget_share.csv`) y las herramientas (`video/tools/`). Los enlaces a esos archivos en entradas anteriores de esta bitácora ya no funcionan.
+
+## 2026-11-14 (noche, 8) · Vídeo, fase 0 y primer material
+
+- Herramientas en `video/tools/` (no se suben a git): ffmpeg 7.0.2 y ffprobe estáticos, y Playwright (`playwright-core`, con el Chrome del sistema).
+- **Cifras del presupuesto comprobadas:** 4,41 % del gasto federal en 1966 (máximo) y 0,33 % en 2026. Las dos frases del guion son correctas. Serie completa en `video/data/nasa_budget_share.csv`.
+- **Imagen del primer paso:** tramo de 35 s de la cinta restaurada del Apolo 11 (NASA Image and Video Library) en `video/assets/archive/`. El audio de Armstrong de la NASA empieza en el s 150,2 de esa cinta (correlación cruzada de la envolvente de audio).
+- **Pendiente:** confirmar de oído cuál de los tres bloques de voz del MP3 es *"That's one small step for man"*. Un reconocedor de voz (Vosk) no entiende la radio de 1969. Probablemente es el bloque 1 (0,3–2,2 s).
+
+## 2026-11-14 (noche, 7) · El producto pasa a llamarse TerraVista; guion v1 del equipo
+
+- **Nombre:** «Terra Analog» → **TerraVista** en la web (`layout.tsx`, `manifest.ts`), README, banner, `package.json` y documentos. El proyecto de Earth Engine y el asset siguen siendo `terra-analog`, porque no se pueden renombrar. La web pública cambiará con el próximo `npm run deploy`.
+- **Guion** ([docs/guion-video.md](guion-video.md)): versión del equipo con los tiempos reajustados (0:00–0:04 / 0:04–0:09 / 0:09–0:13 / 0:13–0:24 / 0:24–0:27 / 0:27–0:30). Vuelve *"and where they break"*. Llevará ~2 s del audio real de Armstrong de fondo al principio. Las funciones de acogida (Open Spaces) se construirán más adelante y saldrán en el vídeo.
+- **Audio de Armstrong** descargado de la NASA (dominio público) en `video/assets/archive/`; créditos en `video/assets/CREDITS.md`.
+
+## 2026-11-14 (noche, 6) · Guion del vídeo de 30 s
+
+Valorados los tres guiones del equipo (`guion.md`, `guion-leo.md`, `guion_victor.txt`) y fundidos en una estructura v0 en [docs/guion-video.md](guion-video.md): contexto de Leo, pregunta de Víctor, producto en una frase y lema de Leo. Propuestas 3 intros y 3 cierres dramáticos, con tres parejas (recomendada: «un pequeño paso» + «el salto empieza aquí»). Quedan para después las cifras del presupuesto (fuente oficial) y el nombre «Open Spaces».
+Elegida la pareja A + 1. Escrita la v1 cronometrada (57 palabras de voz más ~4 s de audio de Armstrong), con la lista de piezas.
+Corrección: el equipo no grabará metraje propio. Todas las imágenes salen de archivo de la NASA, de la web y del visor 3D, o de gráficos generados; el cierre usa archivo de pruebas análogas de la NASA en la Tierra.
+
+## 2026-11-14 (noche, 12) · «How it works» con el análisis en 3 fases (C_1)
+
+- «01 Measure» añade presión del aire, viento y polvo (NASA MERRA-2, de ahí «satellites and models»).
+- «03 Rank» explica los tres filtros (1 forma del terreno, 2 clima y aire, 3 que un equipo pueda llegar) y el embudo, de ≈1,7 millones de sitios a 20.
+
+## 2026-11-14 (noche, 11) · Matriz de operaciones: solo sitios nuevos, MERRA-2 y calibración (C_2)
+
+- **Solo análogos nuevos.** El enunciado pide evitarlos, así que, como en la búsqueda global, ninguna celda a ≤ 300 km de los 25 catalogados puede protagonizar una tarea. El mejor catalogado de cada tarea aparece aparte como **referencia** (`operations.json → tasks[].reference`).
+- **Atmósfera MERRA-2 en uso** (`data/ee/atmo/`, de C_0): ya no queda ninguna aproximación activa. Los umbrales de polvo y viento se ponen por **posición dentro del rango terrestre**, porque la τ ≈ 0,5 de Marte está en el máximo absoluto de la Tierra (polvo en tierra firme: p50 0,013 · p95 0,21 · máx. 0,51).
+- **NDVI recalibrado.** El suelo desnudo hiperárido da en MODIS NDVI p50 0,10 · p90 0,12. Con el umbral anterior (≤ 0,05), el núcleo de Atacama puntuaba 0 en astrobiología; ahora puntúa 0,92.
+- **Sitios nuevos destacados:**
+  - polvo → costa del Sáhara atlántico (Nuadibú, El Argub, Es-Semara) y Tibesti;
+  - astrobiología → Desierto Oriental de Egipto y Pampa de Tarapacá;
+  - sol rasante → Tierra de Francisco José y Nunavut;
+  - EVA → Pamir, Karakórum y Kunlun;
+  - travesías → Tibesti, Sinkiang y Atacama sur.
+- **Nombres de lugar:** solo en alfabeto latino; al sur de 27,67°N, «Western Sahara» en lugar de un país (territorio en disputa).
+- **Hallazgo revisado con la v3 de C_0** (`5ae7a4a`): 3 de los 15 mejores candidatos ya sirven para alguna tarea (≥ 0,8): Kapisa en EVA, y Sinkiang y Maidan Wardak en travesías. En la v2 no llegaba ninguno.
+- Pendiente: mirar en imagen los sitios con nota 1 que están junto a ciudades.
+
+## 2026-11-14 (tarde-noche, 7)
+
+### Análisis v3 en tres fases, en producción
+- Atmósfera de **NASA MERRA-2** (media de 2024): asset público `terra_atmo_01deg` y GeoTIFF en `data/ee/atmo/` (presión, viento a 10 m, humedad y polvo). Control: Tíbet 556 hPa; Sáhara con polvo 0,21; Amazonía con humedad 18,5 g/kg; Atacama con polvo 0,009.
+- `src/data/ee-global.json` v3 generado con `10_tres_fases.js` y `merge-tres-fases.mjs`:
+  - Shackleton: 89.321 → 8.933 → 20 celdas.
+  - Jezero: 88.993 → 8.900 → 20.
+  - Arcadia: 94.446 → 9.445 → 20.
+- Ganadores: mesetas altas, secas y de aire tenue de Asia central (Tíbet, Qinghai, Sinkiang, Kirguistán, Afganistán), y Colorado para la Luna. Para Marte aparecen Qinghai y el borde del Taklamakán junto a **Qaidam**, un análogo conocido que habíamos excluido.
+- ⚠ **La validación empeora:** pasan la fase 1 entre 4 y 7 de 25 análogos conocidos, y la fase 2 uno o ninguno. El doble filtro deja el ~0,5 % de la Tierra, y muchos análogos clásicos fallan en atmósfera (Atacama tiene aire muy limpio y Marte es polvoriento). Hay que decirlo en el pitch.
+- Arreglado `10_tres_fases.js`: `mean()` necesita el mismo nombre de banda en todas las imágenes.
+
+## 2026-11-14 (noche, 10) · Visor 3D accesible (C_1)
+
+- **Diálogo:** tiene nombre («{candidato} compared with {objetivo}») y una descripción para lector de pantalla. Al abrirse, el foco va a «Close»; Tab y Mayús+Tab no salen del diálogo, y al cerrar (botón o Esc) el foco vuelve al botón que lo abrió.
+- **Controles:** cada `<label>` envuelve solo su deslizador. Antes el nombre accesible del deslizador incluía el texto de los botones («Midday (45°)»…). Los deslizadores tienen `aria-valuetext` («25.0 degrees», «times 2»), los botones «Real imagery / Same grey» llevan `aria-pressed` y el «✕» de Close ya no se lee.
+- **Terreno:** el lienzo 3D es `role="img"`, con un resumen leíble: «3D terrain, Earth · candidate: 33.95°N 51.35°E. Relief 1171 m, mean slope 6.9°, max slope 61°.»
+- Comprobado en Chrome (/3d, Isfahan frente a Shackleton) con `tsc` y `eslint` sin avisos.
+
+## 2026-11-14 (noche, 9) · Escena Luna → Tierra por tiempo, no por scroll
+
+Pedido del usuario: el viaje de la Luna a la Tierra de la portada dependía del scroll (3,2 pantallas fijas) y se hacía pesado.
+- `ContrastScene` (en `Story.tsx`) ahora ocupa **una pantalla** y se anima por **tiempo** (12 s), usando un `MotionValue` con `animate` en lugar de `useScroll`. Los textos y el movimiento son los mismos.
+- Arranca sola al entrar en vista (55 %) y se **pausa sola** al salir. Los botones **Pause / Play** y **Replay ↺** miden 44 px (WCAG 2.2.2: el contenido que se mueve más de 5 s debe poder pausarse).
+- Con movimiento reducido se ven los tres mensajes en columnas, como antes.
+- Comprobado en Chrome: avanza 5/12 en 5 s, Pause congela la escena, Play la retoma y se pausa sola al subir a la portada.
+
+## 2026-11-14 (noche, 8) · Estrategias de base y matriz de operaciones análogas
+
+Encargo del usuario (vía C_0), hecho en la sesión C_2.
+- Nuevo [estrategias-bases.md](estrategias-bases.md): una base para cada objetivo, con ubicación, energía, recursos, comunicaciones, terreno y riesgos, con fuentes NASA y científicas, y las suposiciones marcadas.
+  - **Shackleton:** cresta de conexión con de Gerlache; solar en mástiles y fisión.
+  - **Jezero:** frente del delta; fisión y solar. Sin hielo somero: es su punto débil como base.
+  - **Arcadia:** llanura a ~40–45°N con hielo a < 1 m (SWIM); fisión.
+- **Matriz reproducible «tarea × condiciones × sitios».** 11 tareas (EVA, sol rasante, frío extremo, perforación de hielo, polvo, aterrizaje, energía, construcción con regolito, rover, aislamiento y astrobiología).
+  - Cada condición es una función de deseabilidad sobre nuestras variables.
+  - Se calcula en **toda la rejilla** de `data/ee/`, sin limitarse a los candidatos.
+  - Cada tarea da los 5 mejores sitios separados ≥ 300 km, 3 accesibles (≤ 6 h) y la nota de los 25 análogos conocidos. Si hay empate, gana el sitio más accesible.
+  - Ficheros: `scripts/ops/tasks.mjs` (criterios), `scripts/ops/score-ops.mjs` (cálculo; también rellena la tabla del documento) y `scripts/ops/geotiff.mjs` (lector de GeoTIFF sin dependencias).
+  - Resultado en `src/data/operations.json`.
+- **Resultados principales:**
+  - Sol rasante → Svalbard.
+  - Frío extremo → meseta antártica (Concordia).
+  - Astrobiología, polvo y aterrizaje → Atacama.
+  - Permafrost → Ladakh, Badajshán y Devon.
+  - EVA con aire fino → Pamir y Karakórum.
+  - Aislamiento → Nunavut y Groenlandia.
+- **Hallazgo:** los 5 mejores candidatos de cada objetivo (Irán, Afganistán, Canarias…) no llegan a 0,8 en ninguna tarea. Parecerse en conjunto no equivale a servir para ensayar una operación.
+- **Fallo encontrado en `data/ee/*.tif`:** la rejilla estaba estirada a ±90°. Se avisó a C_0, que lo corrigió (`484e9b5`). El script lee la georreferencia de cada fichero y comprueba las altitudes contra `ee-global.json`.
+- **Pendiente:**
+  - Presión, viento y polvo de MERRA-2 (`data/ee/atmo/`, de C_0). Mientras tanto, la presión se estima desde la altitud y los criterios de polvo se omiten.
+  - Capas de permafrost (ESA CCI), litología (ASTER) y lagos secos.
+  - Una vista en la web (propuesta a C_0 y C_1; no se ha tocado ningún componente).
+
+## 2026-11-14 (noche, 7) · Accesibilidad y una web que se explica sola
+
+Prioridad del usuario: que se pueda usar y entender sin nadie que la presente.
+- **«How it works»** en la portada (`src/components/HowItWorks.tsx`): qué es un análogo, en una frase, y los 3 pasos (Measure → Compare → Rank) con lenguaje llano.
+- **Introducción en cada página** (`PageIntro`): «Step N of 5» con barra de progreso, un `h1` y una frase que explica qué se ve y qué se puede hacer. En /data va dentro de la cabecera de `DataExplorer`.
+- **Estructura:** enlace «Skip to content», un único `<main>` en el layout (el de `DataExplorer` pasa a `div`) y `aria-label` en la navegación.
+- **Navegación:** objetivos táctiles de 44 px.
+- **Letra:** las clases de 9 y 10 px suben al mínimo del sistema (`--t-xs`, 11 px), y la atribución de Leaflet también.
+- **Movimiento reducido:** la flecha de «Next» y el indicador «scroll» ya no se mueven en bucle, y ninguna animación CSS se repite.
+- **Texto:** «Nobody had searched the whole planet» pasa a «We searched the whole planet» (lo primero no se puede demostrar, ver la auditoría).
+- Lo que ya estaba hecho y no se ha tocado: el contraste AA de `--mut` y `--dim`, el foco visible y los marcadores de 44 px del globo («Consola v2» en `globals.css`).
+- Comprobado: `tsc` y `eslint` sin errores, y revisado en Chrome a 767 px y 519 px de ancho. Lighthouse no se pudo pasar.
+
+## 2026-11-14 (noche, 6)
+
+### Web en varias páginas
+- La historia se reparte en **5 páginas** con su propia URL:
+  - `/` Home: portada y escena Luna → Tierra.
+  - `/discover/`: elegir destino y deslizador.
+  - `/3d/`: comparación en 3D, ahora con selector de los 5 mejores candidatos de cada objetivo.
+  - `/method/`: validación, dónde se rompe la analogía y fuentes.
+  - `/data/`: las pestañas técnicas.
+- Barra de navegación común con indicador animado de la página activa (`SiteNav.tsx`) y enlace grande «Next →» al final de cada página.
+- El destino elegido y el peso del deslizador se mantienen al cambiar de página (`AppState.tsx`, contexto en el layout).
+- `Story.tsx` recibe `sections` y pinta solo las que pide cada página. El modo «explore» de la antigua portada pasa a `DataExplorer.tsx`.
+
+## 2026-11-14 (noche, 5)
+
+### Planetas 3D reales y arreglo del scroll bloqueado
+- **Scroll bloqueado en la portada:** el globo ocupaba la pantalla y `OrbitControls` capturaba la rueda del ratón para hacer zoom. Nueva prop `zoom` en `Globe.tsx`; en la historia va a `false`, así que la rueda baja la página y arrastrar sigue girando el globo.
+- **Planetas 3D reales:** nuevo `src/components/Planet3D.tsx` (three.js), una esfera con textura NASA, luz lateral con terminador día/noche, atmósfera en la Tierra y Marte y giro lento. Solo dibuja cuando está en pantalla (IntersectionObserver), no captura eventos y respeta `prefers-reduced-motion`. Sin WebGL usa la imagen plana. Sustituye a los orbes CSS en la escena del contraste, los destinos y el bloque 3D (9 contextos WebGL en total, sin errores).
+
+## 2026-11-14 (noche, 4)
+
+### Portada «historia» al estilo Apple
+- Pedido del equipo: una web muy visual, animada e interactiva para vender el proyecto en el pitch, con poco texto técnico.
+- Inspiración en GitHub: **Nutlope/hallmark** y **heydamir/unslop** (skills de diseño «anti-AI-slop»: nada de degradados morados, brillos ni emojis, enseñar el producto y una sola idea fuerte) y **garyhtou/vanta** (rover planetario contado con scroll en 3D, donde el usuario «toma el mando»).
+- Nueva portada `src/components/Story.tsx` (React + framer-motion), página por defecto. Las pestañas de datos siguen detrás de «Explore the data»:
+  1. **Portada:** «Where on Earth is the Moon?», entrada palabra a palabra, parallax y el globo 3D con los candidatos.
+  2. **Escena fija de 320vh** (estilo Apple, ligada al scroll): la Luna gigante (−230 °C) se encoge, entra la Tierra (−81 °C) y termina en «Same extreme, not same number».
+  3. Texto que **se ilumina palabra a palabra** con el scroll y contadores animados.
+  4. **Elige destino:** orbes giratorios de la Luna y Marte. El globo y el top 3 cambian con animación.
+  5. **Ciencia o logística:** un deslizador re-pondera en directo (1−w)·analogía + w·accesibilidad y la lista se reordena con animación. w = 1/3 es la nota oficial.
+  6. **Entra en 3D:** dos orbes enfrentados; el bloque se expande al hacer scroll y abre el visor de 11 × 11 km.
+  7. **Validación** con puntos animados frente a la mediana y el top 10 % de la Tierra, y **dónde se rompe la analogía** (1/6 g, vacío, −230 °C, radiación).
+- Respeta `prefers-reduced-motion`: sin escena fija ni giros. Estilos `.orb` y `.slider` en `globals.css`.
 
 ## 2026-11-14 (noche) · Segunda tanda tras Crítico (sin publicar)
 

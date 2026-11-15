@@ -1,0 +1,428 @@
+[
+ {
+  "start": 0.0,
+  "end": 6.0,
+  "text": "Everything we send to the Moon or Mars gets tested on Earth first. But… where?",
+  "words": [
+   {
+    "w": "Everything",
+    "start": 0.06,
+    "end": 0.6,
+    "aligned": true
+   },
+   {
+    "w": "we",
+    "start": 0.6,
+    "end": 0.72,
+    "aligned": true
+   },
+   {
+    "w": "send",
+    "start": 0.72,
+    "end": 1.02,
+    "aligned": true
+   },
+   {
+    "w": "to",
+    "start": 1.02,
+    "end": 1.11,
+    "aligned": true
+   },
+   {
+    "w": "the",
+    "start": 1.11,
+    "end": 1.2,
+    "aligned": true
+   },
+   {
+    "w": "Moon",
+    "start": 1.2,
+    "end": 1.65,
+    "aligned": true
+   },
+   {
+    "w": "or",
+    "start": 1.65,
+    "end": 1.8,
+    "aligned": true
+   },
+   {
+    "w": "Mars",
+    "start": 1.8,
+    "end": 2.4,
+    "aligned": true
+   },
+   {
+    "w": "gets",
+    "start": 2.4,
+    "end": 2.67,
+    "aligned": true
+   },
+   {
+    "w": "tested",
+    "start": 2.67,
+    "end": 3.12,
+    "aligned": true
+   },
+   {
+    "w": "on",
+    "start": 3.12,
+    "end": 3.3,
+    "aligned": true
+   },
+   {
+    "w": "Earth",
+    "start": 3.33,
+    "end": 3.66,
+    "aligned": true
+   },
+   {
+    "w": "first.",
+    "start": 3.66,
+    "end": 4.29,
+    "aligned": true
+   },
+   {
+    "w": "But…",
+    "start": 4.68,
+    "end": 5.01,
+    "aligned": true
+   },
+   {
+    "w": "where?",
+    "start": 5.28,
+    "end": 5.94,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 6.0,
+  "end": 13.0,
+  "text": "TerraVista scans the whole planet with open NASA data, to find Earth's own Moon and Mars.",
+  "words": [
+   {
+    "w": "TerraVista",
+    "start": 6.48,
+    "end": 7.08,
+    "aligned": false
+   },
+   {
+    "w": "scans",
+    "start": 7.08,
+    "end": 7.68,
+    "aligned": false
+   },
+   {
+    "w": "the",
+    "start": 7.68,
+    "end": 7.83,
+    "aligned": true
+   },
+   {
+    "w": "whole",
+    "start": 7.83,
+    "end": 8.22,
+    "aligned": true
+   },
+   {
+    "w": "planet",
+    "start": 8.22,
+    "end": 8.67,
+    "aligned": true
+   },
+   {
+    "w": "with",
+    "start": 8.67,
+    "end": 8.85,
+    "aligned": true
+   },
+   {
+    "w": "open",
+    "start": 8.88,
+    "end": 9.27,
+    "aligned": true
+   },
+   {
+    "w": "NASA",
+    "start": 9.27,
+    "end": 9.63,
+    "aligned": true
+   },
+   {
+    "w": "data,",
+    "start": 9.63,
+    "end": 10.05,
+    "aligned": true
+   },
+   {
+    "w": "to",
+    "start": 10.17,
+    "end": 10.32,
+    "aligned": true
+   },
+   {
+    "w": "find",
+    "start": 10.32,
+    "end": 10.59,
+    "aligned": true
+   },
+   {
+    "w": "Earth's",
+    "start": 10.62,
+    "end": 10.95,
+    "aligned": true
+   },
+   {
+    "w": "own",
+    "start": 10.98,
+    "end": 11.25,
+    "aligned": true
+   },
+   {
+    "w": "Moon",
+    "start": 11.25,
+    "end": 11.55,
+    "aligned": true
+   },
+   {
+    "w": "and",
+    "start": 11.55,
+    "end": 11.64,
+    "aligned": true
+   },
+   {
+    "w": "Mars.",
+    "start": 11.64,
+    "end": 12.24,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 13.0,
+  "end": 18.0,
+  "text": "Testing a spacesuit? An ice drill? It weighs what matters for that mission,",
+  "words": [
+   {
+    "w": "Testing",
+    "start": 13.05,
+    "end": 13.47,
+    "aligned": true
+   },
+   {
+    "w": "a",
+    "start": 13.47,
+    "end": 13.53,
+    "aligned": true
+   },
+   {
+    "w": "spacesuit?",
+    "start": 13.53,
+    "end": 14.032,
+    "aligned": false
+   },
+   {
+    "w": "An",
+    "start": 14.032,
+    "end": 14.535,
+    "aligned": false
+   },
+   {
+    "w": "ice",
+    "start": 14.535,
+    "end": 15.037,
+    "aligned": false
+   },
+   {
+    "w": "drill?",
+    "start": 15.037,
+    "end": 15.54,
+    "aligned": false
+   },
+   {
+    "w": "It",
+    "start": 15.9,
+    "end": 16.11,
+    "aligned": true
+   },
+   {
+    "w": "weighs",
+    "start": 16.11,
+    "end": 16.5,
+    "aligned": true
+   },
+   {
+    "w": "what",
+    "start": 16.5,
+    "end": 16.68,
+    "aligned": true
+   },
+   {
+    "w": "matters",
+    "start": 16.68,
+    "end": 17.16,
+    "aligned": true
+   },
+   {
+    "w": "for",
+    "start": 17.16,
+    "end": 17.31,
+    "aligned": true
+   },
+   {
+    "w": "that",
+    "start": 17.31,
+    "end": 17.46,
+    "aligned": true
+   },
+   {
+    "w": "mission,",
+    "start": 17.46,
+    "end": 17.97,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 18.0,
+  "end": 22.0,
+  "text": "shows exactly where every analogy breaks,",
+  "words": [
+   {
+    "w": "shows",
+    "start": 18.6,
+    "end": 19.02,
+    "aligned": true
+   },
+   {
+    "w": "exactly",
+    "start": 19.02,
+    "end": 19.77,
+    "aligned": true
+   },
+   {
+    "w": "where",
+    "start": 19.77,
+    "end": 19.98,
+    "aligned": true
+   },
+   {
+    "w": "every",
+    "start": 20.07,
+    "end": 20.49,
+    "aligned": true
+   },
+   {
+    "w": "analogy",
+    "start": 20.49,
+    "end": 21.0,
+    "aligned": true
+   },
+   {
+    "w": "breaks,",
+    "start": 21.0,
+    "end": 21.72,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 22.0,
+  "end": 27.0,
+  "text": "and flags the places you can't safely, or legally, go.",
+  "words": [
+   {
+    "w": "and",
+    "start": 22.26,
+    "end": 22.44,
+    "aligned": true
+   },
+   {
+    "w": "flags",
+    "start": 22.44,
+    "end": 22.86,
+    "aligned": true
+   },
+   {
+    "w": "the",
+    "start": 22.86,
+    "end": 22.98,
+    "aligned": true
+   },
+   {
+    "w": "places",
+    "start": 22.98,
+    "end": 23.49,
+    "aligned": true
+   },
+   {
+    "w": "you",
+    "start": 23.49,
+    "end": 23.61,
+    "aligned": true
+   },
+   {
+    "w": "can't",
+    "start": 23.61,
+    "end": 24.0,
+    "aligned": true
+   },
+   {
+    "w": "safely,",
+    "start": 24.0,
+    "end": 24.72,
+    "aligned": true
+   },
+   {
+    "w": "or",
+    "start": 24.78,
+    "end": 25.03,
+    "aligned": true
+   },
+   {
+    "w": "legally,",
+    "start": 25.05,
+    "end": 25.74,
+    "aligned": true
+   },
+   {
+    "w": "go.",
+    "start": 25.8,
+    "end": 26.25,
+    "aligned": true
+   }
+  ]
+ },
+ {
+  "start": 27.0,
+  "end": 30.0,
+  "text": "TerraVista. Down to Earth.",
+  "words": [
+   {
+    "w": "TerraVista.",
+    "start": 27.21,
+    "end": 28.14,
+    "aligned": false
+   },
+   {
+    "w": "Down",
+    "start": 28.62,
+    "end": 28.95,
+    "aligned": true
+   },
+   {
+    "w": "to",
+    "start": 28.95,
+    "end": 29.1,
+    "aligned": true
+   },
+   {
+    "w": "Earth.",
+    "start": 29.1,
+    "end": 29.64,
+    "aligned": true
+   }
+  ]
+ }
+]

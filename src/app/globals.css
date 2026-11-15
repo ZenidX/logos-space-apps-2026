@@ -292,3 +292,85 @@ h1, h2, h3 {
   .skel::after { animation: none; display: none; }
   .mk i { transition: none; }
 }
+
+/* ───────── Historia (Story.tsx) ───────── */
+/* Orbe planetario que gira: la textura equirectangular se desplaza en X y un sombreado radial le da volumen */
+.orb {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  background-size: 200% 100%;
+  background-repeat: repeat-x;
+  animation: orb-spin 40s linear infinite;
+  box-shadow: inset -18px -10px 36px rgba(0, 0, 0, 0.85), inset 6px 4px 14px rgba(255, 255, 255, 0.12), 0 0 0 1px var(--line);
+  transition: box-shadow 0.4s, transform 0.4s;
+}
+.orb.on {
+  box-shadow: inset -18px -10px 36px rgba(0, 0, 0, 0.85), inset 6px 4px 14px rgba(255, 255, 255, 0.12), 0 0 0 1px var(--acc), 0 0 40px rgba(94, 230, 255, 0.25);
+  animation-duration: 14s;
+}
+@keyframes orb-spin {
+  from { background-position: 0 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Deslizador ciencia ↔ logística */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: linear-gradient(90deg, var(--acc) var(--p), var(--warn) var(--p));
+  outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--bg);
+  border: 2px solid var(--ink);
+  transform: rotate(45deg);
+  cursor: grab;
+}
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--bg);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  transform: rotate(45deg);
+  cursor: grab;
+}
+.slider:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .orb { animation: none; }
+}
+/* La Tierra del orbe en la escena de contraste: atmósfera azul */
+.orb.earth.on { box-shadow: inset -24px -12px 48px rgba(0, 0, 0, 0.85), inset 6px 4px 14px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(90, 170, 255, 0.5), 0 0 60px rgba(90, 170, 255, 0.35); }
+/* Planeta 3D (Planet3D.tsx): anillo fino cuando está seleccionado */
+.planet3d.on::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--acc);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ===== Accesibilidad (C_1, 2026-11-14) ===== */
+/* Saltar la navegación con el teclado: invisible hasta que recibe el foco */
+.skip-link {
+  position: fixed; left: 12px; top: -60px; z-index: 2000;
+  padding: 10px 14px; background: var(--acc); color: var(--bg);
+  font: 500 13px/1 var(--font-jetbrains), monospace; text-transform: uppercase; letter-spacing: .06em;
+  transition: top var(--d2) var(--ease);
+}
+.skip-link:focus { top: 12px; }
+/* Tamaño mínimo de texto: las clases de 9 y 10 px suben al mínimo del sistema (--t-xs = 11 px) */
+.text-\[9px\], .text-\[10px\] { font-size: var(--t-xs) !important; }
+.leaflet-control-attribution { font-size: var(--t-xs) !important; }
+/* Movimiento reducido: ninguna animación en bucle (flecha de «Next», indicador de scroll) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

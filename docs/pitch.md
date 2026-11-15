@@ -17,7 +17,7 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 > Today's analog sites — Atacama, Iceland, Antarctica — were chosen one by one, by experience. We built an open tool that scores all land between 85°N and 85°S against a real Moon or Mars site and tells you *where* each analog stops being useful. The challenge asks exactly that: find new analogs, and explain what is similar, how similar, and where the analogy breaks.
 
 **[0:50–1:50] Solution + demo** *(live demo of the app on a phone)*
-> This is **Terra Analog**. We took NASA Earth observation data — MODIS land temperature, vegetation and albedo, GPM rainfall, and terrain — and scored every 11-kilometre cell of land on Earth against three real targets: the Shackleton crater rim at the lunar south pole, Jezero crater on Mars, and Arcadia Planitia, a candidate Mars landing site with buried ice.
+> This is **TerraVista**. We took NASA Earth observation data — MODIS land temperature, vegetation and albedo, GPM rainfall, and terrain — and scored every 11-kilometre cell of land on Earth against three real targets: the Shackleton crater rim at the lunar south pole, Jezero crater on Mars, and Arcadia Planitia, a candidate Mars landing site with buried ice.
 >
 > The Moon reaches −230 °C — no place on Earth does. So instead of comparing raw numbers, we ask: *where does the target sit within Earth's range?* and find the places that sit at the same extreme.
 >
@@ -40,26 +40,12 @@ La entrega global va **en inglés**. El pitch local de 3 minutos puede hacerse e
 
 ---
 
-## 2. Vídeo de demo (30 s como máximo, inglés o subtítulos en inglés)
+## 2. Campos de la página del proyecto (inglés)
 
-| Tiempo | Imagen | Voz / texto |
-|---|---|---|
-| 0:00–0:03 | Logo del equipo | "We're team Logos, from Barcelona." |
-| 0:03–0:08 | Foto de la Luna → mapa de la Tierra | "Where on Earth can we rehearse for the Moon and Mars?" |
-| 0:08–0:12 | Título | "Terra Analog — finding the Moon and Mars on Earth." |
-| 0:12–0:22 | Grabación de pantalla: mapa → validación → candidato #1 | "We scored all land on Earth with NASA MODIS and GPM data against real Moon and Mars sites, validated with known analogs, and found new ones in the Canadian Arctic and the Karakoram." |
-| 0:22–0:30 | Tarjeta «where the analogy breaks» | "And we show where each analog stops working — so missions test in the right place." |
-
-**El límite de 30 s es estricto:** si se pasa, el proyecto queda fuera de la fase global.
-
----
-
-## 3. Campos de la página del proyecto (inglés)
-
-**Project name:** Terra Analog
+**Project name:** TerraVista
 
 **High-level summary (borrador):**
-Terra Analog systematically searches all land between 85°N and 85°S for new terrestrial analogs of future Moon and Mars base sites. Using NASA MODIS, GPM IMERG and terrain data in Google Earth Engine, it scores every ~11 km land cell in that band against three real targets (Shackleton rim, Jezero crater, Arcadia Planitia) by comparing *relative positions within Earth's range*, since the Moon and Mars are more extreme than anywhere on Earth. It validates the method against 25 known analogs, excludes them, and ranks new candidates, explaining for each one what is analogous, how much, and where the analogy breaks.
+TerraVista systematically searches all land between 85°N and 85°S for new terrestrial analogs of future Moon and Mars base sites. Using NASA MODIS, GPM IMERG and terrain data in Google Earth Engine, it scores every ~11 km land cell in that band against three real targets (Shackleton rim, Jezero crater, Arcadia Planitia) by comparing *relative positions within Earth's range*, since the Moon and Mars are more extreme than anywhere on Earth. It validates the method against 25 known analogs, excludes them, and ranks new candidates, explaining for each one what is analogous, how much, and where the analogy breaks.
 
 **NASA Data:** *Global search:* MODIS MOD11A2 (land surface temperature), MOD13C1 (NDVI), MCD43C3 (albedo) and GPM IMERG monthly V07 (precipitation), accessed via Google Earth Engine. *Reference-site analysis:* MOD13A2, MCD43A3, MOD10A1 (snow), ASTER GED (emissivity), NASADEM (elevation). *Maps and 3D:* NASA GIBS / Worldview, Moon Trek (LRO WAC, LOLA south-pole DEM) and Mars Trek (MGS MOLA, HRSC+MOLA blend), USGS/NASA Mars 2020 CTX DTM of Jezero. *Moon/Mars target values* are approximate figures from the literature on LRO Diviner and LOLA, MGS TES and MOLA and Perseverance MEDA; they were not computed from PDS products.
 
@@ -69,7 +55,7 @@ Terra Analog systematically searches all land between 85°N and 85°S for new te
 
 ---
 
-## 4. Riesgos a decir en voz alta si preguntan
+## 3. Riesgos a decir en voz alta si preguntan
 - Los valores de la Luna y Marte de los objetivos son **aproximados** (de la literatura); todavía no salen de los productos PDS. Como casi todas las temperaturas de la Luna y Marte quedan por debajo del mínimo terrestre, en la práctica la puntuación de clima premia «lo más frío de la Tierra».
 - La pendiente global se mide a 5 km: a esa escala casi toda montaña queda «en el techo» y saca Relieve 100. La web lo marca como «Tie at Earth's limit».
 - Death Valley y Mauna Kea entran en el top 10 % de Shackleton: con solo clima, superficie y pendiente, cualquier sitio seco, sin plantas y empinado parece lunar.
