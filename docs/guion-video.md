@@ -52,3 +52,12 @@ Si no da tiempo, se usan estas frases (en vez de las líneas 3 y 5):
 
 ## Ajustes en ElevenLabs
 Voz natural y cálida. Stability ~45–55 %, Similarity ~75 % y Style bajo-medio. Los puntos suspensivos de «But… where?» y las comas de «safely, or legally,» marcan las pausas. Si pasa de 26 s, se quita «exactly» o «the». Dejar el audio en `video/audio/`.
+
+## Material: comprobación previa al montaje (15-11)
+- **Herramientas:** ffmpeg 7.0.2 estático (con libass, x264 y xfade; sin `drawtext`, así que los textos van como superposición HTML o ASS); Playwright con el Chrome del sistema. WebGL funciona sin GPU (SwiftShader): el globo y el visor 3D se renderizan, aunque más lentos (~20 s por terreno).
+- **Captura:** desde la web pública (https://zenidx.github.io/logos-space-apps-2026/), por fotogramas. Así no se toca la carpeta de trabajo de los otros agentes. `recordVideo` de Playwright no sirve (le falta su propio ffmpeg y la calidad es baja).
+- **Pantallas disponibles:** portada (globo + «Where on Earth is the Moon?»), Discover (selector Shackleton/Jezero/Arcadia, globo con candidatos y deslizador de similitud frente a acceso), 3D (ranking + visor lado a lado con el control del Sol), Method y Data.
+- **Atención:** la web pública todavía dice **«Terra Analog»**, no TerraVista. El cambio de nombre solo está en la rama `video`, sin publicar. Hay que avisar a quien publique o taparlo en el montaje.
+- **Atención:** con 430 px de ancho, en el visor 3D se solapan los textos del HUD de la Luna. Hay que capturar más ancho o recortar.
+- **Sin pantalla todavía:** selector de misión y avisos de conflicto o zonas protegidas (plano provisional: el ranking del visor 3D, donde sale Kapisa, Afganistán, en el #5 de Shackleton).
+- **Falta:** el audio de ElevenLabs con los tiempos de cada frase y saber si el formato es horizontal (16:9) o vertical.
