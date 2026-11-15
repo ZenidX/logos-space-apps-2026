@@ -4,18 +4,19 @@
 // screen at a time while the scene follows (each mission step flies to its target world) and ends in the mission picker.
 // Explorer (a mission chosen, or a link with ?m=): the scene, the mission's list with filters, and the site panel.
 
+import { asset } from "@/lib/logos/asset";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { SceneMarker } from "@/components/SolarScene";
-import SitePanel, { AccessBars } from "@/components/SitePanel";
-import EvidenceBadge from "@/components/Evidence";
-import MethodSheet from "@/components/MethodSheet";
-import Count from "@/components/Count";
-import MissionPreview from "@/components/MissionPreview";
-import { GLOBE_TEX } from "@/lib/globe-tex";
-import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/missions";
+import type { SceneMarker } from "@/components/logos/SolarScene";
+import SitePanel, { AccessBars } from "@/components/logos/SitePanel";
+import EvidenceBadge from "@/components/logos/Evidence";
+import MethodSheet from "@/components/logos/MethodSheet";
+import Count from "@/components/logos/Count";
+import MissionPreview from "@/components/logos/MissionPreview";
+import { GLOBE_TEX } from "@/lib/logos/globe-tex";
+import { EVIDENCE, EVIDENCE_ORDER, FILTERS, HARDWARE, MISSIONS, NEXT_MISSIONS, NO_FILTER, byEvidence, passes, sceneLabel, topNote, travelText, type ListFilter, type Mission, type MissionId, type Site } from "@/lib/logos/missions";
 
-const SolarScene = dynamic(() => import("@/components/SolarScene"), { ssr: false });
+const SolarScene = dynamic(() => import("@/components/logos/SolarScene"), { ssr: false });
 // Project in numbers, computed from the data file (nothing typed by hand).
 const STATS: [string, string][] = [
   [String(MISSIONS.length), "missions from real field campaigns"],
@@ -189,7 +190,7 @@ export default function Home() {
     <main className="stars relative min-h-dvh overflow-x-clip">
       {!missionId && <a href="#explore" className="skip">Skip to the mission explorer</a>}
       <header style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }} className={`pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-2 transition-[background-color] duration-500 md:p-4 md:px-8 ${missionId ? "bg-[var(--bg)] md:bg-transparent" : scrolled ? "head-veil" : ""}`}>
-        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-[url(/logo-symbol.svg)] bg-contain bg-center bg-no-repeat" />Terra Vista <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
+        <button onClick={home} data-scene-avoid className="title-sm pointer-events-auto flex items-center gap-2 text-[16px]" aria-label="Terra Vista, Mission Analogs: back to the start"><span aria-hidden className="inline-block h-[26px] w-[26px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${asset("/logo-symbol.svg")})` }} />Terra Vista <span className={`hidden text-[var(--mut)] transition-opacity duration-500 sm:inline ${calm ? "opacity-0" : ""}`}>· Mission Analogs</span></button>
         <div className="pointer-events-auto flex items-center gap-2" data-scene-avoid>
           <span className={`hidden transition-[opacity,visibility] duration-500 sm:inline ${calm ? "invisible opacity-0" : ""}`}><span className="chip text-[var(--amber)]" style={{ borderColor: "var(--amber)" }}>Prototype</span></span>
           {!missionId && !calm && step !== "explore" && <span className="md:hidden"><button type="button" className="chip" onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}>Missions <span aria-hidden>↓</span></button></span>}

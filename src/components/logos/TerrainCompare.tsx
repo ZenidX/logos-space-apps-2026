@@ -2,6 +2,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 // Two 11 × 11 km terrains side by side (Earth site vs Moon/Mars target), same horizontal and vertical scale,
 // lit by a Sun whose elevation the user sets. Heightmaps are precomputed (scripts/data/06_terrain.py).
+import { asset } from "@/lib/logos/asset";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import index from "@/data/terrain-index.json";
@@ -14,7 +15,7 @@ const N = IDX.grid.n, SIZE_M = IDX.grid.sizeM, EXAG = 2;
 const TINT: Record<Item["body"], number> = { earth: 0xb9c7d6, moon: 0xcfd3da, mars: 0xd9a184 };
 
 async function loadHeights(file: string): Promise<Float32Array> {
-  const res = await fetch(file);
+  const res = await fetch(asset(file));
   if (!res.ok) throw new Error(`terrain ${res.status}`);
   const h = new Float32Array(await res.arrayBuffer());
   if (h.length !== N * N) throw new Error("terrain size");

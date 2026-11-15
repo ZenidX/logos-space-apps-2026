@@ -7,7 +7,7 @@
 import raw from "@/data/sites.json";
 import details from "@/data/site-details.json";
 import terrain from "@/data/terrain-index.json";
-import type { GlobeBody } from "@/lib/globe-tex";
+import type { GlobeBody } from "@/lib/logos/globe-tex";
 
 export type MissionId = "m1-eva-basalt" | "m2-rover-sand" | "m3-ground-ice" | "m4-low-sun";
 

@@ -8,11 +8,11 @@
 // on the far side and come back when the Earth is turned. No line is drawn to the target world.
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { latLonToVec3 } from "@/lib/globe-math";
-import { EARTH_EXTRA, GLOBE_TEX, NORMAL_TEX } from "@/lib/globe-tex";
-import { ATMO_FRAG, ATMO_VERT, EARTH_FRAG, GLOBE_VERT, GLOW_FRAG, GLOW_VERT, ROCKY_FRAG, STAR_FRAG, STAR_VERT, SUN_FRAG, SUN_VERT } from "@/lib/scene-shaders";
-import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/label-layout";
-import { EARTH_R, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, easeOut, INTRO_S, introPose, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/solar-math";
+import { latLonToVec3 } from "@/lib/logos/globe-math";
+import { EARTH_EXTRA, GLOBE_TEX, NORMAL_TEX } from "@/lib/logos/globe-tex";
+import { ATMO_FRAG, ATMO_VERT, EARTH_FRAG, GLOBE_VERT, GLOW_FRAG, GLOW_VERT, ROCKY_FRAG, STAR_FRAG, STAR_VERT, SUN_FRAG, SUN_VERT } from "@/lib/logos/scene-shaders";
+import { layoutLabels, type Disc, type LabelOut, type Rect } from "@/lib/logos/label-layout";
+import { EARTH_R, FOV, NAME_ROOM, ORBIT, OVERVIEW_SCALE, RADIUS, SUN_R, closeFrame, closePose, companionPos, ease, easeOut, INTRO_S, introPose, facesCamera, lerpPose, orientToFace, overviewPose, positions, segmentHitsSphere, siteFacing, targetPose, type BodyId, type Mode } from "@/lib/logos/solar-math";
 
 export interface SceneMarker { id: string; body: BodyId; lat: number; lon: number; kind: "candidate" | "target"; label: string; rank?: number; primary?: boolean } // primary: the sites the Earth turns to show
 interface Props {

@@ -1,7 +1,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 import assert from "node:assert/strict"; import { readFileSync } from "node:fs";
 import { similarity, acceptance, parseIdeal, conditionStatus } from "./rules.ts";
-const d = JSON.parse(readFileSync(new URL("../data/sites.json", import.meta.url), "utf8"));
+const d = JSON.parse(readFileSync(new URL("../../data/sites.json", import.meta.url), "utf8"));
 let n = 0, worst = 0, flips = 0;
 for (const m of d.missions) { const vd = new Map(m.variables.filter((v) => v.inMatch && v.ideal && v.tolerance).map((v) => [v.id, v]));
   for (const s of m.sites) for (const [k, p] of Object.entries(s.perVariable)) { const v = vd.get(k); if (!v || !p || p.value == null || p.similarity == null) continue;

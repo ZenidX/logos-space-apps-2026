@@ -1,17 +1,17 @@
 "use client";
 // AI-assisted (Claude), reviewed by team Logos
-import { Doc } from "@/components/MethodSheet";
+import { Doc } from "@/components/logos/MethodSheet";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import Count from "@/components/Count";
-import { EVIDENCE, FILTERS, INDEPENDENT, MISSIONS, SHORT_LABEL, fmt, idx, topNote, travelText, type Mission, type Site } from "@/lib/missions";
-import EvidenceBadge from "@/components/Evidence";
-import { TerrainStats, terrainOf } from "@/components/TerrainCompare";
-import LocatorMap from "@/components/LocatorMap";
-import RadialDial, { RadialLegend, RadialMini } from "@/components/RadialDial";
-import { buildRings } from "@/lib/radial-data";
-import ConditionStrip, { hasStrip, rangeText } from "@/components/ConditionStrip";
-import { conditionStatus } from "@/lib/rules";
+import Count from "@/components/logos/Count";
+import { EVIDENCE, FILTERS, INDEPENDENT, MISSIONS, SHORT_LABEL, fmt, idx, topNote, travelText, type Mission, type Site } from "@/lib/logos/missions";
+import EvidenceBadge from "@/components/logos/Evidence";
+import { TerrainStats, terrainOf } from "@/components/logos/TerrainCompare";
+import LocatorMap from "@/components/logos/LocatorMap";
+import RadialDial, { RadialLegend, RadialMini } from "@/components/logos/RadialDial";
+import { buildRings } from "@/lib/logos/radial-data";
+import ConditionStrip, { hasStrip, rangeText } from "@/components/logos/ConditionStrip";
+import { conditionStatus } from "@/lib/logos/rules";
 import detailsRaw from "@/data/site-details.json";
 
 interface Details {
@@ -88,7 +88,7 @@ export const pct = idx;
 /** Short names for the small rings on phones. */
 const MINI_LABEL: Record<string, string> = { ndvi: "Vegetation", albedo: "Albedo", precip: "Rain", sand: "Sand", volcanic: "Volcanic rock", lst_mean: "Temperature", low_sun_months: "Low-Sun months", polar_night_months: "Polar night", relief: "Relief", slope: "Slope", access: "Access" };
 
-const TerrainCompare = dynamic(() => import("@/components/TerrainCompare"), { ssr: false, loading: () => <div className="skel relative h-[240px] rounded-xl md:h-[280px]" role="status" aria-label="Loading terrain" /> });
+const TerrainCompare = dynamic(() => import("@/components/logos/TerrainCompare"), { ssr: false, loading: () => <div className="skel relative h-[240px] rounded-xl md:h-[280px]" role="status" aria-label="Loading terrain" /> });
 
 const MONTHS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 /** Noon Sun elevation on day 15 of each month, from latitude only (declination by Cooper's formula). */

@@ -3,7 +3,7 @@
 // Small "where is it" map: a crop of the same NASA global mosaic used on the globes, centred on the point,
 // with a marker. Regional scale: the 11 × 11 km terrain area is smaller than one pixel here, so it is drawn as a dot.
 import { useEffect, useRef, useState } from "react";
-import { GLOBE_TEX, type GlobeBody } from "@/lib/globe-tex";
+import { GLOBE_TEX, type GlobeBody } from "@/lib/logos/globe-tex";
 
 const W = 132, H = 74;
 

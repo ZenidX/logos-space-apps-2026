@@ -1,7 +1,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 import type { KeyboardEvent } from "react";
-import { DATA_DATE, DATA_VERSION, EVIDENCE, EVIDENCE_ORDER, FILTERS, MISSIONS, REMOVED } from "@/lib/missions";
-import EvidenceBadge from "@/components/Evidence";
+import { DATA_DATE, DATA_VERSION, EVIDENCE, EVIDENCE_ORDER, FILTERS, MISSIONS, REMOVED } from "@/lib/logos/missions";
+import EvidenceBadge from "@/components/logos/Evidence";
 
 const REPO = "https://github.com/zexuguo/SpaceApp-Logos/blob/main/";
 /** A file of the public repository, as a link. */

@@ -63,7 +63,7 @@ for (const m of d.missions) for (const s of m.sites) {
 }
 assert.ok(floored >= 1 && permits >= 3, `advisory floor (${floored}) or permit notes (${permits}) missing`);
 // Every new region shown has an entry in the independent check (src/lib/missions.ts), so its evidence badge is never a guess.
-const lib = readFileSync(new URL("../lib/missions.ts", import.meta.url), "utf8"), removed = [...lib.matchAll(/^  "(m\d-[a-z-]+-new\d+)": \{ name:/gm)].map((x) => x[1]);
+const lib = readFileSync(new URL("../lib/logos/missions.ts", import.meta.url), "utf8"), removed = [...lib.matchAll(/^  "(m\d-[a-z-]+-new\d+)": \{ name:/gm)].map((x) => x[1]);
 for (const m of d.missions) for (const s of m.sites) if (s.kind === "new" && !removed.includes(s.id)) assert.ok(new RegExp(`"${s.id}": \\{ verdict: "(Supported nearby|Partly|None found|Not checked)"`).test(lib), `${s.id}: no independent-check entry`);
 // No text in another script reaches the screen through the place names (everything delivered is in English).
 for (const m of d.missions) for (const s of m.sites) { const p = s.name.split(" · "), shown = s.kind === "new" && p.length > 2 ? [p[0], p[p.length - 1]] : p; assert.ok(!/[\u0400-\u04FF\u4E00-\u9FFF\u0600-\u06FF]/.test(shown.join(" ")), `${s.id}: name not in Latin script: ${shown.join(" · ")}`); }

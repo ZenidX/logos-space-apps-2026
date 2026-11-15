@@ -1,7 +1,7 @@
 // AI-assisted (Claude), reviewed by team Logos
 import assert from "node:assert/strict"; import { readFileSync } from "node:fs";
 import { buildRings, dialGeometry, dialLabel, shapeRatio, DIAL } from "./radial-data.ts";
-const H = new URL("../data/", import.meta.url), d = JSON.parse(readFileSync(new URL("sites.json", H), "utf8")), T = JSON.parse(readFileSync(new URL("terrain-index.json", H), "utf8")).items;
+const H = new URL("../../data/", import.meta.url), d = JSON.parse(readFileSync(new URL("sites.json", H), "utf8")), T = JSON.parse(readFileSync(new URL("terrain-index.json", H), "utf8")).items;
 let n = 0, counts = { "in range": 0, accepted: 0, "out of range": 0, none: 0 }, minInner = 999;
 for (const m of d.missions) { const vs = m.variables.filter((v) => v.inMatch);
   for (const s of m.sites) {

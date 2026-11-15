@@ -3,8 +3,8 @@
 // Hover (or keyboard focus) preview of a mission: its target world, what it is about, a few figures from the data file
 // and its main limit. The wrapped control keeps its own click (it opens the mission). Touch screens skip the preview.
 import type { ReactNode } from "react";
-import { GLOBE_TEX } from "@/lib/globe-tex";
-import { EVIDENCE, byEvidence, type Mission } from "@/lib/missions";
+import { GLOBE_TEX } from "@/lib/logos/globe-tex";
+import { EVIDENCE, byEvidence, type Mission } from "@/lib/logos/missions";
 
 const COLOR = { moon: "var(--moon)", mars: "var(--mars)", earth: "var(--earth)" } as const;
 
